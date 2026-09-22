@@ -26,7 +26,7 @@ h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.2}
 .book .stats{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .book .st{font-size:.64rem;font-weight:800;padding:2px 6px;border-radius:6px}
 .book .st.g{background:#e7f1f0;color:#0A5E5D}.book .st.l{background:#fbeee0;color:#8a5a1a}
-.book .st.a{background:#f3e9c9;color:#7a5a00}
+.book .st.a{background:#f3e9c9;color:#7a5a00}.book .st.k{background:#fbe0de;color:#a2231d}
 .book .ty{font-size:.66rem;font-weight:800;color:#fff;background:var(--teal);align-self:flex-start;padding:2px 7px;border-radius:6px}
 .book .bt{font-family:Georgia,serif;font-weight:700;font-size:.96rem;line-height:1.2;margin-top:4px}
 .book .ba{font-size:.76rem;color:var(--soft)}.book .br{font-size:.8rem;color:var(--soft);margin-top:4px}
@@ -67,6 +67,7 @@ h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.2}
     var bh=books.map(function(b){
       var stats='';
       if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
+      if(b.kr_popular) stats+='<span class="st k">🇰🇷 국내 인기</span>';
       if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
       if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
