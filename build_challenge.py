@@ -35,13 +35,13 @@ CURRICULUM = [
 ("🌈","Colors","색깔",[
  (1,"Lemons Are Not Red","Laura Vaccaro Seeger","구멍(다이컷)으로 색이 바뀌는 놀이책"),
  (2,"Mary Wore Her Red Dress","Merle Peek","색깔 옷을 노래하는 반복 라임"),
- (3,"I Went Walking","Sue Williams","\"What did you see?\"로 색깔 동물이 이어지는 반복"),
+ (3,"Where Is the Green Sheep?","Mem Fox","온갖 양이 나오다 초록 양 찾기 — 색+반복"),
  (4,"Pete the Cat: I Love My White Shoes","Eric Litwin","신발 색이 바뀌어도 쿨한 고양이의 노래"),
  (5,"A Color of His Own","Leo Lionni","자기 색을 찾고 싶은 카멜레온 이야기"),
 ]),
 ("🔢","Numbers","숫자",[
  (1,"600 Black Spots","David A. Carter","누르고 넘기면 검은 점이 변신하는 팝업북"),
- (2,"Five Little Ducks","Raffi","새끼 오리가 하나씩 사라지는 노래 라임"),
+ (2,"Ten Fat Sausages","전래동요 (Traditional)","소시지가 하나씩 터지는 카운팅 노래"),
  (3,"Ten Black Dots","Donald Crews","점 개수로 사물을 만드는 반복 카운팅"),
  (4,"Ten Apples Up on Top!","Dr. Seuss","머리에 사과를 쌓는 좌충우돌 라임"),
  (5,"Five Little Monkeys Jumping on the Bed","Eileen Christelow","침대에서 뛰다 다치는 원숭이 이야기"),
@@ -63,7 +63,7 @@ CURRICULUM = [
 ("😊","Feelings","감정",[
  (1,"The Color Monster: A Pop-Up Book of Feelings","Anna Llenas","뒤죽박죽 감정을 색으로 정리하는 팝업북"),
  (2,"The Way I Feel","Janan Cain","다양한 감정을 라임으로 소개"),
- (3,"The Feelings Book","Todd Parr","\"가끔 나는…\" 반복으로 감정 어휘"),
+ (3,"It's Okay to Be Different","Todd Parr","다름을 긍정하는 토드 파의 반복 메시지"),
  (4,"The Pigeon Has Feelings, Too!","Mo Willems","비둘기의 널뛰는 감정을 웃기게"),
  (5,"Knuffle Bunny: A Cautionary Tale","Mo Willems","애착 인형을 잃어버린 아기의 대소동"),
 ]),
@@ -90,9 +90,9 @@ CURRICULUM = [
 ]),
 ("🌱","Nature","자연·정원",[
  (1,"Tap the Magic Tree","Christie Matheson","두드리고 흔들면 나무가 변하는 참여형"),
- (2,"Flower Garden","Eve Bunting","창가 화분을 가꾸는 라임"),
+ (2,"Stick Man","Julia Donaldson","막대 아빠의 사계절 모험 — 라임 서사"),
  (3,"The Carrot Seed","Ruth Krauss","\"안 나올 거야\" 반복 속 믿음의 씨앗"),
- (4,"Jasper's Beanstalk","Nick Butterworth","성급한 고양이의 콩 심기 소동"),
+ (4,"The Leaf Thief","Alice Hemming","누가 내 잎을 훔쳤지? 가을을 알아가는 이야기"),
  (5,"The Tiny Seed","Eric Carle","작은 씨앗의 사계절 여행"),
 ]),
 ("🌦️","Weather & Seasons","날씨·계절",[
@@ -105,9 +105,9 @@ CURRICULUM = [
 ("🐶","Pets","반려동물",[
  (1,"Where's Spot?","Eric Hill","플랩으로 강아지 스팟을 찾는 고전 플랩북"),
  (2,"Hairy Maclary from Donaldson's Dairy","Lynley Dodd","동네 개들이 줄줄이 나오는 라임"),
- (3,"Go, Dog. Go!","P.D. Eastman","쉬운 단어가 반복되는 개들의 소동"),
+ (3,"Kitten's First Full Moon","Kevin Henkes","달을 우유로 착각한 아기 고양이 — 칼데콧 메달"),
  (4,"Bark, George","Jules Feiffer","엉뚱한 소리를 내는 강아지의 반전 유머"),
- (5,"Harry the Dirty Dog","Gene Zion","목욕 싫어 도망친 강아지 이야기"),
+ (5,"Hot Dog","Doug Salati","무더위를 피해 바닷가로 간 강아지 — 칼데콧 메달"),
 ]),
 ("🚜","Farm","농장",[
  (1,"That's Not My Tractor","Fiona Watt","트랙터 촉감을 만지는 촉감북"),
@@ -121,7 +121,7 @@ CURRICULUM = [
  (2,"Commotion in the Ocean","Giles Andreae","바다 동물들을 소개하는 라임"),
  (3,"Hooray for Fish!","Lucy Cousins","온갖 물고기가 이어지는 반복"),
  (4,"This Is Not My Hat","Jon Klassen","모자를 훔친 물고기의 그림 반전"),
- (5,"The Rainbow Fish","Marcus Pfister","반짝 비늘을 나누는 물고기 이야기"),
+ (5,"Swimmy","Leo Lionni","함께의 힘을 배우는 물고기 — 칼데콧 아너"),
 ]),
 ("👻","Monsters","괴물",[
  (1,"Go Away, Big Green Monster!","Ed Emberley","페이지를 넘기며 괴물을 없애는 다이컷 참여북"),
@@ -146,7 +146,7 @@ CURRICULUM = [
 ]),
 ("🎶","Songs & Rhymes","노래·마더구스",[
  (1,"The Wheels on the Bus","Annie Kubler","손유희로 함께 부르는 참여형 노래책"),
- (2,"Down by the Bay","Raffi","말장난이 이어지는 라임 노래"),
+ (2,"Walking Through the Jungle","Debbie Harter","정글을 걸으며 동물을 만나는 노래·챈트"),
  (3,"Polar Bear, Polar Bear, What Do You Hear?","Bill Martin Jr.","동물 소리가 이어지는 브라운베어 후속 챈트"),
  (4,"There's a Wocket in My Pocket!","Dr. Seuss","엉터리 라임 단어의 말놀이 유머"),
  (5,"Over in the Meadow","Ezra Jack Keats","자연 속 동물 가족을 세는 노래 이야기"),
@@ -159,7 +159,7 @@ CURRICULUM = [
  (5,"The Kissing Hand","Audrey Penn","손바닥 뽀뽀로 등원 불안을 달래는 이야기"),
 ]),
 ("🛁","Daily Routine","생활습관",[
- (1,"P is for Potty!","Naomi Kleinberg","플랩으로 배변을 배우는 세서미 플랩북"),
+ (1,"Brush Your Teeth, Please","Leslie McGuire","팝업으로 양치를 배우는 생활습관 조작북"),
  (2,"Pajama Time!","Sandra Boynton","잘 준비를 노래하는 라임"),
  (3,"The Napping House","Audrey Wood","잠든 식구가 쌓이는 누적 반복"),
  (4,"No, David!","David Shannon","말썽꾸러기 데이빗의 \"안 돼!\" 유머"),
@@ -169,8 +169,8 @@ CURRICULUM = [
  (1,"Press Here","Hervé Tullet","점을 누르면 변하는 마법 같은 참여형"),
  (2,"Round Is a Mooncake","Roseanne Thong","일상 속 도형을 찾는 라임"),
  (3,"Opposites","Sandra Boynton","반대말을 반복으로 익히는 보드북"),
- (4,"Duck! Rabbit!","Amy Krouse Rosenthal","오리냐 토끼냐 관점 다툼의 유머"),
- (5,"Mouse Shapes","Ellen Stoll Walsh","도형으로 그림을 만드는 생쥐 이야기"),
+ (4,"I Want My Hat Back","Jon Klassen","모자를 찾는 곰의 시치미 유머 — 가이젤 아너"),
+ (5,"They All Saw a Cat","Brendan Wenzel","같은 고양이를 저마다 다르게 보는 시선 — 칼데콧 아너"),
 ]),
 ("🎨","Imagination","상상·놀이",[
  (1,"Don't Push the Button!","Bill Cotter","누르지 말라는 버튼을 누르면?! 참여형"),
@@ -212,9 +212,11 @@ HONOR={'madeline':1940,'blueberries for sal':1949,'swimmy':1964,'strega nona':19
 'freight train':1979,'olivia':2001,'dont let the pigeon drive the bus':2004,'knuffle bunny':2005,
 'creepy carrots':2013,'extra yarn':2013,'journey':2014,'sam and dave dig a hole':2015,
 'last stop on market street':2016,'click clack moo':2001,'no david':1999,
-'when sophie gets angry really really angry':2000,'a big mooncake for little star':2019}
+'when sophie gets angry really really angry':2000,'a big mooncake for little star':2019,
+'they all saw a cat':2017}
+MEDAL['hot dog']=2023
 NEWBERY={'last stop on market street':2016}
-GEISEL={'the watermelon seed':2014}
+GEISEL={'the watermelon seed':2014,'i want my hat back':2012}
 def award(title):
     n=norm(title); parts=[]
     if n in NEWBERY: parts.append('🎖️ 뉴베리 메달 '+str(NEWBERY[n]))

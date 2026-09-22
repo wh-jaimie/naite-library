@@ -66,7 +66,7 @@ DOMESTIC_ALL = [
 (62,"It's Okay to Be Different","It's Okay to Be Different","3~7","토드 파"),
 (63,"Glad Monster, Sad Monster","Glad Monster Sad Monster","3~7","감정"),
 (64,"Making Faces: A First Book of Emotions","Making Faces","0~3","보드북"),
-(65,"Hot Dog","Hot Dog Doug Salati","3~7","2023 칼데콧 메달"),
+(65,"Hot Dog","Hot Dog","3~7","2023 칼데콧 메달"),
 (66,"I'm the Biggest Thing in the Ocean!","I'm the Biggest Thing in the Ocean","3~6",""),
 (67,"The World of Peter Rabbit 세트","The Tale of Peter Rabbit","4~9","베아트릭스 포터"),
 (68,"Bluey 시리즈","Bluey","2~6","인기 애니 원작"),
