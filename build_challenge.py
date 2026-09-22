@@ -225,13 +225,17 @@ def award(title):
     if n in HONOR: parts.append('🏅 칼데콧 아너 '+str(HONOR[n]))
     return ' · '.join(parts)
 
-# 인기순위/도서관 대출 (gr_master)
+# 세계인기(새 통합순위) + 도서관 대출(gr_master)
+try:
+    from data_global import GLOBAL_100
+    WORLD_SET_C={norm(t) for _,t,_ in GLOBAL_100}
+except Exception:
+    WORLD_SET_C=set()
 try:
     _gm=json.load(open(os.path.join(HERE,"output","gr_master.json"),encoding="utf-8"))["books"]
-    POP={norm(b["title"]):b.get("rank",0) for b in _gm}
     LIB={norm(b["title"]):b.get("lib_loans",0) for b in _gm}
 except Exception:
-    POP={}; LIB={}
+    LIB={}
 
 def _search(params):
     q=urllib.parse.urlencode(params)
@@ -263,7 +267,7 @@ for emoji,en,ko,books in CURRICULUM:
         n=norm(title)
         tb.append({"gid":gid,"tier":tier,"tier_label":TIER_LABELS[tier],"title":title,"author":author,
                    "reason":reason,"cover":cover,"isbn":isbn,"year":year,"id":"c"+str(gid),
-                   "pop_rank":POP.get(n,0),"lib_loans":LIB.get(n,0),"award":award(title),
+                   "pop_rank":(1 if n in WORLD_SET_C else 0),"lib_loans":LIB.get(n,0),"award":award(title),
                    "kr_popular":(n in KR_SET)})
         time.sleep(DELAY)
     themes.append({"emoji":emoji,"en":en,"ko":ko,"key":re.sub(r"[^a-z0-9]+","-",en.lower()).strip("-"),"books":tb})

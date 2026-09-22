@@ -2,6 +2,7 @@
 """조이네영어도서관 사이트: 랜딩 + 세계100 + 국내100 + 주제별 + badges.js"""
 import os, json, re, time, html, urllib.request, urllib.parse
 from data_domestic import DOMESTIC_ALL, AWARDS_EXTRA
+from data_global import GLOBAL_100
 HERE=os.path.dirname(os.path.abspath(__file__)); DOCS=os.path.join(HERE,"docs")
 UA="ChoiEnglishLibrary/1.0"; DELAY=0.25
 def esc(s): return html.escape(str(s) if s is not None else "")
@@ -27,6 +28,8 @@ def award_of(t): return award_map.get(norm(t),"")
 def lib_of(t): return lib_map.get(norm(t),0)
 
 DOM_SET={norm(d[2]) for d in DOMESTIC_ALL}
+WORLD_SET={norm(t) for _,t,_ in GLOBAL_100}
+WORLD_RANK={norm(t):r for r,t,_ in GLOBAL_100}
 
 def ol(title):
     try:
@@ -102,24 +105,25 @@ def card(cover,title,author,rank=None,badges=None,extra=""):
             + (f'<div class="badges">{bg}</div>' if bg else '')
             + '</div></article>')
 
-# 세계 100
-gm_sorted=sorted([b for b in gm if b.get("rank")],key=lambda b:b["rank"])[:100]
+# 세계 100 (여러 서점 통합순위)
 cards=[]
-for b in gm_sorted:
+for rank,title,author in GLOBAL_100:
+    n=norm(title)
+    cov=cover_map.get(n)
+    if not cov: cov=ol(title); cover_map[n]=cov; time.sleep(DELAY)
     badges=[]
-    if norm(b["title"]) in DOM_SET: badges.append(("k","🇰🇷 국내 인기"))
-    if award_of(b["title"]): badges.append(("a",award_of(b["title"])))
-    if b.get("lib_loans"): badges.append(("l",f"📚 도서관 {b['lib_loans']}회"))
-    cards.append(card(b.get("cover"),b["title"],b.get("author",""),rank=b["rank"],badges=badges))
-body=f'<main class="wrap"><div class="hero"><div class="eyebrow">Goodreads · 전세계 독자 인기순</div><h1>🌍 세계 인기 그림책 100</h1><p>전세계 독자들이 가장 많이 담고 읽은 파닉스 전 그림책 100권, 인기순.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
+    if n in DOM_SET: badges.append(("k","🇰🇷 국내 인기"))
+    if award_of(title): badges.append(("a",award_of(title)))
+    if lib_of(title): badges.append(("l",f"📚 도서관 {lib_of(title)}회"))
+    cards.append(card(cov,title,author,rank=rank,badges=badges))
+body=f'<main class="wrap"><div class="hero"><div class="eyebrow">여러 서점 통합순위</div><h1>🌍 세계 인기 그림책 100</h1><p>여러 온·오프라인 서점(미국·영국·글로벌)의 베스트셀러를 통합한 세계적으로 유명한 그림책 100권.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
 open(os.path.join(DOCS,"global.html"),"w",encoding="utf-8").write(page("세계 인기 그림책 100",body))
 
 # 국내 100
-gm_rank_set={norm(x["title"]) for x in gm if x.get("rank")}
 cards=[]
 for d in domestic:
     badges=[]
-    if norm(d["en"]) in gm_rank_set: badges.append(("g","🌍 세계 인기"))
+    if norm(d["en"]) in WORLD_SET: badges.append(("g","🌍 세계 인기"))
     if d["award"]: badges.append(("a",d["award"]))
     if d["lib"]: badges.append(("l",f"📚 도서관 {d['lib']}회"))
     if d["note"]: badges.append(("n",d["note"]))
@@ -139,7 +143,8 @@ blocks=[]
 for emo,name,ranks in THEMES:
     items=[by_rank[r] for r in ranks if r in by_rank]; cs=[]
     for b in items:
-        badges=[("g","🌍 세계 인기")]
+        badges=[]
+        if norm(b["title"]) in WORLD_SET: badges.append(("g","🌍 세계 인기"))
         if norm(b["title"]) in DOM_SET: badges.append(("k","🇰🇷 국내 인기"))
         if award_of(b["title"]): badges.append(("a",award_of(b["title"])))
         if b.get("lib_loans"): badges.append(("l",f"📚 도서관 {b['lib_loans']}회"))
@@ -149,13 +154,12 @@ for emo,name,ranks in THEMES:
 body=f'<main class="wrap"><div class="hero"><div class="eyebrow">주제별 5권 묶음</div><h1>🗂️ 주제별 컬렉션</h1><p>인스타·스터디에 쓰기 좋은 5권 묶음. 표지를 캡처해 카드로 쓰세요.</p></div>{"".join(blocks)}</main>'
 open(os.path.join(DOCS,"collections.html"),"w",encoding="utf-8").write(page("주제별 컬렉션",body,search=False))
 
-# badges.js
+# badges.js (세계=새 통합순위, 국내=국내100, 수상/도서관)
 badge_map={}
-for b in gm:
-    if not b.get("rank"): continue
-    n=norm(b["title"]); e={"w":b["rank"]}
-    if award_of(b["title"]): e["a"]=award_of(b["title"])
-    if b.get("lib_loans"): e["l"]=b["lib_loans"]
+for n,r in WORLD_RANK.items():
+    e={"w":r}
+    if award_of(n): e["a"]=award_of(n)
+    if lib_map.get(n): e["l"]=lib_map[n]
     if n in DOM_SET: e["k"]=1
     badge_map[n]=e
 for d in domestic:
@@ -163,5 +167,9 @@ for d in domestic:
     if d["award"]: e["a"]=d["award"]
     if d["lib"]: e.setdefault("l",d["lib"])
     badge_map[n]=e
+# 도서관/수상 정보가 있는 나머지도 포함(세계·국내 아니어도)
+for n,v in lib_map.items():
+    e=badge_map.setdefault(n,{}); e.setdefault("l",v)
+    if award_of(n): e.setdefault("a",award_of(n))
 open(os.path.join(DOCS,"badges.js"),"w",encoding="utf-8").write("window.BADGES="+json.dumps(badge_map,ensure_ascii=False)+";")
 print("생성: global.html, domestic.html(100), collections.html, badges.js  (배지 항목", len(badge_map),")")

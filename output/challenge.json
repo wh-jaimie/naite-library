@@ -17,7 +17,7 @@
      "isbn": "9781529074932",
      "year": 1982,
      "id": "c1",
-     "pop_rank": 6,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -33,7 +33,7 @@
      "isbn": "9781843620693",
      "year": 1999,
      "id": "c2",
-     "pop_rank": 74,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -49,7 +49,7 @@
      "isbn": "3806749698",
      "year": 1967,
      "id": "c3",
-     "pop_rank": 3,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -65,7 +65,7 @@
      "isbn": "1416950354",
      "year": 1982,
      "id": "c4",
-     "pop_rank": 5,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -137,7 +137,7 @@
      "isbn": "0152056610",
      "year": 2008,
      "id": "c8",
-     "pop_rank": 11,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -153,7 +153,7 @@
      "isbn": "9780439701808",
      "year": 2003,
      "id": "c9",
-     "pop_rank": 12,
+     "pop_rank": 1,
      "lib_loans": 96,
      "award": "🏅 칼데콧 아너 2004",
      "kr_popular": true
@@ -169,7 +169,7 @@
      "isbn": "0811877825",
      "year": 2011,
      "id": "c10",
-     "pop_rank": 48,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -209,7 +209,7 @@
      "isbn": "0827344937",
      "year": 1982,
      "id": "c12",
-     "pop_rank": 35,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -313,7 +313,7 @@
      "isbn": "9780439731409",
      "year": 2004,
      "id": "c18",
-     "pop_rank": 17,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -329,7 +329,7 @@
      "isbn": "9780061906237",
      "year": 2008,
      "id": "c19",
-     "pop_rank": 56,
+     "pop_rank": 1,
      "lib_loans": 74,
      "award": "",
      "kr_popular": true
@@ -433,7 +433,7 @@
      "isbn": "9780395900239",
      "year": 1989,
      "id": "c25",
-     "pop_rank": 94,
+     "pop_rank": 0,
      "lib_loans": 67,
      "award": "",
      "kr_popular": false
@@ -489,7 +489,7 @@
      "isbn": "9780553539899",
      "year": 1960,
      "id": "c28",
-     "pop_rank": 38,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -561,7 +561,7 @@
      "isbn": "0689870280",
      "year": 1982,
      "id": "c32",
-     "pop_rank": 9,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -577,7 +577,7 @@
      "isbn": "9780060275044",
      "year": 1947,
      "id": "c33",
-     "pop_rank": 2,
+     "pop_rank": 1,
      "lib_loans": 84,
      "award": "",
      "kr_popular": false
@@ -633,7 +633,7 @@
      "isbn": "9780316574525",
      "year": 2024,
      "id": "c36",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -697,7 +697,7 @@
      "isbn": "9780439801980",
      "year": 2004,
      "id": "c40",
-     "pop_rank": 60,
+     "pop_rank": 1,
      "lib_loans": 83,
      "award": "🏅 칼데콧 아너 2005",
      "kr_popular": true
@@ -721,7 +721,7 @@
      "isbn": "1416987339",
      "year": 2009,
      "id": "c41",
-     "pop_rank": 42,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -753,7 +753,7 @@
      "isbn": "9780694013012",
      "year": 1977,
      "id": "c43",
-     "pop_rank": 16,
+     "pop_rank": 1,
      "lib_loans": 135,
      "award": "",
      "kr_popular": true
@@ -769,7 +769,7 @@
      "isbn": "9780761137993",
      "year": 2005,
      "id": "c44",
-     "pop_rank": 31,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -785,7 +785,7 @@
      "isbn": "1328852253",
      "year": 2008,
      "id": "c45",
-     "pop_rank": 20,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -809,7 +809,7 @@
      "isbn": "0399235663",
      "year": 1984,
      "id": "c46",
-     "pop_rank": 46,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -929,7 +929,7 @@
      "isbn": "9781481480994",
      "year": 2016,
      "id": "c53",
-     "pop_rank": 71,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1001,7 +1001,7 @@
      "isbn": "1407139649",
      "year": 2001,
      "id": "c57",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1033,7 +1033,7 @@
      "isbn": "9781464239441",
      "year": 2025,
      "id": "c59",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1137,7 +1137,7 @@
      "isbn": "9781484476727",
      "year": 1962,
      "id": "c65",
-     "pop_rank": 19,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1963",
      "kr_popular": false
@@ -1161,7 +1161,7 @@
      "isbn": "0959252908",
      "year": 1980,
      "id": "c66",
-     "pop_rank": 44,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1177,7 +1177,7 @@
      "isbn": "0907349994",
      "year": 1983,
      "id": "c67",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1193,7 +1193,7 @@
      "isbn": "9787533293550",
      "year": 2004,
      "id": "c68",
-     "pop_rank": 97,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 2005",
      "kr_popular": true
@@ -1209,7 +1209,7 @@
      "isbn": "0062051865",
      "year": 1999,
      "id": "c69",
-     "pop_rank": 36,
+     "pop_rank": 0,
      "lib_loans": 80,
      "award": "",
      "kr_popular": false
@@ -1265,7 +1265,7 @@
      "isbn": "1523507772",
      "year": 1993,
      "id": "c72",
-     "pop_rank": 10,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1297,7 +1297,7 @@
      "isbn": "0439021561",
      "year": 1900,
      "id": "c74",
-     "pop_rank": 58,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2001",
      "kr_popular": false
@@ -1369,7 +1369,7 @@
      "isbn": "9780763634414",
      "year": 2005,
      "id": "c78",
-     "pop_rank": 32,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1385,7 +1385,7 @@
      "isbn": "9781443140355",
      "year": 2001,
      "id": "c79",
-     "pop_rank": 47,
+     "pop_rank": 1,
      "lib_loans": 76,
      "award": "🥇 칼데콧 메달 2013",
      "kr_popular": true
@@ -1401,7 +1401,7 @@
      "isbn": "9780590270984",
      "year": 1963,
      "id": "c80",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 1964",
      "kr_popular": true
@@ -1441,7 +1441,7 @@
      "isbn": "9781845025038",
      "year": 1999,
      "id": "c82",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1473,7 +1473,7 @@
      "isbn": "9780375804014",
      "year": 1971,
      "id": "c84",
-     "pop_rank": 84,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1489,7 +1489,7 @@
      "isbn": "9788952723925",
      "year": 1963,
      "id": "c85",
-     "pop_rank": 14,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1964",
      "kr_popular": true
@@ -1649,7 +1649,7 @@
      "isbn": "9780582471542",
      "year": 1957,
      "id": "c94",
-     "pop_rank": 55,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1665,7 +1665,7 @@
      "isbn": "9780544457980",
      "year": 1985,
      "id": "c95",
-     "pop_rank": 49,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1986",
      "kr_popular": false
@@ -1721,7 +1721,7 @@
      "isbn": "0805087982",
      "year": 1991,
      "id": "c98",
-     "pop_rank": 22,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": true
@@ -1881,7 +1881,7 @@
      "isbn": "0761166173",
      "year": 2000,
      "id": "c107",
-     "pop_rank": 53,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1897,7 +1897,7 @@
      "isbn": "9577623263",
      "year": 1984,
      "id": "c108",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -1953,7 +1953,7 @@
      "isbn": "0811879542",
      "year": 2011,
      "id": "c111",
-     "pop_rank": 80,
+     "pop_rank": 1,
      "lib_loans": 65,
      "award": "",
      "kr_popular": true
@@ -1985,7 +1985,7 @@
      "isbn": "9780689869785",
      "year": 1982,
      "id": "c113",
-     "pop_rank": 61,
+     "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
@@ -2001,7 +2001,7 @@
      "isbn": "9780763696764",
      "year": 2011,
      "id": "c114",
-     "pop_rank": 37,
+     "pop_rank": 1,
      "lib_loans": 131,
      "award": "🎖️ 가이젤상 2012",
      "kr_popular": true
@@ -2089,7 +2089,7 @@
      "isbn": "1406357766",
      "year": 2014,
      "id": "c119",
-     "pop_rank": 102,
+     "pop_rank": 0,
      "lib_loans": 81,
      "award": "🏅 칼데콧 아너 2015",
      "kr_popular": true
@@ -2105,7 +2105,7 @@
      "isbn": "0062086529",
      "year": 1955,
      "id": "c120",
-     "pop_rank": 73,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false
