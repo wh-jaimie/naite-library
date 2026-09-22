@@ -192,14 +192,30 @@ for emo,name,ranks in THEMES:
     items=[by_rank[r] for r in ranks if r in by_rank]
     cs=[]
     for b in items:
-        badges=[]
+        badges=[("g","🌍 세계 인기")]
         if norm(b["title"]) in DOM_SET: badges.append(("k","🇰🇷 국내 인기"))
         if b.get("award"): badges.append(("a",b["award"]))
+        if b.get("lib_loans"): badges.append(("l",f"📚 도서관 {b['lib_loans']}회"))
         cs.append(card(b.get("cover"),b["title"],b.get("author",""),badges=badges,
                        extra=(f'<div class="ba" style="margin-top:4px">{esc(b.get("reason",""))}</div>' if b.get("reason") else "")))
     blocks.append(f'<section><h2 style="font-size:1.4rem;margin-bottom:2px">{emo} {esc(name)}</h2><div class="grid" style="margin-top:12px">{"".join(cs)}</div></section>')
 body=f'<main class="wrap"><div class="hero"><div class="eyebrow">주제별 5권 묶음</div><h1>🗂️ 주제별 컬렉션</h1><p>인스타·스터디에 쓰기 좋은 5권 묶음. 표지를 캡처해 카드로 쓰세요.</p></div>{"".join(blocks)}</main>'
 open(os.path.join(DOCS,"collections.html"),"w",encoding="utf-8").write(page("주제별 컬렉션",body,search=False))
 
-print("생성: docs/global.html, domestic.html, collections.html")
+# ── 배지 조회맵 (home.html 등 클라이언트에서 매칭) ──
+badge_map={}
+for b in gm:
+    if not b.get("rank"): continue
+    n=norm(b["title"]); e={"w":b["rank"]}
+    if b.get("award"): e["a"]=b["award"]
+    if b.get("lib_loans"): e["l"]=b["lib_loans"]
+    if n in DOM_SET: e["k"]=1
+    badge_map[n]=e
+for d in domestic:
+    n=norm(d["en"]); e=badge_map.get(n,{}); e["k"]=1
+    if d["award"]: e.setdefault("a",d["award"])
+    if d["lib"]: e.setdefault("l",d["lib"])
+    badge_map[n]=e
+open(os.path.join(DOCS,"badges.js"),"w",encoding="utf-8").write("window.BADGES="+json.dumps(badge_map,ensure_ascii=False)+";")
+print("생성: docs/global.html, domestic.html, collections.html, badges.js")
 PY_DONE=True

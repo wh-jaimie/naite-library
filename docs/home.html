@@ -36,6 +36,9 @@ a{color:var(--tealD);text-decoration:none}
 .row .t{font-weight:700;font-size:.9rem}
 .row .m{font-size:.74rem;color:var(--soft);margin-top:2px}
 .row .star{color:#E9A63B;font-weight:800}
+.row .badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.bg{font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px}
+.bg.k{background:#fbe0de;color:#a2231d}.bg.g{background:#e7f1f0;color:#0A5E5D}.bg.l{background:#fbeee0;color:#8a5a1a}.bg.a{background:#f3e9c9;color:#7a5a00}
 .foot{border-top:1px solid var(--line);margin-top:26px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
 .notice{max-width:640px;margin:50px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:16px 20px;color:#6b5900}
 </style>
@@ -53,11 +56,23 @@ a{color:var(--tealD);text-decoration:none}
 </main>
 <div class="foot"><div class="wrap">드니네 책장 · 조이네영어도서관</div></div>
 <script src="study/config.js"></script>
+<script src="badges.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
   var body=document.getElementById('body');
+  var BADGES=window.BADGES||{};
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function bnorm(t){t=(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/'/g,'');return t.replace(/[^a-z0-9]+/g,' ').trim();}
+  function badgeHTML(title){
+    var e=BADGES[bnorm(title)];if(!e)return '';
+    var b='';
+    if(e.k)b+='<span class="bg k">🇰🇷 국내 인기</span>';
+    if(e.w)b+='<span class="bg g">🌍 세계 인기</span>';
+    if(e.a)b+='<span class="bg a">'+esc(e.a)+'</span>';
+    if(e.l)b+='<span class="bg l">📚 도서관 '+e.l+'회</span>';
+    return b?'<div class="badges">'+b+'</div>':'';
+  }
   if(!window.SUPA_ANON||window.SUPA_ANON.indexOf('PASTE')===0){body.innerHTML='<div class="notice">⚙️ 연결 전이에요. config.js + home_books.sql 실행이 필요합니다.</div>';return;}
   var client=supabase.createClient(window.SUPA_URL,window.SUPA_ANON);
   var ALL=[],curSeries='__all__',curQ='';
@@ -78,7 +93,7 @@ a{color:var(--tealD);text-decoration:none}
       h+='<div class="series"><h2>'+esc(s)+' <span class="c">'+groups[s].length+'권</span></h2><div class="list">'+
         groups[s].map(function(b){
           var m=[];if(b.age)m.push(esc(b.age)+'세');if(b.pref)m.push('<span class="star">★ '+esc(b.pref)+'</span>');
-          return '<div class="row"><div class="t">'+esc(b.title)+'</div>'+(m.length?'<div class="m">'+m.join(' · ')+'</div>':'')+'</div>';
+          return '<div class="row"><div class="t">'+esc(b.title)+'</div>'+(m.length?'<div class="m">'+m.join(' · ')+'</div>':'')+badgeHTML(b.title)+'</div>';
         }).join('')+'</div></div>';
     });
     body.innerHTML=h||'<p style="padding:30px 0;color:var(--soft)">검색 결과가 없어요.</p>';
