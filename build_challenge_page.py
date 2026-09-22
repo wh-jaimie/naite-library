@@ -84,6 +84,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
   font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
 .step .tt{font-size:.76rem;font-weight:700;line-height:1.2}
 .step .au{font-size:.68rem;color:var(--ink-soft)}
+.step .aw{font-size:.64rem;font-weight:800;color:#7a5a00;background:#f3e9c9;border-radius:6px;padding:2px 6px;align-self:flex-start;margin-top:2px}
 .step .rs{font-size:.68rem;color:var(--ink-soft);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media (max-width:760px){.ladder{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
   .step .rs{display:none}.step .au{display:none}}
@@ -161,6 +162,7 @@ function stepHTML(b){
     </div>
     <div class="tt">${esc(b.title)}</div>
     <div class="au">${esc(b.author)}</div>
+    ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
     <div class="rs">${esc(b.reason)}</div>
   </div>`;
 }

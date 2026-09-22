@@ -18,7 +18,9 @@
      "year": 1982,
      "id": "c1",
      "pop_rank": 6,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 2,
@@ -32,7 +34,9 @@
      "year": 1999,
      "id": "c2",
      "pop_rank": 74,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 3,
@@ -46,7 +50,9 @@
      "year": 1967,
      "id": "c3",
      "pop_rank": 3,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 4,
@@ -60,7 +66,9 @@
      "year": 1982,
      "id": "c4",
      "pop_rank": 5,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 5,
@@ -74,7 +82,9 @@
      "year": 1975,
      "id": "c5",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -96,7 +106,9 @@
      "year": 2002,
      "id": "c6",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 7,
@@ -110,7 +122,9 @@
      "year": 1986,
      "id": "c7",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 8,
@@ -124,7 +138,9 @@
      "year": 2008,
      "id": "c8",
      "pop_rank": 11,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 9,
@@ -138,7 +154,9 @@
      "year": 2003,
      "id": "c9",
      "pop_rank": 12,
-     "lib_loans": 96
+     "lib_loans": 96,
+     "award_kind": "honor",
+     "award": "🏅 칼데콧 아너 2004"
     },
     {
      "gid": 10,
@@ -152,7 +170,9 @@
      "year": 2011,
      "id": "c10",
      "pop_rank": 48,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -174,7 +194,9 @@
      "year": 1969,
      "id": "c11",
      "pop_rank": 1,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 12,
@@ -188,7 +210,9 @@
      "year": 1982,
      "id": "c12",
      "pop_rank": 35,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 13,
@@ -202,7 +226,9 @@
      "year": 1993,
      "id": "c13",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 14,
@@ -216,7 +242,9 @@
      "year": 2012,
      "id": "c14",
      "pop_rank": 83,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 15,
@@ -230,7 +258,9 @@
      "year": 1978,
      "id": "c15",
      "pop_rank": 67,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -252,7 +282,9 @@
      "year": 2006,
      "id": "c16",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 17,
@@ -266,7 +298,9 @@
      "year": 1985,
      "id": "c17",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 18,
@@ -280,7 +314,9 @@
      "year": 1990,
      "id": "c18",
      "pop_rank": 62,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 19,
@@ -294,7 +330,9 @@
      "year": 1984,
      "id": "c19",
      "pop_rank": 30,
-     "lib_loans": 61
+     "lib_loans": 61,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 20,
@@ -308,7 +346,9 @@
      "year": 1994,
      "id": "c20",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -330,7 +370,9 @@
      "year": 2000,
      "id": "c21",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 22,
@@ -344,7 +386,9 @@
      "year": 1999,
      "id": "c22",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 23,
@@ -358,7 +402,9 @@
      "year": 1992,
      "id": "c23",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 24,
@@ -372,7 +418,9 @@
      "year": 1961,
      "id": "c24",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 25,
@@ -386,7 +434,9 @@
      "year": 1989,
      "id": "c25",
      "pop_rank": 94,
-     "lib_loans": 67
+     "lib_loans": 67,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -408,7 +458,9 @@
      "year": 2001,
      "id": "c26",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 27,
@@ -422,7 +474,9 @@
      "year": 1989,
      "id": "c27",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 28,
@@ -436,7 +490,9 @@
      "year": 1960,
      "id": "c28",
      "pop_rank": 38,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 29,
@@ -450,7 +506,9 @@
      "year": 2005,
      "id": "c29",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 30,
@@ -464,7 +522,9 @@
      "year": 1994,
      "id": "c30",
      "pop_rank": 7,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -486,7 +546,9 @@
      "year": 2010,
      "id": "c31",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 32,
@@ -500,7 +562,9 @@
      "year": 1982,
      "id": "c32",
      "pop_rank": 9,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 33,
@@ -514,7 +578,9 @@
      "year": 1947,
      "id": "c33",
      "pop_rank": 2,
-     "lib_loans": 84
+     "lib_loans": 84,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 34,
@@ -528,7 +594,9 @@
      "year": 2000,
      "id": "c34",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 35,
@@ -542,7 +610,9 @@
      "year": 1993,
      "id": "c35",
      "pop_rank": 23,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -564,7 +634,9 @@
      "year": 1997,
      "id": "c36",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 37,
@@ -578,7 +650,9 @@
      "year": 2000,
      "id": "c37",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 38,
@@ -592,7 +666,9 @@
      "year": 2000,
      "id": "c38",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 39,
@@ -606,7 +682,9 @@
      "year": 2005,
      "id": "c39",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 40,
@@ -620,7 +698,9 @@
      "year": 2024,
      "id": "c40",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -642,7 +722,9 @@
      "year": 2009,
      "id": "c41",
      "pop_rank": 42,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 42,
@@ -656,7 +738,9 @@
      "year": 1987,
      "id": "c42",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 43,
@@ -670,7 +754,9 @@
      "year": 1977,
      "id": "c43",
      "pop_rank": 16,
-     "lib_loans": 135
+     "lib_loans": 135,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 44,
@@ -684,7 +770,9 @@
      "year": 2005,
      "id": "c44",
      "pop_rank": 31,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 45,
@@ -698,7 +786,9 @@
      "year": 2008,
      "id": "c45",
      "pop_rank": 20,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -720,7 +810,9 @@
      "year": 1984,
      "id": "c46",
      "pop_rank": 46,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 47,
@@ -734,7 +826,9 @@
      "year": 2014,
      "id": "c47",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 48,
@@ -748,7 +842,9 @@
      "year": 1999,
      "id": "c48",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 49,
@@ -762,7 +858,9 @@
      "year": 1977,
      "id": "c49",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 50,
@@ -776,7 +874,9 @@
      "year": 1990,
      "id": "c50",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -798,7 +898,9 @@
      "year": 2002,
      "id": "c51",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 52,
@@ -812,7 +914,9 @@
      "year": 1994,
      "id": "c52",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 53,
@@ -826,7 +930,9 @@
      "year": 2016,
      "id": "c53",
      "pop_rank": 71,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 54,
@@ -840,7 +946,9 @@
      "year": 2008,
      "id": "c54",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 55,
@@ -854,7 +962,9 @@
      "year": 2007,
      "id": "c55",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -876,7 +986,9 @@
      "year": 2013,
      "id": "c56",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 57,
@@ -890,7 +1002,9 @@
      "year": 1994,
      "id": "c57",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 58,
@@ -904,7 +1018,9 @@
      "year": 1945,
      "id": "c58",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 59,
@@ -918,7 +1034,9 @@
      "year": 1993,
      "id": "c59",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 60,
@@ -932,7 +1050,9 @@
      "year": 1970,
      "id": "c60",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -954,7 +1074,9 @@
      "year": 2006,
      "id": "c61",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 62,
@@ -968,7 +1090,9 @@
      "year": 2013,
      "id": "c62",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 63,
@@ -982,7 +1106,9 @@
      "year": 1986,
      "id": "c63",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 64,
@@ -996,7 +1122,9 @@
      "year": 2002,
      "id": "c64",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 65,
@@ -1010,7 +1138,9 @@
      "year": 1962,
      "id": "c65",
      "pop_rank": 19,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "medal",
+     "award": "🥇 칼데콧 메달 1963"
     }
    ]
   },
@@ -1032,7 +1162,9 @@
      "year": 1980,
      "id": "c66",
      "pop_rank": 44,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 67,
@@ -1046,7 +1178,9 @@
      "year": 1983,
      "id": "c67",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 68,
@@ -1060,7 +1194,9 @@
      "year": 1961,
      "id": "c68",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 69,
@@ -1074,7 +1210,9 @@
      "year": 1999,
      "id": "c69",
      "pop_rank": 36,
-     "lib_loans": 80
+     "lib_loans": 80,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 70,
@@ -1088,7 +1226,9 @@
      "year": 1956,
      "id": "c70",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1110,7 +1250,9 @@
      "year": 2001,
      "id": "c71",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 72,
@@ -1124,7 +1266,9 @@
      "year": 1993,
      "id": "c72",
      "pop_rank": 10,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 73,
@@ -1138,7 +1282,9 @@
      "year": 1980,
      "id": "c73",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 74,
@@ -1152,7 +1298,9 @@
      "year": 1900,
      "id": "c74",
      "pop_rank": 58,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 75,
@@ -1166,7 +1314,9 @@
      "year": 1973,
      "id": "c75",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1188,7 +1338,9 @@
      "year": 2019,
      "id": "c76",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 77,
@@ -1202,7 +1354,9 @@
      "year": 1998,
      "id": "c77",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 78,
@@ -1216,7 +1370,9 @@
      "year": 2005,
      "id": "c78",
      "pop_rank": 32,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 79,
@@ -1230,7 +1386,9 @@
      "year": 2007,
      "id": "c79",
      "pop_rank": 52,
-     "lib_loans": 64
+     "lib_loans": 64,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 80,
@@ -1244,7 +1402,9 @@
      "year": 2022,
      "id": "c80",
      "pop_rank": 63,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1266,7 +1426,9 @@
      "year": 1992,
      "id": "c81",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 82,
@@ -1280,7 +1442,9 @@
      "year": 1999,
      "id": "c82",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 83,
@@ -1294,7 +1458,9 @@
      "year": 2010,
      "id": "c83",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 84,
@@ -1308,7 +1474,9 @@
      "year": 1971,
      "id": "c84",
      "pop_rank": 84,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 85,
@@ -1322,7 +1490,9 @@
      "year": 1963,
      "id": "c85",
      "pop_rank": 14,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "medal",
+     "award": "🥇 칼데콧 메달 1964"
     }
    ]
   },
@@ -1344,7 +1514,9 @@
      "year": 2006,
      "id": "c86",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 87,
@@ -1358,7 +1530,9 @@
      "year": 1995,
      "id": "c87",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 88,
@@ -1372,7 +1546,9 @@
      "year": 1988,
      "id": "c88",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 89,
@@ -1386,7 +1562,9 @@
      "year": 2012,
      "id": "c89",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "honor",
+     "award": "🏅 칼데콧 아너 2013"
     },
     {
      "gid": 90,
@@ -1400,7 +1578,9 @@
      "year": 2001,
      "id": "c90",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1422,7 +1602,9 @@
      "year": 2004,
      "id": "c91",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 92,
@@ -1436,7 +1618,9 @@
      "year": 1857,
      "id": "c92",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 93,
@@ -1450,7 +1634,9 @@
      "year": 1986,
      "id": "c93",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 94,
@@ -1464,7 +1650,9 @@
      "year": 1957,
      "id": "c94",
      "pop_rank": 55,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 95,
@@ -1478,7 +1666,9 @@
      "year": 1985,
      "id": "c95",
      "pop_rank": 49,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "medal",
+     "award": "🥇 칼데콧 메달 1986"
     }
    ]
   },
@@ -1500,7 +1690,9 @@
      "year": 2001,
      "id": "c96",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 97,
@@ -1514,7 +1706,9 @@
      "year": 1987,
      "id": "c97",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 98,
@@ -1528,7 +1722,9 @@
      "year": 2005,
      "id": "c98",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 99,
@@ -1542,7 +1738,9 @@
      "year": 1974,
      "id": "c99",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 100,
@@ -1556,7 +1754,9 @@
      "year": 1960,
      "id": "c100",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1578,7 +1778,9 @@
      "year": 1984,
      "id": "c101",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 102,
@@ -1592,7 +1794,9 @@
      "year": 2009,
      "id": "c102",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 103,
@@ -1606,7 +1810,9 @@
      "year": 1971,
      "id": "c103",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 104,
@@ -1620,7 +1826,9 @@
      "year": 2018,
      "id": "c104",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 105,
@@ -1634,7 +1842,9 @@
      "year": 1993,
      "id": "c105",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1656,7 +1866,9 @@
      "year": 2014,
      "id": "c106",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 107,
@@ -1670,7 +1882,9 @@
      "year": 2000,
      "id": "c107",
      "pop_rank": 53,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 108,
@@ -1684,7 +1898,9 @@
      "year": 1984,
      "id": "c108",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 109,
@@ -1698,7 +1914,9 @@
      "year": 1998,
      "id": "c109",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 110,
@@ -1712,7 +1930,9 @@
      "year": 1998,
      "id": "c110",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1734,7 +1954,9 @@
      "year": 2011,
      "id": "c111",
      "pop_rank": 80,
-     "lib_loans": 65
+     "lib_loans": 65,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 112,
@@ -1748,7 +1970,9 @@
      "year": 2000,
      "id": "c112",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 113,
@@ -1762,7 +1986,9 @@
      "year": 1982,
      "id": "c113",
      "pop_rank": 61,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 114,
@@ -1776,7 +2002,9 @@
      "year": 2009,
      "id": "c114",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 115,
@@ -1790,7 +2018,9 @@
      "year": 2007,
      "id": "c115",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   },
@@ -1812,7 +2042,9 @@
      "year": 2014,
      "id": "c116",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 117,
@@ -1826,7 +2058,9 @@
      "year": 2012,
      "id": "c117",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 118,
@@ -1840,7 +2074,9 @@
      "year": 2006,
      "id": "c118",
      "pop_rank": 0,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     },
     {
      "gid": 119,
@@ -1854,7 +2090,9 @@
      "year": 2014,
      "id": "c119",
      "pop_rank": 102,
-     "lib_loans": 81
+     "lib_loans": 81,
+     "award_kind": "honor",
+     "award": "🏅 칼데콧 아너 2015"
     },
     {
      "gid": 120,
@@ -1868,7 +2106,9 @@
      "year": 1955,
      "id": "c120",
      "pop_rank": 73,
-     "lib_loans": 0
+     "lib_loans": 0,
+     "award_kind": "",
+     "award": ""
     }
    ]
   }

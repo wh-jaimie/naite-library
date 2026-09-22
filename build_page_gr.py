@@ -175,6 +175,7 @@ section{padding-block:22px}
 .card .tags{margin-top:auto;padding-top:9px;display:flex;flex-wrap:wrap;gap:4px}
 .chip2{font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--surface-2);color:var(--ink-soft)}
 .chip2.lib{background:color-mix(in srgb,var(--amber) 25%,transparent);color:var(--ink)}
+.chip2.award{background:color-mix(in srgb,#E9A63B 32%,transparent);color:var(--ink)}
 .more{display:block;margin:24px auto 0;padding:11px 22px;border-radius:999px;border:1px solid var(--line);
   background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
 footer{border-top:1px solid var(--line);margin-top:34px;padding-block:26px 42px}
@@ -329,6 +330,7 @@ function card(b){
       <div class="a">${esc(b.author)}${b.year?' · '+b.year:''}</div>
       ${b.reason?`<div class="why">${esc(b.reason)}</div>`:''}
       <div class="tags">
+        ${b.award?`<span class="chip2 award">${esc(b.award)}</span>`:''}
         ${b.shelves.map(s=>`<span class="chip2">${esc(s)}</span>`).join('')}
         ${b.lib_loans?`<span class="chip2 lib tnum">📚 국내도서관 ${b.lib_loans}회</span>`:''}
       </div>
