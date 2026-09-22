@@ -125,7 +125,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
       한 권을 여러 번 읽어도, 순서를 바꿔도 괜찮아요.<br>
-      표지의 <strong>🌍 인기 #N</strong> 은 전세계 인기 그림책 106권 중 순위예요(배지가 없으면 주제·유형을 채우려 넣은 정전 도서).</p>
+      표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요.</p>
 
     <div class="legend" id="legend"></div>
   </section>
@@ -159,7 +159,7 @@ function stepHTML(b){
     <div class="cover" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
-      ${b.pop_rank?`<span class="pop">🌍 인기 #${b.pop_rank}</span>`:''}
+      ${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}
       ${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}
       <div class="chk">✓</div>
     </div>

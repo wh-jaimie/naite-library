@@ -67,7 +67,7 @@ h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.2}
     var bh=books.map(function(b){
       var stats='';
       if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
-      if(b.pop_rank) stats+='<span class="st g">🌍 인기 #'+b.pop_rank+'</span>';
+      if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
       if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div>'+
