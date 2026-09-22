@@ -1,341 +1,50 @@
-<title>조이네 영어 그림책 책장</title>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>조이네영어도서관</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
-:root{
-  --ground:#F6F2E9;--surface:#FFFDF8;--surface-2:#EDE6D6;--ink:#2B2A26;--ink-soft:#6C665A;
-  --line:#E2DAC9;--teal:#0E7C7B;--teal-deep:#0A5E5D;--coral:#E8623C;--amber:#E9A63B;--plum:#8A5A9B;
-  --shadow:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07);
-  --shadow-lg:0 10px 34px rgba(43,42,38,.14);
-  --bandA:#0E7C7B;--bandB:#E8623C;--bandC:#8A5A9B;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --ground:#1B1A17;--surface:#242220;--surface-2:#2E2B27;--ink:#F1ECE1;--ink-soft:#A8A090;
-  --line:#3A362F;--teal:#3FB0AE;--teal-deep:#5CC6C4;--coral:#F27E5B;--amber:#F0B857;--plum:#C08FD0;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.4);--shadow-lg:0 12px 38px rgba(0,0,0,.55);
-  --bandA:#3FB0AE;--bandB:#F27E5B;--bandC:#C08FD0;}}
-:root[data-theme="dark"]{
-  --ground:#1B1A17;--surface:#242220;--surface-2:#2E2B27;--ink:#F1ECE1;--ink-soft:#A8A090;
-  --line:#3A362F;--teal:#3FB0AE;--teal-deep:#5CC6C4;--coral:#F27E5B;--amber:#F0B857;--plum:#C08FD0;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.4);--shadow-lg:0 12px 38px rgba(0,0,0,.55);
-  --bandA:#3FB0AE;--bandB:#F27E5B;--bandC:#C08FD0;}
-*{box-sizing:border-box}
-body{background:var(--ground);color:var(--ink);
-  font-family:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
-h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.14;text-wrap:balance;margin:0}
-.tnum{font-variant-numeric:tabular-nums}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;
-  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:14px;padding-block:12px}
-.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;white-space:nowrap}
-.brand .mark{width:30px;height:30px;border-radius:9px;flex:0 0 auto;background:linear-gradient(135deg,var(--teal),var(--teal-deep));
-  display:grid;place-items:center;color:#fff;font-size:1rem;box-shadow:var(--shadow)}
-.top .search{margin-left:auto;position:relative;flex:1;max-width:320px}
-.top .search input{width:100%;padding:9px 12px 9px 34px;border-radius:999px;border:1px solid var(--line);
-  background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem}
-.top .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-soft)}
-.themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:1rem;flex:0 0 auto}
-.hero{padding-block:44px 26px}
-.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-deep)}
-.hero h1{font-size:clamp(2rem,5.4vw,3.25rem);margin:.35em 0 .3em;font-weight:700}
-.hero p.lead{font-size:1.06rem;color:var(--ink-soft);max-width:62ch}
-.note{font-size:.82rem;color:var(--ink-soft);margin-top:14px;max-width:70ch}
-.cta{display:flex;align-items:center;gap:16px;margin-top:22px;background:linear-gradient(135deg,var(--coral),var(--amber));
-  color:#fff;border-radius:18px;padding:18px 20px;box-shadow:var(--shadow-lg);text-decoration:none;flex-wrap:wrap}
-.cta .big{font-family:'Fraunces',serif;font-weight:700;font-size:1.35rem;line-height:1.15}
-.cta .sm{font-size:.86rem;opacity:.95;margin-top:3px}
-.cta .go{margin-left:auto;background:#fff;color:var(--coral);font-weight:800;font-size:.9rem;
-  padding:10px 18px;border-radius:999px;white-space:nowrap}
-/* 연령대 고르기 */
-.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:26px}
-.pick button{text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:16px;padding:16px 16px;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,border-color .15s}
-.pick button:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
-.pick button.active{border-color:var(--pc);box-shadow:0 0 0 2px var(--pc) inset,var(--shadow)}
-.pick .bk{font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
-.pick .age{font-size:.82rem;color:var(--ink-soft);margin-top:2px}
-.pick .cnt{font-size:.78rem;font-weight:800;color:var(--pc);margin-top:8px}
-.pick .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pc);margin-right:6px;vertical-align:1px}
-/* 읽기 진행률 패널 */
-.progress{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
-  padding:16px 18px;box-shadow:var(--shadow)}
-.progress .row1{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.progress .big{font-family:'Fraunces',serif;font-weight:700;font-size:1.6rem;color:var(--teal-deep)}
-.progress .sub{font-size:.86rem;color:var(--ink-soft)}
-.progress .reset{margin-left:auto;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);
-  font:inherit;font-size:.76rem;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer}
-.bar{height:12px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin-top:12px}
-.bar > i{display:block;height:100%;width:0;border-radius:999px;
-  background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .35s ease}
-section{padding-block:22px}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap}
-.sec-head h2{font-size:clamp(1.5rem,3.6vw,2.05rem)}
-.sec-head .sub{color:var(--ink-soft);font-size:.9rem}
-/* 주제별 컬렉션 */
-.theme{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:18px;
-  padding:16px 16px 18px;box-shadow:var(--shadow)}
-.theme .th{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 2px 12px}
-.theme .th .emo{font-size:1.35rem;line-height:1}
-.theme .th h3{font-size:1.18rem}
-.theme .th .agechip{font-size:.68rem;font-weight:800;color:#fff;background:var(--plum);padding:2px 8px;border-radius:7px;align-self:center}
-.theme .th .hook{font-size:.86rem;color:var(--ink-soft);flex-basis:100%}
-.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.mini{display:flex;flex-direction:column;gap:6px}
-.mini .mc{position:relative;aspect-ratio:3/4;border-radius:9px;overflow:hidden;background:var(--surface-2);box-shadow:var(--shadow)}
-.mini .mc img{width:100%;height:100%;object-fit:cover;display:block}
-.mini .mc .mph{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:8px;text-align:center;color:#fff}
-.mini .mc .mph .pt{font-family:'Fraunces',serif;font-weight:600;font-size:.72rem;line-height:1.15}
-.mini .mc.noimg .mph{display:flex}
-.mini .mc .sc{position:absolute;bottom:5px;left:5px;background:var(--teal-deep);color:#fff;font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:6px;display:none}
-.mini.seen .mc{opacity:.5}
-.mini.seen .mc .sc{display:block}
-.mini .mt{font-size:.76rem;font-weight:700;line-height:1.2}
-.mini .mr{font-size:.7rem;color:var(--ink-soft);line-height:1.35;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-@media (max-width:640px){.strip{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:400px){.strip{grid-template-columns:repeat(2,1fr)}}
-.toolbar{display:flex;align-items:center;gap:10px;margin:6px 0 20px;flex-wrap:wrap}
-.togglelbl{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;color:var(--ink);cursor:pointer;
-  border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;font-weight:700}
-.togglelbl input{accent-color:var(--teal-deep);width:15px;height:15px}
-/* 봤어요 버튼/상태 */
-.seenbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font:inherit;
-  font-size:.8rem;font-weight:800;padding:7px 10px;border-radius:9px;cursor:pointer;margin-top:9px;
-  display:flex;align-items:center;justify-content:center;gap:6px;transition:all .14s}
-.seenbtn:hover{border-color:var(--teal-deep);color:var(--teal-deep)}
-.card.seen{opacity:.62}
-.card.seen:hover{opacity:1}
-.card.seen .seenbtn{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff}
-.seencheck{position:absolute;bottom:8px;left:8px;background:var(--teal-deep);color:#fff;font-weight:800;
-  font-size:.72rem;padding:3px 9px;border-radius:8px;display:none;box-shadow:var(--shadow)}
-.card.seen .seencheck{display:block}
-.toolbar select{padding:7px 11px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.85rem}
-.count{font-size:.85rem;color:var(--ink-soft);margin-left:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:18px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s}
-.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.cover{position:relative;aspect-ratio:3/4;background:var(--surface-2);overflow:hidden}
-.cover img{width:100%;height:100%;object-fit:cover;display:block}
-.cover .ph{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:14px;text-align:center;color:#fff}
-.cover .ph .pt{font-family:'Fraunces',serif;font-weight:600;font-size:.95rem;line-height:1.2}
-.cover.noimg .ph{display:flex}
-.grank{position:absolute;top:8px;left:8px;background:color-mix(in srgb,var(--ink) 82%,transparent);color:#fff;
-  font-weight:800;font-size:.72rem;padding:3px 8px;border-radius:8px}
-.bandtag{position:absolute;top:8px;right:8px;color:#fff;font-weight:800;font-size:.68rem;padding:3px 8px;border-radius:8px}
-.card .body{padding:11px 12px 13px;display:flex;flex-direction:column;gap:3px;flex:1}
-.card .t{font-family:'Fraunces',serif;font-weight:600;font-size:1rem;line-height:1.2}
-.card .a{font-size:.78rem;color:var(--ink-soft)}
-.card .why{font-size:.82rem;color:var(--ink);margin-top:7px;line-height:1.45}
-.card .tags{margin-top:auto;padding-top:9px;display:flex;flex-wrap:wrap;gap:4px}
-.chip2{font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--surface-2);color:var(--ink-soft)}
-.chip2.lib{background:color-mix(in srgb,var(--amber) 25%,transparent);color:var(--ink)}
-.chip2.award{background:color-mix(in srgb,#E9A63B 32%,transparent);color:var(--ink)}
-.more{display:block;margin:24px auto 0;padding:11px 22px;border-radius:999px;border:1px solid var(--line);
-  background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
-footer{border-top:1px solid var(--line);margin-top:34px;padding-block:26px 42px}
-footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
-@media (max-width:560px){.top .brand span.full{display:none}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#F6F2E9;color:#2B2A26;font-family:'Nunito Sans',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55}
+:root{--surface:#FFFDF8;--line:#E2DAC9;--soft:#6C665A;--teal:#0E7C7B;--tealD:#0A5E5D;--coral:#E8623C;--amber:#E9A63B;--plum:#8A5A9B;--sh:0 1px 2px rgba(43,42,38,.06),0 8px 22px rgba(43,42,38,.08);--shL:0 14px 38px rgba(43,42,38,.16)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0;line-height:1.12;text-wrap:balance}
+a{color:inherit;text-decoration:none}
+.hero{text-align:center;padding:60px 0 30px}
+.hero .mark{width:60px;height:60px;border-radius:16px;margin:0 auto 18px;background:linear-gradient(135deg,var(--teal),var(--tealD));display:grid;place-items:center;color:#fff;font-size:1.7rem;box-shadow:var(--sh)}
+.hero h1{font-size:clamp(2.1rem,6vw,3.1rem)}
+.hero p{color:var(--soft);max-width:56ch;margin:14px auto 0;font-size:1.05rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;padding:14px 0 70px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px;transition:transform .16s,box-shadow .16s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shL)}
+.card .emo{font-size:2rem;line-height:1}
+.card h2{font-size:1.35rem;margin-top:8px}
+.card p{color:var(--soft);font-size:.9rem;margin:0;flex:1}
+.card .go{margin-top:12px;font-weight:800;font-size:.9rem;color:var(--tealD)}
+.card .cnt{position:absolute;top:20px;right:20px;font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:var(--coral)}
+.card.feat{background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;border:none}
+.card.feat p,.card.feat .go{color:rgba(255,255,255,.95)}
+.foot{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--soft);font-size:.82rem;text-align:center}
 </style>
-
-<header class="top"><div class="wrap">
-  <div class="brand"><span class="mark">책</span><span class="full">조이네 영어 그림책 책장</span></div>
-  <div class="search">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
-    <input id="q" type="search" placeholder="제목·작가 검색" autocomplete="off">
-  </div>
-  <button class="themebtn" id="theme" title="테마 전환">◐</button>
-</div></header>
-
+</head>
+<body>
 <main class="wrap">
-  <section class="hero">
-    <div class="eyebrow">Goodreads · 전세계 독자 인기순</div>
-    <h1>파닉스 전, 세계 아이들이 사랑한 영어 그림책</h1>
-    <p class="lead">파닉스를 시작하기 전, 엄마가 부담 없이 골라 읽어주기 좋은 그림책을
-      <strong>전세계 독자들이 가장 많이 담고 읽은 순서</strong>로 정리했어요.
-      연령대만 고르면 바로 후보가 나옵니다.</p>
-    <div class="pick" id="pick"></div>
-    <div class="progress" id="progress">
-      <div class="row1">
-        <span class="big" id="prBig">0%</span>
-        <span class="sub" id="prSub">아직 체크한 책이 없어요 · 카드의 <strong>봤어요</strong>를 눌러 기록하세요</span>
-        <button class="reset" id="prReset">기록 초기화</button>
-      </div>
-      <div class="bar"><i id="prBar"></i></div>
-    </div>
-    <p class="note">※ Goodreads의 board-books·toddler·picture-books 인기 셸프를 합산한 순위입니다.
-      국내에서 사기 쉬운 명작 위주라, 노부영·웬디북 등에서 대부분 구하거나 도서관에서 빌릴 수 있어요.
-      일부 책에는 국내 공공도서관 대출 데이터도 함께 표시했습니다.</p>
-    <a class="cta" href="https://wh-jaimie.github.io/joy-curation/challenge.html">
-      <div><div class="big">📚 파닉스 전 120권 챌린지</div>
-        <div class="sm">매번 안 고르고 싶다면 — 24개 주제 × 5권, 난이도 계단으로 그냥 따라오세요</div></div>
-      <span class="go">코스 보기 →</span>
-    </a>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <h2>주제별 컬렉션</h2>
-      <span class="sub">인스타에 올리기 좋은 5권 묶음 · 표지를 캡처해 카드로 쓰세요</span>
-    </div>
-    <div id="themes"></div>
-  </section>
-
-  <section>
-    <div class="sec-head"><h2>전체 목록</h2><span class="sub">106권을 연령대·검색으로 찾아보세요</span></div>
-    <div class="toolbar">
-      <label>정렬 <select id="sort">
-        <option value="rank">전세계 인기순</option>
-        <option value="title">제목순</option>
-        <option value="lib">국내 도서관 대출순</option>
-      </select></label>
-      <label class="togglelbl"><input type="checkbox" id="unseen"> 안 본 책만</label>
-      <span class="count" id="count"></span>
-    </div>
-    <div class="grid" id="grid"></div>
-    <button class="more" id="more" hidden>더 보기</button>
-  </section>
+  <div class="hero">
+    <div class="mark">📚</div>
+    <h1>조이네영어도서관</h1>
+    <p>파닉스 전, 좋은 영어 그림책을 고르고 함께 읽는 곳. 세계·국내 인기부터 우리 집 책장, 매달 스터디까지.</p>
+  </div>
+  <div class="grid">
+    <a class="card" href="global.html"><span class="cnt">100</span><span class="emo">🌍</span><h2>세계 인기 그림책</h2><p>전세계 독자가 가장 많이 읽은 파닉스 전 그림책 100권, 인기순.</p><span class="go">보러 가기 →</span></a>
+    <a class="card" href="domestic.html"><span class="cnt">50</span><span class="emo">🇰🇷</span><h2>국내 인기 그림책</h2><p>국내 서점 통합순위 베스트 50권. 권장연령·특징까지.</p><span class="go">보러 가기 →</span></a>
+    <a class="card" href="collections.html"><span class="emo">🗂️</span><h2>주제별 컬렉션</h2><p>잠자리·에릭칼·사랑·명작… 5권씩 묶은 주제 컬렉션.</p><span class="go">보러 가기 →</span></a>
+    <a class="card" href="home.html"><span class="cnt">405</span><span class="emo">🏠</span><h2>드니네 책장</h2><p>우리 집에 보유한 영어 원서를 전집·시리즈별로 정리.</p><span class="go">보러 가기 →</span></a>
+    <a class="card feat" href="challenge.html"><span class="emo">🎯</span><h2>파닉스 전 120권 챌린지</h2><p>24개 주제 × 5권, 매달 따라 읽는 코스. 읽은 책 체크·진행률.</p><span class="go">시작하기 →</span></a>
+    <a class="card" href="study/"><span class="emo">👩‍👧</span><h2>이번 달 스터디</h2><p>매달 5권 세트 + 읽는 법·활용·영어표현. 부모 공유용.</p><span class="go">보러 가기 →</span></a>
+  </div>
 </main>
-
-<footer><div class="wrap">
-  <p><strong>조이네 영어 그림책 책장</strong> — 파닉스 전 큐레이션</p>
-  <p>인기순 출처: Goodreads 인기 셸프(board-books·toddler·picture-books) · 표지: Open Library · 국내 대출: 도서관 정보나루</p>
-</div></footer>
-
-<script>
-const P={"books": [{"rank": 1, "title": "The Very Hungry Caterpillar", "author": "Eric Carle", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["그림책", "보드북", "토들러"], "score": 169.2, "cover": "https://covers.openlibrary.org/b/id/7835968-L.jpg", "year": 1969, "lib_loans": 0, "reason": "요일·숫자·음식 이름이 반복되고, 구멍 뚫린 페이지를 만지며 보는 입문 1순위.", "award_kind": "", "award": "", "id": "ttheveryhungrycaterpillar"}, {"rank": 2, "title": "Goodnight Moon", "author": "Margaret Wise Brown", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["그림책", "보드북", "토들러"], "score": 160.8, "cover": "https://covers.openlibrary.org/b/id/35556-L.jpg", "year": 1947, "lib_loans": 84, "reason": "방 안 사물마다 \"Goodnight ~\" 반복. 잠자리 루틴 만들기에 딱.", "award_kind": "", "award": "", "id": "tgoodnightmoon"}, {"rank": 3, "title": "Brown Bear, Brown Bear, What Do You See?", "author": "Bill Martin Jr.", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["그림책", "보드북", "토들러"], "score": 150.5, "cover": "https://covers.openlibrary.org/b/id/12624136-L.jpg", "year": 1967, "lib_loans": 0, "reason": "색+동물+\"What do you see?\" 반복. 첫 문장 패턴 익히기 최고.", "award_kind": "", "award": "", "id": "tbrownbearbrownbearwhatdoyousee"}, {"rank": 4, "title": "Chicka Chicka Boom Boom", "author": "Bill Martin Jr.", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["그림책", "보드북", "토들러"], "score": 119.8, "cover": "https://covers.openlibrary.org/b/id/1320266-L.jpg", "year": 1989, "lib_loans": 0, "reason": "리듬감 있는 알파벳 챈트. 파닉스로 넘어가는 다리가 되어줌.", "award_kind": "", "award": "", "id": "tchickachickaboomboom"}, {"rank": 5, "title": "Moo, Baa, La La La!", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 110.7, "cover": "https://covers.openlibrary.org/b/id/437901-L.jpg", "year": 1982, "lib_loans": 0, "reason": "동물 소리를 흉내 내며 깔깔. 아이가 첫 소리를 내보는 보드북.", "award_kind": "", "award": "", "id": "tmoobaalalala"}, {"rank": 6, "title": "Dear Zoo", "author": "Rod Campbell", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 106.7, "cover": "https://covers.openlibrary.org/b/id/10577107-L.jpg", "year": 1982, "lib_loans": 0, "reason": "플랩을 열면 동물이 등장. 'too big/tall' 형용사와 동물 어휘를 함께.", "award_kind": "", "award": "", "id": "tdearzoo"}, {"rank": 7, "title": "Guess How Much I Love You", "author": "Sam McBratney", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 95.9, "cover": "https://covers.openlibrary.org/b/id/13282906-L.jpg", "year": 1994, "lib_loans": 0, "reason": "사랑을 크기로 비교하는 표현. 자기 전 애착을 키우는 그림책.", "award_kind": "", "award": "", "id": "tguesshowmuchiloveyou"}, {"rank": 8, "title": "Good Night, Gorilla", "author": "Peggy Rathmann", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 95.9, "cover": "https://covers.openlibrary.org/b/id/10959581-L.jpg", "year": 1994, "lib_loans": 0, "reason": "글이 거의 없어 그림만으로 이야기가 됨. 엄마 영어 부담이 제로.", "award_kind": "", "award": "", "id": "tgoodnightgorilla"}, {"rank": 9, "title": "The Going To Bed Book", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 95.8, "cover": "https://covers.openlibrary.org/b/id/438326-L.jpg", "year": 1982, "lib_loans": 0, "reason": "라임으로 잠자리 준비 순서를 노래하듯. 운율 타며 읽기 좋음.", "award_kind": "", "award": "", "id": "tthegoingtobedbook"}, {"rank": 10, "title": "Barnyard Dance", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 95.8, "cover": "https://covers.openlibrary.org/b/id/796359-L.jpg", "year": 1993, "lib_loans": 0, "reason": "흥나는 챈트로 몸을 흔들게 됨. 세이펜·노래와 찰떡.", "award_kind": "", "award": "", "id": "tbarnyarddance"}, {"rank": 11, "title": "Little Blue Truck", "author": "Alice Schertle", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 93.2, "cover": "https://covers.openlibrary.org/b/id/2325432-L.jpg", "year": 2008, "lib_loans": 0, "reason": "자동차·동물 소리 \"Beep!\"가 반복돼 의성어 재미가 큼.", "award_kind": "", "award": "", "id": "tlittlebluetruck"}, {"rank": 12, "title": "Don't Let the Pigeon Drive the Bus!", "author": "Mo Willems", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 82.2, "cover": "https://covers.openlibrary.org/b/id/544664-L.jpg", "year": 2003, "lib_loans": 96, "reason": "비둘기에게 \"No!\"를 외치며 참여. 상호작용이 폭발하는 책.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2004", "id": "tdontletthepigeondrivethebus"}, {"rank": 13, "title": "We're Going on a Bear Hunt", "author": "Michael Rosen", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 81.0, "cover": "https://covers.openlibrary.org/b/id/433694-L.jpg", "year": 1746, "lib_loans": 0, "reason": "\"Swishy swashy!\" 소리말 반복. 온몸으로 연기하며 읽는 책.", "award_kind": "", "award": "", "id": "tweregoingonabearhunt"}, {"rank": 14, "title": "Where the Wild Things Are", "author": "Maurice Sendak", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 77.0, "cover": "https://covers.openlibrary.org/b/id/50842-L.jpg", "year": 1963, "lib_loans": 0, "reason": "상상 놀이의 명작. 화나는 감정을 다루기에도 좋음.", "award_kind": "medal", "award": "🥇 칼데콧 메달 1964", "id": "twherethewildthingsare"}, {"rank": 15, "title": "Corduroy", "author": "Don Freeman", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 68.0, "cover": "https://covers.openlibrary.org/b/id/1333207-L.jpg", "year": 1968, "lib_loans": 0, "reason": "단추를 찾아 떠나는 곰인형의 모험. 따뜻한 이야기 입문.", "award_kind": "", "award": "", "id": "tcorduroy"}, {"rank": 16, "title": "From Head to Toe", "author": "Eric Carle", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 62.1, "cover": "https://covers.openlibrary.org/b/id/10672062-L.jpg", "year": 1977, "lib_loans": 135, "reason": "동물 동작을 \"Can you do it?\"로 따라하며 몸으로 읽기.", "award_kind": "", "award": "", "id": "tfromheadtotoe"}, {"rank": 17, "title": "Where Is the Green Sheep?", "author": "Mem Fox", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 59.4, "cover": "https://covers.openlibrary.org/b/id/113648-L.jpg", "year": 2004, "lib_loans": 0, "reason": "온갖 양이 나오고 마지막에 초록 양 찾기. 반전의 재미.", "award_kind": "", "award": "", "id": "twhereisthegreensheep"}, {"rank": 18, "title": "Freight Train", "author": "Donald Crews", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 55.4, "cover": "https://covers.openlibrary.org/b/id/433179-L.jpg", "year": 1978, "lib_loans": 66, "reason": "색깔+기차 어휘를 단순하고 강렬한 그림으로.", "award_kind": "honor", "award": "🏅 칼데콧 아너 1979", "id": "tfreighttrain"}, {"rank": 19, "title": "The Snowy Day", "author": "Ezra Jack Keats", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 53.9, "cover": "https://covers.openlibrary.org/b/id/10134995-L.jpg", "year": 1962, "lib_loans": 0, "reason": "눈 오는 날의 잔잔한 하루. 사계절을 느끼는 명작.", "award_kind": "medal", "award": "🥇 칼데콧 메달 1963", "id": "tthesnowyday"}, {"rank": 20, "title": "Ten Little Fingers and Ten Little Toes", "author": "Mem Fox", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 52.7, "cover": "https://covers.openlibrary.org/b/id/10978432-L.jpg", "year": 2008, "lib_loans": 0, "reason": "전세계 아기의 손·발가락을 부드러운 라임으로.", "award_kind": "", "award": "", "id": "ttenlittlefingersandtenlittletoes"}, {"rank": 21, "title": "But Not the Hippopotamus", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 51.3, "cover": "https://covers.openlibrary.org/b/id/405633-L.jpg", "year": 1982, "lib_loans": 0, "reason": "라임으로 동물을 소개하다 마지막 반전이 귀여움.", "award_kind": "", "award": "", "id": "tbutnotthehippopotamus"}, {"rank": 22, "title": "Polar Bear, Polar Bear, What Do You Hear?", "author": "Bill Martin Jr.", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 50.0, "cover": "https://covers.openlibrary.org/b/id/10959647-L.jpg", "year": 1991, "lib_loans": 0, "reason": "Brown Bear 후속편. 동물 소리 \"What do you hear?\" 반복.", "award_kind": "", "award": "", "id": "tpolarbearpolarbearwhatdoyouhear"}, {"rank": 23, "title": "Time for Bed", "author": "Mem Fox", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 50.0, "cover": "https://covers.openlibrary.org/b/id/114082-L.jpg", "year": 1993, "lib_loans": 0, "reason": "동물 엄마가 아기를 재우는 라임. 자장가 같은 책.", "award_kind": "", "award": "", "id": "ttimeforbed"}, {"rank": 24, "title": "The Runaway Bunny", "author": "Margaret Wise Brown", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 48.6, "cover": "https://covers.openlibrary.org/b/id/8743590-L.jpg", "year": 1942, "lib_loans": 0, "reason": "\"엄마가 늘 찾아갈게\" 애착. 대화체가 반복됨.", "award_kind": "", "award": "", "id": "ttherunawaybunny"}, {"rank": 25, "title": "The Giving Tree", "author": "Shel Silverstein", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 48.0, "cover": "https://covers.openlibrary.org/b/id/655727-L.jpg", "year": 1963, "lib_loans": 0, "reason": "아낌없이 주는 나무. 조금 자란 뒤 마음으로 읽기 좋음.", "award_kind": "", "award": "", "id": "tthegivingtree"}, {"rank": 26, "title": "The Cat in the Hat", "author": "Dr. Seuss", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 47.4, "cover": "https://covers.openlibrary.org/b/id/11342-L.jpg", "year": 1957, "lib_loans": 0, "reason": "라임 가득한 초기 리더. 파닉스 직전 소리 감각 잡기.", "award_kind": "", "award": "", "id": "tthecatinthehat"}, {"rank": 27, "title": "Green Eggs and Ham", "author": "Dr. Seuss", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 47.0, "cover": "https://covers.openlibrary.org/b/id/231746-L.jpg", "year": 1960, "lib_loans": 0, "reason": "50개 단어의 라임 반복. 읽기 자신감 붙이기 좋음.", "award_kind": "", "award": "", "id": "tgreeneggsandham"}, {"rank": 28, "title": "If You Give a Mouse a Cookie", "author": "Laura Numeroff", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 46.4, "cover": "https://covers.openlibrary.org/b/id/50977-L.jpg", "year": 1985, "lib_loans": 0, "reason": "꼬리에 꼬리를 무는 순환 이야기. 인과를 예측하는 재미.", "award_kind": "", "award": "", "id": "tifyougiveamouseacookie"}, {"rank": 29, "title": "Llama Llama Red Pajama", "author": "Anna Dewdney", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 45.9, "cover": "https://covers.openlibrary.org/b/id/6532260-L.jpg", "year": 2005, "lib_loans": 0, "reason": "라임으로 분리불안을 공감. 잠자리 감정 그림책.", "award_kind": "", "award": "", "id": "tllamallamaredpajama"}, {"rank": 30, "title": "Blue Hat, Green Hat", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 44.6, "cover": "https://covers.openlibrary.org/b/id/438047-L.jpg", "year": 1984, "lib_loans": 61, "reason": "\"Oops!\" 반복으로 색과 옷 이름을. 유머 보드북.", "award_kind": "", "award": "", "id": "tbluehatgreenhat"}, {"rank": 31, "title": "Belly Button Book", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 44.6, "cover": "https://covers.openlibrary.org/b/id/6815719-L.jpg", "year": 2005, "lib_loans": 0, "reason": "배꼽 노래로 신체 부위를. 목욕 후 읽어주기 좋음.", "award_kind": "", "award": "", "id": "tbellybuttonbook"}, {"rank": 32, "title": "Hooray for Fish", "author": "Lucy Cousins", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 44.6, "cover": "https://covers.openlibrary.org/b/id/516528-L.jpg", "year": 2005, "lib_loans": 0, "reason": "온갖 물고기 소개 끝에 \"I love you\". 밝은 색과 라임.", "award_kind": "", "award": "", "id": "thoorayforfish"}, {"rank": 33, "title": "The Day the Crayons Quit", "author": "Drew Daywalt", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 44.0, "cover": "https://covers.openlibrary.org/b/id/8314152-L.jpg", "year": 2013, "lib_loans": 0, "reason": "크레용들이 보낸 편지. 색+유머, 조금 큰 아이에게.", "award_kind": "", "award": "", "id": "tthedaythecrayonsquit"}, {"rank": 34, "title": "Big Red Barn", "author": "Margaret Wise Brown", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 43.2, "cover": "https://covers.openlibrary.org/b/id/4660150-L.jpg", "year": 1956, "lib_loans": 0, "reason": "농장의 하루를 라임으로. 잔잔하게 잠으로 마무리.", "award_kind": "", "award": "", "id": "tbigredbarn"}, {"rank": 35, "title": "Jamberry", "author": "Bruce Degen", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 43.2, "cover": "https://covers.openlibrary.org/b/id/445220-L.jpg", "year": 1982, "lib_loans": 0, "reason": "베리와 라임으로 노는 말놀이. 소리의 재미가 가득.", "award_kind": "", "award": "", "id": "tjamberry"}, {"rank": 36, "title": "Bark, George", "author": "Jules Feiffer", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 41.9, "cover": "https://covers.openlibrary.org/b/id/48152-L.jpg", "year": 1999, "lib_loans": 80, "reason": "\"멍\" 대신 나오는 엉뚱한 동물 소리. 반복+반전 유머.", "award_kind": "", "award": "", "id": "tbarkgeorge"}, {"rank": 37, "title": "I Want My Hat Back", "author": "Jon Klassen", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 41.0, "cover": "https://covers.openlibrary.org/b/id/9166975-L.jpg", "year": 2011, "lib_loans": 131, "reason": "모자를 찾는 반복 대화. 위트가 살아있는 그림책.", "award_kind": "", "award": "", "id": "tiwantmyhatback"}, {"rank": 38, "title": "Are You My Mother?", "author": "P.D. Eastman", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["그림책", "보드북", "토들러"], "score": 40.7, "cover": null, "year": "", "lib_loans": 0, "reason": "아기 새의 엄마 찾기 반복. 초기 리더로도 좋음.", "award_kind": "", "award": "", "id": "tareyoumymother"}, {"rank": 39, "title": "The True Story of the 3 Little Pigs", "author": "Jon Scieszka", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 40.0, "cover": "https://covers.openlibrary.org/b/id/12986275-L.jpg", "year": 1992, "lib_loans": 0, "reason": "늑대 시점으로 뒤집은 반전. 조금 큰 아이에게.", "award_kind": "", "award": "", "id": "tthetruestoryofthe3littlepigs"}, {"rank": 40, "title": "Doggies", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 39.2, "cover": "https://covers.openlibrary.org/b/id/405665-L.jpg", "year": 1984, "lib_loans": 0, "reason": "강아지 짖는 소리를 세는 숫자+의성어 보드북.", "award_kind": "", "award": "", "id": "tdoggies"}, {"rank": 41, "title": "Oh, the Places You'll Go!", "author": "Dr. Seuss", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 38.0, "cover": "https://covers.openlibrary.org/b/id/5020952-L.jpg", "year": 1990, "lib_loans": 0, "reason": "응원 메시지가 담긴 명작. 큰 아이·선물용.", "award_kind": "", "award": "", "id": "tohtheplacesyoullgo"}, {"rank": 42, "title": "Where Is Baby's Belly Button?", "author": "Karen Katz", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 37.8, "cover": "https://covers.openlibrary.org/b/id/12954864-L.jpg", "year": 2009, "lib_loans": 0, "reason": "플랩으로 신체 부위 찾기. 돌 전후 최고 인기.", "award_kind": "", "award": "", "id": "twhereisbabysbellybutton"}, {"rank": 43, "title": "Clip-Clop", "author": "Nicola Smee", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 37.8, "cover": "https://covers.openlibrary.org/b/id/952386-L.jpg", "year": 2006, "lib_loans": 0, "reason": "동물들이 조랑말을 타는 반복 챈트. 리듬 타며 읽기.", "award_kind": "", "award": "", "id": "tclipclop"}, {"rank": 44, "title": "Where's Spot?", "author": "Eric Hill", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북", "토들러"], "score": 37.8, "cover": "https://covers.openlibrary.org/b/id/1199330-L.jpg", "year": 1980, "lib_loans": 0, "reason": "플랩 놀이로 강아지 찾기. \"Is he ~?\" 전치사 익히기.", "award_kind": "", "award": "", "id": "twheresspot"}, {"rank": 45, "title": "Snuggle Puppy!", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 36.5, "cover": "https://covers.openlibrary.org/b/id/507732-L.jpg", "year": 2003, "lib_loans": 0, "reason": "사랑을 전하는 노래 보드북. 안아주며 불러주기.", "award_kind": "", "award": "", "id": "tsnugglepuppy"}, {"rank": 46, "title": "The Very Busy Spider", "author": "Eric Carle", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 36.5, "cover": "https://covers.openlibrary.org/b/id/1199659-L.jpg", "year": 1984, "lib_loans": 0, "reason": "거미줄을 만지며 반복 문장. 촉감+동물 소리.", "award_kind": "", "award": "", "id": "ttheverybusyspider"}, {"rank": 47, "title": "This Is Not My Hat", "author": "Jon Klassen", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 36.0, "cover": "https://covers.openlibrary.org/b/id/10207424-L.jpg", "year": 2001, "lib_loans": 76, "reason": "몰래 도망치는 물고기. 그림으로 반전을 읽는 책.", "award_kind": "medal", "award": "🥇 칼데콧 메달 2013", "id": "tthisisnotmyhat"}, {"rank": 48, "title": "Goodnight, Goodnight, Construction Site", "author": "Sherri Duskey Rinker", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 35.1, "cover": "https://covers.openlibrary.org/b/id/7351895-L.jpg", "year": 2011, "lib_loans": 0, "reason": "공사장 차들을 하나씩 재우기. 자동차 좋아하는 아이에게.", "award_kind": "", "award": "", "id": "tgoodnightgoodnightconstructionsite"}, {"rank": 49, "title": "The Polar Express", "author": "Chris Van Allsburg", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 35.0, "cover": "https://covers.openlibrary.org/b/id/394670-L.jpg", "year": 1985, "lib_loans": 0, "reason": "크리스마스 기차 여행. 겨울 선물용 명작.", "award_kind": "medal", "award": "🥇 칼데콧 메달 1986", "id": "tthepolarexpress"}, {"rank": 50, "title": "Madeline", "author": "Ludwig Bemelmans", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 34.0, "cover": "https://covers.openlibrary.org/b/id/973931-L.jpg", "year": 1900, "lib_loans": 0, "reason": "파리 소녀 마들린의 라임 이야기. 리듬감 있는 클래식.", "award_kind": "honor", "award": "🏅 칼데콧 아너 1940", "id": "tmadeline"}, {"rank": 51, "title": "Peek-a-Who?", "author": "Nina Laden", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 33.8, "cover": "https://covers.openlibrary.org/b/id/6814949-L.jpg", "year": 2000, "lib_loans": 0, "reason": "까꿍 플랩. 아기의 첫 상호작용 책.", "award_kind": "", "award": "", "id": "tpeekawho"}, {"rank": 52, "title": "I'm the Biggest Thing in the Ocean!", "author": "Kevin Sherry", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 33.8, "cover": "https://covers.openlibrary.org/b/id/575612-L.jpg", "year": 2007, "lib_loans": 64, "reason": "허세 부리는 오징어의 반전. 크기 어휘를 웃기게.", "award_kind": "", "award": "", "id": "timthebiggestthingintheocean"}, {"rank": 53, "title": "Pajama Time!", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 31.1, "cover": "https://covers.openlibrary.org/b/id/507595-L.jpg", "year": 2000, "lib_loans": 0, "reason": "잠옷 파티 챈트. 흥겨운 잠자리 노래책.", "award_kind": "", "award": "", "id": "tpajamatime"}, {"rank": 54, "title": "The Lorax", "author": "Dr. Seuss", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 31.0, "cover": "https://covers.openlibrary.org/b/id/422253-L.jpg", "year": 1911, "lib_loans": 0, "reason": "환경을 말하는 명작. 조금 큰 아이에게.", "award_kind": "", "award": "", "id": "tthelorax"}, {"rank": 55, "title": "How the Grinch Stole Christmas!", "author": "Dr. Seuss", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 30.0, "cover": "https://covers.openlibrary.org/b/id/12055-L.jpg", "year": 1957, "lib_loans": 0, "reason": "크리스마스 라임 명작. 겨울에 읽기 좋음.", "award_kind": "", "award": "", "id": "thowthegrinchstolechristmas"}, {"rank": 56, "title": "Pete the Cat: I Love My White Shoes", "author": "Eric Litwin", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 29.7, "cover": null, "year": "", "lib_loans": 74, "reason": "\"I love my ~ shoes\" 노래 후렴. 긍정 메시지.", "award_kind": "", "award": "", "id": "tpetethecatilovemywhiteshoes"}, {"rank": 57, "title": "Alexander and the Terrible, Horrible, No Good, Very Bad Day", "author": "Judith Viorst", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 29.0, "cover": "https://covers.openlibrary.org/b/id/433572-L.jpg", "year": 1972, "lib_loans": 0, "reason": "최악의 하루에 공감. 감정 어휘, 조금 큰 아이에게.", "award_kind": "", "award": "", "id": "talexanderandtheterriblehorriblenogoodverybadday"}, {"rank": 58, "title": "Click, Clack, Moo: Cows That Type", "author": "Doreen Cronin", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 28.0, "cover": "https://covers.openlibrary.org/b/id/5725264-L.jpg", "year": 1900, "lib_loans": 0, "reason": "타자 치는 소들의 소동. 의성어+유머 이야기.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2001", "id": "tclickclackmoocowsthattype"}, {"rank": 59, "title": "Last Stop on Market Street", "author": "Matt de la Peña", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 27.0, "cover": "https://covers.openlibrary.org/b/id/7421075-L.jpg", "year": 2015, "lib_loans": 0, "reason": "버스 여행 속 따뜻함과 감사. 마음을 키우는 명작.", "award_kind": "medal", "award": "🎖️ 뉴베리 메달 2016 · 🏅 칼데콧 아너 2016", "id": "tlaststoponmarketstreet"}, {"rank": 60, "title": "Knuffle Bunny", "author": "Mo Willems", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 26.0, "cover": "https://covers.openlibrary.org/b/id/2815321-L.jpg", "year": 2004, "lib_loans": 83, "reason": "애착 인형을 잃어버린 아기. 말 못 하는 아기 공감.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2005", "id": "tknufflebunny"}, {"rank": 61, "title": "Opposites", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 25.7, "cover": "https://covers.openlibrary.org/b/id/405632-L.jpg", "year": 1982, "lib_loans": 0, "reason": "반대말을 익히는 보드북. 어휘 확장에 좋음.", "award_kind": "", "award": "", "id": "topposites"}, {"rank": 62, "title": "I Went Walking", "author": "Sue Williams", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 25.7, "cover": "https://covers.openlibrary.org/b/id/112796-L.jpg", "year": 1990, "lib_loans": 0, "reason": "\"What did you see?\" 반복+색·동물. 첫 패턴책.", "award_kind": "", "award": "", "id": "tiwentwalking"}, {"rank": 63, "title": "The Rainbow Fish", "author": "Marcus Pfister", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 25.0, "cover": "https://covers.openlibrary.org/b/id/12961695-L.jpg", "year": 2022, "lib_loans": 0, "reason": "반짝이는 비늘을 나누는 이야기. 우정 주제.", "award_kind": "", "award": "", "id": "ttherainbowfish"}, {"rank": 64, "title": "Mr. Brown Can Moo! Can You?", "author": "Dr. Seuss", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 24.3, "cover": "https://covers.openlibrary.org/b/id/4735556-L.jpg", "year": 1970, "lib_loans": 0, "reason": "온갖 소리를 흉내 내는 라임. 소리내기 놀이.", "award_kind": "", "award": "", "id": "tmrbrowncanmoocanyou"}, {"rank": 65, "title": "A Parade of Elephants", "author": "Kevin Henkes", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 24.3, "cover": "https://covers.openlibrary.org/b/id/12381728-L.jpg", "year": 2018, "lib_loans": 0, "reason": "코끼리 행진과 위치어. 부드러운 잠자리 책.", "award_kind": "", "award": "", "id": "taparadeofelephants"}, {"rank": 66, "title": "Love You Forever", "author": "Robert Munsch", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 24.0, "cover": "https://covers.openlibrary.org/b/id/772161-L.jpg", "year": 1986, "lib_loans": 0, "reason": "대를 잇는 사랑의 노래. 엄마가 더 뭉클해지는 책.", "award_kind": "", "award": "", "id": "tloveyouforever"}, {"rank": 67, "title": "Cloudy with a Chance of Meatballs", "author": "Judi Barrett", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 23.0, "cover": "https://covers.openlibrary.org/b/id/6475217-L.jpg", "year": 1978, "lib_loans": 0, "reason": "음식이 하늘에서 내리는 상상. 웃긴 이야기.", "award_kind": "", "award": "", "id": "tcloudywithachanceofmeatballs"}, {"rank": 68, "title": "Dr. Seuss's ABC", "author": "Dr. Seuss", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 23.0, "cover": "https://covers.openlibrary.org/b/id/423014-L.jpg", "year": 1960, "lib_loans": 0, "reason": "라임으로 익히는 알파벳. 파닉스로 가는 다리.", "award_kind": "", "award": "", "id": "tdrseusssabc"}, {"rank": 69, "title": "Can You Make a Scary Face?", "author": "Jan Thomas", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 23.0, "cover": "https://covers.openlibrary.org/b/id/9612586-L.jpg", "year": 2009, "lib_loans": 0, "reason": "지시를 따라 표정·동작 만들기. 까르르 참여형.", "award_kind": "", "award": "", "id": "tcanyoumakeascaryface"}, {"rank": 70, "title": "The Adventures of Beekle", "author": "Dan Santat", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 22.0, "cover": "https://covers.openlibrary.org/b/id/7337423-L.jpg", "year": 2014, "lib_loans": 0, "reason": "상상 친구를 찾아가는 여정. 그림 예쁜 명작.", "award_kind": "medal", "award": "🥇 칼데콧 메달 2015", "id": "ttheadventuresofbeekle"}, {"rank": 71, "title": "Dinosaur Dance!", "author": "Sandra Boynton", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 21.6, "cover": "https://covers.openlibrary.org/b/id/7442591-L.jpg", "year": 2016, "lib_loans": 0, "reason": "공룡들의 춤 챈트. 흥나는 의성어.", "award_kind": "", "award": "", "id": "tdinosaurdance"}, {"rank": 72, "title": "Owl Babies", "author": "Martin Waddell", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 21.6, "cover": "https://covers.openlibrary.org/b/id/799318-L.jpg", "year": 1975, "lib_loans": 0, "reason": "엄마를 기다리는 아기 부엉이들. 분리불안 공감.", "award_kind": "", "award": "", "id": "towlbabies"}, {"rank": 73, "title": "Harold and the Purple Crayon", "author": "Crockett Johnson", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 21.0, "cover": "https://covers.openlibrary.org/b/id/50758-L.jpg", "year": 1955, "lib_loans": 0, "reason": "크레용으로 세상을 그리는 상상. 창의력 자극.", "award_kind": "", "award": "", "id": "tharoldandthepurplecrayon"}, {"rank": 74, "title": "Giraffes Can't Dance", "author": "Giles Andreae", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 20.3, "cover": "https://covers.openlibrary.org/b/id/276948-L.jpg", "year": 1999, "lib_loans": 0, "reason": "라임으로 \"나도 할 수 있어\". 자존감 그림책.", "award_kind": "", "award": "", "id": "tgiraffescantdance"}, {"rank": 75, "title": "Make Way for Ducklings", "author": "Robert McCloskey", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 20.0, "cover": "https://covers.openlibrary.org/b/id/400659-L.jpg", "year": 1941, "lib_loans": 0, "reason": "오리 가족의 도시 산책. 사랑받는 클래식.", "award_kind": "medal", "award": "🥇 칼데콧 메달 1942", "id": "tmakewayforducklings"}, {"rank": 76, "title": "Extra Yarn", "author": "Mac Barnett", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 19.0, "cover": "https://covers.openlibrary.org/b/id/7256065-L.jpg", "year": 2011, "lib_loans": 0, "reason": "뜨개실로 마을을 바꾸는 소녀. 잔잔한 명작.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2013", "id": "textrayarn"}, {"rank": 77, "title": "Stellaluna", "author": "Janell Cannon", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 18.0, "cover": "https://covers.openlibrary.org/b/id/11026591-L.jpg", "year": 1990, "lib_loans": 0, "reason": "박쥐와 새의 우정. 다름을 이해, 조금 큰 아이.", "award_kind": "", "award": "", "id": "tstellaluna"}, {"rank": 78, "title": "The Mitten", "author": "Jan Brett", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 17.0, "cover": "https://covers.openlibrary.org/b/id/259482-L.jpg", "year": 1989, "lib_loans": 0, "reason": "벙어리장갑에 모여드는 동물들. 누적 반복 구조.", "award_kind": "", "award": "", "id": "tthemitten"}, {"rank": 79, "title": "I Love You Through and Through", "author": "Bernadette Rossetti-Shustak", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 16.2, "cover": "https://covers.openlibrary.org/b/id/6514560-L.jpg", "year": 2005, "lib_loans": 0, "reason": "온몸으로 사랑을 표현하는 애착 보드북.", "award_kind": "", "award": "", "id": "tiloveyouthroughandthrough"}, {"rank": 80, "title": "Press Here", "author": "Hervé Tullet", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 16.2, "cover": "https://covers.openlibrary.org/b/id/6934884-L.jpg", "year": 2011, "lib_loans": 65, "reason": "점을 누르면 변하는 마법. 상호작용의 끝판왕.", "award_kind": "", "award": "", "id": "tpresshere"}, {"rank": 81, "title": "One Fish, Two Fish, Red Fish, Blue Fish", "author": "Dr. Seuss", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 16.0, "cover": "https://covers.openlibrary.org/b/id/12096-L.jpg", "year": 1960, "lib_loans": 0, "reason": "숫자·색·라임 말놀이. 소리 감각 키우기.", "award_kind": "", "award": "", "id": "tonefishtwofishredfishbluefish"}, {"rank": 82, "title": "Blueberries for Sal", "author": "Robert McCloskey", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 15.0, "cover": "https://covers.openlibrary.org/b/id/11307420-L.jpg", "year": 1948, "lib_loans": 0, "reason": "아이와 아기 곰의 블루베리 하루. 잔잔한 클래식.", "award_kind": "honor", "award": "🏅 칼데콧 아너 1949", "id": "tblueberriesforsal"}, {"rank": 83, "title": "Dragons Love Tacos", "author": "Adam Rubin", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 14.0, "cover": "https://covers.openlibrary.org/b/id/8085856-L.jpg", "year": 2012, "lib_loans": 0, "reason": "타코를 사랑하는 용의 유머. 깔깔대는 이야기.", "award_kind": "", "award": "", "id": "tdragonslovetacos"}, {"rank": 84, "title": "The Monster at the End of this Book", "author": "Jon Stone", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["그림책", "토들러"], "score": 13.8, "cover": "https://covers.openlibrary.org/b/id/8580217-L.jpg", "year": 1971, "lib_loans": 0, "reason": "페이지 넘기지 말라는 몬스터. 참여형 유머.", "award_kind": "", "award": "", "id": "tthemonsterattheendofthisbook"}, {"rank": 85, "title": "Hand, Hand, Fingers, Thumb", "author": "Al Perkins", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 13.5, "cover": "https://covers.openlibrary.org/b/id/145-L.jpg", "year": 1969, "lib_loans": 0, "reason": "원숭이 북치기 라임. 신나는 소리의 책.", "award_kind": "", "award": "", "id": "thandhandfingersthumb"}, {"rank": 86, "title": "The Little Mouse, the Red Ripe Strawberry, and the Big Hungry Bear", "author": "Don Wood", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 13.5, "cover": "https://covers.openlibrary.org/b/id/651372-L.jpg", "year": 1945, "lib_loans": 58, "reason": "딸기를 지키려는 쥐와의 대화. 상호작용형.", "award_kind": "", "award": "", "id": "tthelittlemousetheredripestrawberryandthebighungrybear"}, {"rank": 87, "title": "The Paper Bag Princess", "author": "Robert Munsch", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 13.0, "cover": "https://covers.openlibrary.org/b/id/707991-L.jpg", "year": 1980, "lib_loans": 0, "reason": "용을 물리치는 씩씩한 공주. 반전, 조금 큰 아이.", "award_kind": "", "award": "", "id": "tthepaperbagprincess"}, {"rank": 88, "title": "Yummy Yucky", "author": "Leslie Patricelli", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 12.2, "cover": "https://covers.openlibrary.org/b/id/516031-L.jpg", "year": 2003, "lib_loans": 0, "reason": "먹는 것/못 먹는 것 대비. 첫 어휘 보드북.", "award_kind": "", "award": "", "id": "tyummyyucky"}, {"rank": 89, "title": "The Story of Ferdinand", "author": "Munro Leaf", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 12.0, "cover": "https://covers.openlibrary.org/b/id/6716679-L.jpg", "year": 1936, "lib_loans": 0, "reason": "싸우기 싫은 소 페르디난드. 평화의 클래식.", "award_kind": "", "award": "", "id": "tthestoryofferdinand"}, {"rank": 90, "title": "Flotsam", "author": "David Wiesner", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 10.0, "cover": "https://covers.openlibrary.org/b/id/393712-L.jpg", "year": 2001, "lib_loans": 0, "reason": "글 없는 바닷가 상상. 그림으로 이야기 만들기.", "award_kind": "medal", "award": "🥇 칼데콧 메달 2007", "id": "tflotsam"}, {"rank": 91, "title": "I Am a Bunny", "author": "Ole Risom", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 9.5, "cover": "https://covers.openlibrary.org/b/id/6982495-L.jpg", "year": 1963, "lib_loans": 0, "reason": "사계절을 지내는 토끼. 부드러운 첫 자연책.", "award_kind": "", "award": "", "id": "tiamabunny"}, {"rank": 92, "title": "Hooray for Birds!", "author": "Lucy Cousins", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 9.5, "cover": "https://covers.openlibrary.org/b/id/14637118-L.jpg", "year": 2017, "lib_loans": 0, "reason": "새가 되어보는 하루+동작. 밝은 라임.", "award_kind": "", "award": "", "id": "thoorayforbirds"}, {"rank": 93, "title": "Strega Nona", "author": "Tomie dePaola", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 9.0, "cover": "https://covers.openlibrary.org/b/id/4482016-L.jpg", "year": 1934, "lib_loans": 0, "reason": "넘치는 마법 냄비 이야기. 누적 반복, 조금 큰 아이.", "award_kind": "honor", "award": "🏅 칼데콧 아너 1976", "id": "tstreganona"}, {"rank": 94, "title": "Five Little Monkeys Jumping on the Bed", "author": "Eileen Christelow", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 8.1, "cover": "https://covers.openlibrary.org/b/id/5547929-L.jpg", "year": 1989, "lib_loans": 67, "reason": "침대 위 원숭이 노래+숫자. 아이들이 열광하는 챈트.", "award_kind": "", "award": "", "id": "tfivelittlemonkeysjumpingonthebed"}, {"rank": 95, "title": "Peek-a-Moo!", "author": "Marie Torres Cimarusti", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 8.1, "cover": "https://covers.openlibrary.org/b/id/11693418-L.jpg", "year": 1999, "lib_loans": 0, "reason": "까꿍과 동물 소리 플랩. 아기 참여형.", "award_kind": "", "award": "", "id": "tpeekamoo"}, {"rank": 96, "title": "Caps for Sale", "author": "Esphyr Slobodkina", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 8.0, "cover": "https://covers.openlibrary.org/b/id/50821-L.jpg", "year": 1968, "lib_loans": 0, "reason": "모자 장수와 원숭이의 반복 대사. 흉내내기 재미.", "award_kind": "", "award": "", "id": "tcapsforsale"}, {"rank": 97, "title": "Kitten's First Full Moon", "author": "Kevin Henkes", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 6.0, "cover": "https://covers.openlibrary.org/b/id/31190-L.jpg", "year": 2004, "lib_loans": 0, "reason": "달을 우유로 착각한 아기 고양이. 흑백 그림 명작.", "award_kind": "medal", "award": "🥇 칼데콧 메달 2005", "id": "tkittensfirstfullmoon"}, {"rank": 98, "title": "Global Babies", "author": "The Global Fund for Children", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 5.4, "cover": "https://covers.openlibrary.org/b/id/12444924-L.jpg", "year": 2021, "lib_loans": 0, "reason": "세계 아기들의 사진책. 아주 어린 아기와 눈맞춤.", "award_kind": "", "award": "", "id": "tglobalbabies"}, {"rank": 99, "title": "The Book with No Pictures", "author": "B.J. Novak", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 5.0, "cover": "https://covers.openlibrary.org/b/id/7306621-L.jpg", "year": 2001, "lib_loans": 0, "reason": "그림 없이 웃긴 말들. 소리 내 읽어주는 재미.", "award_kind": "", "award": "", "id": "tthebookwithnopictures"}, {"rank": 100, "title": "On the Night You Were Born", "author": "Nancy Tillman", "band_key": "A", "band": "아기·첫책 (0~2세)", "shelves": ["보드북"], "score": 4.1, "cover": "https://covers.openlibrary.org/b/id/6304062-L.jpg", "year": 2010, "lib_loans": 0, "reason": "태어난 밤의 축복. 뭉클한 선물용 책.", "award_kind": "", "award": "", "id": "tonthenightyouwereborn"}, {"rank": 101, "title": "Spunky Little Monkey", "author": "Bill Martin Jr.", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 4.1, "cover": "https://covers.openlibrary.org/b/isbn/0545776449-L.jpg", "year": 2017, "lib_loans": 0, "reason": "몸을 흔드는 챈트. From Head to Toe처럼 동작 따라하기.", "award_kind": "", "award": "", "id": "tspunkylittlemonkey"}, {"rank": 102, "title": "Sam & Dave Dig a Hole", "author": "Mac Barnett", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 4.0, "cover": "https://covers.openlibrary.org/b/id/7337430-L.jpg", "year": 2014, "lib_loans": 81, "reason": "구멍 파는 형제와 그림의 반전. 위트 있는 책.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2015", "id": "tsamdavedigahole"}, {"rank": 103, "title": "A Sick Day for Amos McGee", "author": "Philip C. Stead", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 3.0, "cover": "https://covers.openlibrary.org/b/id/8133580-L.jpg", "year": 2010, "lib_loans": 0, "reason": "동물원 친구들의 우정. 잔잔한 명작.", "award_kind": "medal", "award": "🥇 칼데콧 메달 2011", "id": "tasickdayforamosmcgee"}, {"rank": 104, "title": "Jump!", "author": "Scott M. Fischer", "band_key": "B", "band": "유아 (2~4세)", "shelves": ["토들러"], "score": 2.7, "cover": "https://covers.openlibrary.org/b/id/10416209-L.jpg", "year": 2010, "lib_loans": 0, "reason": "동물들이 폴짝폴짝. 동작 따라하는 짧은 책.", "award_kind": "", "award": "", "id": "tjump"}, {"rank": 105, "title": "Chrysanthemum", "author": "Kevin Henkes", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 2.0, "cover": "https://covers.openlibrary.org/b/id/6712201-L.jpg", "year": 1991, "lib_loans": 0, "reason": "이름 때문에 속상한 생쥐. 자존감, 조금 큰 아이.", "award_kind": "", "award": "", "id": "tchrysanthemum"}, {"rank": 106, "title": "Olivia", "author": "Ian Falconer", "band_key": "C", "band": "미취학 (4~6세)", "shelves": ["그림책"], "score": 1.0, "cover": "https://covers.openlibrary.org/b/id/954704-L.jpg", "year": 2000, "lib_loans": 0, "reason": "씩씩한 아기 돼지 올리비아. 개성 만점 캐릭터.", "award_kind": "honor", "award": "🏅 칼데콧 아너 2001", "id": "tolivia"}], "themes": [{"emoji": "🌙", "title": "잠들기 전 5분, 잠자리 그림책", "hook": "하루를 포근하게 닫아주는 5권", "age": "", "ids": ["tgoodnightmoon", "ttimeforbed", "tllamallamaredpajama", "tthegoingtobedbook", "tpajamatime"]}, {"emoji": "🎵", "title": "노래처럼 읽는 첫 책", "hook": "멜로디에 얹혀 저절로 따라 부르는 챈트·리듬", "age": "", "ids": ["tchickachickaboomboom", "tbarnyarddance", "tfivelittlemonkeysjumpingonthebed", "tjamberry", "thandhandfingersthumb"]}, {"emoji": "🐛", "title": "에릭 칼 대표작", "hook": "반복과 색으로 만나는 Eric Carle", "age": "", "ids": ["ttheveryhungrycaterpillar", "tbrownbearbrownbearwhatdoyousee", "tpolarbearpolarbearwhatdoyouhear", "tfromheadtotoe", "ttheverybusyspider"]}, {"emoji": "🐾", "title": "동물이 가득, 반복이 재밌어", "hook": "소리와 패턴으로 빠져드는 동물책", "age": "", "ids": ["tdearzoo", "tmoobaalalala", "tbarkgeorge", "tiwentwalking", "thoorayforfish"]}, {"emoji": "👶", "title": "아기 첫 보드북", "hook": "까꿍·플랩으로 시작하는 첫 상호작용", "age": "0~2세", "ids": ["twhereisbabysbellybutton", "tpeekawho", "twheresspot", "tyummyyucky", "tglobalbabies"]}, {"emoji": "✋", "title": "만지고 참여하는 책", "hook": "아이가 직접 개입하는 인터랙티브", "age": "", "ids": ["tpresshere", "tdontletthepigeondrivethebus", "tthemonsterattheendofthisbook", "tcanyoumakeascaryface", "tthebookwithnopictures"]}, {"emoji": "❤️", "title": "사랑을 전하는 책", "hook": "재우며 안아주며 읽는 애착 그림책", "age": "", "ids": ["tguesshowmuchiloveyou", "ttherunawaybunny", "tiloveyouthroughandthrough", "tloveyouforever", "tonthenightyouwereborn"]}, {"emoji": "🚗", "title": "붕붕! 탈것 & 움직임", "hook": "소리와 동작으로 신나는 5권", "age": "", "ids": ["tlittlebluetruck", "tfreighttrain", "tgoodnightgoodnightconstructionsite", "tjump", "tspunkylittlemonkey"]}, {"emoji": "🌟", "title": "마음이 자라는 그림책", "hook": "감정·자존감을 키우는 이야기", "age": "4~6세", "ids": ["twherethewildthingsare", "tgiraffescantdance", "tchrysanthemum", "tthedaythecrayonsquit", "tknufflebunny"]}, {"emoji": "🏅", "title": "세계가 사랑한 명작", "hook": "오래 읽히는 칼데콧·클래식", "age": "4~6세", "ids": ["tthesnowyday", "tmakewayforducklings", "tkittensfirstfullmoon", "tsamdavedigahole", "tasickdayforamosmcgee"]}], "bands": [["A", "아기·첫책", "0~2세", 39], ["B", "유아", "2~4세", 29], ["C", "미취학", "4~6세", 38]]};const {books,bands,themes}=P;
-const byId=Object.fromEntries(books.map(b=>[b.id,b]));
-const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const bandColor={A:'var(--bandA)',B:'var(--bandB)',C:'var(--bandC)'};
-const bandName={A:'아기·첫책',B:'유아',C:'미취학'};
-let curBand='ALL',curSort='rank',curQ='',shown=48,unseenOnly=false;
-
-// ── 봤어요 기록 (기기에 저장) ──
-const SEEN_KEY='joy-seen';
-let seen=new Set();
-try{const raw=localStorage.getItem(SEEN_KEY);if(raw)seen=new Set(JSON.parse(raw));}catch(e){}
-function saveSeen(){try{localStorage.setItem(SEEN_KEY,JSON.stringify([...seen]));}catch(e){}}
-function updateProgress(){
-  const total=books.length,done=books.filter(b=>seen.has(b.id)).length;
-  const pct=total?Math.round(done/total*100):0;
-  document.getElementById('prBig').textContent=pct+'%';
-  document.getElementById('prBar').style.width=pct+'%';
-  document.getElementById('prSub').innerHTML= done===0
-    ? '아직 체크한 책이 없어요 · 카드의 <strong>봤어요</strong>를 눌러 기록하세요'
-    : `전체 ${total}권 중 <strong>${done}권</strong>을 봤어요`;
-}
-function toggleSeen(id){
-  if(seen.has(id))seen.delete(id);else seen.add(id);
-  saveSeen();updateProgress();
-  if(unseenOnly)render();else{
-    document.querySelectorAll(`.seenbtn[data-id="${CSS.escape(id)}"]`).forEach(btn=>{
-      const on=seen.has(id);btn.textContent=on?'✓ 봤어요':'☐ 봤어요';
-      btn.closest('.card').classList.toggle('seen',on);
-    });
-  }
-}
-
-// 연령대 고르기 버튼
-document.getElementById('pick').innerHTML =
-  `<button data-b="ALL" style="--pc:var(--teal-deep)"><div class="bk">전체 보기</div><div class="age">모든 연령</div><div class="cnt">${books.length}권</div></button>`+
-  bands.map(([k,nm,age,cnt])=>`<button data-b="${k}" style="--pc:${bandColor[k]}">
-    <div class="bk"><span class="dot"></span>${nm}</div><div class="age">${age}</div><div class="cnt">${cnt}권</div></button>`).join('');
-document.querySelectorAll('#pick button').forEach(btn=>btn.addEventListener('click',()=>{
-  curBand=btn.dataset.b;shown=48;
-  document.querySelectorAll('#pick button').forEach(b=>b.classList.toggle('active',b===btn));render();
-}));
-document.getElementById('sort').addEventListener('change',e=>{curSort=e.target.value;render();});
-document.getElementById('q').addEventListener('input',e=>{curQ=e.target.value.toLowerCase().trim();shown=48;render();});
-document.getElementById('more').addEventListener('click',()=>{shown+=48;render();});
-document.getElementById('unseen').addEventListener('change',e=>{unseenOnly=e.target.checked;shown=48;render();});
-document.getElementById('grid').addEventListener('click',e=>{
-  const btn=e.target.closest('.seenbtn');if(btn)toggleSeen(btn.dataset.id);
-});
-document.getElementById('prReset').addEventListener('click',()=>{
-  if(seen.size===0)return;
-  if(confirm('봤어요 기록을 모두 지울까요?')){seen.clear();saveSeen();updateProgress();render();}
-});
-window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
-
-function filtered(){
-  let r=books.filter(b=>{
-    if(curBand!=='ALL'&&b.band_key!==curBand)return false;
-    if(unseenOnly&&seen.has(b.id))return false;
-    if(curQ&&!(b.title+' '+b.author).toLowerCase().includes(curQ))return false;
-    return true;
-  });
-  if(curSort==='title')r.sort((a,b)=>a.title.localeCompare(b.title));
-  else if(curSort==='lib')r.sort((a,b)=>b.lib_loans-a.lib_loans||a.rank-b.rank);
-  else r.sort((a,b)=>a.rank-b.rank);
-  return r;
-}
-function card(b){
-  const c=bandColor[b.band_key];
-  return `<article class="card${seen.has(b.id)?' seen':''}">
-    <div class="cover">
-      ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
-      <div class="ph" style="background:linear-gradient(150deg,${c},color-mix(in srgb,${c} 60%,#000))"><div class="pt">${esc(b.title)}</div></div>
-      <span class="grank tnum">인기 #${b.rank}</span>
-      <span class="bandtag" style="background:${c}">${bandName[b.band_key]}</span>
-      <span class="seencheck">✓ 봤어요</span>
-    </div>
-    <div class="body">
-      <div class="t">${esc(b.title)}</div>
-      <div class="a">${esc(b.author)}${b.year?' · '+b.year:''}</div>
-      ${b.reason?`<div class="why">${esc(b.reason)}</div>`:''}
-      <div class="tags">
-        ${b.award?`<span class="chip2 award">${esc(b.award)}</span>`:''}
-        ${b.shelves.map(s=>`<span class="chip2">${esc(s)}</span>`).join('')}
-        ${b.lib_loans?`<span class="chip2 lib tnum">📚 국내도서관 ${b.lib_loans}회</span>`:''}
-      </div>
-      <button class="seenbtn" data-id="${esc(b.id)}">${seen.has(b.id)?'✓ 봤어요':'☐ 봤어요'}</button>
-    </div>
-  </article>`;
-}
-function render(){
-  const r=filtered();
-  document.getElementById('count').textContent=`${r.length}권`;
-  document.getElementById('grid').innerHTML=r.slice(0,shown).map(card).join('');
-  document.getElementById('more').hidden=r.length<=shown;
-}
-const root=document.documentElement;
-try{const t=localStorage.getItem('joy-theme');if(t)root.setAttribute('data-theme',t);}catch(e){}
-document.getElementById('theme').addEventListener('click',()=>{
-  const cur=root.getAttribute('data-theme');
-  const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
-  const next=dark?'light':'dark';root.setAttribute('data-theme',next);
-  try{localStorage.setItem('joy-theme',next);}catch(e){}
-});
-// 주제별 컬렉션 렌더
-function renderThemes(){
-  document.getElementById('themes').innerHTML = themes.map(t=>`
-    <div class="theme">
-      <div class="th">
-        <span class="emo">${t.emoji}</span><h3>${esc(t.title)}</h3>
-        ${t.age?`<span class="agechip">${esc(t.age)}</span>`:''}
-        <span class="hook">${esc(t.hook)}</span>
-      </div>
-      <div class="strip">
-        ${t.ids.map(id=>byId[id]).filter(Boolean).map(b=>`
-          <div class="mini${seen.has(b.id)?' seen':''}" data-id="${esc(b.id)}">
-            <div class="mc">
-              ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
-              <div class="mph" style="background:linear-gradient(150deg,${bandColor[b.band_key]},#0006)"><div class="pt">${esc(b.title)}</div></div>
-              <span class="sc">✓</span>
-            </div>
-            <div class="mt">${esc(b.title)}</div>
-            <div class="mr">${esc(b.reason||'')}</div>
-          </div>`).join('')}
-      </div>
-    </div>`).join('');
-}
-// 봤어요 토글 시 주제 섹션의 표시도 갱신
-const _origToggle=toggleSeen;
-toggleSeen=function(id){_origToggle(id);
-  document.querySelectorAll(`.mini[data-id="${CSS.escape(id)}"]`).forEach(m=>m.classList.toggle('seen',seen.has(id)));
-};
-renderThemes();
-updateProgress();
-render();
-</script>
+<div class="foot"><div class="wrap">조이네영어도서관 · 큐레이션: 전세계 인기(Goodreads)·국내 서점 통합순위 · 표지: Open Library</div></div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>드니네 책장 — 조이네영어도서관</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#F6F2E9;color:#2B2A26;font-family:'Nunito Sans',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55}
+:root{--surface:#FFFDF8;--line:#E2DAC9;--soft:#6C665A;--teal:#0E7C7B;--tealD:#0A5E5D;--coral:#E8623C;--sh:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.15}
+a{color:var(--tealD);text-decoration:none}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,242,233,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding:11px 18px}
+.brand{font-family:Georgia,serif;font-weight:700}
+.top .search{margin-left:auto;flex:1;max-width:300px}
+.top .search input{width:100%;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.9rem}
+.hero{padding:38px 0 6px}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--coral)}
+.hero h1{font-size:clamp(1.9rem,5vw,2.6rem);margin:.3em 0}
+.hero p{color:var(--soft);max-width:64ch}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 16px;box-shadow:var(--sh)}
+.stat .n{font-family:Georgia,serif;font-weight:700;font-size:1.4rem;color:var(--tealD)}
+.stat .l{font-size:.78rem;color:var(--soft)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip.on{background:var(--tealD);color:#fff;border-color:var(--tealD)}
+.series{margin:22px 0}
+.series h2{font-size:1.2rem;color:var(--tealD);border-bottom:2px solid var(--line);padding-bottom:6px;display:flex;align-items:baseline;gap:8px}
+.series h2 .c{font-size:.8rem;color:var(--soft);font-family:'Nunito Sans',sans-serif;font-weight:700}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:12px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;box-shadow:var(--sh)}
+.row .t{font-weight:700;font-size:.9rem}
+.row .m{font-size:.74rem;color:var(--soft);margin-top:2px}
+.row .star{color:#E9A63B;font-weight:800}
+.foot{border-top:1px solid var(--line);margin-top:26px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
+.notice{max-width:640px;margin:50px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:16px 20px;color:#6b5900}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">📚 조이네영어도서관</a>
+  <div class="search"><input type="search" id="q" placeholder="책 제목 검색"></div></div></div>
+<main class="wrap">
+  <div class="hero"><div class="eyebrow">우리 집 보유 원서</div><h1>🏠 드니네 책장</h1>
+    <p>집에 있는 영어 원서를 전집·시리즈별로 정리했어요. 검색하거나 전집을 골라 찾아보세요.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="body"><p style="padding:40px 0;color:var(--soft);text-align:center">불러오는 중…</p></div>
+</main>
+<div class="foot"><div class="wrap">드니네 책장 · 조이네영어도서관</div></div>
+<script src="study/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var body=document.getElementById('body');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  if(!window.SUPA_ANON||window.SUPA_ANON.indexOf('PASTE')===0){body.innerHTML='<div class="notice">⚙️ 연결 전이에요. config.js + home_books.sql 실행이 필요합니다.</div>';return;}
+  var client=supabase.createClient(window.SUPA_URL,window.SUPA_ANON);
+  var ALL=[],curSeries='__all__',curQ='';
+  function seriesList(){var o=[];var seen={};ALL.forEach(function(b){if(!seen[b.series]){seen[b.series]=1;o.push(b.series);}});return o;}
+  function render(){
+    var series=seriesList();
+    var chips='<button class="chip'+(curSeries==='__all__'?' on':'')+'" data-s="__all__">전체</button>'+
+      series.map(function(s){return '<button class="chip'+(curSeries===s?' on':'')+'" data-s="'+esc(s)+'">'+esc(s)+'</button>';}).join('');
+    document.getElementById('chips').innerHTML=chips;
+    document.querySelectorAll('#chips .chip').forEach(function(c){c.addEventListener('click',function(){curSeries=c.dataset.s;render();});});
+    var rows=ALL.filter(function(b){
+      if(curSeries!=='__all__'&&b.series!==curSeries)return false;
+      if(curQ&&(b.title||'').toLowerCase().indexOf(curQ)<0)return false;return true;});
+    var groups={};var order=[];
+    rows.forEach(function(b){if(!groups[b.series]){groups[b.series]=[];order.push(b.series);}groups[b.series].push(b);});
+    var h='';
+    order.forEach(function(s){
+      h+='<div class="series"><h2>'+esc(s)+' <span class="c">'+groups[s].length+'권</span></h2><div class="list">'+
+        groups[s].map(function(b){
+          var m=[];if(b.age)m.push(esc(b.age)+'세');if(b.pref)m.push('<span class="star">★ '+esc(b.pref)+'</span>');
+          return '<div class="row"><div class="t">'+esc(b.title)+'</div>'+(m.length?'<div class="m">'+m.join(' · ')+'</div>':'')+'</div>';
+        }).join('')+'</div></div>';
+    });
+    body.innerHTML=h||'<p style="padding:30px 0;color:var(--soft)">검색 결과가 없어요.</p>';
+  }
+  document.getElementById('q').addEventListener('input',function(e){curQ=e.target.value.toLowerCase().trim();render();});
+  (async function(){
+    try{
+      var r=await client.from('home_books').select('*').order('sort');
+      if(r.error)throw r.error;
+      ALL=r.data||[];
+      var ns=seriesList().length;
+      document.getElementById('stats').innerHTML=
+        '<div class="stat"><div class="n">'+ALL.length+'</div><div class="l">보유 권수</div></div>'+
+        '<div class="stat"><div class="n">'+ns+'</div><div class="l">전집·시리즈</div></div>';
+      render();
+    }catch(e){
+      body.innerHTML='<div class="notice">데이터를 불러오지 못했어요. home_books.sql 을 실행했는지 확인해주세요.<br><small>'+esc(e.message||e)+'</small></div>';
+    }
+  })();
+})();
+</script>
+</body>
+</html>
