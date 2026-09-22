@@ -20,8 +20,12 @@ h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.2}
 .books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
 .book{background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .book:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(43,42,38,.14)}
-.book .cv{aspect-ratio:3/4;background:#EDE6D6}.book .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.book .cv{position:relative;aspect-ratio:3/4;background:#EDE6D6}.book .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.book .pop{position:absolute;top:6px;right:6px;background:rgba(43,42,38,.82);color:#fff;font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px}
 .book .bb{padding:10px 11px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.book .stats{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.book .st{font-size:.64rem;font-weight:800;padding:2px 6px;border-radius:6px}
+.book .st.g{background:#e7f1f0;color:#0A5E5D}.book .st.l{background:#fbeee0;color:#8a5a1a}
 .book .ty{font-size:.66rem;font-weight:800;color:#fff;background:var(--teal);align-self:flex-start;padding:2px 7px;border-radius:6px}
 .book .bt{font-family:Georgia,serif;font-weight:700;font-size:.96rem;line-height:1.2;margin-top:4px}
 .book .ba{font-size:.76rem;color:var(--soft)}.book .br{font-size:.8rem;color:var(--soft);margin-top:4px}
@@ -60,10 +64,14 @@ h1,h2{font-family:Georgia,'Nanum Myeongjo',serif;margin:0;line-height:1.2}
     curKey=theme.key;
     var c=content||{};
     var bh=books.map(function(b){
+      var stats='';
+      if(b.pop_rank) stats+='<span class="st g">🌍 인기 #'+b.pop_rank+'</span>';
+      if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div>'+
         '<div class="bb"><span class="ty">'+esc(b.tier_label)+'</span><div class="bt">'+esc(b.title)+'</div>'+
-        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+'</div></div>';
+        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
+        (stats?'<div class="stats">'+stats+'</div>':'')+'</div></div>';
     }).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
     var h='<div class="wrap">';

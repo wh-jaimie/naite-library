@@ -37,6 +37,8 @@ create table if not exists public.books (
   author     text,
   cover      text,
   reason     text,
+  pop_rank   int default 0,   -- 전세계 인기 106 중 순위(0=목록 밖)
+  lib_loans  int default 0,   -- 국내 공공도서관 대출 건수
   sort       int default 0
 );
 
@@ -105,8 +107,8 @@ for i, t in enumerate(ch["themes"]):
                  f"on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;")
     lines.append(f"insert into public.content(theme_key) values ({q(t['key'])}) on conflict (theme_key) do nothing;")
     for j, b in enumerate(t["books"]):
-        lines.append("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,sort) values "
-                     f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{j});")
+        lines.append("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,sort) values "
+                     f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{j});")
     lines.append("")
 lines.append(f"insert into public.settings(id,current_theme) values (1,{q(order[0])}) "
              "on conflict (id) do update set current_theme=excluded.current_theme;")

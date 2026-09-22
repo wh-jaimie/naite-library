@@ -26,6 +26,8 @@ create table if not exists public.books (
   author     text,
   cover      text,
   reason     text,
+  pop_rank   int default 0,   -- 전세계 인기 106 중 순위(0=목록 밖)
+  lib_loans  int default 0,   -- 국내 공공도서관 대출 건수
   sort       int default 0
 );
 
