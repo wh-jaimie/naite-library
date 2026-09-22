@@ -197,7 +197,12 @@ KR_TITLES = [
 def norm(t):
     t=t.lower(); t=re.split(r"[:(]",t)[0]; t=t.replace("&","and").replace("'","")
     return re.sub(r"[^a-z0-9]+"," ",t).strip()
-KR_SET = {norm(t) for t in KR_TITLES}
+# 국내인기 판정 = 국내 서점 통합순위 100 전체 기준
+try:
+    from data_domestic import DOMESTIC_ALL
+    KR_SET = {norm(d[2]) for d in DOMESTIC_ALL} | {norm(t) for t in KR_TITLES}
+except Exception:
+    KR_SET = {norm(t) for t in KR_TITLES}
 
 # 수상
 MEDAL={'where the wild things are':1964,'make way for ducklings':1942,'the snowy day':1963,
