@@ -19,8 +19,8 @@
      "id": "c1",
      "pop_rank": 6,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 2,
@@ -35,8 +35,8 @@
      "id": "c2",
      "pop_rank": 74,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 3,
@@ -51,8 +51,8 @@
      "id": "c3",
      "pop_rank": 3,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 4,
@@ -67,24 +67,24 @@
      "id": "c4",
      "pop_rank": 5,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 5,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "The Mixed-Up Chameleon",
-     "author": "Eric Carle",
-     "reason": "이것저것 되고 싶던 카멜레온 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/3153851-L.jpg",
-     "isbn": "9781852692872",
-     "year": 1975,
+     "title": "The Crocodile Who Didn't Like Water",
+     "author": "Gemma Merino",
+     "reason": "물을 싫어하던 아기 악어의 반전 성장 이야기",
+     "cover": "https://covers.openlibrary.org/b/id/10167225-L.jpg",
+     "isbn": "1447214714",
+     "year": 2013,
      "id": "c5",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     }
    ]
   },
@@ -100,31 +100,31 @@
      "tier_label": "조작북",
      "title": "That's Not My Truck",
      "author": "Fiona Watt",
-     "reason": "촉감을 만지며 \"내 트럭이 아니야\" 반복하는 촉감북",
+     "reason": "트럭 촉감을 만지는 촉감북",
      "cover": "https://covers.openlibrary.org/b/id/2582595-L.jpg",
      "isbn": "9780794502102",
      "year": 2002,
      "id": "c6",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 7,
      "tier": 2,
      "tier_label": "라임",
-     "title": "Sheep in a Jeep",
-     "author": "Nancy Shaw",
-     "reason": "지프 탄 양떼의 좌충우돌 라임",
-     "cover": "https://covers.openlibrary.org/b/id/255747-L.jpg",
-     "isbn": "9780395411056",
-     "year": 1986,
+     "title": "Truck Full of Ducks",
+     "author": "Ross Burach",
+     "reason": "오리 가득 실은 배달 트럭의 라임 소동",
+     "cover": "https://covers.openlibrary.org/b/id/8753768-L.jpg",
+     "isbn": "9781338129366",
+     "year": 2018,
      "id": "c7",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 8,
@@ -139,8 +139,8 @@
      "id": "c8",
      "pop_rank": 11,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 9,
@@ -155,8 +155,8 @@
      "id": "c9",
      "pop_rank": 12,
      "lib_loans": 96,
-     "award_kind": "honor",
-     "award": "🏅 칼데콧 아너 2004"
+     "award": "🏅 칼데콧 아너 2004",
+     "kr_popular": true
     },
     {
      "gid": 10,
@@ -171,8 +171,8 @@
      "id": "c10",
      "pop_rank": 48,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -186,17 +186,17 @@
      "gid": 11,
      "tier": 1,
      "tier_label": "조작북",
-     "title": "The Very Hungry Caterpillar",
-     "author": "Eric Carle",
-     "reason": "구멍 뚫린 페이지를 만지며 먹이를 따라가는 책",
-     "cover": "https://covers.openlibrary.org/b/id/7835968-L.jpg",
-     "isbn": "9780241003008",
-     "year": 1969,
+     "title": "Ketchup on Your Cornflakes?",
+     "author": "Nick Sharratt",
+     "reason": "위아래 플랩을 뒤섞어 엉뚱한 조합을 만드는 플랩북",
+     "cover": "https://covers.openlibrary.org/b/id/4635355-L.jpg",
+     "isbn": "0590931067",
+     "year": 1994,
      "id": "c11",
-     "pop_rank": 1,
+     "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 12,
@@ -211,8 +211,8 @@
      "id": "c12",
      "pop_rank": 35,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 13,
@@ -227,40 +227,40 @@
      "id": "c13",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 14,
      "tier": 4,
      "tier_label": "유머·반전",
-     "title": "Dragons Love Tacos",
-     "author": "Adam Rubin",
-     "reason": "타코 좋아하는 용이 매운 살사에 대참사",
-     "cover": "https://covers.openlibrary.org/b/id/8085856-L.jpg",
-     "isbn": "9780803736801",
-     "year": 2012,
+     "title": "The Watermelon Seed",
+     "author": "Greg Pizzoli",
+     "reason": "씨를 삼킨 악어의 호들갑 — 웃긴 반전",
+     "cover": "https://covers.openlibrary.org/b/id/8468842-L.jpg",
+     "isbn": "0545840791",
+     "year": 2013,
      "id": "c14",
-     "pop_rank": 83,
+     "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "🎖️ 가이젤상 2014",
+     "kr_popular": true
     },
     {
      "gid": 15,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "Cloudy with a Chance of Meatballs",
-     "author": "Judi Barrett",
-     "reason": "하늘에서 음식이 내리는 마을 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/6475217-L.jpg",
-     "isbn": "9780689707490",
-     "year": 1978,
+     "title": "I Will Not Ever Never Eat a Tomato",
+     "author": "Lauren Child",
+     "reason": "편식쟁이 롤라를 구슬리는 남매 이야기 (찰리와 롤라)",
+     "cover": "https://covers.openlibrary.org/b/id/885657-L.jpg",
+     "isbn": "184121602X",
+     "year": 2000,
      "id": "c15",
-     "pop_rank": 67,
+     "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     }
    ]
   },
@@ -283,8 +283,8 @@
      "id": "c16",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 17,
@@ -299,8 +299,8 @@
      "id": "c17",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 18,
@@ -315,24 +315,24 @@
      "id": "c18",
      "pop_rank": 62,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 19,
      "tier": 4,
      "tier_label": "유머·반전",
-     "title": "Blue Hat, Green Hat",
-     "author": "Sandra Boynton",
-     "reason": "옷을 엉뚱하게 입는 칠면조의 \"Oops!\"",
-     "cover": "https://covers.openlibrary.org/b/id/438047-L.jpg",
-     "isbn": "9780689863042",
-     "year": 1984,
+     "title": "Pete the Cat: I Love My White Shoes",
+     "author": "Eric Litwin",
+     "reason": "신발 색이 바뀌어도 쿨한 고양이의 노래",
+     "cover": "https://covers.openlibrary.org/b/id/6767307-L.jpg",
+     "isbn": "9780061906237",
+     "year": 2008,
      "id": "c19",
-     "pop_rank": 30,
-     "lib_loans": 61,
-     "award_kind": "",
-     "award": ""
+     "pop_rank": 56,
+     "lib_loans": 74,
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 20,
@@ -347,8 +347,8 @@
      "id": "c20",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -362,17 +362,17 @@
      "gid": 21,
      "tier": 1,
      "tier_label": "조작북",
-     "title": "Ten Little Ladybugs",
-     "author": "Melanie Gerth",
-     "reason": "볼록한 무당벌레를 만지며 거꾸로 세는 촉감북",
-     "cover": "https://covers.openlibrary.org/b/id/841692-L.jpg",
-     "isbn": "9781581170917",
-     "year": 2000,
+     "title": "600 Black Spots",
+     "author": "David A. Carter",
+     "reason": "누르고 넘기면 검은 점이 변신하는 팝업북",
+     "cover": "https://covers.openlibrary.org/b/id/761876-L.jpg",
+     "isbn": "1416940928",
+     "year": 2007,
      "id": "c21",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 22,
@@ -387,8 +387,8 @@
      "id": "c22",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 23,
@@ -403,8 +403,8 @@
      "id": "c23",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 24,
@@ -419,8 +419,8 @@
      "id": "c24",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 25,
@@ -435,8 +435,8 @@
      "id": "c25",
      "pop_rank": 94,
      "lib_loans": 67,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -459,8 +459,8 @@
      "id": "c26",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 27,
@@ -475,8 +475,8 @@
      "id": "c27",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 28,
@@ -491,8 +491,8 @@
      "id": "c28",
      "pop_rank": 38,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 29,
@@ -507,24 +507,24 @@
      "id": "c29",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 30,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "Guess How Much I Love You",
-     "author": "Sam McBratney",
-     "reason": "사랑의 크기를 재보는 토끼 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/13282906-L.jpg",
-     "isbn": "1536216801",
-     "year": 1994,
+     "title": "Peppa Pig: Peppa Goes Swimming",
+     "author": "Peppa Pig",
+     "reason": "전세계 국민 캐릭터 페파의 일상 이야기",
+     "cover": "https://covers.openlibrary.org/b/id/8801127-L.jpg",
+     "isbn": "0241411823",
+     "year": 2012,
      "id": "c30",
-     "pop_rank": 7,
+     "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     }
    ]
   },
@@ -547,8 +547,8 @@
      "id": "c31",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 32,
@@ -563,8 +563,8 @@
      "id": "c32",
      "pop_rank": 9,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 33,
@@ -579,8 +579,8 @@
      "id": "c33",
      "pop_rank": 2,
      "lib_loans": 84,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 34,
@@ -595,24 +595,24 @@
      "id": "c34",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 35,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "Time for Bed",
-     "author": "Mem Fox",
-     "reason": "동물 엄마가 아기를 재우는 잔잔한 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/114082-L.jpg",
-     "isbn": "0440833973",
-     "year": 1993,
+     "title": "A Big Mooncake for Little Star",
+     "author": "Grace Lin",
+     "reason": "달을 조금씩 베어 먹는 아기별 이야기",
+     "cover": "https://covers.openlibrary.org/b/id/12659990-L.jpg",
+     "isbn": "9780316404488",
+     "year": 2018,
      "id": "c35",
-     "pop_rank": 23,
+     "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "🏅 칼데콧 아너 2019",
+     "kr_popular": true
     }
    ]
   },
@@ -626,17 +626,17 @@
      "gid": 36,
      "tier": 1,
      "tier_label": "조작북",
-     "title": "Glad Monster, Sad Monster",
-     "author": "Ed Emberley",
-     "reason": "감정 가면을 써보는 참여형 책",
-     "cover": "https://covers.openlibrary.org/b/id/189297-L.jpg",
-     "isbn": "2226189351",
-     "year": 1997,
+     "title": "The Color Monster: A Pop-Up Book of Feelings",
+     "author": "Anna Llenas",
+     "reason": "뒤죽박죽 감정을 색으로 정리하는 팝업북",
+     "cover": "https://covers.openlibrary.org/b/isbn/9780316574525-L.jpg",
+     "isbn": "9780316574525",
+     "year": 2024,
      "id": "c36",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 37,
@@ -651,8 +651,8 @@
      "id": "c37",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 38,
@@ -667,8 +667,8 @@
      "id": "c38",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 39,
@@ -683,24 +683,24 @@
      "id": "c39",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 40,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "The Color Monster",
-     "author": "Anna Llenas",
-     "reason": "뒤죽박죽 감정을 색으로 정리하는 이야기",
-     "cover": "https://covers.openlibrary.org/b/isbn/9780316574525-L.jpg",
-     "isbn": "9780316574525",
-     "year": 2024,
+     "title": "Knuffle Bunny: A Cautionary Tale",
+     "author": "Mo Willems",
+     "reason": "애착 인형을 잃어버린 아기의 대소동",
+     "cover": "https://covers.openlibrary.org/b/id/2815321-L.jpg",
+     "isbn": "9780439801980",
+     "year": 2004,
      "id": "c40",
-     "pop_rank": 0,
-     "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "pop_rank": 60,
+     "lib_loans": 83,
+     "award": "🏅 칼데콧 아너 2005",
+     "kr_popular": true
     }
    ]
   },
@@ -723,8 +723,8 @@
      "id": "c41",
      "pop_rank": 42,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 42,
@@ -739,8 +739,8 @@
      "id": "c42",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 43,
@@ -755,8 +755,8 @@
      "id": "c43",
      "pop_rank": 16,
      "lib_loans": 135,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 44,
@@ -771,8 +771,8 @@
      "id": "c44",
      "pop_rank": 31,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 45,
@@ -787,8 +787,8 @@
      "id": "c45",
      "pop_rank": 20,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -811,8 +811,8 @@
      "id": "c46",
      "pop_rank": 46,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 47,
@@ -827,24 +827,24 @@
      "id": "c47",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 48,
      "tier": 3,
      "tier_label": "반복",
-     "title": "There Was an Old Lady Who Swallowed a Fly",
-     "author": "Pam Adams",
-     "reason": "파리를 삼킨 할머니의 누적 반복",
-     "cover": "https://covers.openlibrary.org/b/id/651393-L.jpg",
-     "isbn": "1904550622",
-     "year": 1999,
+     "title": "The Very Hungry Caterpillar",
+     "author": "Eric Carle",
+     "reason": "요일·음식이 반복되는 구멍 뚫린 필독서",
+     "cover": "https://covers.openlibrary.org/b/id/7835968-L.jpg",
+     "isbn": "9780241003008",
+     "year": 1969,
      "id": "c48",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 49,
@@ -859,8 +859,8 @@
      "id": "c49",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 50,
@@ -875,8 +875,8 @@
      "id": "c50",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -899,8 +899,8 @@
      "id": "c51",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 52,
@@ -915,8 +915,8 @@
      "id": "c52",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 53,
@@ -931,8 +931,8 @@
      "id": "c53",
      "pop_rank": 71,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 54,
@@ -947,8 +947,8 @@
      "id": "c54",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 55,
@@ -963,8 +963,8 @@
      "id": "c55",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -987,8 +987,8 @@
      "id": "c56",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 57,
@@ -1003,8 +1003,8 @@
      "id": "c57",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 58,
@@ -1019,8 +1019,8 @@
      "id": "c58",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 59,
@@ -1035,8 +1035,8 @@
      "id": "c59",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 60,
@@ -1051,8 +1051,8 @@
      "id": "c60",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1075,8 +1075,8 @@
      "id": "c61",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 62,
@@ -1091,8 +1091,8 @@
      "id": "c62",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 63,
@@ -1107,8 +1107,8 @@
      "id": "c63",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 64,
@@ -1123,8 +1123,8 @@
      "id": "c64",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 65,
@@ -1139,8 +1139,8 @@
      "id": "c65",
      "pop_rank": 19,
      "lib_loans": 0,
-     "award_kind": "medal",
-     "award": "🥇 칼데콧 메달 1963"
+     "award": "🥇 칼데콧 메달 1963",
+     "kr_popular": false
     }
    ]
   },
@@ -1163,8 +1163,8 @@
      "id": "c66",
      "pop_rank": 44,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 67,
@@ -1179,8 +1179,8 @@
      "id": "c67",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 68,
@@ -1195,8 +1195,8 @@
      "id": "c68",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 69,
@@ -1211,8 +1211,8 @@
      "id": "c69",
      "pop_rank": 36,
      "lib_loans": 80,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 70,
@@ -1227,8 +1227,8 @@
      "id": "c70",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1251,8 +1251,8 @@
      "id": "c71",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 72,
@@ -1267,8 +1267,8 @@
      "id": "c72",
      "pop_rank": 10,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 73,
@@ -1283,8 +1283,8 @@
      "id": "c73",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 74,
@@ -1299,8 +1299,8 @@
      "id": "c74",
      "pop_rank": 58,
      "lib_loans": 0,
-     "award_kind": "honor",
-     "award": "🏅 칼데콧 아너 2001"
+     "award": "🏅 칼데콧 아너 2001",
+     "kr_popular": false
     },
     {
      "gid": 75,
@@ -1315,8 +1315,8 @@
      "id": "c75",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1330,17 +1330,17 @@
      "gid": 76,
      "tier": 1,
      "tier_label": "조작북",
-     "title": "Never Touch a Shark!",
-     "author": "Rosie Greening",
-     "reason": "말랑한 상어를 만지는 촉감 노벨티북",
-     "cover": "https://covers.openlibrary.org/b/id/10847067-L.jpg",
-     "isbn": "1788436539",
-     "year": 2019,
+     "title": "Shark in the Park",
+     "author": "Nick Sharratt",
+     "reason": "망원경 구멍으로 공원을 보는 참여형 라임",
+     "cover": "https://covers.openlibrary.org/b/id/244378-L.jpg",
+     "isbn": "9780385604697",
+     "year": 2000,
      "id": "c76",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 77,
@@ -1355,8 +1355,8 @@
      "id": "c77",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 78,
@@ -1371,24 +1371,24 @@
      "id": "c78",
      "pop_rank": 32,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 79,
      "tier": 4,
      "tier_label": "유머·반전",
-     "title": "I'm the Biggest Thing in the Ocean!",
-     "author": "Kevin Sherry",
-     "reason": "허세 부리는 오징어의 반전 유머",
-     "cover": "https://covers.openlibrary.org/b/id/575612-L.jpg",
-     "isbn": "9780803731929",
-     "year": 2007,
+     "title": "This Is Not My Hat",
+     "author": "Jon Klassen",
+     "reason": "모자를 훔친 물고기의 그림 반전",
+     "cover": "https://covers.openlibrary.org/b/id/10207424-L.jpg",
+     "isbn": "9781443140355",
+     "year": 2001,
      "id": "c79",
-     "pop_rank": 52,
-     "lib_loans": 64,
-     "award_kind": "",
-     "award": ""
+     "pop_rank": 47,
+     "lib_loans": 76,
+     "award": "🥇 칼데콧 메달 2013",
+     "kr_popular": true
     },
     {
      "gid": 80,
@@ -1403,8 +1403,8 @@
      "id": "c80",
      "pop_rank": 63,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1427,8 +1427,8 @@
      "id": "c81",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 82,
@@ -1443,8 +1443,8 @@
      "id": "c82",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 83,
@@ -1459,8 +1459,8 @@
      "id": "c83",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 84,
@@ -1475,8 +1475,8 @@
      "id": "c84",
      "pop_rank": 84,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 85,
@@ -1491,8 +1491,8 @@
      "id": "c85",
      "pop_rank": 14,
      "lib_loans": 0,
-     "award_kind": "medal",
-     "award": "🥇 칼데콧 메달 1964"
+     "award": "🥇 칼데콧 메달 1964",
+     "kr_popular": true
     }
    ]
   },
@@ -1515,8 +1515,8 @@
      "id": "c86",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 87,
@@ -1531,8 +1531,8 @@
      "id": "c87",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 88,
@@ -1547,8 +1547,8 @@
      "id": "c88",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 89,
@@ -1563,24 +1563,24 @@
      "id": "c89",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "honor",
-     "award": "🏅 칼데콧 아너 2013"
+     "award": "🏅 칼데콧 아너 2013",
+     "kr_popular": true
     },
     {
      "gid": 90,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "Room on the Broom",
-     "author": "Julia Donaldson",
-     "reason": "마녀 빗자루에 동물이 타는 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/10839950-L.jpg",
-     "isbn": "9781529005912",
-     "year": 2001,
+     "title": "Skeleton Hiccups",
+     "author": "Margery Cuyler",
+     "reason": "딸꾹질 멈추려는 해골의 우스운 소동",
+     "cover": "https://covers.openlibrary.org/b/id/436813-L.jpg",
+     "isbn": "1416902767",
+     "year": 2002,
      "id": "c90",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     }
    ]
   },
@@ -1603,8 +1603,8 @@
      "id": "c91",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 92,
@@ -1619,8 +1619,8 @@
      "id": "c92",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 93,
@@ -1635,8 +1635,8 @@
      "id": "c93",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 94,
@@ -1651,8 +1651,8 @@
      "id": "c94",
      "pop_rank": 55,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 95,
@@ -1667,8 +1667,8 @@
      "id": "c95",
      "pop_rank": 49,
      "lib_loans": 0,
-     "award_kind": "medal",
-     "award": "🥇 칼데콧 메달 1986"
+     "award": "🥇 칼데콧 메달 1986",
+     "kr_popular": false
     }
    ]
   },
@@ -1691,8 +1691,8 @@
      "id": "c96",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 97,
@@ -1707,24 +1707,24 @@
      "id": "c97",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 98,
      "tier": 3,
      "tier_label": "반복",
-     "title": "If You're Happy and You Know It",
-     "author": "Jane Cabrera",
-     "reason": "동작을 따라하는 반복 노래",
-     "cover": "https://covers.openlibrary.org/b/id/625653-L.jpg",
-     "isbn": "9780823422272",
-     "year": 2005,
+     "title": "Polar Bear, Polar Bear, What Do You Hear?",
+     "author": "Bill Martin Jr.",
+     "reason": "동물 소리가 이어지는 브라운베어 후속 챈트",
+     "cover": "https://covers.openlibrary.org/b/id/10959647-L.jpg",
+     "isbn": "0805087982",
+     "year": 1991,
      "id": "c98",
-     "pop_rank": 0,
+     "pop_rank": 22,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 99,
@@ -1739,8 +1739,8 @@
      "id": "c99",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 100,
@@ -1755,8 +1755,8 @@
      "id": "c100",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1779,8 +1779,8 @@
      "id": "c101",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 102,
@@ -1795,8 +1795,8 @@
      "id": "c102",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 103,
@@ -1811,8 +1811,8 @@
      "id": "c103",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 104,
@@ -1827,8 +1827,8 @@
      "id": "c104",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 105,
@@ -1843,8 +1843,8 @@
      "id": "c105",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1867,8 +1867,8 @@
      "id": "c106",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 107,
@@ -1883,8 +1883,8 @@
      "id": "c107",
      "pop_rank": 53,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 108,
@@ -1899,8 +1899,8 @@
      "id": "c108",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 109,
@@ -1915,8 +1915,8 @@
      "id": "c109",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "honor",
-     "award": "🏅 칼데콧 아너 1999"
+     "award": "🏅 칼데콧 아너 1999",
+     "kr_popular": true
     },
     {
      "gid": 110,
@@ -1931,8 +1931,8 @@
      "id": "c110",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -1955,8 +1955,8 @@
      "id": "c111",
      "pop_rank": 80,
      "lib_loans": 65,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 112,
@@ -1971,8 +1971,8 @@
      "id": "c112",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 113,
@@ -1987,8 +1987,8 @@
      "id": "c113",
      "pop_rank": 61,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 114,
@@ -2003,8 +2003,8 @@
      "id": "c114",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 115,
@@ -2019,8 +2019,8 @@
      "id": "c115",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   },
@@ -2034,17 +2034,17 @@
      "gid": 116,
      "tier": 1,
      "tier_label": "조작북",
-     "title": "Mix It Up!",
-     "author": "Hervé Tullet",
-     "reason": "손으로 색을 섞는 참여형 (Press Here 작가)",
-     "cover": "https://covers.openlibrary.org/b/id/8174029-L.jpg",
-     "isbn": "1452137358",
-     "year": 2014,
+     "title": "Don't Push the Button!",
+     "author": "Bill Cotter",
+     "reason": "누르지 말라는 버튼을 누르면?! 참여형",
+     "cover": "https://covers.openlibrary.org/b/id/8954256-L.jpg",
+     "isbn": "1728250080",
+     "year": 2013,
      "id": "c116",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": true
     },
     {
      "gid": 117,
@@ -2059,8 +2059,8 @@
      "id": "c117",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 118,
@@ -2075,8 +2075,8 @@
      "id": "c118",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     },
     {
      "gid": 119,
@@ -2091,8 +2091,8 @@
      "id": "c119",
      "pop_rank": 102,
      "lib_loans": 81,
-     "award_kind": "honor",
-     "award": "🏅 칼데콧 아너 2015"
+     "award": "🏅 칼데콧 아너 2015",
+     "kr_popular": true
     },
     {
      "gid": 120,
@@ -2107,8 +2107,8 @@
      "id": "c120",
      "pop_rank": 73,
      "lib_loans": 0,
-     "award_kind": "",
-     "award": ""
+     "award": "",
+     "kr_popular": false
     }
    ]
   }

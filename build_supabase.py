@@ -40,6 +40,7 @@ create table if not exists public.books (
   pop_rank   int default 0,   -- 전세계 인기 106 중 순위(0=목록 밖)
   lib_loans  int default 0,   -- 국내 공공도서관 대출 건수
   award      text default '', -- 수상(칼데콧 등)
+  kr_popular boolean default false, -- 국내 서점 통합 베스트
   sort       int default 0
 );
 
@@ -101,6 +102,7 @@ create policy "admin read events"    on public.events for select using (public.i
 # ── seed.sql ──
 lines = ["-- 조이네 엄마표영어 스터디 — 시드 데이터 (24주제 × 120권)",
          "-- schema.sql 실행 후 이 파일을 SQL Editor 에 붙여넣어 실행하세요.\n"]
+book_lines = []  # reseed용(책만)
 order = [t["key"] for t in ch["themes"]]
 for i, t in enumerate(ch["themes"]):
     lines.append(f"insert into public.themes(key,emoji,en,ko,sort) values "
@@ -108,13 +110,26 @@ for i, t in enumerate(ch["themes"]):
                  f"on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;")
     lines.append(f"insert into public.content(theme_key) values ({q(t['key'])}) on conflict (theme_key) do nothing;")
     for j, b in enumerate(t["books"]):
-        lines.append("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,sort) values "
-                     f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{j});")
+        kr = 'true' if b.get('kr_popular') else 'false'
+        ins=("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values "
+             f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{kr},{j});")
+        lines.append(ins); book_lines.append(ins)
     lines.append("")
 lines.append(f"insert into public.settings(id,current_theme) values (1,{q(order[0])}) "
              "on conflict (id) do update set current_theme=excluded.current_theme;")
 
 open(os.path.join(SQLDIR, "schema.sql"), "w", encoding="utf-8").write(SCHEMA)
 open(os.path.join(SQLDIR, "seed.sql"), "w", encoding="utf-8").write("\n".join(lines))
-print("생성: supabase/schema.sql, supabase/seed.sql")
+
+# ── reseed_books.sql: 기존 DB의 책만 새 120권으로 교체(테마·콘텐츠·설정 보존) ──
+reseed = ["-- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수상/국내인기 컬럼 (재실행 안전)",
+          "-- 테마·콘텐츠·설정은 건드리지 않음. SQL Editor 에서 Run.",
+          "alter table public.books add column if not exists pop_rank int default 0;",
+          "alter table public.books add column if not exists lib_loans int default 0;",
+          "alter table public.books add column if not exists award text default '';",
+          "alter table public.books add column if not exists kr_popular boolean default false;",
+          "delete from public.books;", ""]
+reseed += book_lines
+open(os.path.join(SQLDIR, "reseed_books.sql"), "w", encoding="utf-8").write("\n".join(reseed)+"\n")
+print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql")
 print(f"주제 {len(order)}개, 책 {sum(len(t['books']) for t in ch['themes'])}권 시드")

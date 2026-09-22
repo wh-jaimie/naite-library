@@ -82,6 +82,8 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .step.seen .cover .chk{display:flex}
 .step .pop{position:absolute;top:6px;right:6px;background:color-mix(in srgb,var(--ink) 80%,transparent);color:#fff;
   font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
+.step .krb{position:absolute;top:6px;left:6px;background:#c0392b;color:#fff;
+  font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
 .step .tt{font-size:.76rem;font-weight:700;line-height:1.2}
 .step .au{font-size:.68rem;color:var(--ink-soft)}
 .step .aw{font-size:.64rem;font-weight:800;color:#7a5a00;background:#f3e9c9;border-radius:6px;padding:2px 6px;align-self:flex-start;margin-top:2px}
@@ -158,6 +160,7 @@ function stepHTML(b){
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
       ${b.pop_rank?`<span class="pop">🌍 인기 #${b.pop_rank}</span>`:''}
+      ${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}
       <div class="chk">✓</div>
     </div>
     <div class="tt">${esc(b.title)}</div>
