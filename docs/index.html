@@ -13,7 +13,7 @@ body{background:#F6F2E9;color:#2B2A26;font-family:'Nunito Sans',system-ui,-apple
 h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0;line-height:1.12;text-wrap:balance}
 a{color:inherit;text-decoration:none}
 .hero{text-align:center;padding:60px 0 30px}
-.hero .mark{width:60px;height:60px;border-radius:16px;margin:0 auto 18px;background:linear-gradient(135deg,var(--teal),var(--tealD));display:grid;place-items:center;color:#fff;font-size:1.7rem;box-shadow:var(--sh)}
+.hero .mark{width:76px;height:76px;margin:0 auto 18px;display:block;filter:drop-shadow(0 6px 14px rgba(43,42,38,.14))}
 .hero h1{font-size:clamp(2.1rem,6vw,3.1rem)}
 .hero .tagline{font-family:'Fraunces',Georgia,serif;color:var(--tealD);font-size:clamp(1.05rem,2.6vw,1.35rem);font-weight:600;margin:12px auto 0;max-width:40ch}
 .hero p{color:var(--soft);max-width:56ch;margin:10px auto 0;font-size:1.02rem}
@@ -34,7 +34,14 @@ a{color:inherit;text-decoration:none}
 <body>
 <main class="wrap">
   <div class="hero">
-    <div class="mark">🌳</div>
+    <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="나이테 영어도서관 로고">
+      <circle cx="32" cy="32" r="31" fill="#FFFDF8" stroke="#E2DAC9" stroke-width="1.5"/>
+      <circle cx="32.5" cy="31.5" r="25" fill="none" stroke="#0E7C7B" stroke-width="2.7"/>
+      <circle cx="31.5" cy="32.5" r="19" fill="none" stroke="#E9A63B" stroke-width="2.7"/>
+      <circle cx="32.5" cy="32" r="13" fill="none" stroke="#E8623C" stroke-width="2.7"/>
+      <circle cx="32" cy="32" r="7" fill="none" stroke="#0A5E5D" stroke-width="2.7"/>
+      <circle cx="32" cy="32" r="2.6" fill="#0A5E5D"/>
+    </svg>
     <h1>나이테 영어도서관</h1>
     <p class="tagline">한 권씩, 아이의 영어에 나이테를 만들어요.</p>
     <p>파닉스 전, 좋은 영어 그림책을 고르고 함께 읽는 곳. 세계·국내 인기부터 우리 집 책장, 매달 스터디까지.</p>
