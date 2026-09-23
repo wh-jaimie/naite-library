@@ -10,6 +10,8 @@ update public.books set workbook='https://www.hachetteschools.co.uk/resource/gir
   where theme_key='animals' and title='Giraffes Can''t Dance';
 update public.books set workbook='https://eric-carle.com/resources/downloads-and-activities/'
   where theme_key='animals' and title='Brown Bear, Brown Bear, What Do You See?';
+update public.books set workbook='https://www.rif.org/literacy-central/material/interrupting-chicken-activity-kit'
+  where theme_key='animals' and title='Interrupting Chicken';
 -- Moo, Baa, La La La! / The Crocodile Who Didn't Like Water
 --   → 공식 무료 워크북이 마땅치 않아 비워둠(카드에 워크북 버튼 안 보임).
 
