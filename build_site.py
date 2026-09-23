@@ -119,8 +119,8 @@ for rank,title,author in GLOBAL_100:
     if award_of(title): badges.append(("a",award_of(title)))
     if lib_of(title): badges.append(("l",f"📚 도서관 {lib_of(title)}회"))
     cards.append(card(cov,title,author,rank=rank,badges=badges))
-body=f'<main class="wrap"><div class="hero"><div class="eyebrow">여러 서점 통합순위</div><h1>🌍 세계 인기 그림책 100</h1><p>여러 온·오프라인 서점(미국·영국·글로벌)의 베스트셀러를 통합한 세계적으로 유명한 그림책 100권.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
-open(os.path.join(DOCS,"global.html"),"w",encoding="utf-8").write(page("세계 인기 그림책 100",body))
+body=f'<main class="wrap"><div class="hero"><div class="eyebrow">여러 서점 통합순위</div><h1>🌍 세계 인기 책장</h1><p>여러 온·오프라인 서점(미국·영국·글로벌)의 베스트셀러를 통합한 세계적으로 유명한 그림책 100권.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
+open(os.path.join(DOCS,"global.html"),"w",encoding="utf-8").write(page("세계 인기 책장",body))
 
 # 국내 100
 cards=[]
@@ -132,8 +132,8 @@ for d in domestic:
     if d["note"]: badges.append(("n",d["note"]))
     extra=f'<div class="ba">권장 {esc(d["age"])}세</div>'
     cards.append(card(d["cover"],d["ko"],"",rank=d["rank"],badges=badges,extra=extra))
-body=f'<main class="wrap"><div class="hero"><div class="eyebrow">국내 서점 통합 순위</div><h1>🇰🇷 국내 인기 그림책 100</h1><p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권. 순위·권장연령·특징·수상을 함께 담았어요.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
-open(os.path.join(DOCS,"domestic.html"),"w",encoding="utf-8").write(page("국내 인기 그림책 100",body))
+body=f'<main class="wrap"><div class="hero"><div class="eyebrow">국내 서점 통합 순위</div><h1>🇰🇷 국내 인기 책장</h1><p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권. 순위·권장연령·특징·수상을 함께 담았어요.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
+open(os.path.join(DOCS,"domestic.html"),"w",encoding="utf-8").write(page("국내 인기 책장",body))
 
 # 주제별 컬렉션
 THEMES=[("🌙","잠들기 전, 잠자리 그림책",[2,23,29,9,53]),("🎵","노래처럼 읽는 첫 책",[4,10,94,35,85]),
@@ -154,8 +154,8 @@ for emo,name,ranks in THEMES:
         cs.append(card(b.get("cover"),b["title"],b.get("author",""),badges=badges,
                        extra=(f'<div class="ba" style="margin-top:4px">{esc(b.get("reason",""))}</div>' if b.get("reason") else "")))
     blocks.append(f'<section><h2 style="font-size:1.4rem;margin-bottom:2px">{emo} {esc(name)}</h2><div class="grid" style="margin-top:12px">{"".join(cs)}</div></section>')
-body=f'<main class="wrap"><div class="hero"><div class="eyebrow">주제별 5권 묶음</div><h1>🗂️ 주제별 컬렉션</h1><p>인스타·스터디에 쓰기 좋은 5권 묶음. 표지를 캡처해 카드로 쓰세요.</p></div>{"".join(blocks)}</main>'
-open(os.path.join(DOCS,"collections.html"),"w",encoding="utf-8").write(page("주제별 컬렉션",body,search=False))
+body=f'<main class="wrap"><div class="hero"><div class="eyebrow">주제별 5권 묶음</div><h1>🗂️ 주제별 책장</h1><p>인스타·스터디에 쓰기 좋은 5권 묶음. 표지를 캡처해 카드로 쓰세요.</p></div>{"".join(blocks)}</main>'
+open(os.path.join(DOCS,"collections.html"),"w",encoding="utf-8").write(page("주제별 책장",body,search=False))
 
 # badges.js (세계=새 통합순위, 국내=국내100, 수상/도서관)
 badge_map={}
