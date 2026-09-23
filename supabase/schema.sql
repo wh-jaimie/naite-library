@@ -41,6 +41,7 @@ create table if not exists public.content (
   read_method text default '',
   activities  text default '',
   expressions text default '',
+  workbooks   text default '',
   updated_at  timestamptz default now()
 );
 

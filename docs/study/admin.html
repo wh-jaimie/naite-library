@@ -156,12 +156,14 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<label class="f">읽어주는 방법</label><textarea class="t" id="frm">'+esc(c.read_method)+'</textarea>'+
       '<label class="f">책 활용 아이디어 <span class="hint">(한 줄에 하나)</span></label><textarea class="t" id="fact">'+esc(c.activities)+'</textarea>'+
       '<label class="f">관련 영어표현 <span class="hint">(한 줄에 하나 · "English - 한글")</span></label><textarea class="t" id="fexp">'+esc(c.expressions)+'</textarea>'+
+      '<label class="f">워크북·활동지 <span class="hint">(한 줄에 하나 · "자료 이름 | https://링크")</span></label><textarea class="t" id="fwb" placeholder="Dear Zoo 공식 활동지 | https://...">'+esc(c.workbooks)+'</textarea>'+
+      '<div class="hint">⚠️ 파일을 직접 올리지 말고, 출판사·작가 공식 무료 자료의 <b>링크</b>만 넣으세요 (재배포는 저작권 문제).</div>'+
       '<label class="f">이번 주제 5권 (수정 가능)</label>'+bh;
   }
   async function saveContent(){
     var key=STATE.editKey, st=document.getElementById('saveSt');
     st.textContent='저장 중…';
-    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),updated_at:new Date().toISOString()};
+    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),workbooks:val('fwb'),updated_at:new Date().toISOString()};
     var r1=await client.from('content').upsert(content);
     if(r1.error){st.textContent='실패: '+r1.error.message;return;}
     // 책 업데이트
@@ -186,6 +188,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var sess={};pv.forEach(function(e){if(e.session_id)sess[e.session_id]=1;});
     var perTheme={};pv.forEach(function(e){var k=e.theme_key||'?';perTheme[k]=(perTheme[k]||0)+1;});
     var clicks={};ev.filter(function(e){return e.type==='book_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||('#'+e.book_id);clicks[t]=(clicks[t]||0)+1;});
+    var wbClicks={};ev.filter(function(e){return e.type==='workbook_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||'?';wbClicks[t]=(wbClicks[t]||0)+1;});
+    var wbTotal=ev.filter(function(e){return e.type==='workbook_click';}).length;
     var dwell=ev.filter(function(e){return e.type==='dwell'&&e.meta&&e.meta.seconds;}).map(function(e){return e.meta.seconds;});
     var avgD=dwell.length?Math.round(dwell.reduce(function(a,b){return a+b;},0)/dwell.length):0;
     function rows(obj){return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).map(function(k){return '<tr><td>'+esc(k)+'</td><td>'+obj[k]+'</td></tr>';}).join('')||'<tr><td colspan=2 class="hint">데이터 없음</td></tr>';}
@@ -195,10 +199,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     body.innerHTML=
       '<div class="card"><div class="kgrid">'+
         kpi(pv.length,'페이지 방문')+kpi(Object.keys(sess).length,'순 방문자(세션)')+
-        kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(avgD+'s','평균 체류')+
+        kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(wbTotal,'워크북 열기')+kpi(avgD+'s','평균 체류')+
       '</div></div>'+
       '<div class="card"><h3>주제별 방문</h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 클릭한 책</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(clicks)+'</tbody></table></div>'+
+      '<div class="card"><h3>많이 연 워크북</h3><table><thead><tr><th>자료</th><th>열기</th></tr></thead><tbody>'+rows(wbClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>최근 이벤트</h3><table><thead><tr><th>시각</th><th>유형</th><th>주제</th><th>비고</th></tr></thead><tbody>'+(recent||'<tr><td colspan=4 class="hint">아직 없음</td></tr>')+'</tbody></table></div>';
   }
   function kpi(n,l){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
