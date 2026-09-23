@@ -11,7 +11,8 @@ GitHub Pages(정적 프론트) + Supabase(DB/Auth/KPI) 조합. Claude 없이 독
 
 ## 2. DB 만들기
 1. Supabase → **SQL Editor** → New query
-2. `schema.sql` 을 붙여넣기 — **단, 실행 전 `ADMIN_EMAIL` 을 본인 이메일로 바꾼다** (이 이메일로 로그인한 사람만 편집 가능).
+2. `schema.sql` 을 붙여넣기. 관리자 이메일은 `is_admin()` 안에 `jabbaek@gmail.com` 로 설정돼 있음(다른 이메일이면 그 주소만 수정). 이 이메일로 로그인한 사람만 편집 가능.
+   > 저장 시 `row-level security policy` 오류가 나면, 이메일이 안 맞는 것 → `fix_admin.sql` 을 실행해 바로잡는다.
 3. 실행(Run).
 4. 다시 New query → `seed.sql` 붙여넣고 실행 (24주제 120권 입력).
 

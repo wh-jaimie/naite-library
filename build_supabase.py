@@ -11,12 +11,12 @@ def q(s):
 
 SCHEMA = r"""-- 조이네 엄마표영어 스터디 — Supabase 스키마
 -- Supabase 대시보드 → SQL Editor 에 그대로 붙여넣어 실행하세요.
--- 실행 전: 아래 ADMIN_EMAIL 을 관리자(본인) 이메일로 바꾸세요.
+-- 관리자 이메일은 아래 is_admin() 안의 주소로 판별됩니다. 바꾸려면 그 주소만 수정.
 
 -- ── 관리자 이메일 판별 함수 (이 이메일로 로그인한 사람만 편집 가능) ──
 create or replace function public.is_admin() returns boolean
 language sql stable as $$
-  select coalesce(auth.jwt() ->> 'email', '') = 'ADMIN_EMAIL'
+  select coalesce(auth.jwt() ->> 'email', '') = 'jabbaek@gmail.com'
 $$;
 
 -- ── 테이블 ──
