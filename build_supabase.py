@@ -41,6 +41,7 @@ create table if not exists public.books (
   lib_loans  int default 0,   -- 국내 공공도서관 대출 건수
   award      text default '', -- 수상(칼데콧 등)
   kr_popular boolean default false, -- 국내 서점 통합 베스트
+  read_aloud text default '',  -- 책별 유튜브 낭독 링크
   workbook   text default '',  -- 책별 워크북 링크(공식 무료 활동지)
   buy_url    text default '',  -- 책별 구매 링크(쿠팡 파트너스)
   sort       int default 0
@@ -131,19 +132,20 @@ reseed = ["-- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수�
           "alter table public.books add column if not exists lib_loans int default 0;",
           "alter table public.books add column if not exists award text default '';",
           "alter table public.books add column if not exists kr_popular boolean default false;",
+          "alter table public.books add column if not exists read_aloud text default '';",
           "alter table public.books add column if not exists workbook text default '';",
           "alter table public.books add column if not exists buy_url text default '';",
-          "-- 워크북/구매 링크 임시 보관 후 재삽입",
+          "-- 낭독/워크북/구매 링크 임시 보관 후 재삽입",
           "drop table if exists _book_links;",
-          "create temporary table _book_links as select theme_key, title, workbook, buy_url from public.books;",
+          "create temporary table _book_links as select theme_key, title, read_aloud, workbook, buy_url from public.books;",
           "delete from public.books;", ""]
 reseed += book_lines
 reseed += ["",
-           "-- 보존해 둔 워크북/구매 링크 복원",
-           "update public.books b set workbook=l.workbook, buy_url=l.buy_url",
+           "-- 보존해 둔 낭독/워크북/구매 링크 복원",
+           "update public.books b set read_aloud=l.read_aloud, workbook=l.workbook, buy_url=l.buy_url",
            "  from _book_links l",
            "  where l.theme_key=b.theme_key and l.title=b.title",
-           "    and (coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');",
+           "    and (coalesce(l.read_aloud,'')<>'' or coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');",
            "drop table _book_links;"]
 open(os.path.join(SQLDIR, "reseed_books.sql"), "w", encoding="utf-8").write("\n".join(reseed)+"\n")
 print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql")

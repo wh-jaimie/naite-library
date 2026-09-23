@@ -4,11 +4,12 @@ alter table public.books add column if not exists pop_rank int default 0;
 alter table public.books add column if not exists lib_loans int default 0;
 alter table public.books add column if not exists award text default '';
 alter table public.books add column if not exists kr_popular boolean default false;
+alter table public.books add column if not exists read_aloud text default '';
 alter table public.books add column if not exists workbook text default '';
 alter table public.books add column if not exists buy_url text default '';
--- 워크북/구매 링크 임시 보관 후 재삽입
+-- 낭독/워크북/구매 링크 임시 보관 후 재삽입
 drop table if exists _book_links;
-create temporary table _book_links as select theme_key, title, workbook, buy_url from public.books;
+create temporary table _book_links as select theme_key, title, read_aloud, workbook, buy_url from public.books;
 delete from public.books;
 
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('animals',1,'조작북','Dear Zoo','Rod Campbell','https://covers.openlibrary.org/b/id/10577107-L.jpg','플랩을 열면 동물원이 보낸 동물이 나오는 국민 플랩북',1,0,'',true,0);
@@ -132,9 +133,9 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('imagination',4,'유머·반전','Sam & Dave Dig a Hole','Mac Barnett','https://covers.openlibrary.org/b/id/7337430-L.jpg','구멍 파기와 그림의 기막힌 반전',0,81,'🏅 칼데콧 아너 2015',true,3);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('imagination',5,'스토리','Harold and the Purple Crayon','Crockett Johnson','https://covers.openlibrary.org/b/id/50758-L.jpg','크레용으로 세상을 그리는 상상 이야기',1,0,'',false,4);
 
--- 보존해 둔 워크북/구매 링크 복원
-update public.books b set workbook=l.workbook, buy_url=l.buy_url
+-- 보존해 둔 낭독/워크북/구매 링크 복원
+update public.books b set read_aloud=l.read_aloud, workbook=l.workbook, buy_url=l.buy_url
   from _book_links l
   where l.theme_key=b.theme_key and l.title=b.title
-    and (coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');
+    and (coalesce(l.read_aloud,'')<>'' or coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');
 drop table _book_links;

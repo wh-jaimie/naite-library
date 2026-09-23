@@ -34,9 +34,10 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .prose{white-space:pre-wrap}ul.li{margin:0;padding-left:20px}ul.li li{margin:5px 0}
 .expr{list-style:none;padding:0;margin:0}.expr li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:7px 0;box-shadow:var(--sh)}
 .expr .en2{font-weight:700}.expr .ko2{color:var(--soft);font-size:.9rem}
-.book .acts{display:flex;gap:6px;margin-top:auto;padding-top:10px}
-.book .act{flex:1;text-align:center;font-size:.72rem;font-weight:800;padding:7px 4px;border-radius:8px;text-decoration:none;border:1px solid var(--line);transition:filter .12s}
+.book .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:10px}
+.book .act{flex:1 1 45%;min-width:62px;text-align:center;font-size:.72rem;font-weight:800;padding:7px 4px;border-radius:8px;text-decoration:none;border:1px solid var(--line);transition:filter .12s}
 .book .act:hover{filter:brightness(.96)}
+.book .act.ra{background:#f6ead9;color:#8a5a1a}
 .book .act.wb{background:#eef3ea;color:var(--tealD)}
 .book .act.buy{background:var(--coral);color:#fff;border-color:var(--coral)}
 .disc{font-size:.74rem;color:var(--soft);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin-top:12px}
@@ -78,6 +79,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
       if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
       var acts='';
+      if(b.read_aloud) acts+='<a class="act ra" href="'+esc(b.read_aloud)+'" target="_blank" rel="noopener" data-ra="'+esc(b.title)+'">📺 낭독</a>';
       if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크북</a>';
       if(b.buy_url)  acts+='<a class="act buy" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">🛒 구매</a>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
@@ -101,6 +103,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a href="admin.html" style="display:inline-block;margin-top:8px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
     app.innerHTML=h;
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
+    app.querySelectorAll('.act.ra').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('read_aloud_click',{title:el.dataset.ra});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
     app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
     logEvent('page_view',{theme:theme.ko});
