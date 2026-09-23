@@ -24,6 +24,9 @@ for t in ch:
         if b.get("lib_loans"): lib_map.setdefault(norm(b["title"]),b["lib_loans"])
 # 국내 비고 수상정보 병합(우선)
 for k,v in AWARDS_EXTRA.items(): award_map[k]=v
+# 표지 수동 보정(자동 조회가 안 되거나 깨지는 책)
+COVER_OVERRIDE={"the color monster":"https://covers.openlibrary.org/b/isbn/9781783704248-L.jpg"}
+for k,v in COVER_OVERRIDE.items(): cover_map[k]=v
 def award_of(t): return award_map.get(norm(t),"")
 def lib_of(t): return lib_map.get(norm(t),0)
 
