@@ -15,7 +15,7 @@ CURRICULUM = [
  (1,"Dear Zoo","Rod Campbell","플랩을 열면 동물원이 보낸 동물이 나오는 국민 플랩북"),
  (2,"Giraffes Can't Dance","Giles Andreae","춤 못 추던 기린의 자신감 라임 이야기"),
  (3,"Brown Bear, Brown Bear, What Do You See?","Bill Martin Jr.","색+동물+\"What do you see?\" 반복의 정석"),
- (4,"Moo, Baa, La La La!","Sandra Boynton","동물 소리를 흉내 내다 반전으로 깔깔"),
+ (4,"Interrupting Chicken","David Ezra Stein","이야기마다 불쑥 끼어드는 꼬마 닭의 엉뚱한 유머·반전"),
  (5,"The Crocodile Who Didn't Like Water","Gemma Merino","물을 싫어하던 아기 악어의 반전 성장 이야기"),
 ]),
 ("🚗","Vehicles","탈것",[
@@ -213,7 +213,7 @@ HONOR={'madeline':1940,'blueberries for sal':1949,'swimmy':1964,'strega nona':19
 'creepy carrots':2013,'extra yarn':2013,'journey':2014,'sam and dave dig a hole':2015,
 'last stop on market street':2016,'click clack moo':2001,'no david':1999,
 'when sophie gets angry really really angry':2000,'a big mooncake for little star':2019,
-'they all saw a cat':2017}
+'they all saw a cat':2017,'interrupting chicken':2011}
 MEDAL['hot dog']=2023
 NEWBERY={'last stop on market street':2016}
 GEISEL={'the watermelon seed':2014,'i want my hat back':2012}
