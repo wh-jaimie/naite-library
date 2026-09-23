@@ -34,13 +34,12 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .prose{white-space:pre-wrap}ul.li{margin:0;padding-left:20px}ul.li li{margin:5px 0}
 .expr{list-style:none;padding:0;margin:0}.expr li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:7px 0;box-shadow:var(--sh)}
 .expr .en2{font-weight:700}.expr .ko2{color:var(--soft);font-size:.9rem}
-.wb{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.wb a{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;box-shadow:var(--sh);color:inherit;transition:transform .13s,box-shadow .13s}
-.wb a:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(43,42,38,.13)}
-.wb .ic{font-size:1.25rem;flex:0 0 auto}
-.wb .nm{font-weight:700;font-size:.9rem;line-height:1.25}
-.wb .go{margin-left:auto;color:var(--tealD);font-weight:800;font-size:.82rem;flex:0 0 auto}
-.wbnote{font-size:.78rem;color:var(--soft);margin:0 0 12px}
+.book .acts{display:flex;gap:6px;margin-top:auto;padding-top:10px}
+.book .act{flex:1;text-align:center;font-size:.72rem;font-weight:800;padding:7px 4px;border-radius:8px;text-decoration:none;border:1px solid var(--line);transition:filter .12s}
+.book .act:hover{filter:brightness(.96)}
+.book .act.wb{background:#eef3ea;color:var(--tealD)}
+.book .act.buy{background:var(--coral);color:#fff;border-color:var(--coral)}
+.disc{font-size:.74rem;color:var(--soft);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin-top:12px}
 .empty{color:var(--soft);font-style:italic}
 .notice{max-width:640px;margin:60px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:18px 20px;color:#6b5900}
 .foot{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
@@ -68,7 +67,6 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 
   function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
   function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
-  function parseWB(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var i=l.lastIndexOf('|');if(i<0)return null;var url=l.slice(i+1).trim();var nm=l.slice(0,i).trim();return (/^https?:\/\//.test(url))?{nm:nm,url:url}:null;}).filter(Boolean);}
 
   function render(theme,books,content){
     curKey=theme.key;
@@ -79,30 +77,32 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       if(b.kr_popular) stats+='<span class="st k">🇰🇷 국내 인기</span>';
       if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
       if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
+      var acts='';
+      if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크북</a>';
+      if(b.buy_url)  acts+='<a class="act buy" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">🛒 구매</a>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div>'+
         '<div class="bb"><span class="ty">'+esc(b.tier_label)+'</span><div class="bt">'+esc(b.title)+'</div>'+
         '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
-        (stats?'<div class="stats">'+stats+'</div>':'')+'</div></div>';
+        (stats?'<div class="stats">'+stats+'</div>':'')+
+        (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
     }).join('');
-    var acts=parseList(c.activities),exprs=parseExpr(c.expressions),wbs=parseWB(c.workbooks);
+    var hasBuy=books.some(function(b){return b.buy_url;});
+    var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
     var h='<div class="wrap">';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+'</div>';
-    h+='<div class="sec"><h2>📚 이번 달 5권</h2><div class="books">'+bh+'</div></div>';
+    h+='<div class="sec"><h2>📚 이번 달 5권</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크북</b>은 출판사·작가 공식 무료 활동지로 연결돼요. <b>🛒 구매</b>로 바로 담을 수 있어요.</p><div class="books">'+bh+'</div>'+
+       (hasBuy?'<p class="disc">이 페이지의 <b>🛒 구매</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    if(wbs.length){
-      h+='<div class="sec"><h2>📄 워크북·활동지</h2>'+
-         '<p class="wbnote">출판사·작가 공식 무료 자료예요. 아래 버튼을 누르면 <b>원출처에서 직접 다운로드</b>됩니다. (프린트해서 아이와 함께 활용해 보세요.)</p>'+
-         '<ul class="wb">'+wbs.map(function(w){return '<li><a href="'+esc(w.url)+'" target="_blank" rel="noopener" data-wb="'+esc(w.nm)+'"><span class="ic">📄</span><span class="nm">'+esc(w.nm)+'</span><span class="go">열기 ↗</span></a></li>';}).join('')+'</ul></div>';
-    }
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a href="admin.html" style="display:inline-block;margin-top:8px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
     app.innerHTML=h;
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
-    app.querySelectorAll('.wb a').forEach(function(el){el.addEventListener('click',function(){logEvent('workbook_click',{title:el.dataset.wb});});});
+    app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
+    app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();

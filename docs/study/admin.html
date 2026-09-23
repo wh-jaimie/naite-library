@@ -151,7 +151,9 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<div class="bf"><span class="pill">'+esc(b.tier_label)+'</span>'+
         '<input class="t" style="margin:4px 0" data-bid="'+b.id+'" data-fld="title" value="'+esc(b.title)+'">'+
         '<input class="t" style="margin-bottom:4px;font-size:.82rem" data-bid="'+b.id+'" data-fld="author" value="'+esc(b.author)+'">'+
-        '<input class="t" style="font-size:.82rem" data-bid="'+b.id+'" data-fld="reason" value="'+esc(b.reason)+'"></div></div>';
+        '<input class="t" style="margin-bottom:4px;font-size:.82rem" data-bid="'+b.id+'" data-fld="reason" value="'+esc(b.reason)+'">'+
+        '<input class="t" style="margin-bottom:4px;font-size:.8rem" data-bid="'+b.id+'" data-fld="workbook" placeholder="📄 워크북 링크 (공식 무료 활동지 URL, 없으면 비워두기)" value="'+esc(b.workbook||'')+'">'+
+        '<input class="t" style="font-size:.8rem" data-bid="'+b.id+'" data-fld="buy_url" placeholder="🛒 구매 링크 (쿠팡 파트너스 URL)" value="'+esc(b.buy_url||'')+'"></div></div>';
     }).join('');
     f.innerHTML=
       '<label class="f">월 라벨 <span class="hint">(예: 2026년 10월 · 1개월차)</span></label><input class="t" id="fml" value="'+esc(c.month_label)+'">'+
@@ -159,23 +161,22 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<label class="f">읽어주는 방법</label><textarea class="t" id="frm">'+esc(c.read_method)+'</textarea>'+
       '<label class="f">책 활용 아이디어 <span class="hint">(한 줄에 하나)</span></label><textarea class="t" id="fact">'+esc(c.activities)+'</textarea>'+
       '<label class="f">관련 영어표현 <span class="hint">(한 줄에 하나 · "English - 한글")</span></label><textarea class="t" id="fexp">'+esc(c.expressions)+'</textarea>'+
-      '<label class="f">워크북·활동지 <span class="hint">(한 줄에 하나 · "자료 이름 | https://링크")</span></label><textarea class="t" id="fwb" placeholder="Dear Zoo 공식 활동지 | https://...">'+esc(c.workbooks)+'</textarea>'+
-      '<div class="hint">⚠️ 파일을 직접 올리지 말고, 출판사·작가 공식 무료 자료의 <b>링크</b>만 넣으세요 (재배포는 저작권 문제).</div>'+
-      '<label class="f">이번 주제 5권 (수정 가능)</label>'+bh;
+      '<label class="f">이번 주제 5권 <span class="hint">(제목·저자·한줄소개 + 📄워크북/🛒구매 링크)</span></label>'+
+      '<div class="hint" style="margin-bottom:6px">📄 워크북은 출판사·작가 <b>공식 무료 활동지 링크</b>만(파일 재배포 금지). 없으면 비워두면 카드에 버튼이 안 보여요. 🛒 구매는 쿠팡 파트너스 링크.</div>'+bh;
   }
   async function saveContent(){
     var key=STATE.editKey, st=document.getElementById('saveSt');
     st.textContent='저장 중…';
-    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),workbooks:val('fwb'),updated_at:new Date().toISOString()};
+    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),updated_at:new Date().toISOString()};
     var r1=await client.from('content').upsert(content);
     if(r1.error){st.textContent='실패: '+r1.error.message;return;}
     // 책 업데이트
     var inputs=document.querySelectorAll('#form input[data-bid]'), byId={};
     inputs.forEach(function(inp){var id=inp.dataset.bid;(byId[id]=byId[id]||{id:+id})[inp.dataset.fld]=inp.value;});
     var errs=0;
-    for(var id in byId){var u=byId[id];var r=await client.from('books').update({title:u.title,author:u.author,reason:u.reason}).eq('id',u.id);if(r.error)errs++;}
+    for(var id in byId){var u=byId[id];var r=await client.from('books').update({title:u.title,author:u.author,reason:u.reason,workbook:u.workbook,buy_url:u.buy_url}).eq('id',u.id);if(r.error)errs++;}
     STATE.contentByTheme[key]=content;
-    (STATE.booksByTheme[key]||[]).forEach(function(b){var u=byId[b.id];if(u){b.title=u.title;b.author=u.author;b.reason=u.reason;}});
+    (STATE.booksByTheme[key]||[]).forEach(function(b){var u=byId[b.id];if(u){b.title=u.title;b.author=u.author;b.reason=u.reason;b.workbook=u.workbook;b.buy_url=u.buy_url;}});
     st.textContent=errs?('내용 저장됨, 책 '+errs+'건 실패'):'✓ 저장 완료';
   }
   function val(id){var e=document.getElementById(id);return e?e.value:'';}
@@ -193,6 +194,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var clicks={};ev.filter(function(e){return e.type==='book_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||('#'+e.book_id);clicks[t]=(clicks[t]||0)+1;});
     var wbClicks={};ev.filter(function(e){return e.type==='workbook_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||'?';wbClicks[t]=(wbClicks[t]||0)+1;});
     var wbTotal=ev.filter(function(e){return e.type==='workbook_click';}).length;
+    var buyClicks={};ev.filter(function(e){return e.type==='buy_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||'?';buyClicks[t]=(buyClicks[t]||0)+1;});
+    var buyTotal=ev.filter(function(e){return e.type==='buy_click';}).length;
     var dwell=ev.filter(function(e){return e.type==='dwell'&&e.meta&&e.meta.seconds;}).map(function(e){return e.meta.seconds;});
     var avgD=dwell.length?Math.round(dwell.reduce(function(a,b){return a+b;},0)/dwell.length):0;
     function rows(obj){return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).map(function(k){return '<tr><td>'+esc(k)+'</td><td>'+obj[k]+'</td></tr>';}).join('')||'<tr><td colspan=2 class="hint">데이터 없음</td></tr>';}
@@ -202,11 +205,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     body.innerHTML=
       '<div class="card"><div class="kgrid">'+
         kpi(pv.length,'페이지 방문')+kpi(Object.keys(sess).length,'순 방문자(세션)')+
-        kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(wbTotal,'워크북 열기')+kpi(avgD+'s','평균 체류')+
+        kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(wbTotal,'워크북 열기')+kpi(buyTotal,'구매 클릭')+kpi(avgD+'s','평균 체류')+
       '</div></div>'+
       '<div class="card"><h3>주제별 방문</h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 클릭한 책</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(clicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 연 워크북</h3><table><thead><tr><th>자료</th><th>열기</th></tr></thead><tbody>'+rows(wbClicks)+'</tbody></table></div>'+
+      '<div class="card"><h3>많이 누른 구매 링크</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(buyClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>최근 이벤트</h3><table><thead><tr><th>시각</th><th>유형</th><th>주제</th><th>비고</th></tr></thead><tbody>'+(recent||'<tr><td colspan=4 class="hint">아직 없음</td></tr>')+'</tbody></table></div>';
   }
   function kpi(n,l){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}

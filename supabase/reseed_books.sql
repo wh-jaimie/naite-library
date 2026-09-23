@@ -1,9 +1,14 @@
 -- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수상/국내인기 컬럼 (재실행 안전)
--- 테마·콘텐츠·설정은 건드리지 않음. SQL Editor 에서 Run.
+-- 테마·콘텐츠·설정은 건드리지 않음. 수동 입력한 워크북/구매 링크는 (theme_key,title)로 보존. SQL Editor 에서 Run.
 alter table public.books add column if not exists pop_rank int default 0;
 alter table public.books add column if not exists lib_loans int default 0;
 alter table public.books add column if not exists award text default '';
 alter table public.books add column if not exists kr_popular boolean default false;
+alter table public.books add column if not exists workbook text default '';
+alter table public.books add column if not exists buy_url text default '';
+-- 워크북/구매 링크 임시 보관 후 재삽입
+drop table if exists _book_links;
+create temporary table _book_links as select theme_key, title, workbook, buy_url from public.books;
 delete from public.books;
 
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('animals',1,'조작북','Dear Zoo','Rod Campbell','https://covers.openlibrary.org/b/id/10577107-L.jpg','플랩을 열면 동물원이 보낸 동물이 나오는 국민 플랩북',1,0,'',true,0);
@@ -41,7 +46,7 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('bedtime',3,'반복','Goodnight Moon','Margaret Wise Brown','https://covers.openlibrary.org/b/id/35556-L.jpg','방 안 사물에 "굿나잇"을 반복하는 잠자리 고전',1,84,'',false,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('bedtime',4,'유머·반전','Llama Llama Red Pajama','Anna Dewdney','https://covers.openlibrary.org/b/id/6532260-L.jpg','라마 아기의 잠자리 투정 — 라임',1,0,'',false,3);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('bedtime',5,'스토리','A Big Mooncake for Little Star','Grace Lin','https://covers.openlibrary.org/b/id/12659990-L.jpg','달을 조금씩 베어 먹는 아기별 이야기',0,0,'🏅 칼데콧 아너 2019',true,4);
-insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('feelings',1,'조작북','The Color Monster: A Pop-Up Book of Feelings','Anna Llenas','https://covers.openlibrary.org/b/isbn/9780316574525-L.jpg','뒤죽박죽 감정을 색으로 정리하는 팝업북',1,0,'',true,0);
+insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('feelings',1,'조작북','The Color Monster: A Pop-Up Book of Feelings','Anna Llenas','https://covers.openlibrary.org/b/isbn/9780316450010-L.jpg','뒤죽박죽 감정을 색으로 정리하는 팝업북',1,0,'',true,0);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('feelings',2,'라임','The Way I Feel','Janan Cain','https://covers.openlibrary.org/b/id/6815337-L.jpg','다양한 감정을 라임으로 소개',0,0,'',false,1);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('feelings',3,'반복','It''s Okay to Be Different','Todd Parr','https://covers.openlibrary.org/b/id/10534012-L.jpg','다름을 긍정하는 토드 파의 반복 메시지',0,0,'',true,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('feelings',4,'유머·반전','The Bad Seed','Jory John','https://covers.openlibrary.org/b/id/36480-L.jpg','삐딱한 씨앗의 변화 — 유머로 배우는 감정',1,0,'',false,3);
@@ -126,3 +131,10 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('imagination',3,'반복','Not a Box','Antoinette Portis','https://covers.openlibrary.org/b/id/45783-L.jpg','"상자 아니야!" 반복하며 상상하기',0,0,'',false,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('imagination',4,'유머·반전','Sam & Dave Dig a Hole','Mac Barnett','https://covers.openlibrary.org/b/id/7337430-L.jpg','구멍 파기와 그림의 기막힌 반전',0,81,'🏅 칼데콧 아너 2015',true,3);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('imagination',5,'스토리','Harold and the Purple Crayon','Crockett Johnson','https://covers.openlibrary.org/b/id/50758-L.jpg','크레용으로 세상을 그리는 상상 이야기',1,0,'',false,4);
+
+-- 보존해 둔 워크북/구매 링크 복원
+update public.books b set workbook=l.workbook, buy_url=l.buy_url
+  from _book_links l
+  where l.theme_key=b.theme_key and l.title=b.title
+    and (coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');
+drop table _book_links;

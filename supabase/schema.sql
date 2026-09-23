@@ -30,6 +30,8 @@ create table if not exists public.books (
   lib_loans  int default 0,   -- 국내 공공도서관 대출 건수
   award      text default '', -- 수상(칼데콧 등)
   kr_popular boolean default false, -- 국내 서점 통합 베스트
+  workbook   text default '',  -- 책별 워크북 링크(공식 무료 활동지)
+  buy_url    text default '',  -- 책별 구매 링크(쿠팡 파트너스)
   sort       int default 0
 );
 
