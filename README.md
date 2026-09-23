@@ -1,9 +1,9 @@
-# 나이테 영어 그림책 책장 (joy-curation)
+# 나이테 영어도서관 (naite-library)
 
 파닉스 전 유아를 위해, **전세계 독자가 가장 많이 읽은 영어 그림책**을 연령대별로 고를 수 있게
 정리한 큐레이션. 데이터로 뽑고 표지·추천 이유를 붙여 웹페이지로 발행한다.
 
-🔗 **발행 페이지**: https://wh-jaimie.github.io/joy-curation/
+🔗 **발행 페이지**: https://wh-jaimie.github.io/naite-library/
 
 ## 왜 이렇게 만들었나
 

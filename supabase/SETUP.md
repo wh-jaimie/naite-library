@@ -18,7 +18,7 @@ GitHub Pages(정적 프론트) + Supabase(DB/Auth/KPI) 조합. Claude 없이 독
 ## 3. 관리자 로그인 설정 (매직링크)
 1. Supabase → **Authentication → Providers → Email** 활성화 (매직링크 기본 ON).
 2. **Authentication → URL Configuration → Site URL** 에 GitHub Pages 주소 입력
-   (예: `https://wh-jaimie.github.io/joy-curation`), Redirect URLs 에도 `.../study/admin.html` 추가.
+   (예: `https://wh-jaimie.github.io/naite-library`), Redirect URLs 에도 `.../study/admin.html` 추가.
 3. (본인 이메일은 별도 가입 불필요 — 매직링크 최초 로그인 시 자동 생성됨. `is_admin()`이 이메일로 판별.)
 
 ## 4. 프론트 연결
