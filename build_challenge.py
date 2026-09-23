@@ -191,7 +191,7 @@ KR_TITLES = [
 "From Head to Toe","The Grouchy Ladybug","Maisy's Wonderful Weather Book","Shark in the Park",
 "This Is Not My Hat","Go Away, Big Green Monster!","Where the Wild Things Are","Creepy Carrots!",
 "Skeleton Hiccups","Polar Bear, Polar Bear, What Do You Hear?","No, David!","Press Here",
-"Sam & Dave Dig a Hole","Don't Push the Button!",
+"Sam & Dave Dig a Hole","Don't Push the Button!","Maisy's Wonderful Weather Book",
 ]
 
 def norm(t):
