@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""조이네영어도서관 사이트: 랜딩 + 세계100 + 국내100 + 주제별 + badges.js"""
+"""나이테 영어도서관 사이트: 랜딩 + 세계100 + 국내100 + 주제별 + badges.js"""
 import os, json, re, time, html, urllib.request, urllib.parse
 from data_domestic import DOMESTIC_ALL, AWARDS_EXTRA
 from data_global import GLOBAL_100
@@ -88,9 +88,9 @@ def page(title, body, search=True):
     sj="""<script>var q=document.getElementById('q');if(q)q.addEventListener('input',function(e){var v=e.target.value.toLowerCase().trim();document.querySelectorAll('[data-text]').forEach(function(c){c.style.display=(!v||c.getAttribute('data-text').indexOf(v)>=0)?'':'none';});});
 document.querySelectorAll('.cv img').forEach(function(im){im.addEventListener('error',function(){im.parentElement.classList.add('noimg');im.remove();});});</script>"""
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>{esc(title)}</title>{FONT}<style>{CSS}</style></head><body>
-<div class="top"><div class="wrap"><a class="brand" href="index.html">📚 조이네영어도서관</a>{si}</div></div>
+<div class="top"><div class="wrap"><a class="brand" href="index.html">📚 나이테 영어도서관</a>{si}</div></div>
 {body}
-<div class="foot"><div class="wrap">조이네영어도서관 · 큐레이션: 전세계 인기(Goodreads)·국내 서점 통합순위 · 표지: Open Library</div></div>
+<div class="foot"><div class="wrap">나이테 영어도서관 · 큐레이션: 전세계 인기(Goodreads)·국내 서점 통합순위 · 표지: Open Library</div></div>
 {sj}</body></html>"""
 def card(cover,title,author,rank=None,badges=None,extra=""):
     bg="".join(f'<span class="bg {c}">{esc(t)}</span>' for c,t in (badges or []))

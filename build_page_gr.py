@@ -43,7 +43,7 @@ payload = {"books": books, "themes": themes_payload, "bands": [
     ["C", "미취학", "4~6세", band_counts.get("미취학 (4~6세)", 0)],
 ]}
 
-TEMPLATE = r"""<title>조이네 영어 그림책 책장</title>
+TEMPLATE = r"""<title>나이테 영어 그림책 책장</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
 :root{
@@ -185,7 +185,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 </style>
 
 <header class="top"><div class="wrap">
-  <div class="brand"><span class="mark">책</span><span class="full">조이네 영어 그림책 책장</span></div>
+  <div class="brand"><span class="mark">책</span><span class="full">나이테 영어 그림책 책장</span></div>
   <div class="search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
     <input id="q" type="search" placeholder="제목·작가 검색" autocomplete="off">
@@ -244,7 +244,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 </main>
 
 <footer><div class="wrap">
-  <p><strong>조이네 영어 그림책 책장</strong> — 파닉스 전 큐레이션</p>
+  <p><strong>나이테 영어 그림책 책장</strong> — 파닉스 전 큐레이션</p>
   <p>인기순 출처: Goodreads 인기 셸프(board-books·toddler·picture-books) · 표지: Open Library · 국내 대출: 도서관 정보나루</p>
 </div></footer>
 

@@ -135,7 +135,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 </main>
 
 <footer><div class="wrap">
-  <p><strong>파닉스 전 120권 챌린지</strong> — 조이네 영어 그림책 책장</p>
+  <p><strong>파닉스 전 120권 챌린지</strong> — 나이테 영어 그림책 책장</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
 </div></footer>
 

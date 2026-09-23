@@ -133,7 +133,7 @@ ul.li li{margin:5px 0}
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(t.read_method?'<div class="prose">'+esc(t.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    h+='<div class="foot">조이네 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요</div>';
+    h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요</div>';
     h+='</div></div>';
     app.innerHTML=h;
   }
@@ -221,7 +221,7 @@ ul.li li{margin:5px 0}
     return '<!doctype html>'+LT+'html lang="ko">'+LT+'head>'+
       LT+'meta charset="utf-8">'+
       LT+'meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'+
-      LT+'title>조이네 엄마표영어 스터디'+LT+'/title>'+
+      LT+'title>나이테 엄마표영어 스터디'+LT+'/title>'+
       LT+'style id="appcss">'+css+LT+'/style>'+LT+'/head>'+LT+'body>'+
       LT+'div id="app">'+LT+'/div>'+
       LT+'script type="application/json" id="APP_DATA">'+json+LT+'/script>'+
