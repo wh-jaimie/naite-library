@@ -10,7 +10,5 @@ Dear Zoo — 활동지 PDF (World Book Day) | https://www.worldbookday.com/wp-co
 Brown Bear — 공식 다운로드 자료 (Eric Carle) | https://eric-carle.com/resources/downloads-and-activities/
 Brown Bear — 색칠·활동 템플릿 (DLTK-Teach) | https://www.dltk-teach.com/books/brownbear/
 Giraffes Can''t Dance — 활동지 (Hachette Schools) | https://www.hachetteschools.co.uk/resource/giraffes-cant-dance-activity-sheets/
-Giraffes Can''t Dance — 워드서치·퍼즐 (RIF.org) | https://www.rif.org/literacy-central/book/giraffe-cant-dance
-Moo, Baa, La La La! — 우리 워크북 (색칠·소리잇기·따라쓰기) | worksheets/moo-baa-la-la-la.html
-The Crocodile Who Didn''t Like Water — 우리 워크북 (색칠·순서·감정·따라쓰기) | worksheets/the-crocodile-who-didnt-like-water.html'
+Giraffes Can''t Dance — 워드서치·퍼즐 (RIF.org) | https://www.rif.org/literacy-central/book/giraffe-cant-dance'
 where theme_key = 'animals';

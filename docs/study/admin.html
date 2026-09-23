@@ -57,24 +57,27 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   var STATE={tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, editKey:null, user:null};
 
   // ---------- AUTH ----------
-  function renderLogin(sentTo){
+  function renderLogin(){
+    var defEmail=window.ADMIN_EMAIL||'';
     root.innerHTML='<div class="wrap"><div class="login card">'+
       '<h1>스터디 관리자</h1>'+
-      '<p class="hint" style="margin:10px 0 16px">관리자 이메일로 로그인하세요. 입력하면 <b>매직 링크</b>가 메일로 갑니다.</p>'+
-      (sentTo?('<div class="warn">📧 <b>'+esc(sentTo)+'</b> 로 로그인 링크를 보냈어요. 메일의 링크를 누르면 이 페이지로 돌아옵니다.</div>'):
-        ('<input class="t" id="email" type="email" placeholder="admin@example.com" autocomplete="email">'+
-         '<button class="btn cor" id="send" style="margin-top:12px;width:100%">로그인 링크 받기</button>'+
-         '<div class="status" id="lst" style="margin-top:10px"></div>'))+
+      '<p class="hint" style="margin:10px 0 16px">관리자 이메일과 비밀번호로 로그인하세요.</p>'+
+      '<input class="t" id="email" type="email" placeholder="admin@example.com" autocomplete="username" value="'+esc(defEmail)+'" style="margin-bottom:9px">'+
+      '<input class="t" id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">'+
+      '<button class="btn cor" id="signin" style="margin-top:12px;width:100%">로그인</button>'+
+      '<div class="status" id="lst" style="margin-top:10px"></div>'+
       '</div></div>';
-    var s=document.getElementById('send');
-    if(s)s.addEventListener('click',async function(){
-      var email=(document.getElementById('email').value||'').trim();
-      if(!email){document.getElementById('lst').textContent='이메일을 입력하세요.';return;}
-      document.getElementById('lst').textContent='보내는 중…';
-      var r=await client.auth.signInWithOtp({email:email,options:{emailRedirectTo:location.href.split('#')[0]}});
-      if(r.error)document.getElementById('lst').textContent='실패: '+r.error.message;
-      else renderLogin(email);
-    });
+    var email=document.getElementById('email'), pw=document.getElementById('pw'), st=document.getElementById('lst');
+    (defEmail?pw:email).focus();
+    async function doLogin(){
+      var e=(email.value||'').trim(), p=pw.value||'';
+      if(!e||!p){st.textContent='이메일과 비밀번호를 입력하세요.';return;}
+      st.textContent='로그인 중…';
+      var r=await client.auth.signInWithPassword({email:e,password:p});
+      if(r.error){st.textContent='로그인 실패: '+r.error.message;}
+    }
+    document.getElementById('signin').addEventListener('click',doLogin);
+    pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')doLogin();});
   }
 
   async function boot(){

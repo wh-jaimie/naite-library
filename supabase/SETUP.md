@@ -15,11 +15,16 @@ GitHub Pages(정적 프론트) + Supabase(DB/Auth/KPI) 조합. Claude 없이 독
 3. 실행(Run).
 4. 다시 New query → `seed.sql` 붙여넣고 실행 (24주제 120권 입력).
 
-## 3. 관리자 로그인 설정 (매직링크)
-1. Supabase → **Authentication → Providers → Email** 활성화 (매직링크 기본 ON).
-2. **Authentication → URL Configuration → Site URL** 에 GitHub Pages 주소 입력
-   (예: `https://wh-jaimie.github.io/naite-library`), Redirect URLs 에도 `.../study/admin.html` 추가.
-3. (본인 이메일은 별도 가입 불필요 — 매직링크 최초 로그인 시 자동 생성됨. `is_admin()`이 이메일로 판별.)
+## 3. 관리자 로그인 설정 (이메일 + 비밀번호)
+매직링크 대신 **비밀번호로 바로 로그인**하도록 바꿨다. 관리자 계정을 한 번만 만들면 된다.
+1. Supabase → **Authentication → Providers → Email** 활성화 (Confirm email 은 꺼도 됨).
+2. Supabase → **Authentication → Users → Add user → Create new user**
+   - Email: `jabbaek@gmail.com` (config.js 의 `ADMIN_EMAIL` 과 동일하게)
+   - Password: 원하는 비밀번호 입력
+   - **Auto Confirm User: 켜기** (메일 확인 없이 바로 사용)
+3. 끝. `docs/study/admin.html` 에서 이 이메일+비밀번호로 로그인하면 된다.
+   (이메일은 미리 채워져 있어 **비밀번호만** 치면 됨. `is_admin()` 이 이메일로 편집 권한을 판별.)
+   > 비밀번호를 바꾸려면 같은 화면(Users)에서 해당 사용자 → **Reset password / Update**.
 
 ## 4. 프론트 연결
 프로젝트 **URL + anon key + 관리자 이메일** 을 개발자(Claude)에게 전달하면
