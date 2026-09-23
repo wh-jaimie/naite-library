@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""challenge.json -> 파닉스 전 120권 챌린지 코스 페이지 (challenge.html)"""
+"""challenge.json -> 나이테 120 (파닉스 전 첫 영어책 코스) 페이지 (challenge.html)"""
 import json, os
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "output", "challenge.json")
@@ -7,7 +7,7 @@ OUT = os.path.join(HERE, "output", "challenge.html")
 data = json.load(open(DATA, encoding="utf-8"))
 payload = json.dumps(data, ensure_ascii=False)
 
-TEMPLATE = r"""<title>파닉스 전 120권 챌린지</title>
+TEMPLATE = r"""<title>나이테 120 — 파닉스 전, 첫 영어책 코스</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap');
 :root{
@@ -97,19 +97,19 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 </style>
 
 <header class="top"><div class="wrap">
-  <div class="brand"><span class="mark">120</span><span>파닉스 전 120권 챌린지</span></div>
+  <div class="brand"><span class="mark">120</span><span>나이테 120</span></div>
   <a class="back" href="index.html">← 전체 책장</a>
   <button class="themebtn" id="theme" title="테마 전환">◐</button>
 </div></header>
 
 <main class="wrap">
   <section class="hero">
-    <div class="eyebrow">엄마가 매번 고르지 않아도 되는 코스</div>
-    <h1>파닉스 전 120권,<br>그냥 따라오세요</h1>
-    <p class="lead">뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색.
-      이 반복을 없앴어요. <strong>24개 주제 × 5권</strong>, 각 주제는
-      <strong>조작북·라임·반복·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
-      순서·반복은 자유예요.</p>
+    <div class="eyebrow">파닉스 전, 첫 영어책 코스</div>
+    <h1>나이테 120</h1>
+    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong><br>
+      뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
+      <strong>24개 주제 × 5권</strong>, 각 주제는 <strong>조작북·라임·반복·유머·스토리</strong>
+      5가지 유형을 골고루 담았습니다. 순서·반복은 자유예요.</p>
 
     <div class="panel">
       <div class="r1">
@@ -135,7 +135,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 </main>
 
 <footer><div class="wrap">
-  <p><strong>파닉스 전 120권 챌린지</strong> — 나이테 영어 그림책 책장</p>
+  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어도서관</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
 </div></footer>
 
