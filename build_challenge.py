@@ -36,8 +36,8 @@ CURRICULUM = [
  (1,"Lemons Are Not Red","Laura Vaccaro Seeger","구멍(다이컷)으로 색이 바뀌는 놀이책"),
  (2,"Mary Wore Her Red Dress","Merle Peek","색깔 옷을 노래하는 반복 라임"),
  (3,"Where Is the Green Sheep?","Mem Fox","온갖 양이 나오다 초록 양 찾기 — 색+반복"),
- (4,"Pete the Cat: I Love My White Shoes","Eric Litwin","신발 색이 바뀌어도 쿨한 고양이의 노래"),
- (5,"A Color of His Own","Leo Lionni","자기 색을 찾고 싶은 카멜레온 이야기"),
+ (4,"The Day the Crayons Quit","Drew Daywalt","크레용들이 파업하며 보낸 편지 — 색+유머 명작"),
+ (5,"Pete the Cat: I Love My White Shoes","Eric Litwin","신발 색이 바뀌어도 쿨한 고양이의 노래 이야기"),
 ]),
 ("🔢","Numbers","숫자",[
  (1,"600 Black Spots","David A. Carter","누르고 넘기면 검은 점이 변신하는 팝업북"),
@@ -49,7 +49,7 @@ CURRICULUM = [
 ("👨‍👩‍👧","Family","가족",[
  (1,"Where Is Baby's Mommy?","Karen Katz","플랩을 열며 엄마를 찾는 플랩북"),
  (2,"Is Your Mama a Llama?","Deborah Guarino","\"너희 엄마는 라마야?\" 추측하는 라임"),
- (3,"Are You My Mother?","P.D. Eastman","아기 새가 \"우리 엄마야?\" 반복하며 찾기"),
+ (3,"Guess How Much I Love You","Sam McBratney","사랑의 크기를 재보는 토끼의 잠자리 이야기"),
  (4,"My Mum","Anthony Browne","엄마가 얼마나 대단한지 과장해 그린 따뜻한 유머"),
  (5,"Peppa Pig: Peppa Goes Swimming","Peppa Pig","전세계 국민 캐릭터 페파의 일상 이야기"),
 ]),
@@ -57,14 +57,14 @@ CURRICULUM = [
  (1,"Tuck Me In!","Dean Hacohen","이불(플랩)을 덮어주며 동물을 재우는 플랩북"),
  (2,"The Going to Bed Book","Sandra Boynton","잘 준비 순서를 노래하는 라임"),
  (3,"Goodnight Moon","Margaret Wise Brown","방 안 사물에 \"굿나잇\"을 반복하는 잠자리 고전"),
- (4,"How Do Dinosaurs Say Good Night?","Jane Yolen","공룡의 우스운 잠투정"),
+ (4,"Llama Llama Red Pajama","Anna Dewdney","라마 아기의 잠자리 투정 — 라임"),
  (5,"A Big Mooncake for Little Star","Grace Lin","달을 조금씩 베어 먹는 아기별 이야기"),
 ]),
 ("😊","Feelings","감정",[
  (1,"The Color Monster: A Pop-Up Book of Feelings","Anna Llenas","뒤죽박죽 감정을 색으로 정리하는 팝업북"),
  (2,"The Way I Feel","Janan Cain","다양한 감정을 라임으로 소개"),
  (3,"It's Okay to Be Different","Todd Parr","다름을 긍정하는 토드 파의 반복 메시지"),
- (4,"The Pigeon Has Feelings, Too!","Mo Willems","비둘기의 널뛰는 감정을 웃기게"),
+ (4,"The Bad Seed","Jory John","삐딱한 씨앗의 변화 — 유머로 배우는 감정"),
  (5,"Knuffle Bunny: A Cautionary Tale","Mo Willems","애착 인형을 잃어버린 아기의 대소동"),
 ]),
 ("👣","Body","몸",[
@@ -76,7 +76,7 @@ CURRICULUM = [
 ]),
 ("🐛","Bugs","곤충",[
  (1,"The Very Busy Spider","Eric Carle","볼록한 거미줄을 만지며 보는 촉감북"),
- (2,"Some Bugs","Angela DiTerlizzi","뒷마당 곤충들을 소개하는 라임"),
+ (2,"Superworm","Julia Donaldson","슈퍼 지렁이의 활약 — 라임 서사"),
  (3,"The Very Hungry Caterpillar","Eric Carle","요일·음식이 반복되는 구멍 뚫린 필독서"),
  (4,"The Grouchy Ladybug","Eric Carle","싸움 걸다 망신당하는 심술 무당벌레"),
  (5,"The Very Quiet Cricket","Eric Carle","소리를 못 내던 귀뚜라미 이야기"),
@@ -93,7 +93,7 @@ CURRICULUM = [
  (2,"Stick Man","Julia Donaldson","막대 아빠의 사계절 모험 — 라임 서사"),
  (3,"The Carrot Seed","Ruth Krauss","\"안 나올 거야\" 반복 속 믿음의 씨앗"),
  (4,"The Leaf Thief","Alice Hemming","누가 내 잎을 훔쳤지? 가을을 알아가는 이야기"),
- (5,"The Tiny Seed","Eric Carle","작은 씨앗의 사계절 여행"),
+ (5,"The Snail and the Whale","Julia Donaldson","작은 달팽이의 큰 바다 모험 — 라임 서사"),
 ]),
 ("🌦️","Weather & Seasons","날씨·계절",[
  (1,"Maisy's Wonderful Weather Book","Lucy Cousins","플랩·바퀴로 날씨를 배우는 메이지 조작북"),
@@ -105,7 +105,7 @@ CURRICULUM = [
 ("🐶","Pets","반려동물",[
  (1,"Where's Spot?","Eric Hill","플랩으로 강아지 스팟을 찾는 고전 플랩북"),
  (2,"Hairy Maclary from Donaldson's Dairy","Lynley Dodd","동네 개들이 줄줄이 나오는 라임"),
- (3,"Kitten's First Full Moon","Kevin Henkes","달을 우유로 착각한 아기 고양이 — 칼데콧 메달"),
+ (3,"Go, Dog. Go!","P.D. Eastman","쉬운 단어가 반복되는 개들의 소동"),
  (4,"Bark, George","Jules Feiffer","엉뚱한 소리를 내는 강아지의 반전 유머"),
  (5,"Hot Dog","Doug Salati","무더위를 피해 바닷가로 간 강아지 — 칼데콧 메달"),
 ]),
@@ -118,7 +118,7 @@ CURRICULUM = [
 ]),
 ("🌊","Ocean","바다",[
  (1,"Shark in the Park","Nick Sharratt","망원경 구멍으로 공원을 보는 참여형 라임"),
- (2,"Commotion in the Ocean","Giles Andreae","바다 동물들을 소개하는 라임"),
+ (2,"The Pout-Pout Fish","Deborah Diesen","시무룩 물고기의 반전 — 라임"),
  (3,"Hooray for Fish!","Lucy Cousins","온갖 물고기가 이어지는 반복"),
  (4,"This Is Not My Hat","Jon Klassen","모자를 훔친 물고기의 그림 반전"),
  (5,"Swimmy","Leo Lionni","함께의 힘을 배우는 물고기 — 칼데콧 아너"),
@@ -132,7 +132,7 @@ CURRICULUM = [
 ]),
 ("🎃","Halloween","할로윈",[
  (1,"Where Is Baby's Pumpkin?","Karen Katz","플랩으로 할로윈 물건을 찾는 플랩북"),
- (2,"Five Little Pumpkins","전래동요 (Traditional)","호박 다섯 개의 전래 라임"),
+ (2,"Room on the Broom","Julia Donaldson","마녀 빗자루에 동물이 타는 라임 이야기"),
  (3,"The Little Old Lady Who Was Not Afraid of Anything","Linda Williams","쫓아오는 물건들의 누적 반복"),
  (4,"Creepy Carrots!","Aaron Reynolds","당근이 쫓아온다?! 오싹+반전 유머"),
  (5,"Skeleton Hiccups","Margery Cuyler","딸꾹질 멈추려는 해골의 우스운 소동"),
@@ -156,7 +156,7 @@ CURRICULUM = [
  (2,"Llama Llama Misses Mama","Anna Dewdney","첫 등원의 불안을 달래는 라임"),
  (3,"Do You Want to Be My Friend?","Eric Carle","\"내 친구 될래?\"를 반복하는 우정책"),
  (4,"We Don't Eat Our Classmates","Ryan T. Higgins","친구를 먹으면 안 돼! 공룡의 유머"),
- (5,"The Kissing Hand","Audrey Penn","손바닥 뽀뽀로 등원 불안을 달래는 이야기"),
+ (5,"Chrysanthemum","Kevin Henkes","이름 때문에 속상한 생쥐 — 자존감 이야기"),
 ]),
 ("🛁","Daily Routine","생활습관",[
  (1,"Brush Your Teeth, Please","Leslie McGuire","팝업으로 양치를 배우는 생활습관 조작북"),
