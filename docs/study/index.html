@@ -37,10 +37,18 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .book .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:10px}
 .book .act{flex:1 1 45%;min-width:62px;text-align:center;font-size:.72rem;font-weight:800;padding:7px 4px;border-radius:8px;text-decoration:none;border:1px solid var(--line);transition:filter .12s}
 .book .act:hover{filter:brightness(.96)}
-.book .act.ra{background:#f6ead9;color:#8a5a1a}
 .book .act.wb{background:#eef3ea;color:var(--tealD)}
 .book .act.buy{background:var(--coral);color:#fff;border-color:var(--coral)}
 .disc{font-size:.74rem;color:var(--soft);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin-top:12px}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.vid{background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+.vid .fr{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer}
+.vid .fr img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .15s}
+.vid .fr:hover img{filter:brightness(.82)}
+.vid .fr iframe{width:100%;height:100%;border:0;display:block}
+.vid .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.vid .pl svg{width:60px;height:60px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))}
+.vid .vt{padding:9px 12px;font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:.9rem;line-height:1.25}
 .empty{color:var(--soft);font-style:italic}
 .notice{max-width:640px;margin:60px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:18px 20px;color:#6b5900}
 .foot{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
@@ -68,6 +76,8 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 
   function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
   function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
+  function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
+  var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
 
   function render(theme,books,content){
     curKey=theme.key;
@@ -79,7 +89,6 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
       if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
       var acts='';
-      if(b.read_aloud) acts+='<a class="act ra" href="'+esc(b.read_aloud)+'" target="_blank" rel="noopener" data-ra="'+esc(b.title)+'">📺 낭독</a>';
       if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크북</a>';
       if(b.buy_url)  acts+='<a class="act buy" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">🛒 구매</a>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
@@ -90,6 +99,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
         (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
     }).join('');
     var hasBuy=books.some(function(b){return b.buy_url;});
+    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 낭독 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
     var h='<div class="wrap">';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
@@ -97,13 +107,14 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+'</div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크북</b>은 출판사·작가 공식 무료 활동지로 연결돼요. <b>🛒 구매</b>로 바로 담을 수 있어요.</p><div class="books">'+bh+'</div>'+
        (hasBuy?'<p class="disc">이 페이지의 <b>🛒 구매</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
+    if(vids)h+='<div class="sec"><h2>📺 이번 달 낭독 영상</h2><div class="vids">'+vids+'</div></div>';
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a href="admin.html" style="display:inline-block;margin-top:8px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
     app.innerHTML=h;
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
-    app.querySelectorAll('.act.ra').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('read_aloud_click',{title:el.dataset.ra});});});
+    app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="낭독 영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
     app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
     logEvent('page_view',{theme:theme.ko});
