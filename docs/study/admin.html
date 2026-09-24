@@ -136,7 +136,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var k=document.getElementById('curSel').value;
       document.getElementById('curSt').textContent='설정 중…';
       var r=await client.from('settings').upsert({id:1,current_theme:k});
-      document.getElementById('curSt').textContent=r.error?('실패: '+r.error.message):('✓ 공개 주제: '+k);
+      if(!r.error){await client.from('content').upsert({theme_key:k,published:true});if(STATE.contentByTheme[k])STATE.contentByTheme[k].published=true;}
+      document.getElementById('curSt').textContent=r.error?('실패: '+r.error.message):('✓ 현재 공개 주제: '+k+' (자동 발행됨)');
       if(!r.error)STATE.current=k;
     });
     document.getElementById('edSel').addEventListener('change',function(e){STATE.editKey=e.target.value;renderForm();});
@@ -162,13 +163,16 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<label class="f">읽어주는 방법</label><textarea class="t" id="frm">'+esc(c.read_method)+'</textarea>'+
       '<label class="f">책 활용 아이디어 <span class="hint">(한 줄에 하나)</span></label><textarea class="t" id="fact">'+esc(c.activities)+'</textarea>'+
       '<label class="f">관련 영어표현 <span class="hint">(한 줄에 하나 · "English - 한글")</span></label><textarea class="t" id="fexp">'+esc(c.expressions)+'</textarea>'+
+      '<label class="f">🔒 이 페이지 비밀번호 <span class="hint">(비우면 누구나 열람 · 회원에게 배포할 비번을 넣으세요)</span></label><input class="t" id="fpass" value="'+esc(c.passcode||'')+'">'+
+      '<label class="f" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:12px"><input type="checkbox" id="fpub" '+(c.published?'checked':'')+' style="width:auto;margin:0"> 발행 <span class="hint" style="margin:0">(회원 열람 가능 · 지난 달 보관함에 표시)</span></label>'+
       '<label class="f">이번 주제 5권 <span class="hint">(제목·저자·한줄소개 + 📺낭독/📄워크북/🛒구매 링크)</span></label>'+
       '<div class="hint" style="margin-bottom:6px">📺 낭독은 유튜브 read aloud URL. 📄 워크북은 출판사·작가 <b>공식 무료 활동지 링크</b>만(파일 재배포 금지). 🛒 구매는 쿠팡 파트너스 링크. 빈 칸은 카드에 버튼이 안 보여요.</div>'+bh;
   }
   async function saveContent(){
     var key=STATE.editKey, st=document.getElementById('saveSt');
     st.textContent='저장 중…';
-    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),updated_at:new Date().toISOString()};
+    var pubEl=document.getElementById('fpub');
+    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),passcode:val('fpass'),published:!!(pubEl&&pubEl.checked),updated_at:new Date().toISOString()};
     var r1=await client.from('content').upsert(content);
     if(r1.error){st.textContent='실패: '+r1.error.message;return;}
     // 책 업데이트

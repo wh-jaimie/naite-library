@@ -52,6 +52,18 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .empty{color:var(--soft);font-style:italic}
 .notice{max-width:640px;margin:60px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:18px 20px;color:#6b5900}
 .foot{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
+.cr{font-size:.75rem;color:var(--soft);margin-top:8px;line-height:1.5}
+.gate{max-width:420px;margin:64px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 26px;box-shadow:var(--sh)}
+.gate .mark{width:60px;height:60px;margin:0 auto 14px;display:block}
+.gate h1{font-size:1.6rem}
+.gate p{color:var(--soft);margin:10px 0 16px}
+.gate input{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:1rem;padding:11px 13px;border-radius:11px;text-align:center}
+.gate button{margin-top:12px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:12px;border-radius:11px;cursor:pointer}
+.gate .ge{color:#a2231d;font-size:.85rem;font-weight:700;margin-bottom:10px}
+.archl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.archi{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;box-shadow:var(--sh);color:inherit;font-size:.9rem;transition:transform .13s,box-shadow .13s}
+.archi:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(43,42,38,.13)}
+.archi span{margin-left:auto;color:var(--soft);font-size:.76rem}
 </style>
 </head>
 <body>
@@ -111,8 +123,12 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a href="admin.html" style="display:inline-block;margin-top:8px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
+    h+='<div id="arch"></div>';
+    h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
+       '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
+       '<a href="admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
     app.innerHTML=h;
+    fillArchive(theme.key);
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
     app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="낭독 영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
@@ -123,21 +139,57 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){logEvent('dwell',{seconds:Math.round((Date.now()-start)/1000)});}});
   }
 
-  async function load(){
+  var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
+  function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
+  function passKey(k){return 'joy_pass_'+k;}
+
+  async function fillArchive(curk){
     try{
-      var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();
-      var key=st.data&&st.data.current_theme;
-      if(!key){notice('아직 공개된 주제가 없어요. 관리자 페이지에서 이번 달 주제를 정해주세요.');return;}
-      var th=await client.from('themes').select('*').eq('key',key).maybeSingle();
-      var bk=await client.from('books').select('*').eq('theme_key',key).order('sort');
-      var ct=await client.from('content').select('*').eq('theme_key',key).maybeSingle();
-      if(!th.data){notice('주제 데이터를 찾지 못했어요. seed.sql 을 실행했는지 확인해주세요.');return;}
-      render(th.data, bk.data||[], ct.data);
-    }catch(e){
-      notice('데이터를 불러오지 못했어요. 연결 설정(config.js)과 DB 실행을 확인해주세요.<br><small>'+esc(e.message||e)+'</small>');
-    }
+      var r=await client.rpc('list_published');
+      var list=(r&&r.data)||[];
+      var others=list.filter(function(m){return m.key!==curk;});
+      var el=document.getElementById('arch'); if(!el)return;
+      if(!others.length){el.innerHTML='';return;}
+      el.innerHTML='<div class="sec"><h2>🗂️ 지난 달 스터디</h2>'+
+        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">지난 달 페이지도 각자 비밀번호로 열 수 있어요.</p>'+
+        '<div class="archl">'+others.map(function(m){return '<a class="archi" href="?m='+encodeURIComponent(m.key)+'">'+esc(m.emoji||'📖')+' <b>'+esc(m.ko)+'</b><span>'+esc(m.month_label||m.en||'')+'</span></a>';}).join('')+'</div></div>';
+    }catch(e){}
   }
-  load();
+
+  function showGate(key,msg){
+    app.innerHTML='<div class="wrap"><div class="gate">'+RING+
+      '<h1>나이테 스터디</h1><p>이 페이지는 스터디 회원용이에요.<br>비밀번호를 입력해 주세요.</p>'+
+      (msg?'<div class="ge">'+esc(msg)+'</div>':'')+
+      '<input id="pw" type="password" autocomplete="off" placeholder="비밀번호"><button id="go">입력</button></div></div>';
+    var pw=document.getElementById('pw'),go=document.getElementById('go');
+    pw.focus();
+    function submit(){gate(key,pw.value||'',true);}
+    go.addEventListener('click',submit);
+    pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')submit();});
+  }
+
+  async function gate(key,pass,fromForm){
+    try{
+      var r=await client.rpc('get_study',{p_key:key,p_pass:pass||''});
+      if(r.error){notice('불러오지 못했어요.<br><small>'+esc(r.error.message)+'</small>');return;}
+      var d=r.data||{};
+      if(d.ok){try{if(pass)sessionStorage.setItem(passKey(key),pass);}catch(e){}render(d.theme,d.books||[],d.content||{});return;}
+      if(d.error==='badpass'){try{sessionStorage.removeItem(passKey(key));}catch(e){}showGate(key,fromForm?'비밀번호가 맞지 않아요.':'');return;}
+      if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
+      notice('페이지를 찾지 못했어요.');
+    }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+
+  async function boot(){
+    try{
+      var key=curParam();
+      if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
+      if(!key){notice('아직 공개된 주제가 없어요. 관리자 페이지에서 이번 달 주제를 정해주세요.');return;}
+      var saved='';try{saved=sessionStorage.getItem(passKey(key))||'';}catch(e){}
+      gate(key,saved,false);
+    }catch(e){notice('데이터를 불러오지 못했어요. 연결 설정(config.js)과 DB 실행을 확인해주세요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+  boot();
 })();
 </script>
 </body>

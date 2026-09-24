@@ -56,6 +56,8 @@ create table if not exists public.content (
   activities  text default '',
   expressions text default '',
   workbooks   text default '',
+  passcode    text default '',      -- 페이지별 비밀번호(회원 열람용)
+  published   boolean default false,-- 발행 여부(회원 열람/보관함 표시)
   updated_at  timestamptz default now()
 );
 
@@ -86,13 +88,11 @@ alter table public.content  enable row level security;
 alter table public.settings enable row level security;
 alter table public.events   enable row level security;
 
--- 공개 읽기(부모/방문자)
+-- 공개 읽기: themes/settings 만 공개(목록·현재 달 표시용). content/books 는 비공개 → RPC로만.
 create policy "public read themes"   on public.themes   for select using (true);
-create policy "public read books"    on public.books    for select using (true);
-create policy "public read content"  on public.content  for select using (true);
 create policy "public read settings" on public.settings for select using (true);
 
--- 관리자만 쓰기
+-- 관리자만 쓰기(및 관리자 읽기 포함)
 create policy "admin write themes"   on public.themes   for all using (public.is_admin()) with check (public.is_admin());
 create policy "admin write books"    on public.books    for all using (public.is_admin()) with check (public.is_admin());
 create policy "admin write content"  on public.content  for all using (public.is_admin()) with check (public.is_admin());
@@ -101,6 +101,39 @@ create policy "admin write settings" on public.settings for all using (public.is
 -- KPI: 누구나 삽입 가능(방문자 로그), 조회는 관리자만
 create policy "anyone insert events" on public.events for insert with check (true);
 create policy "admin read events"    on public.events for select using (public.is_admin());
+
+-- ── 스터디 페이지 접근: 비밀번호 검증 후에만 콘텐츠 반환(서버측) ──
+create or replace function public.list_published()
+returns table(key text, emoji text, ko text, en text, month_label text, sort int)
+language sql stable security definer set search_path = public as $$
+  select t.key, t.emoji, t.ko, t.en, coalesce(c.month_label,''), t.sort
+  from public.themes t
+  join public.content c on c.theme_key = t.key
+  where coalesce(c.published,false) = true
+  order by t.sort;
+$$;
+
+create or replace function public.get_study(p_key text, p_pass text)
+returns jsonb
+language plpgsql stable security definer set search_path = public as $$
+declare v_pass text; v_pub boolean; v_theme jsonb; v_content jsonb; v_books jsonb;
+begin
+  select to_jsonb(t) into v_theme from public.themes t where t.key = p_key;
+  if v_theme is null then return jsonb_build_object('ok', false, 'error', 'notfound'); end if;
+  select coalesce(c.passcode,''), coalesce(c.published,false) into v_pass, v_pub
+    from public.content c where c.theme_key = p_key;
+  if not coalesce(v_pub, false) then return jsonb_build_object('ok', false, 'error', 'unpublished'); end if;
+  if v_pass <> '' and coalesce(p_pass,'') <> v_pass then
+    return jsonb_build_object('ok', false, 'error', 'badpass');
+  end if;
+  select (to_jsonb(c) - 'passcode') into v_content from public.content c where c.theme_key = p_key;
+  select coalesce(jsonb_agg(to_jsonb(b) order by b.sort), '[]'::jsonb) into v_books
+    from public.books b where b.theme_key = p_key;
+  return jsonb_build_object('ok', true, 'theme', v_theme, 'content', v_content, 'books', v_books);
+end $$;
+
+grant execute on function public.list_published()      to anon, authenticated;
+grant execute on function public.get_study(text, text) to anon, authenticated;
 """
 
 # ── seed.sql ──
