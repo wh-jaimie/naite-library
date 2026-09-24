@@ -99,7 +99,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
         (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
     }).join('');
     var hasBuy=books.some(function(b){return b.buy_url;});
-    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 낭독 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
+    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 낭독 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">Read Aloud 영상</div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
     var h='<div class="wrap">';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
@@ -107,7 +107,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+'</div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크북</b>은 출판사·작가 공식 무료 활동지로 연결돼요. <b>🛒 구매</b>로 바로 담을 수 있어요.</p><div class="books">'+bh+'</div>'+
        (hasBuy?'<p class="disc">이 페이지의 <b>🛒 구매</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
-    if(vids)h+='<div class="sec"><h2>📺 이번 달 낭독 영상</h2><div class="vids">'+vids+'</div></div>';
+    if(vids)h+='<div class="sec"><h2>📺 이번 달 낭독 영상</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="vids">'+vids+'</div></div>';
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
