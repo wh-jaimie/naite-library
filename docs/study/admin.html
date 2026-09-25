@@ -58,17 +58,16 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
 
   // ---------- AUTH ----------
   function renderLogin(){
-    var defEmail=window.ADMIN_EMAIL||'';
     root.innerHTML='<div class="wrap"><div class="login card">'+
       '<h1>스터디 관리자</h1>'+
       '<p class="hint" style="margin:10px 0 16px">관리자 이메일과 비밀번호로 로그인하세요.</p>'+
-      '<input class="t" id="email" type="email" placeholder="admin@example.com" autocomplete="username" value="'+esc(defEmail)+'" style="margin-bottom:9px">'+
-      '<input class="t" id="pw" type="password" placeholder="비밀번호" autocomplete="current-password">'+
+      '<input class="t" id="email" type="email" placeholder="관리자 이메일" autocomplete="off" style="margin-bottom:9px">'+
+      '<input class="t" id="pw" type="password" placeholder="비밀번호" autocomplete="off">'+
       '<button class="btn cor" id="signin" style="margin-top:12px;width:100%">로그인</button>'+
       '<div class="status" id="lst" style="margin-top:10px"></div>'+
       '</div></div>';
     var email=document.getElementById('email'), pw=document.getElementById('pw'), st=document.getElementById('lst');
-    (defEmail?pw:email).focus();
+    email.focus();
     async function doLogin(){
       var e=(email.value||'').trim(), p=pw.value||'';
       if(!e||!p){st.textContent='이메일과 비밀번호를 입력하세요.';return;}
