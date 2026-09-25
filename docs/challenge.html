@@ -241,28 +241,32 @@ document.getElementById('theme').addEventListener('click',()=>{
   const n=dark?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('joy-theme',n);}catch(e){}
 });
 // ── 진행 공유 이미지 ──
-async function makeShareCanvas(done,total){
+async function makeShareCanvas(done,total,dark){
   const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;
   const g=cv.getContext('2d');
-  g.fillStyle='#1C1E17';g.fillRect(0,0,W,H);
+  const P = dark
+    ? {bg:'#1C1E17', title:'#EAE5D7', sub:'#93A98F', ring:'#3C7A5C', honey:'#D1965C', count:'#EAE5D7', foot:'#93A98F'}
+    : {bg:'#F1F3EA', title:'#23291F', sub:'#5A6350', ring:'#4F9A72', honey:'#B87343', count:'#23291F', foot:'#7A8270'};
+  g.fillStyle=P.bg;g.fillRect(0,0,W,H);
   try{await document.fonts.load('700 68px "Gowun Batang"');await document.fonts.load('700 96px "Gowun Batang"');await document.fonts.load('500 34px "Noto Sans KR"');await document.fonts.load('700 44px "Noto Sans KR"');await document.fonts.ready;}catch(e){}
-  const cream='#EAE5D7',sage='#93A98F',honey='#D1965C',pct=total?done/total:0;
+  const pct=total?done/total:0;
   g.textAlign='center';
-  g.fillStyle=cream;g.font='700 68px "Gowun Batang",serif';g.fillText('한 겹씩 쌓이는 중',W/2,158);
-  g.fillStyle=sage;g.font='500 34px "Noto Sans KR",sans-serif';
-  g.fillText('해온 것들이 나이테처럼 쌓여요.',W/2,222);
-  g.fillText('앞서가지 않아도, 매년 한 겹씩.',W/2,270);
+  g.fillStyle=P.title;g.font='700 68px "Gowun Batang",serif';g.fillText('한 권씩, 나이테처럼',W/2,158);
+  g.fillStyle=P.sub;g.font='500 34px "Noto Sans KR",sans-serif';
+  g.fillText('파닉스 전 첫 영어 그림책 120권,',W/2,222);
+  g.fillText('한 권씩 읽으며 나이테를 만들어요.',W/2,270);
   const cx=W/2,cy=660,rs=[70,135,200,265,330],R=330;
-  rs.forEach((r,i)=>{g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.strokeStyle='#3C7A5C';g.globalAlpha=0.9-i*0.12;g.lineWidth=15;g.stroke();});
+  rs.forEach((r,i)=>{g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.strokeStyle=P.ring;g.globalAlpha=(dark?0.9:0.78)-i*0.12;g.lineWidth=15;g.stroke();});
   g.globalAlpha=1;g.lineCap='round';
-  g.beginPath();g.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(pct,0.001));g.strokeStyle=honey;g.lineWidth=22;g.stroke();
-  g.fillStyle=cream;g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
-  g.fillStyle=cream;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
-  g.fillStyle=honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
-  g.fillStyle=sage;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1288);
+  g.beginPath();g.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(pct,0.001));g.strokeStyle=P.honey;g.lineWidth=22;g.stroke();
+  g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
+  g.fillStyle=P.count;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
+  g.fillStyle=P.honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
+  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1288);
   return cv;
 }
-function openShare(){makeShareCanvas(seen.size,total).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
+function isDark(){const c=document.documentElement.getAttribute('data-theme');return c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;}
+function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
 function saveShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
 function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
 document.getElementById('prShare').addEventListener('click',openShare);
