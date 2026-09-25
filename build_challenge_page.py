@@ -7,7 +7,10 @@ OUT = os.path.join(HERE, "output", "challenge.html")
 data = json.load(open(DATA, encoding="utf-8"))
 payload = json.dumps(data, ensure_ascii=False)
 
-TEMPLATE = r"""<title>나이테 120 — 파닉스 전, 첫 영어책 코스</title>
+TEMPLATE = r"""<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>나이테 120 — 파닉스 전, 첫 영어책 코스</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
 :root{
@@ -94,6 +97,16 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 @media (max-width:520px){.ladder{grid-template-columns:repeat(3,1fr);gap:10px}.step .rs{display:-webkit-box}.step .au{display:block}}
 footer{border-top:1px solid var(--line);margin-top:34px;padding-block:26px 42px}
 footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
+.share{margin-top:14px;width:100%;border:none;background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.ov.on{display:flex}
+.ovb{background:var(--surface);border-radius:18px;padding:16px;max-width:360px;width:100%;box-shadow:var(--shadow-lg);text-align:center}
+.ovb img{width:100%;border-radius:12px;display:block;background:#1C1E17}
+.ovb .btns{display:flex;gap:8px;margin-top:12px}
+.ovb .btns button{flex:1;border:none;font:inherit;font-weight:800;font-size:.9rem;padding:11px;border-radius:10px;cursor:pointer}
+.ovb .save{background:var(--teal-deep);color:#fff}
+.ovb .close{background:var(--surface-2);color:var(--ink)}
+.ovb .hint2{font-size:.74rem;color:var(--ink-soft);margin:10px 0 0}
 </style>
 
 <header class="top"><div class="wrap">
@@ -108,7 +121,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <h1>나이테 120</h1>
     <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong><br>
       뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
-      <strong>24개 주제 × 5권</strong>, 각 주제는 <strong>조작북·라임·반복·유머·스토리</strong>
+      <strong>24개 주제 × 5권</strong>, 각 주제는 <strong>조작북·반복·라임·유머·스토리</strong>
       5가지 유형을 골고루 담았습니다. 순서·반복은 자유예요.</p>
 
     <div class="panel">
@@ -122,6 +135,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
         <button data-c="1y" class="active"><div class="ct">🚀 1년 코스</div><div class="cd">월 2주제 · 10권 × 12개월</div></button>
         <button data-c="2y"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
       </div>
+      <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
@@ -134,6 +148,12 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <section><div id="course-body"></div></section>
 </main>
 
+<div class="ov" id="ov"><div class="ovb">
+  <img id="ovimg" alt="나이테 120 진행 이미지">
+  <div class="btns"><button class="save" id="ovShare">📤 공유</button><button class="save" id="ovSave">💾 저장</button><button class="close" id="ovClose">닫기</button></div>
+  <p class="hint2">이미지를 저장하거나 공유해 보세요. (모바일에서는 공유 시 인스타·카톡 등으로 바로 보낼 수 있어요.)</p>
+</div></div>
+
 <footer><div class="wrap">
   <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어도서관</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
@@ -143,6 +163,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 const P=/*DATA*/;const {themes,tier_labels,total}=P;
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const tvar=t=>`var(--t${t})`;
+// 표시 순서: 조작북(1) → 반복(3) → 라임(2) → 유머(4) → 스토리(5). 번호·색은 표시 위치 기준.
+const DORD=[1,3,2,4,5];const POS={};DORD.forEach((t,i)=>POS[t]=i+1);
 let course='1y';
 // 봤어요 기록
 const KEY='joy-challenge-seen';let seen=new Set();
@@ -152,11 +174,11 @@ window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 
 // 범례
 document.getElementById('legend').innerHTML='<span class="lg" style="color:var(--ink)">5가지 유형:</span>'+
-  [1,2,3,4,5].map(t=>`<span class="lg"><span class="sw" style="background:${tvar(t)}"></span>${t}. ${esc(tier_labels[t])}</span>`).join('');
+  DORD.map(t=>`<span class="lg"><span class="sw" style="background:var(--t${POS[t]})"></span>${POS[t]}. ${esc(tier_labels[t])}</span>`).join('');
 
 function stepHTML(b){
   return `<div class="step${seen.has(b.id)?' seen':''}" data-id="${b.id}">
-    <span class="tier" style="background:${tvar(b.tier)}">${b.tier}. ${esc(b.tier_label)}</span>
+    <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
     <div class="cover" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
@@ -176,7 +198,7 @@ function themeHTML(t){
   return `<div class="theme" data-key="${esc(t.key)}">
     <div class="th"><span class="emo">${t.emoji}</span><h3>${esc(t.ko)}</h3>
       <span class="en">${esc(t.en)}</span><span class="done tnum" data-role="done">${done}/5</span></div>
-    <div class="ladder">${t.books.map(stepHTML).join('')}</div>
+    <div class="ladder">${[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]).map(stepHTML).join('')}</div>
   </div>`;
 }
 function renderBody(){
@@ -227,6 +249,36 @@ document.getElementById('theme').addEventListener('click',()=>{
   const cur=root.getAttribute('data-theme');const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
   const n=dark?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('joy-theme',n);}catch(e){}
 });
+// ── 진행 공유 이미지 ──
+async function makeShareCanvas(done,total){
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const g=cv.getContext('2d');
+  g.fillStyle='#1C1E17';g.fillRect(0,0,W,H);
+  try{await document.fonts.load('700 68px "Gowun Batang"');await document.fonts.load('700 96px "Gowun Batang"');await document.fonts.load('500 34px "Noto Sans KR"');await document.fonts.load('700 44px "Noto Sans KR"');await document.fonts.ready;}catch(e){}
+  const cream='#EAE5D7',sage='#93A98F',honey='#D1965C',pct=total?done/total:0;
+  g.textAlign='center';
+  g.fillStyle=cream;g.font='700 68px "Gowun Batang",serif';g.fillText('한 겹씩 쌓이는 중',W/2,158);
+  g.fillStyle=sage;g.font='500 34px "Noto Sans KR",sans-serif';
+  g.fillText('해온 것들이 나이테처럼 쌓여요.',W/2,222);
+  g.fillText('앞서가지 않아도, 매년 한 겹씩.',W/2,270);
+  const cx=W/2,cy=660,rs=[70,135,200,265,330],R=330;
+  rs.forEach((r,i)=>{g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.strokeStyle='#3C7A5C';g.globalAlpha=0.9-i*0.12;g.lineWidth=15;g.stroke();});
+  g.globalAlpha=1;g.lineCap='round';
+  g.beginPath();g.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(pct,0.001));g.strokeStyle=honey;g.lineWidth=22;g.stroke();
+  g.fillStyle=cream;g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
+  g.fillStyle=cream;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
+  g.fillStyle=honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
+  g.fillStyle=sage;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1288);
+  return cv;
+}
+function openShare(){makeShareCanvas(seen.size,total).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
+function saveShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
+function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
+document.getElementById('prShare').addEventListener('click',openShare);
+document.getElementById('ovSave').addEventListener('click',saveShare);
+document.getElementById('ovShare').addEventListener('click',shareShare);
+document.getElementById('ovClose').addEventListener('click',()=>document.getElementById('ov').classList.remove('on'));
+document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')document.getElementById('ov').classList.remove('on');});
 renderBody();updateProgress();
 </script>
 """

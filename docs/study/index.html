@@ -94,6 +94,8 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
   function render(theme,books,content){
     curKey=theme.key;
     var c=content||{};
+    var TORD={1:1,3:2,2:3,4:4,5:5}; // 표시 순서: 조작북→반복→라임→유머→스토리
+    books=(books||[]).slice().sort(function(a,b){return (TORD[a.tier]||9)-(TORD[b.tier]||9);});
     var bh=books.map(function(b){
       var stats='';
       if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
