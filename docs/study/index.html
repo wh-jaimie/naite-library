@@ -65,6 +65,23 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .archi{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;box-shadow:var(--sh);color:inherit;font-size:.9rem;transition:transform .13s,box-shadow .13s}
 .archi:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(43,42,38,.13)}
 .archi span{margin-left:auto;color:var(--soft);font-size:.76rem}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
+  .hero .subj{font-size:.95rem;text-align:left}
+  .sec{margin-top:22px}.sec h2{font-size:1.14rem;margin-bottom:12px}
+  /* 한 줄에 책 한 권 · 가로형 카드 */
+  .books{grid-template-columns:1fr;gap:12px}
+  .book{flex-direction:row;align-items:stretch}
+  .book .cv{flex:0 0 112px;width:112px;aspect-ratio:3/4}
+  .book .bb{padding:12px 14px;gap:4px}
+  .book .bt{font-size:1.05rem;margin-top:3px}
+  .book .ba{font-size:.82rem}.book .br{font-size:.85rem;margin-top:5px}
+  /* 아래 글 가독성 */
+  .prose{font-size:1rem;line-height:1.75}
+  ul.li{padding-left:18px}ul.li li{margin:8px 0;line-height:1.6}
+  .expr li{padding:11px 13px}.expr .en2{font-size:1rem}.expr .ko2{display:block;margin-top:3px;font-size:.86rem}
+}
 </style>
 </head>
 <body>
