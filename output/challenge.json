@@ -25,7 +25,7 @@
     {
      "gid": 2,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Giraffes Can't Dance",
      "author": "Giles Andreae",
      "reason": "춤 못 추던 기린의 자신감 라임 이야기",
@@ -41,7 +41,7 @@
     {
      "gid": 3,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Brown Bear, Brown Bear, What Do You See?",
      "author": "Bill Martin Jr.",
      "reason": "색+동물+\"What do you see?\" 반복의 정석",
@@ -113,7 +113,7 @@
     {
      "gid": 7,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Truck Full of Ducks",
      "author": "Ross Burach",
      "reason": "\"truck full of ducks!\" 후렴이 반복되는 배달 소동",
@@ -129,7 +129,7 @@
     {
      "gid": 8,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Little Blue Truck",
      "author": "Alice Schertle",
      "reason": "AABB 라임과 동물 소리로 통통 튀는 파랑 트럭",
@@ -201,7 +201,7 @@
     {
      "gid": 12,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Jamberry",
      "author": "Bruce Degen",
      "reason": "곰과 소년이 베리를 따는 말놀이 라임",
@@ -217,7 +217,7 @@
     {
      "gid": 13,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Today Is Monday",
      "author": "Eric Carle",
      "reason": "요일마다 음식이 쌓이는 노래 반복",
@@ -289,7 +289,7 @@
     {
      "gid": 17,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Mary Wore Her Red Dress",
      "author": "Merle Peek",
      "reason": "색깔 옷을 노래하는 반복 라임",
@@ -305,7 +305,7 @@
     {
      "gid": 18,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Where Is the Green Sheep?",
      "author": "Mem Fox",
      "reason": "온갖 양이 나오다 초록 양 찾기 — 색+반복",
@@ -377,7 +377,7 @@
     {
      "gid": 22,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Ten Fat Sausages",
      "author": "전래동요 (Traditional)",
      "reason": "소시지가 하나씩 터지는 카운팅 노래",
@@ -393,7 +393,7 @@
     {
      "gid": 23,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Ten Black Dots",
      "author": "Donald Crews",
      "reason": "점 개수로 사물을 만드는 반복 카운팅",
@@ -465,7 +465,7 @@
     {
      "gid": 27,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Is Your Mama a Llama?",
      "author": "Deborah Guarino",
      "reason": "\"너희 엄마는 라마야?\" 추측하는 라임",
@@ -481,7 +481,7 @@
     {
      "gid": 28,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Guess How Much I Love You",
      "author": "Sam McBratney",
      "reason": "사랑의 크기를 재보는 토끼의 잠자리 이야기",
@@ -553,7 +553,7 @@
     {
      "gid": 32,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "The Going to Bed Book",
      "author": "Sandra Boynton",
      "reason": "잘 준비 순서를 노래하는 라임",
@@ -569,7 +569,7 @@
     {
      "gid": 33,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Goodnight Moon",
      "author": "Margaret Wise Brown",
      "reason": "방 안 사물에 \"굿나잇\"을 반복하는 잠자리 고전",
@@ -641,7 +641,7 @@
     {
      "gid": 37,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "The Way I Feel",
      "author": "Janan Cain",
      "reason": "다양한 감정을 라임으로 소개",
@@ -657,7 +657,7 @@
     {
      "gid": 38,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "It's Okay to Be Different",
      "author": "Todd Parr",
      "reason": "다름을 긍정하는 토드 파의 반복 메시지",
@@ -729,7 +729,7 @@
     {
      "gid": 42,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Here Are My Hands",
      "author": "Bill Martin Jr.",
      "reason": "몸의 각 부분을 소개하는 라임",
@@ -745,7 +745,7 @@
     {
      "gid": 43,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "From Head to Toe",
      "author": "Eric Carle",
      "reason": "\"Can you do it?\" 동작을 따라하는 반복",
@@ -817,7 +817,7 @@
     {
      "gid": 47,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Superworm",
      "author": "Julia Donaldson",
      "reason": "슈퍼 지렁이의 활약 — 라임 서사",
@@ -833,7 +833,7 @@
     {
      "gid": 48,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "The Very Hungry Caterpillar",
      "author": "Eric Carle",
      "reason": "요일·음식이 반복되는 구멍 뚫린 필독서",
@@ -905,7 +905,7 @@
     {
      "gid": 52,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Dinosaur Roar!",
      "author": "Paul Stickland",
      "reason": "크다/작다 반대말을 공룡 라임으로",
@@ -921,7 +921,7 @@
     {
      "gid": 53,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "How Do Dinosaurs Say Goodnight?",
      "author": "Jane Yolen",
      "reason": "\"How does a dinosaur…?\" 질문이 반복되는 패턴북",
@@ -993,7 +993,7 @@
     {
      "gid": 57,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Stick Man",
      "author": "Julia Donaldson",
      "reason": "막대 아빠의 사계절 모험 — 라임 서사",
@@ -1009,7 +1009,7 @@
     {
      "gid": 58,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "The Carrot Seed",
      "author": "Ruth Krauss",
      "reason": "\"안 나올 거야\" 반복 속 믿음의 씨앗",
@@ -1081,7 +1081,7 @@
     {
      "gid": 62,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Rain!",
      "author": "Linda Ashman",
      "reason": "비 오는 날 할아버지와 아이의 라임",
@@ -1097,7 +1097,7 @@
     {
      "gid": 63,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "It Looked Like Spilt Milk",
      "author": "Charles G. Shaw",
      "reason": "\"가끔 이렇게 보였어\" 반복하는 구름책",
@@ -1169,7 +1169,7 @@
     {
      "gid": 67,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Hairy Maclary from Donaldson's Dairy",
      "author": "Lynley Dodd",
      "reason": "동네 개들이 줄줄이 나오는 라임",
@@ -1184,7 +1184,7 @@
     },
     {
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Go, Dog. Go!",
      "author": "P.D. Eastman",
      "reason": "쉬운 단어가 반복되는 개들의 소동",
@@ -1257,7 +1257,7 @@
     {
      "gid": 72,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Barnyard Dance",
      "author": "Sandra Boynton",
      "reason": "농장 동물들의 흥나는 춤 라임",
@@ -1273,7 +1273,7 @@
     {
      "gid": 73,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Mrs. Wishy-Washy",
      "author": "Joy Cowley",
      "reason": "동물을 씻기는 아주머니의 반복 소동",
@@ -1345,7 +1345,7 @@
     {
      "gid": 77,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "The Pout-Pout Fish",
      "author": "Deborah Diesen",
      "reason": "시무룩 물고기의 반전 — 라임",
@@ -1361,7 +1361,7 @@
     {
      "gid": 78,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Hooray for Fish!",
      "author": "Lucy Cousins",
      "reason": "온갖 물고기가 이어지는 반복",
@@ -1433,7 +1433,7 @@
     {
      "gid": 82,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "The Gruffalo",
      "author": "Julia Donaldson",
      "reason": "없는 괴물을 지어내다 진짜 만나는 라임 서사",
@@ -1449,7 +1449,7 @@
     {
      "gid": 83,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "If You're a Monster and You Know It",
      "author": "Rebecca Emberley",
      "reason": "\"행복하면~\"의 괴물 버전 반복 노래",
@@ -1521,7 +1521,7 @@
     {
      "gid": 87,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Room on the Broom",
      "author": "Julia Donaldson",
      "reason": "마녀 빗자루에 동물이 타는 라임 이야기",
@@ -1537,7 +1537,7 @@
     {
      "gid": 88,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "The Little Old Lady Who Was Not Afraid of Anything",
      "author": "Linda Williams",
      "reason": "쫓아오는 물건들의 누적 반복",
@@ -1609,7 +1609,7 @@
     {
      "gid": 92,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "The Night Before Christmas",
      "author": "Clement C. Moore",
      "reason": "크리스마스 전날 밤의 고전 시",
@@ -1625,7 +1625,7 @@
     {
      "gid": 93,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "The Twelve Days of Christmas",
      "author": "전래 캐럴 (Traditional)",
      "reason": "선물이 하나씩 쌓이는 누적 캐럴",
@@ -1697,7 +1697,7 @@
     {
      "gid": 97,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Walking Through the Jungle",
      "author": "Debbie Harter",
      "reason": "정글을 걸으며 동물을 만나는 노래·챈트",
@@ -1713,7 +1713,7 @@
     {
      "gid": 98,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Polar Bear, Polar Bear, What Do You Hear?",
      "author": "Bill Martin Jr.",
      "reason": "동물 소리가 이어지는 브라운베어 후속 챈트",
@@ -1785,7 +1785,7 @@
     {
      "gid": 102,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Llama Llama Misses Mama",
      "author": "Anna Dewdney",
      "reason": "첫 등원의 불안을 달래는 라임",
@@ -1800,7 +1800,7 @@
     },
     {
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Do You Want to Be My Friend?",
      "author": "Eric Carle",
      "reason": "\"내 친구 될래?\"를 반복하는 우정책",
@@ -1873,7 +1873,7 @@
     {
      "gid": 107,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Pajama Time!",
      "author": "Sandra Boynton",
      "reason": "잘 준비를 노래하는 라임",
@@ -1889,7 +1889,7 @@
     {
      "gid": 108,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "The Napping House",
      "author": "Audrey Wood",
      "reason": "잠든 식구가 쌓이는 누적 반복",
@@ -1961,7 +1961,7 @@
     {
      "gid": 112,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "Round Is a Mooncake",
      "author": "Roseanne Thong",
      "reason": "일상 속 도형을 찾는 라임",
@@ -1977,7 +1977,7 @@
     {
      "gid": 113,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Opposites",
      "author": "Sandra Boynton",
      "reason": "반대말을 반복으로 익히는 보드북",
@@ -2049,7 +2049,7 @@
     {
      "gid": 117,
      "tier": 2,
-     "tier_label": "라임",
+     "tier_label": "라임/운율",
      "title": "If I Built a House",
      "author": "Chris Van Dusen",
      "reason": "상상의 집을 짓는 라임",
@@ -2065,7 +2065,7 @@
     {
      "gid": 118,
      "tier": 3,
-     "tier_label": "반복",
+     "tier_label": "반복/패턴",
      "title": "Not a Box",
      "author": "Antoinette Portis",
      "reason": "\"상자 아니야!\" 반복하며 상상하기",
@@ -2115,8 +2115,8 @@
  ],
  "tier_labels": {
   "1": "조작북",
-  "2": "라임",
-  "3": "반복",
+  "2": "라임/운율",
+  "3": "반복/패턴",
   "4": "유머·반전",
   "5": "스토리"
  },
