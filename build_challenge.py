@@ -84,7 +84,7 @@ CURRICULUM = [
 ("🦖","Dinosaurs","공룡",[
  (1,"That's Not My Dinosaur","Fiona Watt","공룡 촉감을 만지는 촉감북"),
  (2,"Dinosaur Roar!","Paul Stickland","크다/작다 반대말을 공룡 라임으로"),
- (3,"Dinosaur Dance!","Sandra Boynton","공룡들이 춤추는 리듬 반복"),
+ (3,"How Do Dinosaurs Say Goodnight?","Jane Yolen","\"How does a dinosaur…?\" 질문이 반복되는 패턴북"),
  (4,"Dinosaur vs. Bedtime","Bob Shea","뭐든 이기는 공룡, 잠자리엔 질까?"),
  (5,"Tyrannosaurus Drip","Julia Donaldson","초식 공룡 무리에서 자란 티라노 이야기"),
 ]),
