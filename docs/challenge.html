@@ -120,7 +120,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   .pr-t td{border-bottom:.5pt solid #ccc;padding:2.5pt 4pt;vertical-align:top}
   .pr-t .c1{width:14pt;text-align:center}
   .pr-t .c2{width:64pt;color:#333}
-  .pr-t .c4{width:120pt;color:#555}
+  .pr-t .c4{width:110pt;color:#555}
+  .pr-t .c5{width:52pt;color:#333;text-align:right;white-space:nowrap}
   body{background:#fff}
   @page{margin:14mm}
 }
@@ -319,11 +320,11 @@ function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{con
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
-  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어도서관 · ${now}</p></div>`;
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · AR은 추정치 · 나이테 영어도서관 · ${now}</p></div>`;
   themes.forEach((t,i)=>{
     const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
     h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
-    bks.forEach(b=>{h+=`<tr><td class="c1">${seen.has(b.id)?'✓':'☐'}</td><td class="c2">${POS[b.tier]}. ${esc(b.tier_label)}</td><td>${esc(b.title)}</td><td class="c4">${esc(b.author)}</td></tr>`;});
+    bks.forEach(b=>{const lvl=(b.ar!=null)?('AR '+b.ar.toFixed(1)):(b.format||'');h+=`<tr><td class="c1">${seen.has(b.id)?'✓':'☐'}</td><td class="c2">${POS[b.tier]}. ${esc(b.tier_label)}</td><td>${esc(b.title)}</td><td class="c4">${esc(b.author)}</td><td class="c5">${esc(lvl)}</td></tr>`;});
     h+=`</tbody></table></div>`;
   });
   document.getElementById('printable').innerHTML=h;
