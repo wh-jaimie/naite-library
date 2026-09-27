@@ -20,7 +20,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 2,
@@ -36,7 +38,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.1
     },
     {
      "gid": 3,
@@ -52,7 +56,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 4,
@@ -68,7 +74,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2011",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.7
     },
     {
      "gid": 5,
@@ -84,7 +92,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.5
     }
    ]
   },
@@ -108,7 +118,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 7,
@@ -124,7 +136,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 8,
@@ -140,7 +154,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.2
     },
     {
      "gid": 9,
@@ -156,7 +172,9 @@
      "pop_rank": 1,
      "lib_loans": 96,
      "award": "🏅 칼데콧 아너 2004",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.3
     },
     {
      "gid": 10,
@@ -172,7 +190,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.1
     }
    ]
   },
@@ -196,7 +216,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 12,
@@ -212,7 +234,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 13,
@@ -228,7 +252,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 14,
@@ -244,7 +270,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🎖️ 가이젤상 2014",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.3
     },
     {
      "gid": 15,
@@ -260,7 +288,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.6
     }
    ]
   },
@@ -284,7 +314,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 17,
@@ -300,7 +332,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 18,
@@ -316,7 +350,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.2
     },
     {
      "gid": 20,
@@ -332,7 +368,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.8
     },
     {
      "gid": 19,
@@ -348,7 +386,9 @@
      "pop_rank": 1,
      "lib_loans": 74,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.5
     }
    ]
   },
@@ -372,7 +412,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 22,
@@ -388,7 +430,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.0
     },
     {
      "gid": 23,
@@ -404,7 +448,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 24,
@@ -420,7 +466,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 25,
@@ -436,7 +484,9 @@
      "pop_rank": 0,
      "lib_loans": 67,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.8
     }
    ]
   },
@@ -460,7 +510,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 27,
@@ -476,7 +528,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.4
     },
     {
      "gid": 28,
@@ -492,7 +546,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     },
     {
      "gid": 29,
@@ -508,7 +564,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.5
     },
     {
      "gid": 30,
@@ -524,7 +582,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.0
     }
    ]
   },
@@ -548,7 +608,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 32,
@@ -564,7 +626,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.4
     },
     {
      "gid": 33,
@@ -580,7 +644,9 @@
      "pop_rank": 1,
      "lib_loans": 84,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.8
     },
     {
      "gid": 34,
@@ -596,7 +662,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.8
     },
     {
      "gid": 35,
@@ -612,7 +680,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2019",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.5
     }
    ]
   },
@@ -636,7 +706,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "팝업",
+     "ar": null
     },
     {
      "gid": 37,
@@ -652,7 +724,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.5
     },
     {
      "gid": 38,
@@ -668,7 +742,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 39,
@@ -684,7 +760,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.5
     },
     {
      "gid": 40,
@@ -700,7 +778,9 @@
      "pop_rank": 1,
      "lib_loans": 83,
      "award": "🏅 칼데콧 아너 2005",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.2
     }
    ]
   },
@@ -724,7 +804,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 42,
@@ -740,7 +822,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 43,
@@ -756,7 +840,9 @@
      "pop_rank": 1,
      "lib_loans": 135,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.3
     },
     {
      "gid": 44,
@@ -772,7 +858,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 45,
@@ -788,7 +876,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.8
     }
    ]
   },
@@ -812,7 +902,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 47,
@@ -828,7 +920,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     },
     {
      "gid": 48,
@@ -844,7 +938,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.9
     },
     {
      "gid": 49,
@@ -860,7 +956,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.9
     },
     {
      "gid": 50,
@@ -876,7 +974,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     }
    ]
   },
@@ -900,7 +1000,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 52,
@@ -916,7 +1018,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.0
     },
     {
      "gid": 53,
@@ -932,7 +1036,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.7
     },
     {
      "gid": 54,
@@ -948,7 +1054,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.3
     },
     {
      "tier": 5,
@@ -964,7 +1072,9 @@
      "award": "",
      "kr_popular": false,
      "gid": 55,
-     "id": "c55"
+     "id": "c55",
+     "format": null,
+     "ar": 3.5
     }
    ]
   },
@@ -988,7 +1098,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 57,
@@ -1004,7 +1116,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 3.5
     },
     {
      "gid": 58,
@@ -1020,7 +1134,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.9
     },
     {
      "gid": 59,
@@ -1036,7 +1152,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.5
     },
     {
      "gid": 60,
@@ -1052,7 +1170,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.5
     }
    ]
   },
@@ -1076,7 +1196,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 62,
@@ -1092,7 +1214,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 63,
@@ -1108,7 +1232,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.6
     },
     {
      "tier": 4,
@@ -1124,7 +1250,9 @@
      "award": "",
      "kr_popular": false,
      "gid": 64,
-     "id": "c64"
+     "id": "c64",
+     "format": null,
+     "ar": 3.5
     },
     {
      "gid": 65,
@@ -1140,7 +1268,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1963",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.7
     }
    ]
   },
@@ -1164,7 +1294,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 67,
@@ -1180,7 +1312,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     },
     {
      "tier": 3,
@@ -1196,7 +1330,9 @@
      "award": "",
      "kr_popular": false,
      "gid": 68,
-     "id": "c68"
+     "id": "c68",
+     "format": null,
+     "ar": 1.1
     },
     {
      "gid": 69,
@@ -1212,7 +1348,9 @@
      "pop_rank": 0,
      "lib_loans": 80,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.7
     },
     {
      "gid": 70,
@@ -1228,7 +1366,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 2023",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.5
     }
    ]
   },
@@ -1252,7 +1392,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "팝업",
+     "ar": null
     },
     {
      "gid": 72,
@@ -1268,7 +1410,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 73,
@@ -1284,7 +1428,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.6
     },
     {
      "gid": 74,
@@ -1300,7 +1446,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2001",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.7
     },
     {
      "gid": 75,
@@ -1316,7 +1464,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.2
     }
    ]
   },
@@ -1340,7 +1490,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 77,
@@ -1356,7 +1508,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.8
     },
     {
      "gid": 78,
@@ -1372,7 +1526,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 79,
@@ -1388,7 +1544,9 @@
      "pop_rank": 1,
      "lib_loans": 76,
      "award": "🥇 칼데콧 메달 2013",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.6
     },
     {
      "gid": 80,
@@ -1404,7 +1562,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 1964",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 3.2
     }
    ]
   },
@@ -1428,7 +1588,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 82,
@@ -1444,7 +1606,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.9
     },
     {
      "gid": 83,
@@ -1460,7 +1624,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 84,
@@ -1476,7 +1642,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.6
     },
     {
      "gid": 85,
@@ -1492,7 +1660,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1964",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 3.4
     }
    ]
   },
@@ -1516,7 +1686,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 87,
@@ -1532,7 +1704,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     },
     {
      "gid": 88,
@@ -1548,7 +1722,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.3
     },
     {
      "gid": 89,
@@ -1564,7 +1740,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2013",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 3.1
     },
     {
      "gid": 90,
@@ -1580,7 +1758,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.9
     }
    ]
   },
@@ -1604,7 +1784,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 92,
@@ -1620,7 +1802,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 4.0
     },
     {
      "gid": 93,
@@ -1636,7 +1820,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.5
     },
     {
      "gid": 94,
@@ -1652,7 +1838,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 4.0
     },
     {
      "gid": 95,
@@ -1668,7 +1856,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "🥇 칼데콧 메달 1986",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 4.0
     }
    ]
   },
@@ -1692,7 +1882,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 97,
@@ -1708,7 +1900,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 98,
@@ -1724,7 +1918,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.5
     },
     {
      "gid": 99,
@@ -1740,7 +1936,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.9
     },
     {
      "gid": 100,
@@ -1756,7 +1954,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     }
    ]
   },
@@ -1780,7 +1980,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": "플랩",
+     "ar": null
     },
     {
      "gid": 102,
@@ -1796,7 +1998,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.4
     },
     {
      "tier": 3,
@@ -1812,7 +2016,9 @@
      "award": "",
      "kr_popular": false,
      "gid": 103,
-     "id": "c103"
+     "id": "c103",
+     "format": null,
+     "ar": 0.9
     },
     {
      "gid": 104,
@@ -1828,7 +2034,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.2
     },
     {
      "tier": 5,
@@ -1844,7 +2052,9 @@
      "award": "",
      "kr_popular": false,
      "gid": 105,
-     "id": "c105"
+     "id": "c105",
+     "format": null,
+     "ar": 3.2
     }
    ]
   },
@@ -1868,7 +2078,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "팝업",
+     "ar": null
     },
     {
      "gid": 107,
@@ -1884,7 +2096,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.0
     },
     {
      "gid": 108,
@@ -1900,7 +2114,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.9
     },
     {
      "gid": 109,
@@ -1916,7 +2132,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 1999",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 0.8
     },
     {
      "gid": 110,
@@ -1932,7 +2150,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 0.9
     }
    ]
   },
@@ -1956,7 +2176,9 @@
      "pop_rank": 1,
      "lib_loans": 65,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 112,
@@ -1972,7 +2194,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 2.5
     },
     {
      "gid": 113,
@@ -1988,7 +2212,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 1.0
     },
     {
      "gid": 114,
@@ -2004,7 +2230,9 @@
      "pop_rank": 1,
      "lib_loans": 131,
      "award": "🎖️ 가이젤상 2012",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 1.6
     },
     {
      "gid": 115,
@@ -2020,7 +2248,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "🏅 칼데콧 아너 2017",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.1
     }
    ]
   },
@@ -2044,7 +2274,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": "놀이북",
+     "ar": null
     },
     {
      "gid": 117,
@@ -2060,7 +2292,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.5
     },
     {
      "gid": 118,
@@ -2076,7 +2310,9 @@
      "pop_rank": 0,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 0.7
     },
     {
      "gid": 119,
@@ -2092,7 +2328,9 @@
      "pop_rank": 0,
      "lib_loans": 81,
      "award": "🏅 칼데콧 아너 2015",
-     "kr_popular": true
+     "kr_popular": true,
+     "format": null,
+     "ar": 2.6
     },
     {
      "gid": 120,
@@ -2108,7 +2346,9 @@
      "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
-     "kr_popular": false
+     "kr_popular": false,
+     "format": null,
+     "ar": 3.0
     }
    ]
   }

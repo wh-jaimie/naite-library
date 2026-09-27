@@ -2,6 +2,7 @@
 """파닉스 전 120권 챌린지 (24주제 × 5유형) + 국내 베스트30 통합 + 표지/인기/대출/수상 -> challenge.json
    5유형: 1 조작북 / 2 라임 / 3 반복 / 4 유머·반전 / 5 스토리"""
 import os, json, time, re, urllib.request, urllib.parse
+import ar_data  # 조작북 형태(FORMAT) + AR(추정) 데이터
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "output", "challenge.json")
@@ -273,7 +274,9 @@ for emoji,en,ko,books in CURRICULUM:
         tb.append({"gid":gid,"tier":tier,"tier_label":TIER_LABELS[tier],"title":title,"author":author,
                    "reason":reason,"cover":cover,"isbn":isbn,"year":year,"id":"c"+str(gid),
                    "pop_rank":(1 if n in WORLD_SET_C else 0),"lib_loans":LIB.get(n,0),"award":award(title),
-                   "kr_popular":(n in KR_SET)})
+                   "kr_popular":(n in KR_SET),
+                   "format":(ar_data.FORMAT.get(n) if tier==1 else None),
+                   "ar":(None if tier==1 else ar_data.AR.get(n))})
         time.sleep(DELAY)
     themes.append({"emoji":emoji,"en":en,"ko":ko,"key":re.sub(r"[^a-z0-9]+","-",en.lower()).strip("-"),"books":tb})
     print(f"  {emoji} {ko} — 표지 {sum(1 for b in tb if b['cover'])}/5 · 국내인기 {sum(1 for b in tb if b['kr_popular'])}")

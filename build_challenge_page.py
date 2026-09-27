@@ -95,6 +95,10 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .step .cp{align-self:flex-start;margin-top:2px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font:inherit;font-size:.64rem;font-weight:800;padding:3px 8px;border-radius:6px;cursor:pointer;transition:border-color .12s,color .12s}
 .step .cp:hover{border-color:var(--teal);color:var(--teal-deep)}
 .step .cp.done{border-color:var(--teal);color:var(--teal-deep);background:color-mix(in srgb,var(--teal) 12%,var(--surface))}
+.step .fmt{font-size:.62rem;font-weight:800;color:#6a4a8a;background:#efe7f5;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
+.step .arb{font-size:.62rem;font-weight:800;color:#245648;background:#e7f1f0;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
+#statline{margin-top:12px}
+#statline b{color:var(--ink)}
 @media (max-width:760px){.ladder{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
   .step .rs{display:none}.step .au{display:none}}
 @media (max-width:520px){.ladder{grid-template-columns:repeat(3,1fr);gap:10px}.step .rs{display:-webkit-box}.step .au{display:block}}
@@ -166,6 +170,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요.</p>
 
     <div class="legend" id="legend"></div>
+    <div id="statline" class="note"></div>
   </section>
 
   <section><div id="course-body"></div></section>
@@ -200,6 +205,12 @@ window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 // 범례
 document.getElementById('legend').innerHTML='<span class="lg" style="color:var(--ink)">5가지 유형:</span>'+
   DORD.map(t=>`<span class="lg"><span class="sw" style="background:var(--t${POS[t]})"></span>${POS[t]}. ${esc(tier_labels[t])}</span>`).join('');
+(function(){var fmt={'팝업':0,'플랩':0,'놀이북':0},band={};
+ themes.forEach(t=>t.books.forEach(b=>{if(b.format)fmt[b.format]=(fmt[b.format]||0)+1;if(b.ar!=null){var k=Math.floor(b.ar);band[k]=(band[k]||0)+1;}}));
+ var bs=Object.keys(band).sort().map(k=>k+'점대 '+band[k]).join(' · ');
+ var el=document.getElementById('statline');
+ if(el)el.innerHTML='<b>조작북 형태</b> 팝업 '+fmt['팝업']+' · 플랩 '+fmt['플랩']+' · 놀이북 '+fmt['놀이북']+' &nbsp;|&nbsp; <b>AR(추정, 96권)</b> '+bs;
+})();
 
 function stepHTML(b){
   return `<div class="step${seen.has(b.id)?' seen':''}" data-id="${b.id}">
@@ -213,6 +224,7 @@ function stepHTML(b){
     </div>
     <div class="tt">${esc(b.title)}</div>
     <div class="au">${esc(b.author)}</div>
+    ${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.ar!=null)?`<span class="arb">AR ~${b.ar.toFixed(1)}</span>`:''}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
     ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
     ${b.lib_loans?`<div class="lib">📚 도서관 ${b.lib_loans}회</div>`:''}
