@@ -204,7 +204,7 @@ document.getElementById('legend').innerHTML='<span class="lg" style="color:var(-
 function stepHTML(b){
   return `<div class="step${seen.has(b.id)?' seen':''}" data-id="${b.id}">
     <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
-    <div class="cover" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
+    <div class="cover${b.cover?'':' noimg'}" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
       ${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}

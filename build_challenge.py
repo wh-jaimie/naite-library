@@ -19,7 +19,7 @@ CURRICULUM = [
  (5,"The Crocodile Who Didn't Like Water","Gemma Merino","물을 싫어하던 아기 악어의 반전 성장 이야기"),
 ]),
 ("🚗","Vehicles","탈것",[
- (1,"That's Not My Truck","Fiona Watt","트럭 촉감을 만지는 촉감북"),
+ (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
  (2,"Little Blue Truck","Alice Schertle","AABB 라임과 동물 소리로 통통 튀는 파랑 트럭"),
  (3,"Truck Full of Ducks","Ross Burach","\"truck full of ducks!\" 후렴이 반복되는 배달 소동"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
