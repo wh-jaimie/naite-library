@@ -27,7 +27,7 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 
 insert into public.themes(key,emoji,en,ko,sort) values ('colors','🌈','Colors','색깔',3) on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;
 insert into public.content(theme_key) values ('colors') on conflict (theme_key) do nothing;
-insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('colors',1,'조작북','Lemons Are Not Red','Laura Vaccaro Seeger','https://covers.openlibrary.org/b/id/9347233-L.jpg','구멍(다이컷)으로 색이 바뀌는 놀이책',0,0,'',false,0);
+insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('colors',1,'조작북','Mix It Up!','Hervé Tullet','https://covers.openlibrary.org/b/id/8174029-L.jpg','손가락으로 색을 섞는 에르베 튈레의 참여형 색깔책',0,0,'',true,0);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('colors',2,'라임·운율','Mary Wore Her Red Dress','Merle Peek','https://covers.openlibrary.org/b/id/5019277-L.jpg','색깔 옷을 노래하는 반복 라임',0,0,'',false,1);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('colors',3,'반복·패턴','Where Is the Green Sheep?','Mem Fox','https://covers.openlibrary.org/b/id/113648-L.jpg','온갖 양이 나오다 초록 양 찾기 — 색+반복',0,0,'',true,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('colors',4,'유머·반전','The Day the Crayons Quit','Drew Daywalt','https://covers.openlibrary.org/b/id/8314152-L.jpg','크레용들이 파업하며 보낸 편지 — 색+유머 명작',1,0,'',false,3);
@@ -35,7 +35,7 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 
 insert into public.themes(key,emoji,en,ko,sort) values ('numbers','🔢','Numbers','숫자',4) on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;
 insert into public.content(theme_key) values ('numbers') on conflict (theme_key) do nothing;
-insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('numbers',1,'조작북','600 Black Spots','David A. Carter','https://covers.openlibrary.org/b/id/761876-L.jpg','누르고 넘기면 검은 점이 변신하는 팝업북',0,0,'',true,0);
+insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('numbers',1,'조작북','There Were Ten in the Bed','Annie Kubler','https://covers.openlibrary.org/b/id/1606374-L.jpg','구멍(다이컷)으로 하나씩 떨어지는 카운팅 싱어롱 조작북',0,0,'',false,0);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('numbers',2,'라임·운율','Ten Fat Sausages','전래동요 (Traditional)','https://covers.openlibrary.org/b/id/9884815-L.jpg','소시지가 하나씩 터지는 카운팅 노래',0,0,'',true,1);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('numbers',3,'반복·패턴','Ten Black Dots','Donald Crews','https://covers.openlibrary.org/b/id/6637747-L.jpg','점 개수로 사물을 만드는 반복 카운팅',0,0,'',false,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('numbers',4,'유머·반전','Ten Apples Up on Top!','Dr. Seuss','https://covers.openlibrary.org/b/id/423601-L.jpg','머리에 사과를 쌓는 좌충우돌 라임',0,0,'',false,3);
