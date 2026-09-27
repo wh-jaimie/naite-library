@@ -40,12 +40,40 @@ th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
 th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}
 .hidden{display:none}
 .warn{background:#fff3cd;border:1px solid #e0c97a;border-radius:10px;padding:12px 14px;color:#6b5900;font-size:.88rem}
+#pdfout{display:none}
+@media print{
+  .top,#root{display:none!important}
+  #pdfout{display:block!important;color:#000;font-family:'Noto Sans KR',sans-serif}
+  body{background:#fff}
+  @page{size:A4;margin:12mm}
+  .pdf-h1{font-size:20pt;font-family:'Gowun Batang',serif;margin:0 0 2pt}
+  .pdf-sub{font-size:10pt;color:#555;margin:0 0 2pt}
+  .pdf-subject{font-size:9.5pt;color:#333;margin:6pt 0 10pt;white-space:pre-wrap;line-height:1.55}
+  .pdf-sec-h{font-size:12pt;font-weight:800;border-bottom:1.5pt solid #245648;color:#245648;padding-bottom:2pt;margin:13pt 0 6pt}
+  .pb-book{display:flex;gap:10pt;break-inside:avoid;border-bottom:.5pt solid #ccc;padding:8pt 0}
+  .pb-cov{width:58pt;height:78pt;flex:0 0 58pt;border:.5pt solid #ddd;object-fit:cover}
+  .pb-info{flex:1;min-width:0}
+  .pb-ty{font-size:8pt;font-weight:800;color:#fff;background:#2f6e58;display:inline-block;padding:1pt 5pt;border-radius:3pt}
+  .pb-t{font-size:11pt;font-weight:800;margin:3pt 0 1pt}
+  .pb-a{font-size:9pt;color:#555}
+  .pb-badges{font-size:8pt;color:#333;margin:3pt 0}.pb-badges span{margin-right:7pt;white-space:nowrap}
+  .pb-r{font-size:9pt;color:#333;margin-top:2pt;line-height:1.4}
+  .pb-qrs{display:flex;gap:8pt;flex:0 0 auto;align-items:flex-start}
+  .pb-qr{text-align:center;font-size:7.5pt;color:#333;width:66pt}
+  .pb-qr img{width:60pt;height:60pt;display:block;margin:0 auto 2pt}
+  .pdf-prose{font-size:9.5pt;white-space:pre-wrap;line-height:1.6}
+  .pdf-list{margin:0;padding-left:15pt;font-size:9.5pt;line-height:1.55}
+  .pdf-expr{list-style:none;padding:0;margin:0;font-size:9.5pt}.pdf-expr li{margin:3pt 0}.pdf-expr .k{color:#555}
+  .pdf-foot{margin-top:12pt;border-top:.5pt solid #ccc;padding-top:6pt;font-size:8pt;color:#666;text-align:center}
+}
 </style>
 </head>
 <body>
 <div id="root"><div class="wrap"><p style="padding:60px 0;text-align:center;color:var(--soft)">불러오는 중…</p></div></div>
+<div id="pdfout"></div>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <script>
 (function(){
   var root=document.getElementById('root');
@@ -130,7 +158,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
       '<div class="card"><label class="f" style="margin-top:0">편집할 주제</label><select class="t" id="edSel">'+opt(STATE.editKey)+'</select>'+
         '<div id="form"></div>'+
-        '<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><button class="btn cor" id="save">저장</button><span class="status" id="saveSt"></span></div></div>';
+        '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
+        '<div class="hint">PDF에서는 낭독·워크북·구매 링크가 <b>QR코드</b>로 들어가요. (편집 중인 주제 기준 · 인쇄 창에서 "PDF로 저장")</div></div>';
     document.getElementById('setCur').addEventListener('click',async function(){
       var k=document.getElementById('curSel').value;
       document.getElementById('curSt').textContent='설정 중…';
@@ -141,7 +170,57 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     });
     document.getElementById('edSel').addEventListener('change',function(e){STATE.editKey=e.target.value;renderForm();});
     document.getElementById('save').addEventListener('click',saveContent);
+    document.getElementById('pdf').addEventListener('click',function(){buildPdf(STATE.editKey);});
     renderForm();
+  }
+
+  // ---------- PDF(인쇄) 생성 ----------
+  function qr(text){
+    try{ var q=qrcode(0,'M'); q.addData(String(text)); q.make(); return q.createDataURL(4,2); }catch(e){ return ''; }
+  }
+  function parseListP(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
+  function parseExprP(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
+  async function buildPdf(key){
+    var st=document.getElementById('saveSt'); st.textContent='PDF 준비 중…';
+    var theme=STATE.themes.filter(function(t){return t.key===key;})[0];
+    var c=STATE.contentByTheme[key]||{};
+    var books=(STATE.booksByTheme[key]||[]).slice();
+    var TORD={1:1,3:2,2:3,4:4,5:5};
+    books.sort(function(a,b){return (TORD[a.tier]||9)-(TORD[b.tier]||9);});
+    if(!theme){st.textContent='주제를 찾지 못했어요.';return;}
+    var bh='';
+    for(var i=0;i<books.length;i++){
+      var b=books[i], badges=[];
+      if(b.format) badges.push('형태: '+esc(b.format));
+      if(b.ar!=null&&b.ar!=='') badges.push('AR ~'+Number(b.ar).toFixed(1));
+      if(b.award) badges.push(esc(b.award));
+      if(b.kr_popular) badges.push('🇰🇷 국내 인기');
+      if(b.pop_rank) badges.push('🌍 세계 인기');
+      if(b.lib_loans) badges.push('📚 도서관 '+b.lib_loans+'회');
+      var qrs='';
+      if(b.read_aloud){var u=await qr(b.read_aloud); if(u) qrs+='<div class="pb-qr"><img src="'+u+'">📺 낭독</div>';}
+      if(b.workbook){var u2=await qr(b.workbook); if(u2) qrs+='<div class="pb-qr"><img src="'+u2+'">📄 워크북</div>';}
+      if(b.buy_url){var u3=await qr(b.buy_url); if(u3) qrs+='<div class="pb-qr"><img src="'+u3+'">🛒 구매</div>';}
+      bh+='<div class="pb-book">'+
+        (b.cover?'<img class="pb-cov" src="'+esc(b.cover)+'">':'<div class="pb-cov"></div>')+
+        '<div class="pb-info"><span class="pb-ty">'+esc(b.tier_label)+'</span>'+
+        '<div class="pb-t">'+esc(b.title)+'</div><div class="pb-a">'+esc(b.author)+'</div>'+
+        (badges.length?'<div class="pb-badges">'+badges.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>':'')+
+        (b.reason?'<div class="pb-r">'+esc(b.reason)+'</div>':'')+'</div>'+
+        (qrs?'<div class="pb-qrs">'+qrs+'</div>':'')+'</div>';
+    }
+    var acts=parseListP(c.activities), exprs=parseExprP(c.expressions);
+    var h='<div class="pdf-h1">'+esc(theme.emoji)+' '+esc(theme.ko)+' <span style="font-size:11pt;color:#888">'+esc(theme.en)+'</span></div>'+
+      '<div class="pdf-sub">'+(c.month_label?esc(c.month_label)+' · ':'')+'나이테 엄마표영어 스터디</div>'+
+      (c.subject?'<div class="pdf-subject">'+esc(c.subject)+'</div>':'');
+    h+='<div class="pdf-sec-h">📚 이번 달 5권</div>'+bh;
+    h+='<div class="pdf-sec-h">🗣️ 읽어주는 방법</div>'+(c.read_method?'<div class="pdf-prose">'+esc(c.read_method)+'</div>':'<div class="pdf-prose">—</div>');
+    h+='<div class="pdf-sec-h">🎨 책 활용 아이디어</div>'+(acts.length?'<ul class="pdf-list">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<div class="pdf-prose">—</div>');
+    h+='<div class="pdf-sec-h">💬 관련 영어표현</div>'+(exprs.length?'<ul class="pdf-expr">'+exprs.map(function(e){return '<li><b>'+esc(e.en)+'</b>'+(e.ko?' <span class="k">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<div class="pdf-prose">—</div>');
+    h+='<div class="pdf-foot">나이테 영어도서관 · QR을 스캔하면 낭독 영상·워크북·구매 링크로 연결돼요 · © 나이테 영어도서관</div>';
+    document.getElementById('pdfout').innerHTML=h;
+    st.textContent='✓ 인쇄 창을 여는 중…';
+    setTimeout(function(){window.print();st.textContent='';},300);
   }
   function renderForm(){
     var key=STATE.editKey, c=STATE.contentByTheme[key]||{}, books=STATE.booksByTheme[key]||[];
