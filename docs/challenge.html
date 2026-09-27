@@ -101,6 +101,25 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 .ovb .save{background:var(--teal-deep);color:#fff}
 .ovb .close{background:var(--surface-2);color:var(--ink)}
 .ovb .hint2{font-size:.74rem;color:var(--ink-soft);margin:10px 0 0}
+.print{margin-top:8px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
+.print:hover{border-color:var(--teal)}
+#printable{display:none}
+@media print{
+  header.top,main.wrap,footer,.ov{display:none!important}
+  #printable{display:block!important;color:#000;font-family:'Noto Sans KR',sans-serif}
+  .pr-head h1{font-size:18pt;margin:0 0 2pt}
+  .pr-head p{font-size:9pt;color:#444;margin:0 0 12pt}
+  .pr-theme{break-inside:avoid;margin:0 0 9pt}
+  .pr-h2{font-size:11pt;margin:0 0 3pt;border-bottom:1pt solid #000;padding-bottom:2pt}
+  .pr-h2 span{font-size:8pt;color:#666;font-weight:400}
+  .pr-t{width:100%;border-collapse:collapse;font-size:9pt}
+  .pr-t td{border-bottom:.5pt solid #ccc;padding:2.5pt 4pt;vertical-align:top}
+  .pr-t .c1{width:14pt;text-align:center}
+  .pr-t .c2{width:64pt;color:#333}
+  .pr-t .c4{width:120pt;color:#555}
+  body{background:#fff}
+  @page{margin:14mm}
+}
 </style>
 
 <header class="top"><div class="wrap">
@@ -130,6 +149,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
         <button data-c="2y"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
       </div>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
+      <button class="print" id="prPrint">🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
@@ -147,6 +167,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <div class="btns"><button class="save" id="ovShare">📤 공유</button><button class="save" id="ovSave">💾 저장</button><button class="close" id="ovClose">닫기</button></div>
   <p class="hint2">이미지를 저장하거나 공유해 보세요. (모바일에서는 공유 시 인스타·카톡 등으로 바로 보낼 수 있어요.)</p>
 </div></div>
+
+<div id="printable"></div>
 
 <footer><div class="wrap">
   <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어도서관</p>
@@ -281,6 +303,20 @@ function isDark(){const c=document.documentElement.getAttribute('data-theme');re
 function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
 function saveShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
 function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
+// ── 120권 목록 인쇄/PDF ──
+function buildPrintable(){
+  const now=new Date().toLocaleDateString('ko-KR');
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어도서관 · ${now}</p></div>`;
+  themes.forEach((t,i)=>{
+    const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
+    h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
+    bks.forEach(b=>{h+=`<tr><td class="c1">${seen.has(b.id)?'✓':'☐'}</td><td class="c2">${POS[b.tier]}. ${esc(b.tier_label)}</td><td>${esc(b.title)}</td><td class="c4">${esc(b.author)}</td></tr>`;});
+    h+=`</tbody></table></div>`;
+  });
+  document.getElementById('printable').innerHTML=h;
+}
+function printList(){buildPrintable();window.print();}
+document.getElementById('prPrint').addEventListener('click',printList);
 document.getElementById('prShare').addEventListener('click',openShare);
 document.getElementById('ovSave').addEventListener('click',saveShare);
 document.getElementById('ovShare').addEventListener('click',shareShare);
