@@ -44,6 +44,8 @@ create table if not exists public.books (
   read_aloud text default '',  -- 책별 유튜브 낭독 링크
   workbook   text default '',  -- 책별 워크북 링크(공식 무료 활동지)
   buy_url    text default '',  -- 책별 구매 링크(쿠팡 파트너스)
+  format     text default '',  -- 조작북 형태(팝업/플랩/놀이북), 조작북 아니면 빈값
+  ar         real,             -- AR(추정) 지수, 조작북은 null
   sort       int default 0
 );
 
@@ -148,8 +150,10 @@ for i, t in enumerate(ch["themes"]):
     lines.append(f"insert into public.content(theme_key) values ({q(t['key'])}) on conflict (theme_key) do nothing;")
     for j, b in enumerate(t["books"]):
         kr = 'true' if b.get('kr_popular') else 'false'
-        ins=("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values "
-             f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{kr},{j});")
+        fmt = q(b.get('format') or '')
+        arv = ('null' if b.get('ar') is None else str(b.get('ar')))
+        ins=("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,format,ar,sort) values "
+             f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{kr},{fmt},{arv},{j});")
         lines.append(ins); book_lines.append(ins)
     lines.append("")
 lines.append(f"insert into public.settings(id,current_theme) values (1,{q(order[0])}) "
@@ -168,6 +172,8 @@ reseed = ["-- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수�
           "alter table public.books add column if not exists read_aloud text default '';",
           "alter table public.books add column if not exists workbook text default '';",
           "alter table public.books add column if not exists buy_url text default '';",
+          "alter table public.books add column if not exists format text default '';",
+          "alter table public.books add column if not exists ar real;",
           "-- 낭독/워크북/구매 링크 임시 보관 후 재삽입",
           "drop table if exists _book_links;",
           "create temporary table _book_links as select theme_key, title, read_aloud, workbook, buy_url from public.books;",

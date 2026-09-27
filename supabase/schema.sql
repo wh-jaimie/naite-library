@@ -33,6 +33,8 @@ create table if not exists public.books (
   read_aloud text default '',  -- 책별 유튜브 낭독 링크
   workbook   text default '',  -- 책별 워크북 링크(공식 무료 활동지)
   buy_url    text default '',  -- 책별 구매 링크(쿠팡 파트너스)
+  format     text default '',  -- 조작북 형태(팝업/플랩/놀이북), 조작북 아니면 빈값
+  ar         real,             -- AR(추정) 지수, 조작북은 null
   sort       int default 0
 );
 
