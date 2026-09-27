@@ -35,7 +35,7 @@ _FORMAT = {
 _AR = {
  "Giraffes Can't Dance": 3.1, "Brown Bear, Brown Bear, What Do You See?": 1.5,
  "Interrupting Chicken": 2.7, "The Crocodile Who Didn't Like Water": 2.5,
- "Little Blue Truck": 2.2, "Truck Full of Ducks": 2.0,
+ "Nee Naw the Little Fire Engine": 2.8, "Truck Full of Ducks": 2.0,
  "Don't Let the Pigeon Drive the Bus!": 1.3, "Goodnight, Goodnight, Construction Site": 3.1,
  "Jamberry": 2.0, "Today Is Monday": 2.0, "The Watermelon Seed": 1.3,
  "I Will Not Ever Never Eat a Tomato": 2.6,

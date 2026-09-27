@@ -25,7 +25,7 @@ CURRICULUM = [
 ]),
 ("🚗","Vehicles","탈것",[
  (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
- (2,"Little Blue Truck","Alice Schertle","AABB 라임과 동물 소리로 통통 튀는 파랑 트럭"),
+ (2,"Nee Naw the Little Fire Engine","Deano Yipadee","삐뽀 소리와 라임이 신나는 꼬마 소방차 이야기"),
  (3,"Truck Full of Ducks","Ross Burach","\"truck full of ducks!\" 후렴이 반복되는 배달 소동"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
