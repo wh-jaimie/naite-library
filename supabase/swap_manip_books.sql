@@ -14,3 +14,19 @@ update public.books set
   reason='구멍(다이컷)으로 하나씩 떨어지는 카운팅 싱어롱 조작북',
   pop_rank=0, lib_loans=0, award='', kr_popular=false
 where theme_key='numbers' and tier=1;
+
+-- 농장: That's Not My Tractor → Charlie Chick (배 누르면 팝업, Pictory 조작북)
+update public.books set
+  title='Charlie Chick', author='Nick Denchfield',
+  cover='https://covers.openlibrary.org/b/id/114033-L.jpg',
+  reason='배를 누르면 팝업이 튀어나오는 병아리 조작북(Press my tummy!)',
+  pop_rank=0, lib_loans=0, award='', kr_popular=false
+where theme_key='farm' and tier=1;
+
+-- 바다: Shark in the Park → One Lonely Fish (다이컷 카운팅 조작북, Pictory)
+update public.books set
+  title='One Lonely Fish', author='Andy Mansfield',
+  cover='https://covers.openlibrary.org/b/id/12794540-L.jpg',
+  reason='다이컷 입으로 물고기를 하나씩 세는 카운팅 조작북',
+  pop_rank=0, lib_loans=0, award='', kr_popular=false
+where theme_key='ocean' and tier=1;

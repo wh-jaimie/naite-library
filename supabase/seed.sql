@@ -115,7 +115,7 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 
 insert into public.themes(key,emoji,en,ko,sort) values ('farm','🚜','Farm','농장',14) on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;
 insert into public.content(theme_key) values ('farm') on conflict (theme_key) do nothing;
-insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('farm',1,'조작북','That''s Not My Tractor','Fiona Watt','https://covers.openlibrary.org/b/id/1389424-L.jpg','트랙터 촉감을 만지는 촉감북',0,0,'',false,0);
+insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('farm',1,'조작북','Charlie Chick','Nick Denchfield','https://covers.openlibrary.org/b/id/114033-L.jpg','배를 누르면 팝업이 튀어나오는 병아리 조작북(Press my tummy!)',0,0,'',false,0);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('farm',2,'라임·운율','Barnyard Dance','Sandra Boynton','https://covers.openlibrary.org/b/id/796359-L.jpg','농장 동물들의 흥나는 춤 라임',0,0,'',false,1);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('farm',3,'반복·패턴','Mrs. Wishy-Washy','Joy Cowley','https://covers.openlibrary.org/b/id/259809-L.jpg','동물을 씻기는 아주머니의 반복 소동',0,0,'',false,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('farm',4,'유머·반전','Click, Clack, Moo: Cows That Type','Doreen Cronin','https://covers.openlibrary.org/b/id/5725264-L.jpg','타자기로 요구하는 소들의 유머',0,0,'🏅 칼데콧 아너 2001',false,3);
@@ -123,7 +123,7 @@ insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop
 
 insert into public.themes(key,emoji,en,ko,sort) values ('ocean','🌊','Ocean','바다',15) on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;
 insert into public.content(theme_key) values ('ocean') on conflict (theme_key) do nothing;
-insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('ocean',1,'조작북','Shark in the Park','Nick Sharratt','https://covers.openlibrary.org/b/id/244378-L.jpg','망원경 구멍으로 공원을 보는 참여형 라임',0,0,'',true,0);
+insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('ocean',1,'조작북','One Lonely Fish','Andy Mansfield','https://covers.openlibrary.org/b/id/12794540-L.jpg','다이컷 입으로 물고기를 하나씩 세는 카운팅 조작북',0,0,'',false,0);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('ocean',2,'라임·운율','The Pout-Pout Fish','Deborah Diesen','https://covers.openlibrary.org/b/id/8813366-L.jpg','시무룩 물고기의 반전 — 라임',1,0,'',false,1);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('ocean',3,'반복·패턴','Hooray for Fish!','Lucy Cousins','https://covers.openlibrary.org/b/id/516528-L.jpg','온갖 물고기가 이어지는 반복',0,0,'',false,2);
 insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,sort) values ('ocean',4,'유머·반전','This Is Not My Hat','Jon Klassen','https://covers.openlibrary.org/b/id/10207424-L.jpg','모자를 훔친 물고기의 그림 반전',1,76,'🥇 칼데콧 메달 2013',true,3);

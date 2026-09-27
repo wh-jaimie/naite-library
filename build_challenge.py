@@ -110,14 +110,14 @@ CURRICULUM = [
  (5,"Hot Dog","Doug Salati","무더위를 피해 바닷가로 간 강아지 — 칼데콧 메달"),
 ]),
 ("🚜","Farm","농장",[
- (1,"That's Not My Tractor","Fiona Watt","트랙터 촉감을 만지는 촉감북"),
+ (1,"Charlie Chick","Nick Denchfield","배를 누르면 팝업이 튀어나오는 병아리 조작북(Press my tummy!)"),
  (2,"Barnyard Dance","Sandra Boynton","농장 동물들의 흥나는 춤 라임"),
  (3,"Mrs. Wishy-Washy","Joy Cowley","동물을 씻기는 아주머니의 반복 소동"),
  (4,"Click, Clack, Moo: Cows That Type","Doreen Cronin","타자기로 요구하는 소들의 유머"),
  (5,"The Little Red Hen","Paul Galdone","\"누가 도와줄래?\" 부지런한 암탉 이야기"),
 ]),
 ("🌊","Ocean","바다",[
- (1,"Shark in the Park","Nick Sharratt","망원경 구멍으로 공원을 보는 참여형 라임"),
+ (1,"One Lonely Fish","Andy Mansfield","다이컷 입으로 물고기를 하나씩 세는 카운팅 조작북"),
  (2,"The Pout-Pout Fish","Deborah Diesen","시무룩 물고기의 반전 — 라임"),
  (3,"Hooray for Fish!","Lucy Cousins","온갖 물고기가 이어지는 반복"),
  (4,"This Is Not My Hat","Jon Klassen","모자를 훔친 물고기의 그림 반전"),
