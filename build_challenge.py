@@ -12,6 +12,7 @@ TIER_LABELS = {1: "조작북", 2: "라임·운율", 3: "반복·패턴", 4: "유
 # 공개 카탈로그에 표지가 없는 책은 여기에 직접 지정(레포 docs/covers 에 올린 이미지의 Pages URL)
 COVER_OVERRIDE = {
   "fire engine": "https://wh-jaimie.github.io/naite-library/covers/fire-engine.jpg",
+  "nee naw the little fire engine": "https://wh-jaimie.github.io/naite-library/covers/nee-naw.jpg",
 }
 
 # (emoji, en, ko, [(type, title, author, reason)×5])
