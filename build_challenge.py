@@ -20,8 +20,8 @@ CURRICULUM = [
 ]),
 ("🚗","Vehicles","탈것",[
  (1,"That's Not My Truck","Fiona Watt","트럭 촉감을 만지는 촉감북"),
- (2,"Truck Full of Ducks","Ross Burach","오리 가득 실은 배달 트럭의 라임 소동"),
- (3,"Little Blue Truck","Alice Schertle","\"Beep!\" 소리와 동물이 반복되는 파랑 트럭"),
+ (2,"Little Blue Truck","Alice Schertle","AABB 라임과 동물 소리로 통통 튀는 파랑 트럭"),
+ (3,"Truck Full of Ducks","Ross Burach","\"truck full of ducks!\" 후렴이 반복되는 배달 소동"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
 ]),
