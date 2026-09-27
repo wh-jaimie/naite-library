@@ -7,7 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "output", "challenge.json")
 UA = "ChoiEnglishLibrary/1.0 (curation; contact jabbaek@gmail.com)"
 DELAY = 0.25
-TIER_LABELS = {1: "조작북", 2: "라임/운율", 3: "반복/패턴", 4: "유머·반전", 5: "스토리"}
+TIER_LABELS = {1: "조작북", 2: "라임·운율", 3: "반복·패턴", 4: "유머·반전", 5: "스토리"}
 
 # (emoji, en, ko, [(type, title, author, reason)×5])
 CURRICULUM = [
