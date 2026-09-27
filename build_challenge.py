@@ -8,6 +8,10 @@ OUT = os.path.join(HERE, "output", "challenge.json")
 UA = "ChoiEnglishLibrary/1.0 (curation; contact jabbaek@gmail.com)"
 DELAY = 0.25
 TIER_LABELS = {1: "조작북", 2: "라임·운율", 3: "반복·패턴", 4: "유머·반전", 5: "스토리"}
+# 공개 카탈로그에 표지가 없는 책은 여기에 직접 지정(레포 docs/covers 에 올린 이미지의 Pages URL)
+COVER_OVERRIDE = {
+  "fire engine": "https://wh-jaimie.github.io/naite-library/covers/fire-engine.jpg",
+}
 
 # (emoji, en, ko, [(type, title, author, reason)×5])
 CURRICULUM = [
@@ -263,8 +267,9 @@ for emoji,en,ko,books in CURRICULUM:
     for tier,title,author,reason in books:
         gid+=1
         cover,isbn,year=ol(title,author)
-        if not cover: misses.append(f"{ko}/{title}")
         n=norm(title)
+        if n in COVER_OVERRIDE: cover=COVER_OVERRIDE[n]
+        if not cover: misses.append(f"{ko}/{title}")
         tb.append({"gid":gid,"tier":tier,"tier_label":TIER_LABELS[tier],"title":title,"author":author,
                    "reason":reason,"cover":cover,"isbn":isbn,"year":year,"id":"c"+str(gid),
                    "pop_rank":(1 if n in WORLD_SET_C else 0),"lib_loans":LIB.get(n,0),"award":award(title),

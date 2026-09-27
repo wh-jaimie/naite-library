@@ -18,7 +18,8 @@ where theme_key='numbers' and tier=1;
 -- 탈것: That's Not My Truck → Fire Engine (Pictory 조작북; 표지는 공개 카탈로그에 없어 비움)
 update public.books set
   title='Fire Engine', author='Melanie Whittington',
-  cover='', reason='소방차를 움직이며 노는 불자동차 조작북 (Pictory)',
+  cover='https://wh-jaimie.github.io/naite-library/covers/fire-engine.jpg',
+  reason='소방차를 움직이며 노는 불자동차 조작북 (Pictory)',
   pop_rank=0, lib_loans=0, award='', kr_popular=false
 where theme_key='vehicles' and tier=1;
 
