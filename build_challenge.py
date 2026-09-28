@@ -40,17 +40,17 @@ CURRICULUM = [
 ]),
 ("🌈","Colors","색깔",[
  (1,"Mix It Up!","Hervé Tullet","손가락으로 색을 섞는 에르베 튈레의 참여형 색깔책"),
- (2,"Mary Wore Her Red Dress","Merle Peek","색깔 옷을 노래하는 반복 라임"),
+ (2,"Pete the Cat: I Love My White Shoes","Eric Litwin","신발 색이 바뀌어도 쿨한 고양이의 신나는 노래·찬트"),
  (3,"Where Is the Green Sheep?","Mem Fox","온갖 양이 나오다 초록 양 찾기 — 색+반복"),
  (4,"The Day the Crayons Quit","Drew Daywalt","크레용들이 파업하며 보낸 편지 — 색+유머 명작"),
- (5,"Pete the Cat: I Love My White Shoes","Eric Litwin","신발 색이 바뀌어도 쿨한 고양이의 노래 이야기"),
+ (5,"Mouse Paint","Ellen Stoll Walsh","생쥐 셋이 빨강·노랑·파랑 물감으로 색을 섞는 이야기"),
 ]),
 ("🔢","Numbers","숫자",[
  (1,"There Were Ten in the Bed","Annie Kubler","구멍(다이컷)으로 하나씩 떨어지는 카운팅 싱어롱 조작북"),
  (2,"Ten Fat Sausages","전래동요 (Traditional)","소시지가 하나씩 터지는 카운팅 노래"),
  (3,"Ten Black Dots","Donald Crews","점 개수로 사물을 만드는 반복 카운팅"),
  (4,"Ten Apples Up on Top!","Dr. Seuss","머리에 사과를 쌓는 좌충우돌 라임"),
- (5,"Five Little Monkeys Jumping on the Bed","Eileen Christelow","침대에서 뛰다 다치는 원숭이 이야기"),
+ (5,"The Doorbell Rang","Pat Hutchins","손님이 올 때마다 쿠키를 나누는 수 세기 이야기"),
 ]),
 ("👨‍👩‍👧","Family","가족",[
  (1,"Where Is Baby's Mommy?","Karen Katz","플랩을 열며 엄마를 찾는 플랩북"),
