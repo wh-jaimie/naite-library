@@ -55,15 +55,15 @@ CURRICULUM = [
 ("👨‍👩‍👧","Family","가족",[
  (1,"Where Is Baby's Mommy?","Karen Katz","플랩을 열며 엄마를 찾는 플랩북"),
  (2,"Is Your Mama a Llama?","Deborah Guarino","\"너희 엄마는 라마야?\" 추측하는 라임"),
- (3,"Guess How Much I Love You","Sam McBratney","사랑의 크기를 재보는 토끼의 잠자리 이야기"),
+ (3,"Are You My Mother?","P.D. Eastman","\"Are you my mother?\"를 반복하며 엄마를 찾는 아기 새"),
  (4,"My Mum","Anthony Browne","엄마가 얼마나 대단한지 과장해 그린 따뜻한 유머"),
- (5,"Peppa Pig: Peppa Goes Swimming","Peppa Pig","전세계 국민 캐릭터 페파의 일상 이야기"),
+ (5,"Guess How Much I Love You","Sam McBratney","사랑의 크기를 재보는 토끼의 잠자리 이야기"),
 ]),
 ("🌙","Bedtime","잠자리",[
  (1,"Tuck Me In!","Dean Hacohen","이불(플랩)을 덮어주며 동물을 재우는 플랩북"),
  (2,"The Going to Bed Book","Sandra Boynton","잘 준비 순서를 노래하는 라임"),
  (3,"Goodnight Moon","Margaret Wise Brown","방 안 사물에 \"굿나잇\"을 반복하는 잠자리 고전"),
- (4,"Llama Llama Red Pajama","Anna Dewdney","라마 아기의 잠자리 투정 — 라임"),
+ (4,"Goodnight Already!","Jory John","자려는 곰과 안 재우는 오리 이웃의 티격태격 유머"),
  (5,"A Big Mooncake for Little Star","Grace Lin","달을 조금씩 베어 먹는 아기별 이야기"),
 ]),
 ("😊","Feelings","감정",[
