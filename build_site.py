@@ -94,7 +94,8 @@ document.querySelectorAll('.cv img').forEach(function(im){im.addEventListener('e
 <div class="top"><div class="wrap"><a class="brand" href="index.html" style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="#245648" stroke-width="1.6"/><circle cx="16" cy="16" r="9.5" stroke="#245648" stroke-width="1.6" opacity=".75"/><circle cx="16" cy="16" r="5" stroke="#245648" stroke-width="1.6" opacity=".5"/><circle cx="16" cy="16" r="1.7" fill="#D1965C"/></svg>나이테 영어도서관</a>{si}</div></div>
 {body}
 <div class="foot"><div class="wrap">나이테 영어도서관 · 큐레이션: 전세계 인기(Goodreads)·국내 서점 통합순위 · 표지: Open Library</div></div>
-{sj}</body></html>"""
+{sj}
+<script src="track.js" data-page="{esc(title)}"></script></body></html>"""
 def card(cover,title,author,rank=None,badges=None,extra=""):
     bg="".join(f'<span class="bg {c}">{esc(t)}</span>' for c,t in (badges or []))
     dtext=esc((title+" "+(author or "")).lower())

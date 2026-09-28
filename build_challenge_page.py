@@ -348,6 +348,7 @@ document.getElementById('ovClose').addEventListener('click',()=>document.getElem
 document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')document.getElementById('ov').classList.remove('on');});
 renderBody();updateProgress();
 </script>
+<script src="track.js" data-page="나이테 120"></script>
 """
 html_out = TEMPLATE.replace("/*DATA*/", payload)
 with open(OUT, "w", encoding="utf-8") as f:

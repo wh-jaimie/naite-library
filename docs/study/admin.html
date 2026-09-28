@@ -274,6 +274,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var pv=ev.filter(function(e){return e.type==='page_view';});
     var sess={};pv.forEach(function(e){if(e.session_id)sess[e.session_id]=1;});
     var perTheme={};pv.forEach(function(e){var k=e.theme_key||'?';perTheme[k]=(perTheme[k]||0)+1;});
+    var perPage={};pv.forEach(function(e){var p=(e.meta&&e.meta.page)||e.path||'?';perPage[p]=(perPage[p]||0)+1;});
     var clicks={};ev.filter(function(e){return e.type==='book_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||('#'+e.book_id);clicks[t]=(clicks[t]||0)+1;});
     var wbClicks={};ev.filter(function(e){return e.type==='workbook_click';}).forEach(function(e){var t=(e.meta&&e.meta.title)||'?';wbClicks[t]=(wbClicks[t]||0)+1;});
     var wbTotal=ev.filter(function(e){return e.type==='workbook_click';}).length;
@@ -323,7 +324,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div class="card"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📈 날짜별 추이 <span class="hint">최근 14일</span></h3>'+
         '<select class="t" id="kmetric" style="width:auto;margin-left:auto;padding:6px 10px;font-size:.85rem"><option value="view">방문</option><option value="visitor">순 방문자</option><option value="book">책 클릭</option><option value="ra">영상 재생</option><option value="wb">워크지 열기</option><option value="buy">구매 클릭</option></select></div>'+
         '<div id="kchart" style="margin-top:12px"></div></div>'+
-      '<div class="card"><h3>주제별 방문</h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
+      '<div class="card"><h3>페이지별 방문 <span class="hint">(전체 메뉴)</span></h3><table><thead><tr><th>페이지</th><th>방문</th></tr></thead><tbody>'+rows(perPage)+'</tbody></table></div>'+
+      '<div class="card"><h3>주제별 방문 <span class="hint">(스터디)</span></h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 클릭한 책</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(clicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 본 영상</h3><table><thead><tr><th>책</th><th>재생</th></tr></thead><tbody>'+rows(raClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 연 워크지</h3><table><thead><tr><th>자료</th><th>열기</th></tr></thead><tbody>'+rows(wbClicks)+'</tbody></table></div>'+
