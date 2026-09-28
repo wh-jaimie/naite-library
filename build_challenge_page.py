@@ -173,6 +173,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <div class="legend" id="legend"></div>
     <div id="statline" class="note"></div>
     <p class="note" style="margin-top:6px">※ <b>AR(추정)</b>은 아이 연령 기준이 아니라, <b>엄마가 읽어줄 때 얼마나 수월하게 읽히는지</b> 가늠하려고 넣었어요 — 어차피 읽는 사람은 엄마니까요.</p>
+    <p class="note" style="margin-top:6px">🧩 <a href="types.html"><b>이 5가지 유형을 왜 골랐는지</b> 자세히 보기 →</a></p>
   </section>
 
   <section><div id="course-body"></div></section>
