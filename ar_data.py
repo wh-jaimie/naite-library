@@ -72,7 +72,7 @@ _AR = {
  "The Night Before Christmas": 4.0, "The Twelve Days of Christmas": 3.5,
  "How the Grinch Stole Christmas!": 4.0, "The Polar Express": 4.0,
  "Walking Through the Jungle": 1.5, "Polar Bear, Polar Bear, What Do You Hear?": 1.5,
- "There's a Wocket in My Pocket!": 1.9, "Over in the Meadow": 3.0,
+ "There's a Wocket in My Pocket!": 1.9, "We're Going on a Bear Hunt": 1.9,
  "Llama Llama Misses Mama": 2.4, "Do You Want to Be My Friend?": 0.9,
  "We Don't Eat Our Classmates": 3.2, "Chrysanthemum": 3.2,
  "Pajama Time!": 2.0, "The Napping House": 2.9, "No, David!": 0.8,

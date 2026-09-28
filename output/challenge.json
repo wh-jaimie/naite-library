@@ -1944,19 +1944,19 @@
      "gid": 100,
      "tier": 5,
      "tier_label": "스토리",
-     "title": "Over in the Meadow",
-     "author": "Ezra Jack Keats",
-     "reason": "자연 속 동물 가족을 세는 노래 이야기",
-     "cover": "https://covers.openlibrary.org/b/id/402285-L.jpg",
-     "isbn": "9780590448482",
-     "year": 1960,
+     "title": "We're Going on a Bear Hunt",
+     "author": "Michael Rosen",
+     "reason": "가족이 곰을 찾아 나서는 챈트 모험 이야기(반전 결말)",
+     "cover": "https://covers.openlibrary.org/b/id/433694-L.jpg",
+     "isbn": "9780689815812",
+     "year": 1989,
      "id": "c100",
-     "pop_rank": 0,
+     "pop_rank": 1,
      "lib_loans": 0,
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.0
+     "ar": 1.9
     }
    ]
   },

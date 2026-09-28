@@ -155,7 +155,7 @@ CURRICULUM = [
  (2,"Walking Through the Jungle","Debbie Harter","정글을 걸으며 동물을 만나는 노래·챈트"),
  (3,"Polar Bear, Polar Bear, What Do You Hear?","Bill Martin Jr.","동물 소리가 이어지는 브라운베어 후속 챈트"),
  (4,"There's a Wocket in My Pocket!","Dr. Seuss","엉터리 라임 단어의 말놀이 유머"),
- (5,"Over in the Meadow","Ezra Jack Keats","자연 속 동물 가족을 세는 노래 이야기"),
+ (5,"We're Going on a Bear Hunt","Michael Rosen","가족이 곰을 찾아 나서는 챈트 모험 이야기(반전 결말)"),
 ]),
 ("🏫","School & Friends","학교·친구",[
  (1,"Spot Goes to School","Eric Hill","플랩으로 학교 하루를 여는 스팟 플랩북"),
