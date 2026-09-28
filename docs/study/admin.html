@@ -283,6 +283,34 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var raTotal=ev.filter(function(e){return e.type==='read_aloud_click';}).length;
     var dwell=ev.filter(function(e){return e.type==='dwell'&&e.meta&&e.meta.seconds;}).map(function(e){return e.meta.seconds;});
     var avgD=dwell.length?Math.round(dwell.reduce(function(a,b){return a+b;},0)/dwell.length):0;
+    // ── 날짜별 집계(최근 14일) ──
+    function dstr(x){var d=new Date(x);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+    var perDay={};
+    ev.forEach(function(e){var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},book:0,ra:0,wb:0,buy:0});
+      if(e.type==='page_view'){o.view++;if(e.session_id)o.sess[e.session_id]=1;}
+      else if(e.type==='book_click')o.book++;else if(e.type==='read_aloud_click')o.ra++;
+      else if(e.type==='workbook_click')o.wb++;else if(e.type==='buy_click')o.buy++;});
+    var days=[];var _t=new Date();for(var _i=13;_i>=0;_i--){var _d=new Date(_t);_d.setDate(_t.getDate()-_i);days.push(dstr(_d));}
+    var METRICS={view:['방문','#2F6E58',function(o){return o?o.view:0;}],
+      visitor:['순 방문자','#B87343',function(o){return o?Object.keys(o.sess).length:0;}],
+      book:['책 클릭','#4F9A72',function(o){return o?o.book:0;}],
+      ra:['영상 재생','#D1965C',function(o){return o?o.ra:0;}],
+      wb:['워크지 열기','#245648',function(o){return o?o.wb:0;}],
+      buy:['구매 클릭','#a2231d',function(o){return o?o.buy:0;}]};
+    function drawChart(mk){
+      var m=METRICS[mk]||METRICS.view,col=m[1],f=m[2];
+      var vals=days.map(function(dd){return f(perDay[dd]);});
+      var max=Math.max.apply(null,vals.concat([1]));
+      var W=700,H=210,padL=26,padB=34,padT=16,n=days.length,bw=(W-padL-10)/n,base=H-padB,plotH=H-padB-padT;
+      var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:100%;display:block">';
+      s+='<line x1="'+padL+'" y1="'+base+'" x2="'+(W-4)+'" y2="'+base+'" stroke="#E2E5DA"/>';
+      s+='<text x="2" y="'+(padT+4)+'" font-size="10" fill="#565E4E">'+max+'</text>';
+      vals.forEach(function(v,i){var h=v>0?Math.max(2,Math.round(v/max*plotH)):0,x=padL+i*bw+3,y=base-h,w=bw-6;
+        if(h>0)s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+col+'"><title>'+days[i]+' · '+v+'</title></rect>';
+        if(v>0)s+='<text x="'+(x+w/2)+'" y="'+(y-3)+'" font-size="10" fill="#23291F" text-anchor="middle">'+v+'</text>';
+        s+='<text x="'+(x+w/2)+'" y="'+(base+14)+'" font-size="9" fill="#565E4E" text-anchor="middle">'+days[i].slice(5).replace('-','/')+'</text>';});
+      s+='</svg>';var el=document.getElementById('kchart');if(el)el.innerHTML=s;
+    }
     function rows(obj){return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).map(function(k){return '<tr><td>'+esc(k)+'</td><td>'+obj[k]+'</td></tr>';}).join('')||'<tr><td colspan=2 class="hint">데이터 없음</td></tr>';}
     var themeName={};STATE.themes.forEach(function(t){themeName[t.key]=t.emoji+' '+t.ko;});
     var perThemeNamed={};Object.keys(perTheme).forEach(function(k){perThemeNamed[themeName[k]||k]=perTheme[k];});
@@ -292,12 +320,18 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         kpi(pv.length,'페이지 방문')+kpi(Object.keys(sess).length,'순 방문자(세션)')+
         kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(raTotal,'영상 재생')+kpi(wbTotal,'워크지 열기')+kpi(buyTotal,'구매 클릭')+kpi(avgD+'s','평균 체류')+
       '</div></div>'+
+      '<div class="card"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📈 날짜별 추이 <span class="hint">최근 14일</span></h3>'+
+        '<select class="t" id="kmetric" style="width:auto;margin-left:auto;padding:6px 10px;font-size:.85rem"><option value="view">방문</option><option value="visitor">순 방문자</option><option value="book">책 클릭</option><option value="ra">영상 재생</option><option value="wb">워크지 열기</option><option value="buy">구매 클릭</option></select></div>'+
+        '<div id="kchart" style="margin-top:12px"></div></div>'+
       '<div class="card"><h3>주제별 방문</h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 클릭한 책</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(clicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 본 영상</h3><table><thead><tr><th>책</th><th>재생</th></tr></thead><tbody>'+rows(raClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 연 워크지</h3><table><thead><tr><th>자료</th><th>열기</th></tr></thead><tbody>'+rows(wbClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>많이 누른 구매 링크</h3><table><thead><tr><th>책</th><th>클릭</th></tr></thead><tbody>'+rows(buyClicks)+'</tbody></table></div>'+
       '<div class="card"><h3>최근 이벤트</h3><table><thead><tr><th>시각</th><th>유형</th><th>주제</th><th>비고</th></tr></thead><tbody>'+(recent||'<tr><td colspan=4 class="hint">아직 없음</td></tr>')+'</tbody></table></div>';
+    var kmSel=document.getElementById('kmetric');
+    if(kmSel)kmSel.addEventListener('change',function(){drawChart(kmSel.value);});
+    drawChart('view');
   }
   function kpi(n,l){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
 
