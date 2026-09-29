@@ -1,0 +1,17 @@
+{
+  "name": "나이테 영어도서관",
+  "short_name": "나이테",
+  "description": "파닉스 전, 아이의 첫 영어 그림책 큐레이션",
+  "lang": "ko",
+  "start_url": "/naite-library/",
+  "scope": "/naite-library/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1F4E42",
+  "theme_color": "#245648",
+  "icons": [
+    { "src": "/naite-library/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/naite-library/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/naite-library/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
