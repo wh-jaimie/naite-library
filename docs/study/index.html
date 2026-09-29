@@ -75,6 +75,18 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .archi span{margin-left:auto;color:var(--soft);font-size:.76rem}
 .mlink{display:inline-block;margin-top:18px;font-weight:800;font-size:.95rem;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);padding:11px 20px;border-radius:999px;box-shadow:var(--sh)}
 .mlink:hover{filter:brightness(.97)}
+.pwa-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:var(--tealD);color:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.28);padding:11px 12px;display:flex;align-items:center;gap:10px;max-width:520px;margin:0 auto}
+.pwa-bar .ic{font-size:1.35rem;flex:0 0 auto}
+.pwa-bar .tx{flex:1;font-size:.82rem;line-height:1.35}
+.pwa-bar .tx b{font-weight:700}
+.pwa-bar button{border:none;border-radius:9px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.pwa-bar .add{background:#fff;color:var(--tealD);padding:8px 13px;flex:0 0 auto}
+.pwa-bar .x{background:transparent;color:#fff;opacity:.7;padding:6px 4px;font-size:.95rem;flex:0 0 auto}
+.pwa-guide{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.pwa-guide .box{background:var(--surface);color:var(--ink);border-radius:16px;max-width:340px;width:100%;padding:22px;box-shadow:var(--sh)}
+.pwa-guide h3{margin:0 0 12px;font-size:1.2rem}
+.pwa-guide ol{margin:0;padding-left:20px;font-size:.92rem;line-height:1.7}
+.pwa-guide button{margin-top:16px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:11px;border-radius:11px;cursor:pointer}
 @media (max-width:560px){
   .wrap{padding:0 16px}
   .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
@@ -224,6 +236,42 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     }catch(e){notice('데이터를 불러오지 못했어요. 연결 설정(config.js)과 DB 실행을 확인해주세요.<br><small>'+esc(e.message||e)+'</small>');}
   }
   boot();
+})();
+</script>
+<script>
+/* 홈 화면 추가(PWA) 도우미 — 스터디 페이지를 앱처럼 설치 */
+(function(){
+  if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/study/'});}catch(e){}}
+  function standalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
+  if(standalone())return;
+  var KEY='naite_pwa_dismiss', deferred=null, bar=null;
+  function isiOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
+  function dismissed(){try{return localStorage.getItem(KEY)==='1';}catch(e){return false;}}
+  function makeBar(){
+    if(bar||dismissed())return;
+    bar=document.createElement('div');bar.className='pwa-bar';
+    bar.innerHTML='<span class="ic">📲</span><span class="tx"><b>홈 화면에 추가</b><br>매달 스터디를 앱처럼 바로 열어요</span><button class="add">추가</button><button class="x" aria-label="닫기">✕</button>';
+    document.body.appendChild(bar);
+    bar.querySelector('.x').onclick=function(){if(bar){bar.remove();bar=null;}try{localStorage.setItem(KEY,'1');}catch(e){}};
+    bar.querySelector('.add').onclick=onAdd;
+  }
+  function onAdd(){
+    if(deferred){deferred.prompt();deferred.userChoice.finally(function(){deferred=null;if(bar){bar.remove();bar=null;}});return;}
+    showGuide();
+  }
+  function showGuide(){
+    var g=document.createElement('div');g.className='pwa-guide';var ios=isiOS();
+    g.innerHTML='<div class="box"><h3>📲 홈 화면에 추가</h3>'+(ios?
+      '<ol><li>하단 <b>공유</b> 버튼(⬆️)을 눌러요</li><li><b>홈 화면에 추가</b>를 선택해요</li><li><b>추가</b>를 누르면 끝!</li></ol>':
+      '<ol><li>브라우저 <b>메뉴(⋮)</b>를 열어요</li><li><b>홈 화면에 추가</b>(또는 앱 설치)를 눌러요</li><li><b>추가</b>를 누르면 끝!</li></ol>')+
+      '<button class="ok">확인</button></div>';
+    document.body.appendChild(g);
+    g.querySelector('.ok').onclick=function(){g.remove();};
+    g.onclick=function(e){if(e.target===g)g.remove();};
+  }
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;makeBar();});
+  window.addEventListener('appinstalled',function(){if(bar){bar.remove();bar=null;}try{localStorage.setItem(KEY,'1');}catch(e){}});
+  if(isiOS()){setTimeout(makeBar,1200);} // iOS는 이벤트가 없어 안내형으로 노출
 })();
 </script>
 </body>
