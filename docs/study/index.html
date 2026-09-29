@@ -122,9 +122,13 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
 
+  var IS_ADMIN=false;
+  function noTrack(){try{return localStorage.getItem('naite_notrack')==='1';}catch(e){return false;}}
+  (function(){try{var _q=new URLSearchParams(location.search);if(_q.has('notrack')){var v=_q.get('notrack')==='0'?'0':'1';localStorage.setItem('naite_notrack',v);alert(v==='0'?'이 기기: 방문 집계를 다시 시작합니다.':'이 기기의 방문은 이제 KPI 집계에서 제외됩니다.');}}catch(e){}})();
+
   function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
   var curKey=null;
-  async function logEvent(type,extra){try{var row={type:type,theme_key:curKey,session_id:sid(),path:location.pathname,meta:extra||null};if(extra&&extra.book_id)row.book_id=extra.book_id;await client.from('events').insert(row);}catch(e){}}
+  async function logEvent(type,extra){if(IS_ADMIN||noTrack())return;try{var row={type:type,theme_key:curKey,session_id:sid(),path:location.pathname,meta:extra||null};if(extra&&extra.book_id)row.book_id=extra.book_id;await client.from('events').insert(row);}catch(e){}}
 
   function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
   function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
@@ -228,6 +232,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 
   async function boot(){
     try{
+      try{var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;IS_ADMIN=!!(u&&window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase());}catch(e){}
       var key=curParam();
       if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
       if(!key){notice('아직 공개된 주제가 없어요. 관리자 페이지에서 이번 달 주제를 정해주세요.');return;}

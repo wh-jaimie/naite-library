@@ -5,6 +5,9 @@
   var ANON="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi";
   var cs=document.currentScript;
   var page=(cs&&cs.getAttribute('data-page'))||document.title||location.pathname;
+  // 방문 집계 제외 옵션: ?notrack=1 로 이 기기 제외(=0 해제). 관리자 본인 방문 제외용.
+  try{var _q=new URLSearchParams(location.search);if(_q.has('notrack')){var _v=_q.get('notrack')==='0'?'0':'1';localStorage.setItem('naite_notrack',_v);alert(_v==='0'?'이 기기: 방문 집계를 다시 시작합니다.':'이 기기의 방문은 이제 KPI 집계에서 제외됩니다.');}}catch(e){}
+  try{if(localStorage.getItem('naite_notrack')==='1')return;}catch(e){}
   function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
   try{
     fetch(URL+"/rest/v1/events",{

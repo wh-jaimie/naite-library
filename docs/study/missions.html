@@ -76,6 +76,10 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
 
+  var IS_ADMIN=false;
+  function noTrack(){try{return localStorage.getItem('naite_notrack')==='1';}catch(e){return false;}}
+  (function(){try{var _q=new URLSearchParams(location.search);if(_q.has('notrack')){var v=_q.get('notrack')==='0'?'0':'1';localStorage.setItem('naite_notrack',v);alert(v==='0'?'이 기기: 방문 집계를 다시 시작합니다.':'이 기기의 방문은 이제 KPI 집계에서 제외됩니다.');}}catch(e){}})();
+
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
   function passKey(k){return 'joy_pass_'+k;}
   var RING='<svg viewBox="0 0 64 64" width="58" height="58" fill="none" aria-hidden="true" style="margin:0 auto 6px;display:block"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
@@ -98,8 +102,8 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
     h+='<div class="cta"><a class="pri" href="index.html'+(curParam()?('?m='+encodeURIComponent(curParam())):'')+'">← 이번 달 책 보러가기</a>'+
        '<a href="../types.html">5가지 유형이 궁금하다면</a></div>';
     app.innerHTML=h;
-    // 방문 로그
-    try{client.from('events').insert({type:'page_view',theme_key:theme&&theme.key,session_id:sid(),path:location.pathname,meta:{page:'스터디 미션'}});}catch(e){}
+    // 방문 로그 (관리자·집계제외 기기는 제외)
+    if(!IS_ADMIN&&!noTrack()){try{client.from('events').insert({type:'page_view',theme_key:theme&&theme.key,session_id:sid(),path:location.pathname,meta:{page:'스터디 미션'}});}catch(e){}}
   }
   function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
 
@@ -129,6 +133,7 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
 
   async function boot(){
     try{
+      try{var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;IS_ADMIN=!!(u&&window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase());}catch(e){}
       var key=curParam();
       if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
       if(!key){notice('아직 공개된 주제가 없어요.');return;}
