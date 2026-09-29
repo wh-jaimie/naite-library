@@ -46,6 +46,9 @@ create table if not exists public.content (
   read_method text default '',
   activities  text default '',
   expressions text default '',
+  missions    text default '그림책 준비 + 사진 인증 📸 | 이번 달 그림책을 준비해 사진으로 인증해요. 5권을 다 준비하지 않아도 괜찮아요 — 원하는 책만 골라도, 집에 이미 있는 다른 책이어도 좋아요. 중요한 건 아이에게 읽어주는 것이니까요!
+도서관에서 아이와 함께 빌리기 📚 | 아이와 함께 도서관에 가서 이번 달 주제의 그림책을 빌려보세요. 아이가 직접 고르게 해주세요 — 직접 고른 책은 성공 확률이 아주 높아요. 책을 고르는 즐거움 자체를 느끼게 해주는 게 목표예요.
+읽어주고 아이 반응 공유 💬 | 읽어준 뒤 아이가 어떤 부분을 좋아했는지 공유해 주세요. 다른 엄마들에게도 큰 도움이 돼요. 아이가 싫어하는 책도 있을 수 있고, 엄마가 읽어주는 방식에 따라 반응이 달라지기도 해요. 싫어하면 굳이 붙잡지 말고 과감히 다른 책으로 넘어가세요. 엄마표영어의 핵심은 재미예요.', -- 이번 달 미션(한 줄에 하나 "제목 | 설명")
   workbooks   text default '',
   passcode    text default '',      -- 페이지별 비밀번호(회원 열람용)
   published   boolean default false,-- 발행 여부(회원 열람/보관함 표시)

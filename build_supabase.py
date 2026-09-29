@@ -9,6 +9,13 @@ os.makedirs(SQLDIR, exist_ok=True)
 def q(s):
     return "'" + (s or "").replace("'", "''") + "'"
 
+# 기본 미션 3가지(모든 달 공통 초기값 · 관리자에서 달마다 수정 가능). 한 줄에 하나 "제목 | 설명".
+DEFAULT_MISSIONS = (
+    "그림책 준비 + 사진 인증 📸 | 이번 달 그림책을 준비해 사진으로 인증해요. 5권을 다 준비하지 않아도 괜찮아요 — 원하는 책만 골라도, 집에 이미 있는 다른 책이어도 좋아요. 중요한 건 아이에게 읽어주는 것이니까요!\n"
+    "도서관에서 아이와 함께 빌리기 📚 | 아이와 함께 도서관에 가서 이번 달 주제의 그림책을 빌려보세요. 아이가 직접 고르게 해주세요 — 직접 고른 책은 성공 확률이 아주 높아요. 책을 고르는 즐거움 자체를 느끼게 해주는 게 목표예요.\n"
+    "읽어주고 아이 반응 공유 💬 | 읽어준 뒤 아이가 어떤 부분을 좋아했는지 공유해 주세요. 다른 엄마들에게도 큰 도움이 돼요. 아이가 싫어하는 책도 있을 수 있고, 엄마가 읽어주는 방식에 따라 반응이 달라지기도 해요. 싫어하면 굳이 붙잡지 말고 과감히 다른 책으로 넘어가세요. 엄마표영어의 핵심은 재미예요."
+)
+
 SCHEMA = r"""-- 조이네 엄마표영어 스터디 — Supabase 스키마
 -- Supabase 대시보드 → SQL Editor 에 그대로 붙여넣어 실행하세요.
 -- 관리자 이메일은 아래 is_admin() 안의 주소로 판별됩니다. 바꾸려면 그 주소만 수정.
@@ -57,6 +64,7 @@ create table if not exists public.content (
   read_method text default '',
   activities  text default '',
   expressions text default '',
+  missions    text default __MISSIONS_DEFAULT__, -- 이번 달 미션(한 줄에 하나 "제목 | 설명")
   workbooks   text default '',
   passcode    text default '',      -- 페이지별 비밀번호(회원 열람용)
   published   boolean default false,-- 발행 여부(회원 열람/보관함 표시)
@@ -137,6 +145,7 @@ end $$;
 grant execute on function public.list_published()      to anon, authenticated;
 grant execute on function public.get_study(text, text) to anon, authenticated;
 """
+SCHEMA = SCHEMA.replace("__MISSIONS_DEFAULT__", q(DEFAULT_MISSIONS))
 
 # ── seed.sql ──
 lines = ["-- 조이네 엄마표영어 스터디 — 시드 데이터 (24주제 × 120권)",
@@ -187,5 +196,14 @@ reseed += ["",
            "    and (coalesce(l.read_aloud,'')<>'' or coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');",
            "drop table _book_links;"]
 open(os.path.join(SQLDIR, "reseed_books.sql"), "w", encoding="utf-8").write("\n".join(reseed)+"\n")
-print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql")
+
+# ── migrate_missions.sql: 기존 DB에 미션 컬럼 추가(모든 달에 기본 미션 채워짐) ──
+mig = ["-- 이번 달 미션 컬럼 추가(관리자에서 달마다 수정 가능). SQL Editor 에서 Run.",
+       "-- default 를 지정하므로 기존 24개 달 행에도 기본 미션 3가지가 자동으로 채워집니다.",
+       f"alter table public.content add column if not exists missions text default {q(DEFAULT_MISSIONS)};",
+       "-- 이미 비어 있는(빈 문자열) 행이 있다면 기본 미션으로 채우기",
+       f"update public.content set missions = {q(DEFAULT_MISSIONS)} where coalesce(missions,'') = '';"]
+open(os.path.join(SQLDIR, "migrate_missions.sql"), "w", encoding="utf-8").write("\n".join(mig)+"\n")
+
+print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql, supabase/migrate_missions.sql")
 print(f"주제 {len(order)}개, 책 {sum(len(t['books']) for t in ch['themes'])}권 시드")

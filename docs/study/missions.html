@@ -25,13 +25,19 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
 .mission .mhd{display:flex;align-items:center;gap:13px;margin-bottom:10px}
 .mission .num{width:36px;height:36px;flex:0 0 auto;border-radius:50%;background:var(--coral);color:#fff;font-family:'Gowun Batang',serif;font-weight:700;display:grid;place-items:center;font-size:1.1rem}
 .mission h2{font-size:1.24rem}
-.mission .emo{margin-left:auto;font-size:1.7rem;line-height:1}
 .mission p{margin:0;color:#2c332a}
 .mission p b{color:var(--tealD)}
 .note{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:16px 18px;color:var(--soft);font-size:.92rem;margin:18px 0}
 .cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:26px 0 8px}
 .cta a{text-decoration:none;font-weight:800;font-size:.95rem;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 .cta a.pri{background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;border:none}
+.empty{color:var(--soft);font-style:italic;text-align:center;padding:30px 0}
+.gate{max-width:420px;margin:40px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 26px;box-shadow:var(--sh)}
+.gate h2{font-size:1.5rem}
+.gate p{color:var(--soft);margin:10px 0 16px}
+.gate input{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:1rem;padding:11px 13px;border-radius:11px;text-align:center}
+.gate button{margin-top:12px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:12px;border-radius:11px;cursor:pointer}
+.gate .ge{color:#a2231d;font-size:.85rem;font-weight:700;margin-bottom:10px}
 .foot{border-top:1px solid var(--line);margin-top:30px;padding:22px 0 50px;color:var(--soft);font-size:.82rem;text-align:center}
 @media (max-width:560px){.hero{padding:30px 0 4px}.mission{padding:18px 16px}}
 </style>
@@ -45,37 +51,85 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
   <a class="back" href="index.html">← 이번 달 책</a>
 </div></header>
 
-<main class="wrap">
-  <section class="hero">
-    <div class="eyebrow">나이테 엄마표영어 스터디</div>
-    <h1>이번 달 미션 🎯</h1>
-    <p>매달 함께하는 3가지 미션이에요. 어렵지 않아요 — 완료하면 오픈채팅에 사진·후기로 공유해요!</p>
-  </section>
-
-  <section class="mission">
-    <div class="mhd"><span class="num">1</span><h2>그림책 준비 + 사진 인증</h2><span class="emo">📸</span></div>
-    <p>이번 달 그림책을 준비해 사진으로 인증해요. 5권을 다 준비하지 않아도 괜찮아요 — 원하는 책만 골라도, 집에 이미 있는 다른 책이어도 좋아요. 중요한 건 아이에게 <b>읽어주는 것</b>이니까요!</p>
-  </section>
-
-  <section class="mission">
-    <div class="mhd"><span class="num">2</span><h2>도서관에서 아이와 함께 빌리기</h2><span class="emo">📚</span></div>
-    <p>아이와 함께 도서관에 가서 이번 달 주제의 그림책을 빌려보세요. <b>아이가 직접 고르게</b> 해주세요 — 직접 고른 책은 성공 확률이 아주 높아요. 책을 고르는 즐거움 자체를 느끼게 해주는 게 목표예요.</p>
-  </section>
-
-  <section class="mission">
-    <div class="mhd"><span class="num">3</span><h2>읽어주고 아이 반응 공유</h2><span class="emo">💬</span></div>
-    <p>읽어준 뒤 아이가 어떤 부분을 좋아했는지 공유해 주세요. 다른 엄마들에게도 큰 도움이 돼요. 아이가 싫어하는 책도 있을 수 있고, 엄마가 읽어주는 방식에 따라 반응이 달라지기도 해요. 싫어하면 굳이 붙잡지 말고 과감히 다른 책으로 넘어가세요. <b>엄마표영어의 핵심은 재미</b>예요.</p>
-  </section>
-
-  <div class="note">💡 미션은 <b>순서·개수에 얽매이지 않아도</b> 돼요. 이번 달 우리 아이·우리 집 상황에 맞게 할 수 있는 것부터 하나씩 함께해요.</div>
-
-  <div class="cta">
-    <a class="pri" href="index.html">← 이번 달 책 보러가기</a>
-    <a href="../types.html">5가지 유형이 궁금하다면</a>
-  </div>
-</main>
+<main class="wrap"><div id="app"><p class="empty" style="padding:60px 0">불러오는 중…</p></div></main>
 
 <div class="foot"><div class="wrap">나이테 영어도서관 · 한 권씩, 아이의 영어에 나이테를 만들어요.</div></div>
-<script src="../track.js" data-page="스터디 미션"></script>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function notice(msg){app.innerHTML='<div class="note" style="max-width:560px;margin:40px auto">'+msg+'</div>';}
+
+  if(!window.SUPA_ANON||window.SUPA_ANON.indexOf('PASTE')===0){
+    notice('⚙️ 아직 연결 전이에요. <code>config.js</code> 를 확인해주세요.');return;
+  }
+  var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
+
+  function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
+  function passKey(k){return 'joy_pass_'+k;}
+  var RING='<svg viewBox="0 0 64 64" width="58" height="58" fill="none" aria-hidden="true" style="margin:0 auto 6px;display:block"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
+
+  function parseMissions(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var i=l.indexOf('|');return i<0?{title:l,body:''}:{title:l.slice(0,i).trim(),body:l.slice(i+1).trim()};});}
+
+  function render(theme,content){
+    var c=content||{};
+    var mis=parseMissions(c.missions);
+    var h='<section class="hero"><div class="eyebrow">'+(c.month_label?esc(c.month_label):'나이테 엄마표영어 스터디')+'</div>'+
+      '<h1>이번 달 미션 🎯</h1>'+
+      '<p>매달 함께하는 미션이에요. 어렵지 않아요 — 완료하면 오픈채팅에 사진·후기로 공유해요!</p></section>';
+    if(mis.length){
+      h+=mis.map(function(m,i){return '<section class="mission"><div class="mhd"><span class="num">'+(i+1)+'</span><h2>'+esc(m.title)+'</h2></div>'+
+        (m.body?'<p>'+esc(m.body)+'</p>':'')+'</section>';}).join('');
+      h+='<div class="note">💡 미션은 <b>순서·개수에 얽매이지 않아도</b> 돼요. 이번 달 우리 아이·우리 집 상황에 맞게 할 수 있는 것부터 하나씩 함께해요.</div>';
+    }else{
+      h+='<p class="empty">이번 달 미션은 준비 중이에요.</p>';
+    }
+    h+='<div class="cta"><a class="pri" href="index.html'+(curParam()?('?m='+encodeURIComponent(curParam())):'')+'">← 이번 달 책 보러가기</a>'+
+       '<a href="../types.html">5가지 유형이 궁금하다면</a></div>';
+    app.innerHTML=h;
+    // 방문 로그
+    try{client.from('events').insert({type:'page_view',theme_key:theme&&theme.key,session_id:sid(),path:location.pathname,meta:{page:'스터디 미션'}});}catch(e){}
+  }
+  function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
+
+  function showGate(key,msg){
+    app.innerHTML='<div class="gate">'+RING+
+      '<h2>나이테 스터디</h2><p>이 페이지는 스터디 회원용이에요.<br>비밀번호를 입력해 주세요.</p>'+
+      (msg?'<div class="ge">'+esc(msg)+'</div>':'')+
+      '<input id="pw" type="password" autocomplete="off" placeholder="비밀번호"><button id="go">입력</button></div>';
+    var pw=document.getElementById('pw'),go=document.getElementById('go');
+    pw.focus();
+    function submit(){gate(key,pw.value||'',true);}
+    go.addEventListener('click',submit);
+    pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')submit();});
+  }
+
+  async function gate(key,pass,fromForm){
+    try{
+      var r=await client.rpc('get_study',{p_key:key,p_pass:pass||''});
+      if(r.error){notice('불러오지 못했어요.<br><small>'+esc(r.error.message)+'</small>');return;}
+      var d=r.data||{};
+      if(d.ok){try{if(pass)sessionStorage.setItem(passKey(key),pass);}catch(e){}render(d.theme,d.content||{});return;}
+      if(d.error==='badpass'){try{sessionStorage.removeItem(passKey(key));}catch(e){}showGate(key,fromForm?'비밀번호가 맞지 않아요.':'');return;}
+      if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
+      notice('페이지를 찾지 못했어요.');
+    }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+
+  async function boot(){
+    try{
+      var key=curParam();
+      if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
+      if(!key){notice('아직 공개된 주제가 없어요.');return;}
+      var saved='';try{saved=sessionStorage.getItem(passKey(key))||'';}catch(e){}
+      gate(key,saved,false);
+    }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+  boot();
+})();
+</script>
 </body>
 </html>
