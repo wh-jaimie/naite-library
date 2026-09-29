@@ -65,6 +65,11 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .archi{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;box-shadow:var(--sh);color:inherit;font-size:.9rem;transition:transform .13s,box-shadow .13s}
 .archi:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(43,42,38,.13)}
 .archi span{margin-left:auto;color:var(--soft);font-size:.76rem}
+.missions{display:grid;gap:12px}
+.mission{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--coral);border-radius:13px;padding:14px 16px;box-shadow:var(--sh)}
+.mission .mn{width:30px;height:30px;flex:0 0 auto;border-radius:50%;background:var(--coral);color:#fff;font-family:'Gowun Batang',serif;font-weight:700;display:grid;place-items:center}
+.mission .mt{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.02rem;margin-bottom:3px}
+.mission p{margin:0;font-size:.9rem;color:#2c332a;line-height:1.55}
 @media (max-width:560px){
   .wrap{padding:0 16px}
   .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
@@ -146,6 +151,13 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
+    h+='<div class="sec"><h2>🎯 이번 달 미션</h2>'+
+       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">매달 함께하는 3가지 미션이에요. 완료하면 오픈채팅에 공유해요!</p>'+
+       '<div class="missions">'+
+       '<div class="mission"><span class="mn">1</span><div><div class="mt">그림책 준비 + 사진 인증 📸</div><p>이번 달 그림책을 준비해 사진으로 인증해요. 5권 중 원하는 책만 진행해도, 집에 있는 다른 책을 준비해도 좋아요. 아이에게 읽어주는 게 중요하니까요!</p></div></div>'+
+       '<div class="mission"><span class="mn">2</span><div><div class="mt">도서관에서 아이와 함께 빌리기 📚</div><p>아이와 함께 도서관에 가서 이번 달 주제의 그림책을 빌려보세요. 아이가 직접 고르게 해주세요 — 직접 고른 책은 성공 확률이 아주 높아요. 책 고르는 즐거움을 느끼게 해주세요!</p></div></div>'+
+       '<div class="mission"><span class="mn">3</span><div><div class="mt">읽어주고 아이 반응 공유 💬</div><p>읽어주고 아이가 어떤 부분을 좋아했는지 공유해 주세요. 다른 엄마들에게도 도움이 돼요. 싫어하는 책도 있을 수 있고, 엄마가 읽어주는 방식에 따라 반응이 달라져요. 싫어하면 굳이 붙잡지 말고 과감히 다른 책으로! <b>엄마표영어의 핵심은 재미</b>예요.</p></div></div>'+
+       '</div></div>';
     h+='<div id="arch"></div>';
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
        '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
