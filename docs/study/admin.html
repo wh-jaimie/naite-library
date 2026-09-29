@@ -287,8 +287,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     // ── 날짜별 집계(최근 14일) ──
     function dstr(x){var d=new Date(x);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
     var perDay={};
-    ev.forEach(function(e){var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},book:0,ra:0,wb:0,buy:0});
-      if(e.type==='page_view'){o.view++;if(e.session_id)o.sess[e.session_id]=1;}
+    ev.forEach(function(e){var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},book:0,ra:0,wb:0,buy:0,pages:{}});
+      if(e.type==='page_view'){o.view++;if(e.session_id)o.sess[e.session_id]=1;var pg=(e.meta&&e.meta.page)||e.path||'?';o.pages[pg]=(o.pages[pg]||0)+1;}
       else if(e.type==='book_click')o.book++;else if(e.type==='read_aloud_click')o.ra++;
       else if(e.type==='workbook_click')o.wb++;else if(e.type==='buy_click')o.buy++;});
     var days=[];var _t=new Date();for(var _i=13;_i>=0;_i--){var _d=new Date(_t);_d.setDate(_t.getDate()-_i);days.push(dstr(_d));}
@@ -298,6 +298,10 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       ra:['영상 재생','#D1965C',function(o){return o?o.ra:0;}],
       wb:['워크지 열기','#245648',function(o){return o?o.wb:0;}],
       buy:['구매 클릭','#a2231d',function(o){return o?o.buy:0;}]};
+    Object.keys(perPage).forEach(function(p){METRICS['p:'+p]=[p,'#4F9A72',function(o){return (o&&o.pages)?(o.pages[p]||0):0;}];});
+    var baseOpts='<option value="view">방문(전체)</option><option value="visitor">순 방문자</option><option value="book">책 클릭</option><option value="ra">영상 재생</option><option value="wb">워크지 열기</option><option value="buy">구매 클릭</option>';
+    var pageOpts=Object.keys(perPage).sort(function(a,b){return perPage[b]-perPage[a];}).map(function(p){return '<option value="p:'+esc(p)+'">📄 '+esc(p)+'</option>';}).join('');
+    var optsHtml=baseOpts+(pageOpts?'<optgroup label="── 페이지별 방문 ──">'+pageOpts+'</optgroup>':'');
     function drawChart(mk){
       var m=METRICS[mk]||METRICS.view,col=m[1],f=m[2];
       var vals=days.map(function(dd){return f(perDay[dd]);});
@@ -322,7 +326,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         kpi(ev.filter(function(e){return e.type==='book_click';}).length,'책 클릭')+kpi(raTotal,'영상 재생')+kpi(wbTotal,'워크지 열기')+kpi(buyTotal,'구매 클릭')+kpi(avgD+'s','평균 체류')+
       '</div></div>'+
       '<div class="card"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📈 날짜별 추이 <span class="hint">최근 14일</span></h3>'+
-        '<select class="t" id="kmetric" style="width:auto;margin-left:auto;padding:6px 10px;font-size:.85rem"><option value="view">방문</option><option value="visitor">순 방문자</option><option value="book">책 클릭</option><option value="ra">영상 재생</option><option value="wb">워크지 열기</option><option value="buy">구매 클릭</option></select></div>'+
+        '<select class="t" id="kmetric" style="width:auto;margin-left:auto;padding:6px 10px;font-size:.85rem">'+optsHtml+'</select></div>'+
         '<div id="kchart" style="margin-top:12px"></div></div>'+
       '<div class="card"><h3>페이지별 방문 <span class="hint">(전체 메뉴)</span></h3><table><thead><tr><th>페이지</th><th>방문</th></tr></thead><tbody>'+rows(perPage)+'</tbody></table></div>'+
       '<div class="card"><h3>주제별 방문 <span class="hint">(스터디)</span></h3><table><thead><tr><th>주제</th><th>방문</th></tr></thead><tbody>'+rows(perThemeNamed)+'</tbody></table></div>'+
