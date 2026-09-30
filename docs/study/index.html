@@ -58,6 +58,8 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .vid .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .vid .pl svg{width:60px;height:60px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))}
 .vid .vt{padding:9px 12px;font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:.9rem;line-height:1.25}
+.exlink{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--sh);text-decoration:none;color:var(--tealD);font-weight:700;font-size:.92rem;line-height:1.35}
+.exlink:hover{filter:brightness(.98)}.exlink span{word-break:break-all}
 .empty{color:var(--soft);font-style:italic}
 .notice{max-width:640px;margin:60px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:18px 20px;color:#6b5900}
 .foot{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
@@ -132,6 +134,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 
   function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
   function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
+  function parseExtras(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var i=l.indexOf('|');return i<0?{title:'',url:l.trim()}:{title:l.slice(0,i).trim(),url:l.slice(i+1).trim()};});}
   function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
   var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
 
@@ -161,6 +164,11 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     var hasBuy=books.some(function(b){return b.buy_url;});
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
+    var extras=parseExtras(c.extras);
+    var exhtml=extras.map(function(x){var id=ytid(x.url);
+      if(id)return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(x.title||'부가자료')+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(x.title||'부가 영상')+'"><div class="pl">'+PLAYSVG+'</div></div>'+(x.title?'<div class="vt">'+esc(x.title)+'</div>':'')+'</div>';
+      return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
+    }).join('');
     var h='<div class="wrap">';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
@@ -173,6 +181,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
+    if(exhtml)h+='<div class="sec"><h2>📎 부가자료</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="vids">'+exhtml+'</div></div>';
     h+='<div id="arch"></div>';
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
        '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+

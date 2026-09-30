@@ -228,6 +228,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     h+='<div class="pdf-sec-h">💬 관련 영어표현</div>'+(exprs.length?'<ul class="pdf-expr">'+exprs.map(function(e){return '<li><b>'+esc(e.en)+'</b>'+(e.ko?' <span class="k">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<div class="pdf-prose">—</div>');
     var mis=parseMisP(c.missions);
     if(mis.length)h+='<div class="pdf-sec-h">🎯 이번 달 미션</div>'+'<ol class="pdf-list">'+mis.map(function(m){return '<li><b>'+esc(m.title)+'</b>'+(m.body?' — '+esc(m.body):'')+'</li>';}).join('')+'</ol>';
+    var ext=parseMisP(c.extras); // 재사용: "제목 | URL"
+    if(ext.length){
+      var exq='';
+      for(var e2=0;e2<ext.length;e2++){var x=ext[e2],url=x.body||x.title,label=x.body?x.title:'';var uq=await qr(url);
+        exq+='<div class="pb-qr">'+(uq?'<img src="'+uq+'">':'')+(label?esc(label):'🔗 링크')+'</div>';}
+      h+='<div class="pdf-sec-h">📎 부가자료</div><div class="pb-qrs">'+exq+'</div>';
+    }
     h+='<div class="pdf-foot">나이테 영어도서관 · QR을 스캔하면 영상·워크지·구매 링크로 연결돼요 · © 나이테 영어도서관</div>';
     document.getElementById('pdfout').innerHTML=h;
     st.textContent='✓ 인쇄 창을 여는 중…';
@@ -254,6 +261,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<label class="f">관련 영어표현 <span class="hint">(한 줄에 하나 · "English - 한글")</span></label><textarea class="t" id="fexp">'+esc(c.expressions)+'</textarea>'+
       '<label class="f">🎯 이번 달 미션 <span class="hint">(한 줄에 하나 · "제목 | 설명" · 보통 3가지)</span></label><textarea class="t" id="fmis" style="min-height:120px">'+esc(c.missions||'')+'</textarea>'+
       '<div class="hint" style="margin-top:4px">제목과 설명을 <b>|</b> (막대) 로 구분해요. 예) <code>그림책 준비 + 사진 인증 📸 | 이번 달 그림책을 준비해 사진으로 인증해요…</code></div>'+
+      '<label class="f">📎 부가자료 <span class="hint">(한 줄에 하나 · "제목 | URL" · 유튜브 링크는 영상으로 노출)</span></label><textarea class="t" id="fext" style="min-height:90px">'+esc(c.extras||'')+'</textarea>'+
+      '<div class="hint" style="margin-top:4px">유튜브 링크는 자동으로 재생 카드가 되고, 그 외 링크는 버튼으로 나와요. 예) <code>알파벳 송 | https://youtu.be/xxxx</code></div>'+
       '<label class="f">🔒 이 페이지 비밀번호 <span class="hint">(비우면 누구나 열람 · 회원에게 배포할 비번을 넣으세요)</span></label><input class="t" id="fpass" value="'+esc(c.passcode||'')+'">'+
       '<label class="f" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:12px"><input type="checkbox" id="fpub" '+(c.published?'checked':'')+' style="width:auto;margin:0"> 발행 <span class="hint" style="margin:0">(회원 열람 가능 · 지난 달 보관함에 표시)</span></label>'+
       '<label class="f">이번 주제 5권 <span class="hint">(제목·저자·한줄소개 + 📺영상/📄워크지/🛒구매 링크)</span></label>'+
@@ -263,7 +272,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var key=STATE.editKey, st=document.getElementById('saveSt');
     st.textContent='저장 중…';
     var pubEl=document.getElementById('fpub');
-    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),missions:val('fmis'),passcode:val('fpass'),published:!!(pubEl&&pubEl.checked),updated_at:new Date().toISOString()};
+    var content={theme_key:key,month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),missions:val('fmis'),extras:val('fext'),passcode:val('fpass'),published:!!(pubEl&&pubEl.checked),updated_at:new Date().toISOString()};
     var r1=await client.from('content').upsert(content);
     if(r1.error){st.textContent='실패: '+r1.error.message;return;}
     // 책 업데이트

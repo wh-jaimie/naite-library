@@ -65,6 +65,7 @@ create table if not exists public.content (
   activities  text default '',
   expressions text default '',
   missions    text default __MISSIONS_DEFAULT__, -- 이번 달 미션(한 줄에 하나 "제목 | 설명")
+  extras      text default '',      -- 부가자료(한 줄에 하나 "제목 | URL", 주로 유튜브)
   workbooks   text default '',
   passcode    text default '',      -- 페이지별 비밀번호(회원 열람용)
   published   boolean default false,-- 발행 여부(회원 열람/보관함 표시)
@@ -205,5 +206,10 @@ mig = ["-- 이번 달 미션 컬럼 추가(관리자에서 달마다 수정 가�
        f"update public.content set missions = {q(DEFAULT_MISSIONS)} where coalesce(missions,'') = '';"]
 open(os.path.join(SQLDIR, "migrate_missions.sql"), "w", encoding="utf-8").write("\n".join(mig)+"\n")
 
-print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql, supabase/migrate_missions.sql")
+# ── migrate_extras.sql: 부가자료 컬럼 추가 ──
+mig2 = ["-- 부가자료(추가 유튜브 영상 등) 컬럼 추가. SQL Editor 에서 Run.",
+        "alter table public.content add column if not exists extras text default '';"]
+open(os.path.join(SQLDIR, "migrate_extras.sql"), "w", encoding="utf-8").write("\n".join(mig2)+"\n")
+
+print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql, supabase/migrate_missions.sql, supabase/migrate_extras.sql")
 print(f"주제 {len(order)}개, 책 {sum(len(t['books']) for t in ch['themes'])}권 시드")
