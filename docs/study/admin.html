@@ -48,6 +48,14 @@ th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
 th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}
 .hidden{display:none}
 .warn{background:#fff3cd;border:1px solid #e0c97a;border-radius:10px;padding:12px 14px;color:#6b5900;font-size:.88rem}
+.pvmask{position:fixed;inset:0;z-index:100;background:rgba(35,41,31,.6);display:flex;flex-direction:column;align-items:center;padding:16px 12px}
+.pvbar{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;justify-content:center}
+.pvbar .t{color:#fff;font-weight:700;font-family:'Gowun Batang',serif}
+.pvbar .seg{display:flex;border:1px solid rgba(255,255,255,.4);border-radius:9px;overflow:hidden}
+.pvbar .seg button{background:transparent;color:#fff;border:none;font:inherit;font-size:.82rem;font-weight:700;padding:6px 12px;cursor:pointer}
+.pvbar .seg button.on{background:#fff;color:var(--tealD)}
+.pvframe{width:100%;max-width:430px;flex:1;min-height:0;background:#E4E7DD;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);transition:max-width .18s}
+.pvframe iframe{width:100%;height:100%;border:0;display:block;background:#E4E7DD}
 #pdfout{display:none}
 @media print{
   .top,#root{display:none!important}
@@ -166,7 +174,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
       '<div class="card"><label class="f" style="margin-top:0">편집할 주제</label><select class="t" id="edSel">'+opt(STATE.editKey)+'</select>'+
         '<div id="form"></div>'+
-        '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
+        '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="preview">👁 미리보기</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
         '<div class="hint">PDF에서는 영상·워크지·구매 링크가 <b>QR코드</b>로 들어가요. (편집 중인 주제 기준 · 인쇄 창에서 "PDF로 저장")</div></div>';
     document.getElementById('setCur').addEventListener('click',async function(){
       var k=document.getElementById('curSel').value;
@@ -178,6 +186,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     });
     document.getElementById('edSel').addEventListener('change',function(e){STATE.editKey=e.target.value;renderForm();});
     document.getElementById('save').addEventListener('click',saveContent);
+    document.getElementById('preview').addEventListener('click',openPreview);
     document.getElementById('pdf').addEventListener('click',function(){buildPdf(STATE.editKey);});
     renderForm();
   }
@@ -268,6 +277,34 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<label class="f">이번 주제 5권 <span class="hint">(제목·저자·한줄소개 + 📺영상/📄워크지/🛒구매 링크)</span></label>'+
       '<div class="hint" style="margin-bottom:6px">📺 영상은 유튜브 read aloud URL. 📄 워크지는 출판사·작가 <b>공식 무료 활동지 링크</b>만(파일 재배포 금지). 🛒 구매는 쿠팡 파트너스 링크. 빈 칸은 카드에 버튼이 안 보여요.</div>'+bh;
   }
+  // ---------- 미리보기(저장 전 화면) ----------
+  function openPreview(){
+    var key=STATE.editKey;
+    var theme=STATE.themes.filter(function(t){return t.key===key;})[0]||{key:key};
+    var content={month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),missions:val('fmis'),extras:val('fext')};
+    var inputs=document.querySelectorAll('#form input[data-bid]'), byId={};
+    inputs.forEach(function(inp){var id=inp.dataset.bid;(byId[id]=byId[id]||{})[inp.dataset.fld]=inp.value;});
+    var books=(STATE.booksByTheme[key]||[]).map(function(b){var u=byId[b.id]||{},c={};for(var k in b)c[k]=b[k];['title','author','reason','read_aloud','workbook','buy_url'].forEach(function(f){if(u[f]!=null)c[f]=u[f];});return c;});
+    var mask=document.createElement('div');mask.className='pvmask';
+    mask.innerHTML='<div class="pvbar"><span class="t">👁 미리보기</span>'+
+      '<span class="seg"><button data-w="430" class="on">📱 모바일</button><button data-w="900">💻 넓게</button></span>'+
+      '<button class="btn" id="pvclose">닫기 ✕</button></div>'+
+      '<div class="pvframe" id="pvframe"><iframe id="pvif" src="index.html#preview"></iframe></div>';
+    document.body.appendChild(mask);
+    var payload={t:'preview-data',theme:theme,books:books,content:content};
+    var ifr=document.getElementById('pvif'),frame=document.getElementById('pvframe');
+    function post(){try{ifr.contentWindow.postMessage(payload,'*');}catch(e){}}
+    function onMsg(e){if(e.data&&e.data.t==='preview-ready')post();}
+    window.addEventListener('message',onMsg);
+    ifr.addEventListener('load',post); // 폴백
+    function close(){window.removeEventListener('message',onMsg);mask.remove();}
+    document.getElementById('pvclose').onclick=close;
+    mask.addEventListener('click',function(e){if(e.target===mask)close();});
+    mask.querySelectorAll('.seg button').forEach(function(bt){bt.onclick=function(){
+      mask.querySelectorAll('.seg button').forEach(function(x){x.classList.remove('on');});
+      bt.classList.add('on');frame.style.maxWidth=bt.dataset.w+'px';};});
+  }
+
   async function saveContent(){
     var key=STATE.editKey, st=document.getElementById('saveSt');
     st.textContent='저장 중…';
