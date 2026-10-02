@@ -19,3 +19,7 @@ KakaoTalkChats.txt
 *모집합니다.md
 무제.md
 Pasted image *.png
+
+# 스터디 DB 콘텐츠(회원 전용 · 공개 저장소 제외)
+supabase/content_*.sql
+supabase/sample_*.sql
