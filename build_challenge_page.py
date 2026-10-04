@@ -66,6 +66,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .course button.active{border-color:var(--coral);box-shadow:0 0 0 2px var(--coral) inset,var(--shadow)}
 .course .ct{font-family:'Gowun Batang',serif;font-weight:700;font-size:1.05rem}
 .course .cd{font-size:.8rem;color:var(--ink-soft);margin-top:2px}
+.join{display:block;width:100%;margin-top:14px;text-align:center;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.12rem;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);border:none;border-radius:14px;padding:16px;box-shadow:var(--shadow);cursor:pointer}
+.join:hover{filter:brightness(.97)}
+.join .sub{display:block;font-family:'Noto Sans KR',sans-serif;font-size:.8rem;font-weight:600;opacity:.95;margin-top:4px}
 .note{font-size:.8rem;color:var(--ink-soft);margin-top:14px;max-width:none}
 /* 계단 범례 */
 .legend{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 6px}
@@ -167,9 +170,10 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       </div>
       <div class="bar"><i id="prBar"></i></div>
       <div class="course" id="course">
-        <button data-c="1y" class="active"><div class="ct">🚀 1년 코스</div><div class="cd">월 2주제 · 10권 × 12개월</div></button>
-        <button data-c="2y"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
+        <button data-c="2y" class="active"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
+        <button data-c="1y"><div class="ct">🚀 1년 코스</div><div class="cd">월 2주제 · 10권 × 12개월</div></button>
       </div>
+      <a class="join" id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
@@ -206,7 +210,7 @@ const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"
 const tvar=t=>`var(--t${t})`;
 // 표시 순서: 조작북(1) → 반복(3) → 라임(2) → 유머(4) → 스토리(5). 번호·색은 표시 위치 기준.
 const DORD=[1,3,2,4,5];const POS={};DORD.forEach((t,i)=>POS[t]=i+1);
-let course='1y';
+let course='2y';
 // 봤어요 기록
 const KEY='joy-challenge-seen';let seen=new Set();
 try{const r=localStorage.getItem(KEY);if(r)seen=new Set(JSON.parse(r));}catch(e){}
@@ -351,6 +355,12 @@ function printList(){buildPrintable();window.print();}
 document.getElementById('prPrint').addEventListener('click',printList);
 // 🖨️ PDF 버튼은 관리자 전용: URL에 ?admin=1 이 있을 때만 노출(저장 안 함). 일반 링크에선 항상 숨김.
 try{var _ap=new URLSearchParams(location.search);if(_ap.get('admin')==='1'){var _pb=document.getElementById('prPrint');if(_pb)_pb.hidden=false;}}catch(e){}
+// 스터디 참여하기 클릭 집계(인스타 유입→참여 전환 측정)
+(function(){var jb=document.getElementById('joinBtn');if(!jb)return;jb.addEventListener('click',function(){
+  try{if(localStorage.getItem('naite_notrack')==='1')return;var A="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi",sid=localStorage.getItem('joy_sid')||'anon';
+    fetch("https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events",{method:"POST",headers:{"apikey":A,"Authorization":"Bearer "+A,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({type:"join_click",session_id:sid,path:location.pathname,meta:{page:"나이테 120"}}),keepalive:true}).catch(function(){});
+  }catch(e){}
+});})();
 document.getElementById('prShare').addEventListener('click',openShare);
 document.getElementById('ovSave').addEventListener('click',saveShare);
 document.getElementById('ovShare').addEventListener('click',shareShare);
