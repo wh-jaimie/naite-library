@@ -333,7 +333,8 @@ async function makeShareCanvas(done,total,dark){
   g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
   g.fillStyle=P.count;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
   g.fillStyle=P.honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
-  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1288);
+  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1282);
+  g.fillStyle=P.honey;g.font='700 32px "Noto Sans KR",sans-serif';g.fillText('📷 Instagram  @naite_library',W/2,1328);
   return cv;
 }
 function isDark(){const c=document.documentElement.getAttribute('data-theme');return c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;}
