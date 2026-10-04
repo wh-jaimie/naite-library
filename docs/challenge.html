@@ -162,7 +162,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
         <button data-c="2y"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
       </div>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
-      <button class="print" id="prPrint">🖨️ 120권 목록 인쇄 · PDF 저장</button>
+      <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
@@ -340,6 +340,9 @@ function buildPrintable(){
 }
 function printList(){buildPrintable();window.print();}
 document.getElementById('prPrint').addEventListener('click',printList);
+// 🖨️ PDF 버튼은 관리자 전용: ?admin=1 로 이 기기에서 노출(?admin=0 해제). 일반 방문자에게는 숨김.
+try{var _ap=new URLSearchParams(location.search);if(_ap.has('admin')){localStorage.setItem('naite_admin',_ap.get('admin')==='0'?'0':'1');}}catch(e){}
+try{if(localStorage.getItem('naite_admin')==='1'){var _pb=document.getElementById('prPrint');if(_pb)_pb.hidden=false;}}catch(e){}
 document.getElementById('prShare').addEventListener('click',openShare);
 document.getElementById('ovSave').addEventListener('click',saveShare);
 document.getElementById('ovShare').addEventListener('click',shareShare);
