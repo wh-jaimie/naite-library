@@ -127,6 +127,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 .ovb .hint2{font-size:.74rem;color:var(--ink-soft);margin:10px 0 0}
 .print{margin-top:8px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
 .print:hover{border-color:var(--teal)}
+.sharelink{margin-top:8px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
+.sharelink:hover{border-color:var(--teal)}
 #printable{display:none}
 @media print{
   header.top,main.wrap,footer,.ov{display:none!important}
@@ -175,6 +177,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       </div>
       <a class="join" id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
+      <button class="sharelink" id="prLink">🔗 페이지 공유하기</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
@@ -353,6 +356,16 @@ function buildPrintable(){
 }
 function printList(){buildPrintable();window.print();}
 document.getElementById('prPrint').addEventListener('click',printList);
+// 🔗 페이지(링크) 공유 — 모바일은 네이티브 공유시트, 아니면 링크 복사
+function sharePage(){
+  var url=location.origin+location.pathname;
+  var btn=document.getElementById('prLink');
+  if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
+  function done(){var o=btn.dataset.label||btn.textContent;btn.dataset.label=o;btn.textContent='링크 복사됨 ✓';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent=o;},1400);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}
+  else{try{var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
+}
+document.getElementById('prLink').addEventListener('click',sharePage);
 // 🖨️ PDF 버튼은 관리자 전용: URL에 ?admin=1 이 있을 때만 노출(저장 안 함). 일반 링크에선 항상 숨김.
 try{var _ap=new URLSearchParams(location.search);if(_ap.get('admin')==='1'){var _pb=document.getElementById('prPrint');if(_pb)_pb.hidden=false;}}catch(e){}
 // 스터디 참여하기 클릭 집계(인스타 유입→참여 전환 측정)
