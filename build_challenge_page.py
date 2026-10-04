@@ -127,8 +127,6 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 .ovb .hint2{font-size:.74rem;color:var(--ink-soft);margin:10px 0 0}
 .print{margin-top:8px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
 .print:hover{border-color:var(--teal)}
-.sharelink{margin-top:8px;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
-.sharelink:hover{border-color:var(--teal)}
 #printable{display:none}
 @media print{
   header.top,main.wrap,footer,.ov{display:none!important}
@@ -152,6 +150,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 <header class="top"><div class="wrap">
   <div class="brand"><span class="mark">120</span><span>나이테 120</span></div>
   <a class="back" href="index.html">← 전체 책장</a>
+  <button class="themebtn" id="prLink" title="페이지 공유">🔗</button>
   <button class="themebtn" id="theme" title="테마 전환">◐</button>
 </div></header>
 
@@ -177,7 +176,6 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       </div>
       <a class="join" id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
-      <button class="sharelink" id="prLink">🔗 페이지 공유하기</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
@@ -361,7 +359,7 @@ function sharePage(){
   var url=location.origin+location.pathname;
   var btn=document.getElementById('prLink');
   if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
-  function done(){var o=btn.dataset.label||btn.textContent;btn.dataset.label=o;btn.textContent='링크 복사됨 ✓';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent=o;},1400);}
+  function done(){btn.textContent='✓';btn.title='링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='🔗';btn.title='페이지 공유';},1400);}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}
   else{try{var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
 }
