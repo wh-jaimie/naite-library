@@ -349,9 +349,8 @@ function buildPrintable(){
 }
 function printList(){buildPrintable();window.print();}
 document.getElementById('prPrint').addEventListener('click',printList);
-// 🖨️ PDF 버튼은 관리자 전용: ?admin=1 로 이 기기에서 노출(?admin=0 해제). 일반 방문자에게는 숨김.
-try{var _ap=new URLSearchParams(location.search);if(_ap.has('admin')){localStorage.setItem('naite_admin',_ap.get('admin')==='0'?'0':'1');}}catch(e){}
-try{if(localStorage.getItem('naite_admin')==='1'){var _pb=document.getElementById('prPrint');if(_pb)_pb.hidden=false;}}catch(e){}
+// 🖨️ PDF 버튼은 관리자 전용: URL에 ?admin=1 이 있을 때만 노출(저장 안 함). 일반 링크에선 항상 숨김.
+try{var _ap=new URLSearchParams(location.search);if(_ap.get('admin')==='1'){var _pb=document.getElementById('prPrint');if(_pb)_pb.hidden=false;}}catch(e){}
 document.getElementById('prShare').addEventListener('click',openShare);
 document.getElementById('ovSave').addEventListener('click',saveShare);
 document.getElementById('ovShare').addEventListener('click',shareShare);
