@@ -99,6 +99,10 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var STATE={tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, editKey:null, user:null};
+  // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
+  var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+  var LV_LABEL={1:'🌱 쉬움',2:'🌿 보통',3:'🌳 도전'};
+  function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 
   // ---------- AUTH ----------
   function renderLogin(){
@@ -204,11 +208,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var c=STATE.contentByTheme[key]||{};
     var books=(STATE.booksByTheme[key]||[]).slice();
     var TORD={1:1,3:2,2:3,4:4,5:5};
-    books.sort(function(a,b){return (TORD[a.tier]||9)-(TORD[b.tier]||9);});
+    books.sort(function(a,b){var la=level(a)||99,lb=level(b)||99;if(la!==lb)return la-lb;return (TORD[a.tier]||9)-(TORD[b.tier]||9);});
     if(!theme){st.textContent='주제를 찾지 못했어요.';return;}
     var bh='';
     for(var i=0;i<books.length;i++){
-      var b=books[i], badges=[];
+      var b=books[i], badges=[], _lv=level(b);
+      if(_lv) badges.push(LV_LABEL[_lv]);
       if(b.format) badges.push('형태: '+esc(b.format));
       if(b.ar!=null&&b.ar!=='') badges.push('AR ~'+Number(b.ar).toFixed(1));
       if(b.award) badges.push(esc(b.award));
