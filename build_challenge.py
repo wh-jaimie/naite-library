@@ -145,10 +145,10 @@ CURRICULUM = [
 ]),
 ("🎄","Christmas","크리스마스",[
  (1,"Dear Santa","Rod Campbell","플랩으로 산타의 선물을 여는 플랩북"),
- (2,"The Night Before Christmas","Clement C. Moore","크리스마스 전날 밤의 고전 시"),
- (3,"The Twelve Days of Christmas","전래 캐럴 (Traditional)","선물이 하나씩 쌓이는 누적 캐럴"),
- (4,"How the Grinch Stole Christmas!","Dr. Seuss","크리스마스를 훔치려던 그린치"),
- (5,"The Polar Express","Chris Van Allsburg","북극행 기차를 탄 소년 이야기"),
+ (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
+ (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
+ (4,"Santa Bruce","Ryan T. Higgins","투덜이 곰 브루스가 얼떨결에 산타가 되는 반전 유머"),
+ (5,"Bear Stays Up for Christmas","Karma Wilson","잠 많은 곰이 친구들과 크리스마스를 준비하는 따뜻한 이야기"),
 ]),
 ("🎶","Songs & Rhymes","노래·마더구스",[
  (1,"The Wheels on the Bus","Annie Kubler","손유희로 함께 부르는 참여형 노래책"),
