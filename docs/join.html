@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
+<meta name="theme-color" content="#245648">
+<title>스터디 참여 — 나이테 영어도서관</title>
+<meta name="description" content="매달 5권, 엄마표영어 오픈채팅에서 함께해요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="나이테 엄마표영어 스터디 참여하기">
+<meta property="og:description" content="매달 5권, 엄마표영어 오픈채팅에서 함께해요.">
+<meta property="og:image" content="https://wh-jaimie.github.io/naite-library/naite-ig-logo.png">
+<meta property="og:url" content="https://wh-jaimie.github.io/naite-library/join.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--tealD:#245648;--coral:#B87343;--amber:#D1965C;--sh:0 1px 2px rgba(43,42,38,.06),0 8px 22px rgba(43,42,38,.08)}
+.box{width:100%;max-width:400px;text-align:center}
+.mark{width:72px;height:72px;margin:0 auto 16px;display:block;filter:drop-shadow(0 6px 14px rgba(43,42,38,.14))}
+h1{font-family:'Gowun Batang',Georgia,serif;font-size:1.7rem;margin:0;line-height:1.2}
+.tag{font-family:'Gowun Batang',Georgia,serif;color:var(--tealD);font-weight:700;margin:8px 0 26px}
+.join{display:block;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.2rem;color:#fff;background:linear-gradient(135deg,var(--coral),var(--amber));border-radius:16px;padding:18px;box-shadow:var(--sh)}
+.join:hover{filter:brightness(.97)}
+.join .sub{display:block;font-family:'Noto Sans KR',sans-serif;font-size:.82rem;font-weight:600;opacity:.95;margin-top:4px}
+</style>
+</head>
+<body>
+<main class="box">
+  <svg class="mark" viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 영어도서관 로고">
+    <circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/>
+    <circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.2" opacity=".72"/>
+    <circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.2" opacity=".5"/>
+    <circle cx="32" cy="32" r="3.4" fill="#D1965C"/>
+  </svg>
+  <h1>나이테 영어도서관</h1>
+  <p class="tag">한 권씩, 아이의 영어에 나이테를 만들어요.</p>
+  <a class="join" id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
+</main>
+<script src="track.js" data-page="스터디 참여"></script>
+<script>
+// 참여 버튼 클릭 집계(join_click) — 나이테 120 페이지와 같은 방식
+(function(){var jb=document.getElementById('joinBtn');if(!jb)return;jb.addEventListener('click',function(){
+  try{if(localStorage.getItem('naite_notrack')==='1')return;var A="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi",sid=localStorage.getItem('joy_sid')||'anon';
+    fetch("https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events",{method:"POST",headers:{"apikey":A,"Authorization":"Bearer "+A,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({type:"join_click",session_id:sid,path:location.pathname,meta:{page:"스터디 참여"}}),keepalive:true}).catch(function(){});
+  }catch(e){}
+});})();
+</script>
+</body>
+</html>
