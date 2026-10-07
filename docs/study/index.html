@@ -37,7 +37,14 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .book .st.g{background:#e7f1f0;color:#245648}.book .st.l{background:#fbeee0;color:#8a5a1a}
 .book .st.a{background:#f3e9c9;color:#7a5a00}.book .st.k{background:#fbe0de;color:#a2231d}
 .book .st.fmt{background:#efe7f5;color:#6a4a8a}.book .st.ar{background:#e7f1f0;color:#245648}
-.book .ty{font-size:.66rem;font-weight:800;color:#fff;background:var(--teal);align-self:flex-start;padding:2px 7px;border-radius:6px}
+.book .ty{font-size:.66rem;font-weight:800;color:#fff;background:var(--teal);padding:2px 7px;border-radius:6px}
+.book .tyrow{display:flex;flex-wrap:wrap;gap:5px;align-items:center;align-self:flex-start}
+.book .lv{font-size:.66rem;font-weight:800;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.book .lv.l1{background:#e3f1df;color:#2f6e58}
+.book .lv.l2{background:#d8ecee;color:#1f6f72}
+.book .lv.l3{background:#fbe3d6;color:#b05a2a}
+.lvguide{background:#eef3ea;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:11px;padding:12px 14px;font-size:.86rem;line-height:1.55;color:#2c332a;margin:0 0 12px}
+.lvguide .lvkey{display:block;margin-top:8px;font-size:.76rem;color:var(--soft)}
 .book .bt{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:.96rem;line-height:1.2;margin-top:4px}
 .book .ba{font-size:.76rem;color:var(--soft)}.book .br{font-size:.8rem;color:var(--soft);margin-top:4px}
 .prose{white-space:pre-wrap}ul.li{margin:0;padding-left:20px}ul.li li{margin:5px 0}
@@ -139,12 +146,22 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
   function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
   var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
 
+  // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
+  var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+  var LV_LABEL={1:'🌱 쉬움',2:'🌿 보통',3:'🌳 도전'};
+  function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
+
   function render(theme,books,content){
     curKey=theme.key;
     var c=content||{};
-    var TORD={1:1,3:2,2:3,4:4,5:5}; // 표시 순서: 조작북→반복→라임→유머→스토리
-    books=(books||[]).slice().sort(function(a,b){return (TORD[a.tier]||9)-(TORD[b.tier]||9);});
+    var TORD={1:1,3:2,2:3,4:4,5:5}; // 유형 표시 순서: 조작북→반복→라임→유머→스토리
+    // 난이도 오름차순(쉬움→보통→도전) → 같은 단계 안에서는 유형 순서 유지, 단계 없음은 맨 뒤
+    books=(books||[]).slice().sort(function(a,b){
+      var la=level(a)||99, lb=level(b)||99; if(la!==lb)return la-lb;
+      return (TORD[a.tier]||9)-(TORD[b.tier]||9);
+    });
     var bh=books.map(function(b){
+      var lv=level(b);
       var stats='';
       if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
       if(b.kr_popular) stats+='<span class="st k">🇰🇷 국내 인기</span>';
@@ -157,7 +174,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       if(b.buy_url)  acts+='<a class="act buy" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">🛒 구매</a>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div>'+
-        '<div class="bb"><span class="ty">'+esc(b.tier_label)+'</span><div class="bt">'+esc(b.title)+'</div>'+
+        '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
         '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
         (stats?'<div class="stats">'+stats+'</div>':'')+
         (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
@@ -175,7 +192,9 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
        '<a class="mlink" href="missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a></div>';
-    h+='<div class="sec"><h2>📚 이번 달 5권</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>🛒 구매</b>로 바로 담을 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
+    h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
+       '<div class="lvguide"><b>🌱부터 시작하세요.</b> 3~4살이라면 🌱 쉬움 2권만 읽어도 이번 달 성공이에요. 익숙해지면 🌿 보통, 🌳 도전으로 넘어가요. 5~6살이라면 5권 모두 도전해 보세요. 아이가 싫어하는 책은 과감히 넘어가도 괜찮아요 — <b>엄마표영어의 핵심은 재미</b>예요.<span class="lvkey">🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
+       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>🛒 구매</b>로 바로 담을 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
        '<p class="wbnote" style="font-size:.78rem;color:var(--soft);margin:10px 0 0">※ <b>AR</b>은 글의 난이도를 나타내는 지수예요. 여기서는 엄마가 읽어줄 때 얼마나 수월할지 가늠하시라고 참고로 넣었어요(읽는 사람은 엄마니까요).</p>'+
        (hasBuy?'<p class="disc">이 페이지의 <b>🛒 구매</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
     if(vids)h+='<div class="sec"><h2>📺 Read Aloud 영상</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="vids">'+vids+'</div></div>';
