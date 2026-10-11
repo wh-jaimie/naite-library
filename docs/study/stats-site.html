@@ -112,13 +112,15 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     joinEv.forEach(function(e){var src=(e.meta&&e.meta.from)||(e.meta&&e.meta.page)||'기타';var nm=srcName(src);joinsNamed[nm]=(joinsNamed[nm]||0)+1;});
     function dstr(x){var d=new Date(x);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
     var perDay={};
-    ev.forEach(function(e){if(e.type!=='page_view')return;var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},pages:{}});
-      o.view++;if(e.session_id)o.sess[e.session_id]=1;var pg=pageName(e);o.pages[pg]=(o.pages[pg]||0)+1;});
+    ev.forEach(function(e){if(e.type!=='page_view'&&e.type!=='join_click')return;var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},pages:{},join:0});
+      if(e.type==='page_view'){o.view++;if(e.session_id)o.sess[e.session_id]=1;var pg=pageName(e);o.pages[pg]=(o.pages[pg]||0)+1;}
+      else if(e.type==='join_click'){o.join++;}});
     var days=[];var _t=new Date();for(var _i=13;_i>=0;_i--){var _d=new Date(_t);_d.setDate(_t.getDate()-_i);days.push(dstr(_d));}
     var METRICS={view:['방문','#2F6E58',function(o){return o?o.view:0;}],
-      visitor:['순 방문자','#B87343',function(o){return o?Object.keys(o.sess).length:0;}]};
+      visitor:['순 방문자','#B87343',function(o){return o?Object.keys(o.sess).length:0;}],
+      join:['참여 클릭','#D1965C',function(o){return o?(o.join||0):0;}]};
     Object.keys(perPage).forEach(function(p){METRICS['p:'+p]=[p,'#4F9A72',function(o){return (o&&o.pages)?(o.pages[p]||0):0;}];});
-    var baseOpts='<option value="view">방문(전체)</option><option value="visitor">순 방문자</option>';
+    var baseOpts='<option value="view">방문(전체)</option><option value="visitor">순 방문자</option><option value="join">🌿 참여 클릭</option>';
     var pageOpts=Object.keys(perPage).sort(function(a,b){return perPage[b]-perPage[a];}).map(function(p){return '<option value="p:'+esc(p)+'">📄 '+esc(p)+'</option>';}).join('');
     var optsHtml=baseOpts+(pageOpts?'<optgroup label="── 페이지별 방문 ──">'+pageOpts+'</optgroup>':'');
     function drawChart(mk){
