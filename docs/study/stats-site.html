@@ -106,6 +106,10 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var pv=ev.filter(function(e){return e.type==='page_view';});
     var sess={};pv.forEach(function(e){if(e.session_id)sess[e.session_id]=1;});
     var perPage={};pv.forEach(function(e){var p=pageName(e);perPage[p]=(perPage[p]||0)+1;});
+    // 참여 클릭(join_click) 출처별 집계
+    function srcName(s){var m={blog:'📝 블로그',insta:'📷 인스타',instagram:'📷 인스타',direct:'🔗 직접','스터디 참여':'🔗 직접','나이테 120':'🎯 나이테 120'};return m[s]||('🔸 '+s);}
+    var joinEv=ev.filter(function(e){return e.type==='join_click';}), joinTotal=joinEv.length, joinsNamed={};
+    joinEv.forEach(function(e){var src=(e.meta&&e.meta.from)||(e.meta&&e.meta.page)||'기타';var nm=srcName(src);joinsNamed[nm]=(joinsNamed[nm]||0)+1;});
     function dstr(x){var d=new Date(x);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
     var perDay={};
     ev.forEach(function(e){if(e.type!=='page_view')return;var k=dstr(e.created_at);var o=perDay[k]||(perDay[k]={view:0,sess:{},pages:{}});
@@ -135,12 +139,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var recent=pv.slice(0,20).map(function(e){return '<tr><td>'+esc(new Date(e.created_at).toLocaleString('ko-KR'))+'</td><td>'+esc(pageName(e))+'</td><td>'+esc(e.session_id||'')+'</td></tr>';}).join('');
     body.innerHTML=
       '<div class="card"><div class="kgrid">'+
-        kpi(pv.length,'페이지 방문')+kpi(Object.keys(sess).length,'순 방문자(세션)')+kpi(Object.keys(perPage).length,'메뉴(페이지) 수')+
+        kpi(pv.length,'페이지 방문')+kpi(Object.keys(sess).length,'순 방문자(세션)')+kpi(Object.keys(perPage).length,'메뉴(페이지) 수')+kpi(joinTotal,'참여 클릭')+
       '</div></div>'+
       '<div class="card"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📈 날짜별 추이 <span class="hint">최근 14일</span></h3>'+
         '<select class="t" id="kmetric" style="width:auto;margin-left:auto;padding:6px 10px;font-size:.85rem">'+optsHtml+'</select></div>'+
         '<div id="kchart" style="margin-top:12px"></div></div>'+
       '<div class="card"><h3>메뉴(페이지)별 방문 <span class="hint">(스터디 제외)</span></h3><table><thead><tr><th>페이지</th><th>방문</th></tr></thead><tbody>'+rows(perPage)+'</tbody></table></div>'+
+      '<div class="card"><h3>🌿 참여 클릭 출처 <span class="hint">(스터디 참여하기 버튼)</span></h3><table><thead><tr><th>출처</th><th>클릭</th></tr></thead><tbody>'+rows(joinsNamed)+'</tbody></table></div>'+
       '<div class="card"><h3>최근 방문</h3><table><thead><tr><th>시각</th><th>페이지</th><th>세션</th></tr></thead><tbody>'+(recent||'<tr><td colspan=3 class="hint">아직 없음</td></tr>')+'</tbody></table></div>';
     var kmSel=document.getElementById('kmetric');
     if(kmSel)kmSel.addEventListener('change',function(){drawChart(kmSel.value);});
