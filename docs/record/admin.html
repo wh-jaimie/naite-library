@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<meta name="robots" content="noindex">
+<title>회원 기록 관리 — 나이테 스터디</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.6}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--tealD:#245648;--coral:#B87343;--sh:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07)}
+.wrap{max-width:780px;margin:0 auto;padding:40px 18px 60px}
+h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.25}
+h1{font-size:1.6rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--sh);margin:16px 0}
+.card h2{font-size:1.15rem;margin-bottom:6px}
+label{display:block;font-size:.82rem;font-weight:800;color:var(--soft);margin:14px 0 5px}
+input{width:100%;border:1px solid var(--line);background:#fff;color:#23291F;font:inherit;font-size:1rem;padding:11px 12px;border-radius:10px}
+.btn{border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:11px 16px;border-radius:10px;cursor:pointer;margin-top:12px}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--soft)}
+.hint{font-size:.8rem;color:var(--soft);margin:6px 0 0}
+.st{font-size:.86rem;font-weight:700;margin-top:10px;min-height:1.3em}
+.ok{color:#2F6E58}.bad{color:#a2231d}
+.cur{font-size:1.4rem;font-weight:800;letter-spacing:.15em;font-variant-numeric:tabular-nums}
+.kgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{background:#F1F3EB;border-radius:12px;padding:10px 12px}
+.kpi .n{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.5rem;color:var(--tealD)}
+.kpi .l{font-size:.74rem;color:var(--soft)}
+.warn{background:#fff3cd;border:1px solid #e0c97a;border-radius:10px;padding:12px 14px;color:#6b5900;font-size:.88rem}
+a{color:var(--tealD);font-weight:700}
+.narrow{max-width:520px}
+.shd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.shd h2{margin:0}
+.shd select{margin-left:auto;font:inherit;font-size:.9rem;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#23291F}
+.kgrid5{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}
+.kpi .s{font-size:.72rem;color:var(--soft);margin-top:2px}
+h3.sub{font-family:'Gowun Batang',Georgia,serif;font-size:1.02rem;margin:22px 0 8px;color:var(--tealD)}
+.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.72rem;color:var(--soft);font-weight:800;background:#F1F3EB;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td img{width:30px;height:40px;object-fit:cover;border-radius:3px;display:block}
+.bt{font-weight:700;line-height:1.3}.ty{font-size:.72rem;color:var(--soft)}
+.ibar{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.ibar i{display:block;height:8px;border-radius:0 4px 4px 0;background:#2F6E58;min-width:2px}
+.ibar span{min-width:2.2em;text-align:right;font-weight:800}
+.notes{margin:10px 0 0;padding-left:18px;font-size:.86rem}
+.notes li{margin:3px 0}
+.bars{display:flex;flex-direction:column;gap:7px}
+.br{display:grid;grid-template-columns:80px 1fr 78px;gap:10px;align-items:center;font-size:.84rem}
+.br .track{height:14px;background:#EEF0E8;border-radius:0 4px 4px 0}
+.br .track i{display:block;height:100%;background:#2F6E58;border-radius:0 4px 4px 0}
+.br .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
+.br .v small{color:var(--soft);font-weight:700}
+.flow svg{width:100%;height:auto;display:block}
+.flow rect.hit{fill:transparent}
+.flow g:hover rect.bar{opacity:.72}
+.empty{color:var(--soft);font-size:.9rem;padding:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="hint">불러오는 중…</p></div>
+<script src="../study/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
+
+  function renderLogin(msg){
+    app.innerHTML='<h1>회원 기록 관리</h1><div class="card"><h2>관리자 로그인</h2>'+
+      '<label for="em">이메일</label><input id="em" type="email" value="'+esc(window.ADMIN_EMAIL||'')+'" autocomplete="off">'+
+      '<label for="pw">비밀번호</label><input id="pw" type="password" autocomplete="off">'+
+      '<button class="btn" id="go">로그인</button><div class="st bad" id="st">'+esc(msg||'')+'</div></div>';
+    var pw=document.getElementById('pw');pw.focus();
+    async function go(){
+      var r=await client.auth.signInWithPassword({email:document.getElementById('em').value.trim(),password:pw.value});
+      if(r.error){document.getElementById('st').textContent='로그인하지 못했어요: '+r.error.message;return;}
+      boot();
+    }
+    document.getElementById('go').onclick=go;
+    pw.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+  }
+
+  async function renderMain(){
+    var cfg=await client.from('member_config').select('member_code,updated_at').eq('id',1).maybeSingle();
+    if(cfg.error){
+      app.innerHTML='<h1>회원 기록 관리</h1><div class="warn">회원 기록용 DB가 아직 없어요. Supabase SQL Editor에서 <b>supabase/migrate_reading_logs.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(cfg.error.message)+'</small></div>';
+      return;
+    }
+    var code=(cfg.data&&cfg.data.member_code)||'';
+    var pubs=(await client.rpc('list_published')).data||[];
+    var cur=(await client.from('settings').select('current_theme').eq('id',1).maybeSingle()).data;
+    var curKey=(cur&&cur.current_theme)||(pubs[0]&&pubs[0].key)||'';
+    app.innerHTML='<h1>회원 기록 관리</h1><p class="hint">회원 입장(<a href="./">record/</a>) → 기록 화면(<a href="app.html">record/app.html</a>)의 회원 비밀번호와 읽기 기록 통계예요.</p>'+
+      '<div class="card narrow"><h2>회원 비밀번호</h2>'+
+        '<div class="hint">지금 비밀번호</div><div class="cur">'+(code?esc(code):'<span class="bad" style="letter-spacing:0;font-size:1rem">설정 안 됨 (아무도 기록할 수 없어요)</span>')+'</div>'+
+        '<label for="nc">새 비밀번호</label><input id="nc" inputmode="numeric" maxlength="20" placeholder="예: 1102" autocomplete="off">'+
+        '<button class="btn" id="save">저장</button><div class="st" id="sst"></div>'+
+        '<p class="hint">바꾸면 회원들은 다음 접속 때 새 비밀번호를 한 번 넣어야 해요. 읽기 기록은 비밀번호와 따로 저장돼서 그대로 이어져요.</p></div>'+
+      '<div class="card"><div class="shd"><h2>읽기 기록 통계</h2>'+
+        (pubs.length?'<select id="tsel" aria-label="스터디 달">'+pubs.map(function(m){return '<option value="'+esc(m.key)+'"'+(m.key===curKey?' selected':'')+'>'+esc((m.month_label||'').split('·')[0].trim()||m.ko)+' · '+esc(m.emoji||'')+' '+esc(m.ko)+'</option>';}).join('')+'</select>':'')+
+      '</div><div id="sbody"><p class="empty">불러오는 중…</p></div>'+
+      '<p class="hint" style="margin-top:14px">회원 이름은 저장하지 않아요. ‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰이나 브라우저를 바꾸면 따로 세요. 공개 전에 남긴 테스트 기록은 Supabase에서 지워 주세요.</p></div>'+
+      '<button class="btn ghost" id="lo">로그아웃</button>';
+    var tsel=document.getElementById('tsel');
+    if(tsel)tsel.onchange=function(){loadStats(tsel.value,pubs);};
+    if(curKey)loadStats(curKey,pubs);else document.getElementById('sbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';
+    document.getElementById('save').onclick=async function(){
+      var v=document.getElementById('nc').value.trim(),st=document.getElementById('sst');
+      if(!v){st.className='st bad';st.textContent='새 비밀번호를 넣어주세요.';return;}
+      var r=await client.from('member_config').update({member_code:v,updated_at:new Date().toISOString()}).eq('id',1).select();
+      if(r.error||!r.data||!r.data.length){st.className='st bad';st.textContent='저장하지 못했어요'+(r.error?': '+r.error.message:' (관리자 계정인지 확인해 주세요)');return;}
+      st.className='st ok';st.textContent='저장했어요.';setTimeout(renderMain,700);
+    };
+    document.getElementById('lo').onclick=async function(){await client.auth.signOut();renderLogin();};
+  }
+
+  // reading_logs 는 1000행씩 나눠서 모두 가져옴(PostgREST 기본 한도)
+  async function fetchAll(key){
+    var out=[],from=0,size=1000;
+    while(true){
+      var r=await client.from('reading_logs').select('reader,book_id,read_on').eq('theme_key',key).order('id').range(from,from+size-1);
+      if(r.error)throw r.error;
+      out=out.concat(r.data||[]);if(!r.data||r.data.length<size)break;from+=size;
+    }
+    return out;
+  }
+  function pad(n){return (n<10?'0':'')+n;}
+  function md(s){var p=s.split('-');return (+p[1])+'/'+(+p[2]);}
+  function cnt(o){return Object.keys(o).length;}
+
+  async function loadStats(key,pubs){
+    var body=document.getElementById('sbody');body.innerHTML='<p class="empty">불러오는 중…</p>';
+    var meta=pubs.filter(function(m){return m.key===key;})[0]||{},books,logs;
+    try{
+      var bq=await client.from('books').select('id,title,cover,tier,tier_label,sort').eq('theme_key',key).order('sort');
+      if(bq.error)throw bq.error;
+      books=bq.data||[];logs=await fetchAll(key);
+    }catch(e){body.innerHTML='<div class="warn">불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small></div>';return;}
+    if(!logs.length){body.innerHTML='<p class="empty">아직 이 달의 읽기 기록이 없어요.</p>';return;}
+    var readers={},perBook={},days={},week=new Date(Date.now()-7*864e5).toISOString().slice(0,10),recent={};
+    books.forEach(function(b){perBook[b.id]={b:b,total:0,readers:{},first:''};});
+    logs.forEach(function(l){
+      (readers[l.reader]=readers[l.reader]||{})[l.book_id]=1;
+      var pb=perBook[l.book_id];if(pb){pb.total++;pb.readers[l.reader]=1;if(!pb.first||l.read_on<pb.first)pb.first=l.read_on;}
+      var d=(days[l.read_on]=days[l.read_on]||{n:0,r:{}});d.n++;d.r[l.reader]=1;
+      if(l.read_on>=week)recent[l.reader]=1;
+    });
+    var rIds=Object.keys(readers),nR=rIds.length,total=logs.length,nB=books.length||5;
+    var full=rIds.filter(function(r){return cnt(readers[r])>=nB;}).length;
+    var avgMet=rIds.reduce(function(a,r){return a+cnt(readers[r]);},0)/nR;
+    var h='<div class="kgrid5">'+
+      '<div class="kpi"><div class="n">'+nR+'</div><div class="l">기록한 폰</div><div class="s">최근 7일 '+cnt(recent)+'대</div></div>'+
+      '<div class="kpi"><div class="n">'+total+'</div><div class="l">총 읽기</div></div>'+
+      '<div class="kpi"><div class="n">'+(total/nR).toFixed(1)+'</div><div class="l">폰당 평균 읽기</div></div>'+
+      '<div class="kpi"><div class="n">'+avgMet.toFixed(1)+'<small style="font-size:.8rem;color:var(--soft)"> / '+nB+'권</small></div><div class="l">폰당 만난 책</div></div>'+
+      '<div class="kpi"><div class="n">'+Math.round(full/nR*100)+'%</div><div class="l">'+nB+'권 모두 읽음</div><div class="s">'+full+' / '+nR+'대</div></div>'+
+    '</div>';
+    // 책별
+    var list=books.map(function(b){return perBook[b.id];});
+    var maxT=Math.max.apply(null,list.map(function(p){return p.total;}))||1;
+    h+='<h3 class="sub">책별 반응</h3><div class="tblw"><table><thead><tr><th></th><th>책</th><th class="num">읽은 폰</th><th class="num">총 읽기</th><th class="num">폰당 반복</th><th class="num">첫 기록</th></tr></thead><tbody>'+
+      list.map(function(p){var r=cnt(p.readers);
+        return '<tr><td>'+(p.b.cover?'<img src="'+esc(p.b.cover)+'" alt="">':'')+'</td><td><div class="bt">'+esc(p.b.title)+'</div><div class="ty">'+esc(p.b.tier_label||'')+'</div></td>'+
+          '<td class="num">'+r+' <span class="ty">('+Math.round(r/nR*100)+'%)</span></td>'+
+          '<td class="num"><div class="ibar"><i style="width:'+Math.round(p.total/maxT*80)+'px"></i><span>'+p.total+'</span></div></td>'+
+          '<td class="num">'+(r?(p.total/r).toFixed(1)+'번':'–')+'</td><td class="num">'+(p.first?md(p.first):'–')+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
+    var byRep=list.filter(function(p){return cnt(p.readers);}).sort(function(a,b){return b.total/cnt(b.readers)-a.total/cnt(a.readers);});
+    var byReach=list.slice().sort(function(a,b){return cnt(a.readers)-cnt(b.readers);});
+    var notes=[];
+    if(byRep[0])notes.push('가장 많이 반복한 책: <b>'+esc(byRep[0].b.title)+'</b> (읽은 폰당 '+(byRep[0].total/cnt(byRep[0].readers)).toFixed(1)+'번)');
+    if(byReach[0]&&nR>=3)notes.push('가장 적게 읽힌 책: <b>'+esc(byReach[0].b.title)+'</b> ('+cnt(byReach[0].readers)+'대'+(byReach[0].first?', 첫 기록 '+md(byReach[0].first):', 아직 기록 없음')+'). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');
+    if(notes.length)h+='<ul class="notes">'+notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
+    // 유형별
+    var types=[],tc={},tr={};
+    books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.tier_label||'기타';if(!(t in tc)){tc[t]=0;tr[t]={};types.push(t);}});
+    logs.forEach(function(l){var pb=perBook[l.book_id];if(!pb)return;var t=pb.b.tier_label||'기타';tc[t]++;tr[t][l.reader]=1;});
+    var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||1;
+    h+='<h3 class="sub">유형별 읽기</h3><div class="bars">'+types.map(function(t){return '<div class="br"><span>'+esc(t)+'</span><span class="track"><i style="width:'+(tc[t]/tmax*100)+'%"></i></span><span class="v">'+tc[t]+'번 <small>· '+cnt(tr[t])+'대</small></span></div>';}).join('')+'</div>';
+    // 날짜별(스터디 달 기준, 없으면 기록 범위)
+    var mm=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(meta.month_label||''),dl=[];
+    if(mm){var dim=new Date(+mm[1],+mm[2],0).getDate();for(var d=1;d<=dim;d++)dl.push(mm[1]+'-'+pad(+mm[2])+'-'+pad(d));}
+    else{dl=Object.keys(days).sort();}
+    var outside=Object.keys(days).filter(function(k){return dl.indexOf(k)<0;}).reduce(function(a,k){return a+days[k].n;},0);
+    var dmax=Math.max(3,Math.max.apply(null,dl.map(function(k){return days[k]?days[k].n:0;}))),W=640,H=150,bw=W/dl.length;
+    var now=new Date(),today=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+    var svg='<svg viewBox="0 0 '+W+' '+(H+20)+'" role="img" aria-label="날짜별 읽기 횟수">'+
+      '<line x1="0" y1="16" x2="'+W+'" y2="16" stroke="#E2E5DA" stroke-dasharray="3 4"/><text x="'+W+'" y="12" text-anchor="end" font-size="10" fill="#565E4E">'+dmax+'번</text>';
+    dl.forEach(function(k,i){var v=days[k]?days[k].n:0,rc=days[k]?cnt(days[k].r):0,x=i*bw,bh=v/dmax*(H-16),w=Math.max(bw-2,1);
+      svg+='<g><title>'+md(k)+' · '+v+'번 · '+rc+'대</title><rect class="hit" x="'+x+'" y="0" width="'+bw+'" height="'+H+'"/>'+
+        (v?'<rect class="bar" x="'+(x+1)+'" y="'+(H-bh)+'" width="'+w+'" height="'+bh+'" rx="'+Math.min(4,w/2)+'" fill="'+(k===today?'#B87343':'#2F6E58')+'"/>':'')+'</g>';});
+    svg+='<line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#CBD0C1"/>';
+    dl.forEach(function(k,i){var dd=+k.slice(8);if(mm?(dd===1||dd%7===1):i%7===0)svg+='<text x="'+((i+.5)*bw)+'" y="'+(H+14)+'" text-anchor="middle" font-size="10" fill="#565E4E">'+md(k)+'</text>';});
+    svg+='</svg>';
+    h+='<h3 class="sub">날짜별 읽기</h3><div class="flow">'+svg+'</div><p class="hint">막대에 마우스를 올리면 그날 읽기 횟수와 기록한 폰 수가 보여요. 주황 막대는 오늘이에요.'+(outside?' 이 달 밖 날짜의 기록 '+outside+'번은 위 합계에만 들어 있어요.':'')+'</p>';
+    body.innerHTML=h;
+  }
+
+  async function boot(){
+    var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;
+    if(!u){renderLogin();return;}
+    if(window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()!==window.ADMIN_EMAIL.toLowerCase()){await client.auth.signOut();renderLogin('관리자 계정이 아니에요.');return;}
+    renderMain();
+  }
+  boot();
+})();
+</script>
+</body>
+</html>
