@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
+<link rel="manifest" href="/naite-library/study/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="나이테">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#245648">
+<title>나이테 엄마표영어 스터디 — 이번 달 책</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--teal:#2F6E58;--tealD:#245648;--coral:#B87343;--sh:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07)}
+.wrap{max-width:940px;margin:0 auto;padding:0 18px}
+h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
+.hero{padding:44px 0 20px;text-align:center}
+.hero .ml{font-size:.85rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--coral)}
+.hero .em{font-size:3rem;margin:12px 0;line-height:1}
+.hero h1{font-size:clamp(1.9rem,5vw,2.7rem)}
+.hero .en{color:var(--soft);font-weight:700;margin-top:4px}
+.hero .subj{max-width:60ch;margin:16px auto 0;white-space:pre-wrap}
+.sec{margin-top:26px}.sec h2{font-size:1.3rem;color:var(--tealD);border-bottom:2px solid var(--line);padding-bottom:7px;margin-bottom:14px}
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.book{background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.book:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(43,42,38,.14)}
+.book .cv{position:relative;aspect-ratio:3/4;background:#EBEDE3}.book .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.book .cv a.cvlink{display:block;width:100%;height:100%}
+.book .pop{position:absolute;top:6px;right:6px;background:rgba(43,42,38,.82);color:#fff;font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px}
+.book .bb{padding:10px 11px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.book .stats{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.book .st{font-size:.64rem;font-weight:800;padding:2px 6px;border-radius:6px}
+.book .st.g{background:#e7f1f0;color:#245648}.book .st.l{background:#fbeee0;color:#8a5a1a}
+.book .st.a{background:#f3e9c9;color:#7a5a00}.book .st.k{background:#fbe0de;color:#a2231d}
+.book .st.fmt{background:#efe7f5;color:#6a4a8a}.book .st.ar{background:#e7f1f0;color:#245648}
+.book .ty{font-size:.66rem;font-weight:800;color:#fff;background:var(--teal);padding:2px 7px;border-radius:6px}
+.book .tyrow{display:flex;flex-wrap:wrap;gap:5px;align-items:center;align-self:flex-start}
+.book .lv{font-size:.66rem;font-weight:800;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.book .lv.l1{background:#e3f1df;color:#2f6e58}
+.book .lv.l2{background:#d8ecee;color:#1f6f72}
+.book .lv.l3{background:#fbe3d6;color:#b05a2a}
+.lvguide{background:#eef3ea;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:11px;padding:12px 14px;font-size:.86rem;line-height:1.55;color:#2c332a;margin:0 0 12px}
+.lvguide .lvkey{display:block;margin-top:8px;font-size:.76rem;color:var(--soft)}
+.book .bt{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:.96rem;line-height:1.2;margin-top:4px}
+.book .ba{font-size:.76rem;color:var(--soft)}.book .br{font-size:.8rem;color:var(--soft);margin-top:4px}
+.prose{white-space:pre-wrap}ul.li{margin:0;padding-left:20px}ul.li li{margin:5px 0}
+.expr{list-style:none;padding:0;margin:0}.expr li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:7px 0;box-shadow:var(--sh)}
+.expr .en2{font-weight:700}.expr .ko2{color:var(--soft);font-size:.9rem}
+.book .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:10px}
+.book .act{flex:1 1 45%;min-width:62px;text-align:center;font-size:.72rem;font-weight:800;padding:7px 4px;border-radius:8px;text-decoration:none;border:1px solid var(--line);transition:filter .12s}
+.book .act:hover{filter:brightness(.96)}
+.book .act.wb{background:#eef3ea;color:var(--tealD)}
+.book .act.buy{background:var(--coral);color:#fff;border-color:var(--coral)}
+.disc{font-size:.74rem;color:var(--soft);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin-top:12px}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.vid{background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+.vid .fr{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer}
+.vid .fr img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .15s}
+.vid .fr:hover img{filter:brightness(.82)}
+.vid .fr iframe{width:100%;height:100%;border:0;display:block}
+.vid .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.vid .pl svg{width:60px;height:60px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))}
+.vid .vt{padding:9px 12px;font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:.9rem;line-height:1.25}
+.exlink{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--sh);text-decoration:none;color:var(--tealD);font-weight:700;font-size:.92rem;line-height:1.35}
+.exlink:hover{filter:brightness(.98)}.exlink span{word-break:break-all}
+.empty{color:var(--soft);font-style:italic}
+.notice{max-width:640px;margin:60px auto;background:#fff3cd;border:1px solid #e0c97a;border-radius:12px;padding:18px 20px;color:#6b5900}
+.foot{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 44px;color:var(--soft);font-size:.82rem;text-align:center}
+.cr{font-size:.75rem;color:var(--soft);margin-top:8px;line-height:1.5}
+.gate{max-width:420px;margin:64px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 26px;box-shadow:var(--sh)}
+.gate .mark{width:60px;height:60px;margin:0 auto 14px;display:block}
+.gate h1{font-size:1.6rem}
+.gate p{color:var(--soft);margin:10px 0 16px}
+.gate input{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:1rem;padding:11px 13px;border-radius:11px;text-align:center}
+.gate button{margin-top:12px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:12px;border-radius:11px;cursor:pointer}
+.gate .ge{color:#a2231d;font-size:.85rem;font-weight:700;margin-bottom:10px}
+.archl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.archi{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;box-shadow:var(--sh);color:inherit;font-size:.9rem;transition:transform .13s,box-shadow .13s}
+.archi:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(43,42,38,.13)}
+.archi span{margin-left:auto;color:var(--soft);font-size:.76rem}
+.mlink{display:inline-block;margin-top:18px;font-weight:800;font-size:.95rem;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);padding:11px 20px;border-radius:999px;box-shadow:var(--sh)}
+.mlink:hover{filter:brightness(.97)}
+.installbtn{border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:.95rem;padding:11px 20px;border-radius:999px;cursor:pointer;box-shadow:var(--sh)}
+.installbtn:hover{filter:brightness(1.06)}
+.herobtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:18px}
+.herobtns .mlink{margin-top:0}
+.pwa-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:var(--tealD);color:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.28);padding:11px 12px;display:flex;align-items:center;gap:10px;max-width:520px;margin:0 auto}
+.pwa-bar .ic{font-size:1.35rem;flex:0 0 auto}
+.pwa-bar .tx{flex:1;font-size:.82rem;line-height:1.35}
+.pwa-bar .tx b{font-weight:700}
+.pwa-bar button{border:none;border-radius:9px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.pwa-bar .add{background:#fff;color:var(--tealD);padding:8px 13px;flex:0 0 auto}
+.pwa-bar .x{background:transparent;color:#fff;opacity:.7;padding:6px 4px;font-size:.95rem;flex:0 0 auto}
+.pwa-guide{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.pwa-guide .box{background:var(--surface);color:var(--ink);border-radius:16px;max-width:340px;width:100%;padding:22px;box-shadow:var(--sh)}
+.pwa-guide h3{margin:0 0 12px;font-size:1.2rem}
+.pwa-guide ol{margin:0;padding-left:20px;font-size:.92rem;line-height:1.7}
+.pwa-guide button{margin-top:16px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:11px;border-radius:11px;cursor:pointer}
+/* ── 회원 읽기 기록(reading-log.js) ── */
+[hidden]{display:none!important}
+body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
+.hero{position:relative}
+.rpill{position:absolute;top:12px;right:0;border:1px solid var(--line);background:var(--surface);color:var(--tealD);font:inherit;font-size:.78rem;font-weight:800;padding:6px 12px;border-radius:999px;cursor:pointer;box-shadow:var(--sh)}
+.rpill.on{background:#E3EEE8;border-color:transparent;box-shadow:none}
+/* 상단 기록 줄 */
+.rtray{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 6px 16px -14px rgba(43,42,38,.5)}
+.rtray.enter{animation:rlDown .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rlDown{from{transform:translateY(-100%);opacity:0}to{transform:none;opacity:1}}
+.rt-in{max-width:520px;margin:0 auto;padding:10px 16px 11px}
+.rt-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rt-tt{font-weight:800;font-size:.86rem}
+.rt-chip{display:inline-flex;gap:2px;background:#EEF0E8;border-radius:999px;padding:2px}
+.rt-chip button{border:0;background:none;border-radius:999px;font:inherit;font-size:.72rem;font-weight:800;padding:3px 10px;cursor:pointer;color:var(--soft)}
+.rt-chip button[aria-pressed="true"]{background:var(--tealD);color:#fff}
+.rt-sum{margin-left:auto;font-size:.74rem;color:var(--soft);font-weight:700}
+.rt-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;align-items:center}
+.rt-cov{position:relative;border:0;padding:0;background:#EBEDE3;border-radius:7px;aspect-ratio:3/4;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font:inherit;max-width:84px;width:100%;justify-self:center}
+.rt-cov img{width:100%;height:100%;object-fit:cover;border-radius:7px;display:block;transition:filter .2s,opacity .2s}
+.rt-cov .nt{display:grid;place-items:center;height:100%;padding:4px;font-size:.6rem;font-weight:700;line-height:1.2;color:var(--soft)}
+.rt-cov.zero img{filter:saturate(.25);opacity:.55}
+.rt-cov .pl{position:absolute;inset:0;display:grid;place-items:center;font-size:1.35rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:none}
+.rt-cov:not(.zero) .pl{display:none}
+.rt-cov .ct{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:var(--coral);color:#fff;font-size:.72rem;font-weight:800;display:grid;place-items:center;border:2px solid var(--surface);font-variant-numeric:tabular-nums}
+.rt-cov.zero .ct{display:none}
+.rt-cov .rp{position:absolute;inset:-4px;border-radius:10px;border:3px solid var(--coral);opacity:0;pointer-events:none}
+.rt-cov.bump{animation:rtBump .42s ease}
+.rt-cov.bump .rp{animation:rtRipple .55s ease-out}
+@keyframes rtBump{0%{transform:scale(1)}35%{transform:scale(.9)}70%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes rtRipple{0%{opacity:.9;transform:scale(.92)}100%{opacity:0;transform:scale(1.18)}}
+.rt-ft{margin-top:8px;font-size:.72rem;color:var(--soft)}
+.rt-mini{display:none}
+.rtray.compact .rt-in{padding:6px 16px}
+.rtray.compact .rt-hd,.rtray.compact .rt-ft{display:none}
+.rtray.compact .rt-row{grid-template-columns:repeat(5,34px) 1fr;gap:8px}
+.rtray.compact .rt-cov,.rtray.compact .rt-cov img{border-radius:5px}
+.rtray.compact .rt-cov .pl{font-size:.9rem}
+.rtray.compact .rt-cov .ct{top:-5px;right:-7px;min-width:17px;height:17px;font-size:.6rem;padding:0 3px;border-width:1.5px}
+.rtray.compact .rt-mini{display:block;font-size:.74rem;color:var(--soft);font-weight:700;text-align:right}
+.rtray.compact .rt-mini b{color:var(--coral)}
+/* 책 카드 '읽었어요' */
+.book .rrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
+.book .acts+.rrow{margin-top:0;padding-top:8px}
+.book .rmeta{flex:1 1 90px;min-width:0;font-size:.7rem;color:var(--soft);line-height:1.35}
+.book .rmeta b{color:#23291F}
+.book .rbtn{flex:0 0 auto;border:0;background:var(--coral);color:#fff;font:inherit;font-weight:800;font-size:.76rem;padding:8px 12px;border-radius:999px;cursor:pointer;touch-action:manipulation}
+.book .rbtn:active{transform:scale(.95)}
+/* 비회원: 회원 전용 안내 카드 */
+.rlock{margin:26px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
+.rlock .peek{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:14px 14px 0;max-width:460px}
+.rlock .peek img,.rlock .peek span{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;filter:saturate(.3) blur(1.2px);opacity:.6;background:#EBEDE3;display:block}
+.rlock .lk{position:absolute;inset:0;display:grid;place-items:center}
+.rlock .lk span{filter:none;opacity:1;aspect-ratio:auto;width:auto;background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:800;color:var(--tealD);box-shadow:var(--sh)}
+.rlock .body{padding:14px 16px 16px}
+.rlock h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.12rem;margin:0}
+.rlock p{margin:4px 0 10px;font-size:.86rem;color:var(--soft)}
+.rlock ul{margin:0 0 14px;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px;font-size:.84rem}
+.rlock li::before{content:'✓ ';color:var(--coral);font-weight:800}
+.rlock .btns{display:flex;gap:8px;flex-wrap:wrap}
+.rlock .btns>*{flex:1 1 140px;text-align:center;border-radius:11px;padding:11px 8px;font:inherit;font-size:.88rem;font-weight:800;cursor:pointer;text-decoration:none}
+.rlock .pri{border:0;background:var(--tealD);color:#fff}
+.rlock .sec{margin:0;background:#EEF0E8;color:var(--tealD);border:1px solid var(--line)}
+/* 하단 메뉴 */
+.rtabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px -14px rgba(43,42,38,.5)}
+.rtabs.enter{animation:rlUp .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rlUp{from{transform:translateY(40%);opacity:.4}to{transform:none;opacity:1}}
+.rtabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.rtab{border:0;background:none;font:inherit;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.74rem;font-weight:700;color:var(--soft);padding:6px 0 5px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.rtab .ic{position:relative;font-size:1.2rem;line-height:1.15}
+.rtab .ic i{position:absolute;right:-12px;top:-3px;font-size:.62rem;font-style:normal}
+.rtab[aria-selected="true"]{color:var(--tealD);background:#E3EEE8}
+.rtab.locked{color:#8A9180}
+.rtab.locked .ic{filter:grayscale(.6);opacity:.75}
+/* 토스트 · 아래 창 */
+.rl-toast{position:fixed;left:12px;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:70;max-width:440px;margin:0 auto;background:#23291F;color:#F4F5EF;border-radius:14px;padding:10px 10px 10px 15px;display:flex;align-items:center;gap:10px;font-size:.84rem;box-shadow:0 10px 30px rgba(0,0,0,.3);transform:translateY(18px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
+.rl-toast.on{transform:none;opacity:1;pointer-events:auto}
+.rl-toast .tx{flex:1;min-width:0;line-height:1.4}
+.rl-toast button{border:0;border-radius:9px;background:#D1965C;color:#1f1a14;font:inherit;font-weight:800;font-size:.78rem;padding:7px 11px;cursor:pointer;flex:0 0 auto}
+html.rl-lock,html.rl-lock body{overflow:hidden}
+.rl-scrim{position:fixed;inset:0;z-index:80;background:rgba(20,26,18,.5);display:flex;align-items:flex-end;justify-content:center}
+.rl-sheet{width:100%;max-width:480px;background:var(--surface);border-radius:22px 22px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto;animation:rlUp .3s ease}
+.rl-sheet .grab{width:38px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.rl-sheet h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.3rem;margin:0}
+.rl-sheet .sub{font-size:.86rem;color:var(--soft);margin:6px 0 16px}
+.rl-sheet .pin{width:100%;text-align:center;font:inherit;font-size:1.3rem;font-weight:800;letter-spacing:.3em;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:#23291F}
+.rl-sheet .pin:focus{border-color:var(--tealD);outline:none}
+.rl-sheet .err{color:#a2231d;font-size:.82rem;font-weight:700;text-align:center;min-height:1.3em;margin:6px 0 2px}
+.rl-sheet .keep{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.84rem;color:var(--soft)}
+.rl-sheet .keep input{width:17px;height:17px;accent-color:var(--tealD)}
+.rl-sheet .pri{width:100%;margin-top:14px;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:13px;border-radius:12px;cursor:pointer}
+.rl-sheet .pri:disabled{opacity:.6}
+.rl-sheet .subtle{width:100%;margin-top:8px;border:0;background:none;color:var(--soft);font:inherit;font-weight:700;font-size:.86rem;padding:8px;cursor:pointer}
+.rl-sheet .joinlink{display:block;text-align:center;margin-top:14px;font-size:.84rem;font-weight:800;color:var(--tealD)}
+/* 우리 책장 · 읽기 통계 */
+.rv{max-width:560px;margin:0 auto;padding:6px 16px 30px}
+.rv-hd{text-align:center;padding:26px 0 6px}
+.rv-hd .em{font-size:2.2rem;line-height:1}
+.rv-hd h2{font-size:1.6rem;margin-top:6px;color:#23291F;border:0;padding:0}
+.rv-hd p{margin:4px 0 0;color:var(--soft);font-size:.88rem}
+.rv-hd p b{color:var(--coral)}
+.rv-h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.15rem;color:var(--tealD);border-bottom:2px solid var(--line);padding-bottom:6px;margin:30px 0 8px}
+.rv-empty{color:var(--soft);font-size:.88rem;text-align:center}
+.rv-note{font-size:.76rem;color:var(--soft);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:9px 12px;margin-top:18px}
+.rs-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.rs-kpi{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 11px;box-shadow:var(--sh);display:flex;flex-direction:column}
+.rs-kpi .k{font-size:.72rem;font-weight:800;color:var(--soft)}
+.rs-kpi .v{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.55rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.rs-kpi .v small{font-family:'Noto Sans KR',sans-serif;font-size:.72rem;color:var(--soft);font-weight:700}
+.rs-shelf{margin-top:24px;display:flex;flex-direction:column;gap:26px}
+.rs-plank{display:flex;justify-content:center;align-items:flex-end;gap:20px;padding:0 8px 12px;border-bottom:8px solid #CBD0C1;border-radius:0 0 3px 3px}
+.rs-book{width:96px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.rs-book .cv{position:relative;width:96px;aspect-ratio:3/4;display:block}
+.rs-book img{width:100%;height:100%;object-fit:cover;border-radius:3px 6px 6px 3px;display:block}
+.rs-book .nt{display:grid;place-items:center;height:100%;background:var(--surface);border-radius:6px;padding:6px;font-size:.7rem;text-align:center}
+.rs-book.unread img,.rs-book.unread .nt{filter:grayscale(1);opacity:.38}
+.rs-book.unread .cv{outline:1.5px dashed #9AA28F;outline-offset:3px;border-radius:6px}
+.rs-book .x{position:absolute;bottom:-9px;right:-9px;background:var(--coral);color:#fff;font-weight:800;font-size:.78rem;border-radius:999px;padding:1px 9px;border:2px solid #E4E7DD;font-variant-numeric:tabular-nums}
+.rs-book .lb{font-size:.72rem;color:var(--soft);font-weight:700}
+.rs-legend{font-size:.78rem;color:var(--soft);margin:14px 0 0;text-align:center}
+.rs-list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:13px;box-shadow:var(--sh)}
+.rs-list li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.86rem}
+.rs-list li:last-child{border-bottom:0}
+.rs-list .dl{flex:0 0 52px;font-size:.74rem;font-weight:800;color:var(--soft)}
+.rs-list img{width:28px;height:37px;object-fit:cover;border-radius:3px;flex:0 0 auto}
+.rs-list .tt{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs-list button{border:1px solid var(--line);background:none;color:var(--soft);font:inherit;font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:8px;cursor:pointer;flex:0 0 auto}
+.rv-panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;box-shadow:var(--sh)}
+.rv-panel h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.02rem;margin:0 0 10px}
+.rv-panel svg{width:100%;height:auto;display:block}
+.fav{display:flex;gap:14px;align-items:center}
+.fav img{width:66px;height:88px;object-fit:cover;border-radius:5px;box-shadow:var(--sh);flex:0 0 auto}
+.fav .ft{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1rem;line-height:1.25}
+.fav .fx{font-size:.8rem;color:var(--soft);margin-top:3px}
+.fav .fx b{color:var(--coral);font-size:1rem}
+.bars{display:flex;flex-direction:column;gap:7px}
+.br{display:grid;grid-template-columns:70px 1fr 26px;gap:8px;align-items:center;font-size:.78rem}
+.br .bl{font-weight:700}
+.br .track{height:13px;background:#EEF0E8;border-radius:99px;overflow:hidden}
+.br .track i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.br.top .track i{background:var(--coral)}
+.br .bv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
+.insight{font-size:.8rem;background:#F6E6D8;border-radius:9px;padding:8px 10px;margin-top:10px;line-height:1.5}
+@media (prefers-reduced-motion:reduce){.rt-cov.bump,.rt-cov.bump .rp,.rtray.enter,.rtabs.enter,.rl-sheet{animation:none}.rl-toast{transition:none}}
+@media (max-width:560px){
+  body .hero{padding-top:54px}
+  .rpill{top:12px}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
+  .hero .subj{font-size:.95rem;text-align:left}
+  .sec{margin-top:22px}.sec h2{font-size:1.14rem;margin-bottom:12px}
+  /* 한 줄에 책 한 권 · 가로형 카드 */
+  .books{grid-template-columns:1fr;gap:12px}
+  .book{flex-direction:row;align-items:stretch}
+  .book .cv{flex:0 0 112px;width:112px;aspect-ratio:3/4}
+  .book .bb{padding:12px 14px;gap:4px}
+  .book .bt{font-size:1.05rem;margin-top:3px}
+  .book .ba{font-size:.82rem}.book .br{font-size:.85rem;margin-top:5px}
+  /* 아래 글 가독성 */
+  .prose{font-size:1rem;line-height:1.75}
+  ul.li{padding-left:18px}ul.li li{margin:8px 0;line-height:1.6}
+  .expr li{padding:11px 13px}.expr .en2{font-size:1rem}.expr .ko2{display:block;margin-top:3px;font-size:.86rem}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
+<script src="config.js"></script>
+<script src="reading-log.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function notice(msg){app.innerHTML='<div class="wrap"><div class="notice">'+msg+'</div></div>';}
+
+  if(!window.SUPA_ANON||window.SUPA_ANON.indexOf('PASTE')===0){
+    notice('⚙️ 아직 연결 전이에요. <code>docs/study/config.js</code> 에 Supabase <b>anon key</b> 를 넣고, DB(schema.sql·seed.sql)를 실행하면 이 페이지가 채워집니다.');
+    return;
+  }
+  var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
+
+  var IS_ADMIN=false;
+  var PREVIEW=(location.hash||'').indexOf('preview')>=0; // 관리자 미리보기 모드(집계·아카이브 없이 폼 데이터 렌더)
+  function noTrack(){try{return localStorage.getItem('naite_notrack')==='1';}catch(e){return false;}}
+  (function(){try{var _q=new URLSearchParams(location.search);if(_q.has('notrack')){var v=_q.get('notrack')==='0'?'0':'1';localStorage.setItem('naite_notrack',v);alert(v==='0'?'이 기기: 방문 집계를 다시 시작합니다.':'이 기기의 방문은 이제 KPI 집계에서 제외됩니다.');}}catch(e){}})();
+
+  function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
+  var curKey=null;
+  async function logEvent(type,extra){if(PREVIEW||IS_ADMIN||noTrack())return;try{var row={type:type,theme_key:curKey,session_id:sid(),path:location.pathname,meta:extra||null};if(extra&&extra.book_id)row.book_id=extra.book_id;await client.from('events').insert(row);}catch(e){}}
+
+  function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
+  function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
+  function parseExtras(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var i=l.indexOf('|');return i<0?{title:'',url:l.trim()}:{title:l.slice(0,i).trim(),url:l.slice(i+1).trim()};});}
+  function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
+  var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
+
+  // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
+  var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+  var LV_LABEL={1:'🌱 쉬움',2:'🌿 보통',3:'🌳 도전'};
+  function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
+
+  function render(theme,books,content){
+    curKey=theme.key;
+    var c=content||{};
+    var TORD={1:1,3:2,2:3,4:4,5:5}; // 유형 표시 순서: 조작북→반복→라임→유머→스토리
+    // 난이도 오름차순(쉬움→보통→도전) → 같은 단계 안에서는 유형 순서 유지, 단계 없음은 맨 뒤
+    books=(books||[]).slice().sort(function(a,b){
+      var la=level(a)||99, lb=level(b)||99; if(la!==lb)return la-lb;
+      return (TORD[a.tier]||9)-(TORD[b.tier]||9);
+    });
+    var bh=books.map(function(b){
+      var lv=level(b);
+      var stats='';
+      if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
+      if(b.kr_popular) stats+='<span class="st k">🇰🇷 국내 인기</span>';
+      if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
+      if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
+      if(b.format) stats+='<span class="st fmt">'+esc(b.format)+'</span>';
+      if(b.ar!=null&&b.ar!=='') stats+='<span class="st ar">AR ~'+Number(b.ar).toFixed(1)+'</span>';
+      var acts='';
+      if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크지</a>';
+      return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
+        '<div class="cv">'+(b.buy_url?'<a href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" class="cvlink" data-buy="'+esc(b.title)+'">':'')+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+(b.buy_url?'</a>':'')+'</div>'+
+        '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
+        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
+        (stats?'<div class="stats">'+stats+'</div>':'')+
+        (acts?'<div class="acts">'+acts+'</div>':'')+
+        '<div class="rrow" data-rrow="'+b.id+'" hidden></div></div></div>';
+    }).join('');
+    var hasBuy=books.some(function(b){return b.buy_url;});
+    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
+    var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
+    var extras=parseExtras(c.extras);
+    var exhtml=extras.map(function(x){var id=ytid(x.url);
+      if(id)return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(x.title||'부가자료')+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(x.title||'부가 영상')+'"><div class="pl">'+PLAYSVG+'</div></div>'+(x.title?'<div class="vt">'+esc(x.title)+'</div>':'')+'</div>';
+      return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
+    }).join('');
+    var h='<div class="rtray" id="rtray" hidden></div><div id="v-study"><div class="wrap">';
+    h+='<div class="hero"><button type="button" class="rpill" id="rpill">🔒 회원 입장</button><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
+       '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
+       (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
+       '<div class="herobtns"><a class="mlink" href="missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
+       '<button type="button" id="installBtn" class="installbtn">📲 홈 화면에 추가</button></div></div>';
+    h+='<div id="rlock"></div>';
+    h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
+       '<div class="lvguide"><b>🌱 쉬움부터 시작하세요.</b> 3~4살은 🌱 2권만, 5살 이상은 5권 모두 도전! 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
+       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책 표지를 누르면</b> 책정보(구매처)를 볼 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
+       '<p class="wbnote" style="font-size:.78rem;color:var(--soft);margin:10px 0 0">※ <b>AR</b>은 글의 난이도를 나타내는 지수예요. 여기서는 엄마가 읽어줄 때 얼마나 수월할지 가늠하시라고 참고로 넣었어요(읽는 사람은 엄마니까요).</p>'+
+       (hasBuy?'<p class="disc">이 페이지에서 책 표지를 누르면 열리는 <b>📖 책정보</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
+    if(vids)h+='<div class="sec"><h2>📺 Read Aloud 영상</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="vids">'+vids+'</div></div>';
+    h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
+    h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
+    h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
+    if(exhtml)h+='<div class="sec"><h2>📎 부가자료</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="vids">'+exhtml+'</div></div>';
+    h+='<div id="arch"></div>';
+    h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
+       '<div style="margin-top:12px"><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="color:var(--tealD);font-weight:700;text-decoration:none">📷 Instagram @naite_library</a></div>'+
+       '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
+       '<a href="admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div></div>';
+    h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
+    app.innerHTML=h;
+    if(window.NaiteReading&&!PREVIEW)window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,onEvent:function(t,m){logEvent(t,m);}});
+    if(!PREVIEW)fillArchive(theme.key);
+    app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
+    app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
+    app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
+    app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
+    app.querySelectorAll('.book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
+    var ib=document.getElementById('installBtn');
+    if(ib){ if(window.__naiteStandalone&&window.__naiteStandalone()){ib.style.display='none';}
+      else{ib.addEventListener('click',function(){logEvent('install_click',{});if(window.__naiteInstall)window.__naiteInstall();});} }
+    logEvent('page_view',{theme:theme.ko});
+    // 체류시간
+    var start=Date.now();
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){logEvent('dwell',{seconds:Math.round((Date.now()-start)/1000)});}});
+  }
+
+  var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
+  function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
+  function passKey(k){return 'joy_pass_'+k;}
+
+  async function fillArchive(curk){
+    try{
+      var r=await client.rpc('list_published');
+      var list=(r&&r.data)||[];
+      var others=list.filter(function(m){return m.key!==curk;});
+      var el=document.getElementById('arch'); if(!el)return;
+      if(!others.length){el.innerHTML='';return;}
+      el.innerHTML='<div class="sec"><h2>🗂️ 지난 달 스터디</h2>'+
+        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">지난 달 페이지도 각자 비밀번호로 열 수 있어요.</p>'+
+        '<div class="archl">'+others.map(function(m){return '<a class="archi" href="?m='+encodeURIComponent(m.key)+'">'+esc(m.emoji||'📖')+' <b>'+esc(m.ko)+'</b><span>'+esc(m.month_label||m.en||'')+'</span></a>';}).join('')+'</div></div>';
+    }catch(e){}
+  }
+
+  function showGate(key,msg){
+    app.innerHTML='<div class="wrap"><div class="gate">'+RING+
+      '<h1>나이테 스터디</h1><p>이 페이지는 스터디 회원용이에요.<br>비밀번호를 입력해 주세요.</p>'+
+      (msg?'<div class="ge">'+esc(msg)+'</div>':'')+
+      '<input id="pw" type="password" autocomplete="off" placeholder="비밀번호"><button id="go">입력</button></div></div>';
+    var pw=document.getElementById('pw'),go=document.getElementById('go');
+    pw.focus();
+    function submit(){gate(key,pw.value||'',true);}
+    go.addEventListener('click',submit);
+    pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')submit();});
+  }
+
+  async function gate(key,pass,fromForm){
+    try{
+      var r=await client.rpc('get_study',{p_key:key,p_pass:pass||''});
+      if(r.error){notice('불러오지 못했어요.<br><small>'+esc(r.error.message)+'</small>');return;}
+      var d=r.data||{};
+      if(d.ok){try{if(pass)sessionStorage.setItem(passKey(key),pass);}catch(e){}render(d.theme,d.books||[],d.content||{});return;}
+      if(d.error==='badpass'){try{sessionStorage.removeItem(passKey(key));}catch(e){}showGate(key,fromForm?'비밀번호가 맞지 않아요.':'');return;}
+      if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
+      notice('페이지를 찾지 못했어요.');
+    }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+
+  async function boot(){
+    if(PREVIEW){
+      window.addEventListener('message',function(ev){
+        if(location.origin!=='null'&&ev.origin!==location.origin)return;
+        var d=ev.data;if(!d||d.t!=='preview-data')return;
+        try{render(d.theme||{},d.books||[],d.content||{});}catch(e){notice('미리보기 오류: '+esc(e.message||e));}
+      });
+      try{parent.postMessage({t:'preview-ready'},'*');}catch(e){}
+      return;
+    }
+    try{
+      try{var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;IS_ADMIN=!!(u&&window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase());}catch(e){}
+      var key=curParam();
+      if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
+      if(!key){notice('아직 공개된 주제가 없어요. 관리자 페이지에서 이번 달 주제를 정해주세요.');return;}
+      var saved='';try{saved=sessionStorage.getItem(passKey(key))||'';}catch(e){}
+      gate(key,saved,false);
+    }catch(e){notice('데이터를 불러오지 못했어요. 연결 설정(config.js)과 DB 실행을 확인해주세요.<br><small>'+esc(e.message||e)+'</small>');}
+  }
+  boot();
+})();
+</script>
+<script>
+/* 홈 화면 추가(PWA) — '📲 홈 화면에 추가' 버튼으로 설치(안드로이드: 설치창 / iOS: 안내) */
+(function(){
+  if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/study/'});}catch(e){}}
+  function standalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
+  window.__naiteStandalone=standalone;
+  var deferred=null;
+  function isiOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
+  function showGuide(){
+    var g=document.createElement('div');g.className='pwa-guide';var ios=isiOS();
+    g.innerHTML='<div class="box"><h3>📲 홈 화면에 추가</h3>'+(ios?
+      '<ol><li>하단 <b>공유</b> 버튼(⬆️)을 눌러요</li><li><b>홈 화면에 추가</b>를 선택해요</li><li><b>추가</b>를 누르면 끝!</li></ol>':
+      '<ol><li>브라우저 <b>메뉴(⋮)</b>를 열어요</li><li><b>홈 화면에 추가</b>(또는 앱 설치)를 눌러요</li><li><b>추가</b>를 누르면 끝!</li></ol>')+
+      '<button class="ok">확인</button></div>';
+    document.body.appendChild(g);
+    g.querySelector('.ok').onclick=function(){g.remove();};
+    g.onclick=function(e){if(e.target===g)g.remove();};
+  }
+  window.__naiteInstall=function(){
+    if(deferred){deferred.prompt();deferred.userChoice.finally(function(){deferred=null;});return;}
+    showGuide(); // 안드로이드에서 설치 이벤트 전이거나 iOS면 안내
+  };
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
+  window.addEventListener('appinstalled',function(){var b=document.getElementById('installBtn');if(b)b.style.display='none';});
+})();
+</script>
+</body>
+</html>

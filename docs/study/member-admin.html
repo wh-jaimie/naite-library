@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<meta name="robots" content="noindex">
+<title>회원 기록 관리 — 나이테 스터디</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.6}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--tealD:#245648;--coral:#B87343;--sh:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07)}
+.wrap{max-width:560px;margin:0 auto;padding:40px 18px 60px}
+h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.25}
+h1{font-size:1.6rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--sh);margin:16px 0}
+.card h2{font-size:1.15rem;margin-bottom:6px}
+label{display:block;font-size:.82rem;font-weight:800;color:var(--soft);margin:14px 0 5px}
+input{width:100%;border:1px solid var(--line);background:#fff;color:#23291F;font:inherit;font-size:1rem;padding:11px 12px;border-radius:10px}
+.btn{border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:11px 16px;border-radius:10px;cursor:pointer;margin-top:12px}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--soft)}
+.hint{font-size:.8rem;color:var(--soft);margin:6px 0 0}
+.st{font-size:.86rem;font-weight:700;margin-top:10px;min-height:1.3em}
+.ok{color:#2F6E58}.bad{color:#a2231d}
+.cur{font-size:1.4rem;font-weight:800;letter-spacing:.15em;font-variant-numeric:tabular-nums}
+.kgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{background:#F1F3EB;border-radius:12px;padding:10px 12px}
+.kpi .n{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.5rem;color:var(--tealD)}
+.kpi .l{font-size:.74rem;color:var(--soft)}
+.warn{background:#fff3cd;border:1px solid #e0c97a;border-radius:10px;padding:12px 14px;color:#6b5900;font-size:.88rem}
+a{color:var(--tealD);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="hint">불러오는 중…</p></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var app=document.getElementById('app');
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
+
+  function renderLogin(msg){
+    app.innerHTML='<h1>회원 기록 관리</h1><div class="card"><h2>관리자 로그인</h2>'+
+      '<label for="em">이메일</label><input id="em" type="email" value="'+esc(window.ADMIN_EMAIL||'')+'" autocomplete="off">'+
+      '<label for="pw">비밀번호</label><input id="pw" type="password" autocomplete="off">'+
+      '<button class="btn" id="go">로그인</button><div class="st bad" id="st">'+esc(msg||'')+'</div></div>';
+    var pw=document.getElementById('pw');pw.focus();
+    async function go(){
+      var r=await client.auth.signInWithPassword({email:document.getElementById('em').value.trim(),password:pw.value});
+      if(r.error){document.getElementById('st').textContent='로그인하지 못했어요: '+r.error.message;return;}
+      boot();
+    }
+    document.getElementById('go').onclick=go;
+    pw.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+  }
+
+  async function renderMain(){
+    var cfg=await client.from('member_config').select('member_code,updated_at').eq('id',1).maybeSingle();
+    if(cfg.error){
+      app.innerHTML='<h1>회원 기록 관리</h1><div class="warn">회원 기록용 DB가 아직 없어요. Supabase SQL Editor에서 <b>supabase/migrate_reading_logs.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(cfg.error.message)+'</small></div>';
+      return;
+    }
+    var code=(cfg.data&&cfg.data.member_code)||'';
+    var since=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+    var logs=await client.from('reading_logs').select('reader,read_on').gte('read_on',since);
+    var rows=(logs.data||[]),readers={};rows.forEach(function(r){readers[r.reader]=1;});
+    app.innerHTML='<h1>회원 기록 관리</h1><p class="hint">스터디 자료 새 페이지(<a href="v2.html">study/v2.html</a>)의 회원 비밀번호와 기록 현황이에요.</p>'+
+      '<div class="card"><h2>회원 비밀번호</h2>'+
+        '<div class="hint">지금 비밀번호</div><div class="cur">'+(code?esc(code):'<span class="bad" style="letter-spacing:0;font-size:1rem">설정 안 됨 (아무도 기록할 수 없어요)</span>')+'</div>'+
+        '<label for="nc">새 비밀번호</label><input id="nc" inputmode="numeric" maxlength="20" placeholder="예: 1102" autocomplete="off">'+
+        '<button class="btn" id="save">저장</button><div class="st" id="sst"></div>'+
+        '<p class="hint">바꾸면 회원들은 다음 접속 때 새 비밀번호를 한 번 넣어야 해요. 읽기 기록은 비밀번호와 따로 저장돼서 그대로 이어져요.</p></div>'+
+      '<div class="card"><h2>최근 7일 기록</h2><div class="kgrid">'+
+        '<div class="kpi"><div class="n">'+Object.keys(readers).length+'</div><div class="l">기록한 기기</div></div>'+
+        '<div class="kpi"><div class="n">'+rows.length+'</div><div class="l">읽기 기록</div></div>'+
+        '<div class="kpi"><div class="n">'+(Object.keys(readers).length?(rows.length/Object.keys(readers).length).toFixed(1):'0')+'</div><div class="l">기기당 평균</div></div>'+
+      '</div></div>'+
+      '<button class="btn ghost" id="lo">로그아웃</button>';
+    document.getElementById('save').onclick=async function(){
+      var v=document.getElementById('nc').value.trim(),st=document.getElementById('sst');
+      if(!v){st.className='st bad';st.textContent='새 비밀번호를 넣어주세요.';return;}
+      var r=await client.from('member_config').update({member_code:v,updated_at:new Date().toISOString()}).eq('id',1).select();
+      if(r.error||!r.data||!r.data.length){st.className='st bad';st.textContent='저장하지 못했어요'+(r.error?': '+r.error.message:' (관리자 계정인지 확인해 주세요)');return;}
+      st.className='st ok';st.textContent='저장했어요.';setTimeout(renderMain,700);
+    };
+    document.getElementById('lo').onclick=async function(){await client.auth.signOut();renderLogin();};
+  }
+
+  async function boot(){
+    var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;
+    if(!u){renderLogin();return;}
+    if(window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()!==window.ADMIN_EMAIL.toLowerCase()){await client.auth.signOut();renderLogin('관리자 계정이 아니에요.');return;}
+    renderMain();
+  }
+  boot();
+})();
+</script>
+</body>
+</html>

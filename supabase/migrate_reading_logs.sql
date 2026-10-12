@@ -1,7 +1,28 @@
--- 읽기 기록(1단계) — 표지 한 번 탭 = 한 행
+-- 회원 읽기 기록 — 표지 한 번 탭 = 한 행 (study/v2.html 에서 사용)
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전(idempotent).
--- 기존 페이지는 이 테이블/함수를 쓰지 않으므로, 프론트 배포 전에 먼저 실행해도 영향 없음.
+-- 운영 중인 study/index.html·admin.html 은 이 테이블/함수를 쓰지 않으므로, 먼저 실행해도 영향 없음.
 
+-- ── 회원 비밀번호(1개) — 관리자만 읽고 씀. 바꿔도 기록은 기기 ID에 묶여 있어 그대로 이어짐 ──
+create table if not exists public.member_config (
+  id          int primary key default 1 check (id = 1),
+  member_code text not null default '',
+  updated_at  timestamptz default now()
+);
+insert into public.member_config(id) values (1) on conflict (id) do nothing;
+alter table public.member_config enable row level security;
+drop policy if exists "admin all member_config" on public.member_config;
+create policy "admin all member_config" on public.member_config
+  for all using (public.is_admin()) with check (public.is_admin());
+
+-- 회원 비밀번호 확인(비어 있으면 아무도 회원 아님)
+create or replace function public.check_member(p_code text)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select coalesce(m.member_code,'') <> '' and coalesce(p_code,'') = m.member_code
+    from public.member_config m where m.id = 1;
+$$;
+
+-- ── 읽기 기록 ──
 create table if not exists public.reading_logs (
   id         bigint generated always as identity primary key,
   created_at timestamptz default now(),
@@ -10,8 +31,8 @@ create table if not exists public.reading_logs (
   theme_key  text references public.themes(key) on delete cascade,
   book_id    bigint references public.books(id) on delete cascade,
   read_on    date not null,              -- 새벽 4시 전 탭은 전날(브라우저에서 계산)
-  how        text,                       -- (2단계) 'parent' | 'video' | 'self'
-  reaction   text,                       -- (2단계) 'love' | 'ok' | 'meh' | 'sleepy'
+  how        text,                       -- (다음 단계) 'parent' | 'video' | 'self'
+  reaction   text,                       -- (다음 단계) 'love' | 'ok' | 'meh' | 'sleepy'
   unique (reader, client_id)
 );
 create index if not exists reading_logs_reader_idx on public.reading_logs(reader, theme_key);
@@ -22,12 +43,14 @@ alter table public.reading_logs enable row level security;
 drop policy if exists "admin read reading_logs" on public.reading_logs;
 create policy "admin read reading_logs" on public.reading_logs for select using (public.is_admin());
 
--- 기록 1회 추가
-create or replace function public.log_read(p_reader text, p_client_id text, p_book_id bigint, p_read_on date)
+-- 기록 1회 추가(회원 비밀번호 확인). 예전 시안의 4인자 버전이 있으면 제거.
+drop function if exists public.log_read(text, text, bigint, date);
+create or replace function public.log_read(p_reader text, p_client_id text, p_book_id bigint, p_read_on date, p_code text)
 returns jsonb
 language plpgsql volatile security definer set search_path = public as $$
 declare v_theme text; v_today date := (now() at time zone 'Asia/Seoul')::date; v_n int;
 begin
+  if not coalesce(public.check_member(p_code), false) then return jsonb_build_object('ok',false,'error','member'); end if;
   if coalesce(length(p_reader),0) not between 16 and 64 then return jsonb_build_object('ok',false,'error','reader'); end if;
   if coalesce(length(p_client_id),0) not between 8 and 64 then return jsonb_build_object('ok',false,'error','client'); end if;
   -- 오늘·어제(+새벽 4시 보정) 범위만 허용
@@ -65,6 +88,7 @@ language sql stable security definer set search_path = public as $$
    order by r.created_at;
 $$;
 
-grant execute on function public.log_read(text, text, bigint, date) to anon, authenticated;
-grant execute on function public.undo_read(text, text)              to anon, authenticated;
-grant execute on function public.my_reads(text, text)               to anon, authenticated;
+grant execute on function public.check_member(text)                      to anon, authenticated;
+grant execute on function public.log_read(text, text, bigint, date, text) to anon, authenticated;
+grant execute on function public.undo_read(text, text)                    to anon, authenticated;
+grant execute on function public.my_reads(text, text)                     to anon, authenticated;
