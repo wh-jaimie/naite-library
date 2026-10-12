@@ -6,7 +6,7 @@
 <link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
-<link rel="manifest" href="/naite-library/study/manifest-record.webmanifest">
+<link rel="manifest" href="/naite-library/record/manifest.webmanifest">
 <meta name="apple-mobile-web-app-title" content="나이테 기록">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -90,18 +90,6 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .installbtn:hover{filter:brightness(1.06)}
 .herobtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:18px}
 .herobtns .mlink{margin-top:0}
-.pwa-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:var(--tealD);color:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.28);padding:11px 12px;display:flex;align-items:center;gap:10px;max-width:520px;margin:0 auto}
-.pwa-bar .ic{font-size:1.35rem;flex:0 0 auto}
-.pwa-bar .tx{flex:1;font-size:.82rem;line-height:1.35}
-.pwa-bar .tx b{font-weight:700}
-.pwa-bar button{border:none;border-radius:9px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
-.pwa-bar .add{background:#fff;color:var(--tealD);padding:8px 13px;flex:0 0 auto}
-.pwa-bar .x{background:transparent;color:#fff;opacity:.7;padding:6px 4px;font-size:.95rem;flex:0 0 auto}
-.pwa-guide{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
-.pwa-guide .box{background:var(--surface);color:var(--ink);border-radius:16px;max-width:340px;width:100%;padding:22px;box-shadow:var(--sh)}
-.pwa-guide h3{margin:0 0 12px;font-size:1.2rem}
-.pwa-guide ol{margin:0;padding-left:20px;font-size:.92rem;line-height:1.7}
-.pwa-guide button{margin-top:16px;width:100%;border:none;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:11px;border-radius:11px;cursor:pointer}
 /* ── 회원 읽기 기록(reading-log.js) ── */
 [hidden]{display:none!important}
 body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
@@ -174,6 +162,10 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .rl-sheet .pri{width:100%;margin-top:14px;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:13px;border-radius:12px;cursor:pointer}
 .rl-sheet .pri:disabled{opacity:.6}
 .rl-sheet .subtle{width:100%;margin-top:8px;border:0;background:none;color:var(--soft);font:inherit;font-weight:700;font-size:.86rem;padding:8px;cursor:pointer}
+.rl-sheet a.pri{display:block;text-align:center;text-decoration:none}
+.rl-sheet .steps{margin:4px 0 6px;padding-left:22px;font-size:.92rem;line-height:1.8}
+.rl-sheet .steps b{color:var(--tealD)}
+.rv-install{display:block;width:100%;margin:22px 0 0;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer}
 .rl-sheet .joinlink{display:block;text-align:center;margin-top:14px;font-size:.84rem;font-weight:800;color:var(--tealD)}
 /* 우리 책장 · 읽기 통계 */
 .rv{max-width:560px;margin:0 auto;padding:6px 16px 30px}
@@ -184,7 +176,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .rv-hd p b{color:var(--coral)}
 .rv-h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.15rem;color:var(--tealD);border-bottom:2px solid var(--line);padding-bottom:6px;margin:30px 0 8px}
 .rv-empty{color:var(--soft);font-size:.88rem;text-align:center}
-.rv-leave{display:block;margin:22px auto 0;border:0;background:none;color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;text-decoration:underline;cursor:pointer}
+.rv-leave{display:block;margin:12px auto 0;border:0;background:none;color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;text-decoration:underline;cursor:pointer}
 .rv-note{font-size:.76rem;color:var(--soft);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:9px 12px;margin-top:18px}
 .rs-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
 .rs-kpi{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 11px;box-shadow:var(--sh);display:flex;flex-direction:column}
@@ -247,7 +239,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 </head>
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
-<script src="config.js"></script>
+<script src="../study/config.js"></script>
 <script src="reading-log.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -322,8 +314,8 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
-       '<div class="herobtns"><a class="mlink" href="missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
-       '<button type="button" id="installBtn" class="installbtn">📲 홈 화면에 추가</button></div></div>';
+       '<div class="herobtns"><a class="mlink" href="../study/missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
+       (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 홈 화면에 추가</button>')+'</div></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
        '<div class="lvguide"><b>🌱 쉬움부터 시작하세요.</b> 3~4살은 🌱 2권만, 5살 이상은 5권 모두 도전! 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책 표지를 누르면</b> 책정보(구매처)를 볼 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
@@ -338,22 +330,19 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
        '<div style="margin-top:12px"><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="color:var(--tealD);font-weight:700;text-decoration:none">📷 Instagram @naite_library</a></div>'+
        '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
-       '<a href="admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div></div>';
+       '<a href="../study/admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
     window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
       onEvent:function(t,m){logEvent(t,m);},
       onExpired:function(){toEntry(true);},
-      onLeave:function(){location.replace('index.html'+(curParam()?'?m='+encodeURIComponent(curParam()):''));}});
+      onLeave:function(){location.replace('../study/'+(curParam()?'?m='+encodeURIComponent(curParam()):''));}});
     fillArchive(theme.key);
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
     app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
     app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
     app.querySelectorAll('.book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
-    var ib=document.getElementById('installBtn');
-    if(ib){ if(window.__naiteStandalone&&window.__naiteStandalone()){ib.style.display='none';}
-      else{ib.addEventListener('click',function(){logEvent('install_click',{});if(window.__naiteInstall)window.__naiteInstall();});} }
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();
@@ -379,7 +368,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
   // 회원 입장 화면으로(비밀번호 없음·만료). 보던 달(?m=)은 입장 후 돌아오도록 넘겨줌
   function toEntry(expired){
     var q=[];if(expired)q.push('expired=1');var m=curParam();if(m)q.push('m='+encodeURIComponent(m));
-    location.replace('member.html'+(q.length?'?'+q.join('&'):''));
+    location.replace('./'+(q.length?'?'+q.join('&'):''));
   }
 
   async function boot(){
@@ -404,30 +393,8 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 })();
 </script>
 <script>
-/* 홈 화면 추가(PWA) — '📲 홈 화면에 추가' 버튼으로 설치(안드로이드: 설치창 / iOS: 안내) */
-(function(){
-  if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/study/'});}catch(e){}}
-  function standalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
-  window.__naiteStandalone=standalone;
-  var deferred=null;
-  function isiOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
-  function showGuide(){
-    var g=document.createElement('div');g.className='pwa-guide';var ios=isiOS();
-    g.innerHTML='<div class="box"><h3>📲 홈 화면에 추가</h3>'+(ios?
-      '<ol><li>하단 <b>공유</b> 버튼(⬆️)을 눌러요</li><li><b>홈 화면에 추가</b>를 선택해요</li><li><b>추가</b>를 누르면 끝!</li></ol>':
-      '<ol><li>브라우저 <b>메뉴(⋮)</b>를 열어요</li><li><b>홈 화면에 추가</b>(또는 앱 설치)를 눌러요</li><li><b>추가</b>를 누르면 끝!</li></ol>')+
-      '<button class="ok">확인</button></div>';
-    document.body.appendChild(g);
-    g.querySelector('.ok').onclick=function(){g.remove();};
-    g.onclick=function(e){if(e.target===g)g.remove();};
-  }
-  window.__naiteInstall=function(){
-    if(deferred){deferred.prompt();deferred.userChoice.finally(function(){deferred=null;});return;}
-    showGuide(); // 안드로이드에서 설치 이벤트 전이거나 iOS면 안내
-  };
-  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
-  window.addEventListener('appinstalled',function(){var b=document.getElementById('installBtn');if(b)b.style.display='none';});
-})();
+/* 홈 화면 앱(record/ 범위). 설치 안내·버튼은 reading-log.js(NaiteReading.install) */
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/'});}catch(e){}}
 </script>
 </body>
 </html>

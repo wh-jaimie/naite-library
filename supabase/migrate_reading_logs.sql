@@ -1,4 +1,4 @@
--- 회원 읽기 기록 — 표지 한 번 탭 = 한 행 (study/member.html 입장 → study/record.html 에서 사용)
+-- 회원 읽기 기록 — 표지 한 번 탭 = 한 행 (record/ 입장 → record/app.html 에서 사용)
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전(idempotent).
 -- 운영 중인 study/index.html·admin.html 은 이 테이블/함수를 쓰지 않으므로, 먼저 실행해도 영향 없음.
 

@@ -6,7 +6,7 @@
 <link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
-<link rel="manifest" href="/naite-library/study/manifest-record.webmanifest">
+<link rel="manifest" href="/naite-library/record/manifest.webmanifest">
 <meta name="apple-mobile-web-app-title" content="나이테 기록">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -40,12 +40,31 @@ label.l{display:block;font-size:.8rem;font-weight:800;color:var(--soft);margin-b
 .links a{color:var(--tealD);font-weight:800;text-decoration:none}
 .links .sub{color:var(--soft);font-weight:700}
 :focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+[hidden]{display:none!important}
+.inapp{background:#FFF3CD;border:1px solid #E0C97A;color:#5c4a00;border-radius:14px;padding:12px 14px;margin:0 0 16px;text-align:left;font-size:.86rem;line-height:1.55}
+.inapp b{display:block;font-size:.92rem;margin-bottom:2px}
+.inapp a{display:block;text-align:center;margin-top:10px;background:#5c4a00;color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:10px}
+.links button.ins{border:0;background:none;font:inherit;color:var(--tealD);font-weight:800;cursor:pointer;padding:0}
+/* 아래에서 올라오는 창·토스트(reading-log.js) */
+html.rl-lock,html.rl-lock body{overflow:hidden}
+.rl-scrim{position:fixed;inset:0;z-index:80;background:rgba(20,26,18,.5);display:flex;align-items:flex-end;justify-content:center}
+.rl-sheet{width:100%;max-width:480px;background:var(--surface);border-radius:22px 22px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto;text-align:left}
+.rl-sheet .grab{width:38px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.rl-sheet h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.3rem;margin:0}
+.rl-sheet .sub{font-size:.88rem;color:var(--soft);margin:6px 0 12px}
+.rl-sheet .steps{margin:4px 0 6px;padding-left:22px;font-size:.92rem;line-height:1.8}
+.rl-sheet .steps b{color:var(--tealD)}
+.rl-sheet .pri{display:block;width:100%;margin-top:12px;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:1rem;padding:13px;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none}
+.rl-sheet .subtle{width:100%;margin-top:8px;border:0;background:none;color:var(--soft);font:inherit;font-weight:700;font-size:.86rem;padding:8px;cursor:pointer}
+.rl-toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;max-width:440px;margin:0 auto;background:#23291F;color:#F4F5EF;border-radius:14px;padding:12px 15px;font-size:.86rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.rl-toast.on{opacity:1}
 </style>
 </head>
 <body>
 <main>
   <div class="box">
     <svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>
+    <div class="inapp" id="inapp" hidden></div>
     <span class="eyebrow">나이테 엄마표영어 스터디</span>
     <h1>회원 입장</h1>
     <p class="lead">회원 비밀번호를 넣으면 매일 읽은 책을<br>기록하는 화면으로 이동해요.</p>
@@ -64,21 +83,34 @@ label.l{display:block;font-size:.8rem;font-weight:800;color:var(--soft);margin-b
     </form>
     <div class="links">
       <span class="sub">비밀번호는 오픈채팅 공지에 있어요.</span>
-      <a href="index.html" id="pubLink">스터디 자료만 둘러보기 ›</a>
+      <a href="../study/" id="pubLink">스터디 자료만 둘러보기 ›</a>
       <a href="../join.html?from=member">아직 회원이 아니라면 · 스터디 참여 안내 ›</a>
+      <button type="button" class="ins" id="insBtn" data-rinstall="entry">📲 이 화면을 홈 화면에 추가</button>
     </div>
   </div>
 </main>
-<script src="config.js"></script>
+<script src="../study/config.js"></script>
 <script src="reading-log.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/'});}catch(e){}}
+</script>
 <script>
 (function(){
   var NR=window.NaiteReading,client=supabase.createClient(window.SUPA_URL,window.SUPA_ANON);
   var q=new URLSearchParams(location.search),m=q.get('m')||'';
-  var target='record.html'+(m?'?m='+encodeURIComponent(m):'');
-  if(m)document.getElementById('pubLink').href='index.html?m='+encodeURIComponent(m);
+  var target='app.html'+(m?'?m='+encodeURIComponent(m):'');
+  if(m)document.getElementById('pubLink').href='../study/?m='+encodeURIComponent(m);
   var pin=document.getElementById('pin'),err=document.getElementById('err'),go=document.getElementById('go'),info=document.getElementById('info');
+
+  // 카카오톡 등 앱 안 브라우저: 설치가 안 되고 기록도 따로 저장됨 → 크롬/사파리로 열기 안내
+  var app=NR.inAppName(),ios=/iphone|ipad|ipod/i.test(navigator.userAgent),ext=NR.externalHref();
+  if(app){var ia=document.getElementById('inapp');ia.hidden=false;
+    ia.innerHTML='<b>'+app+' 안에서 열려 있어요</b>여기서 기록하면 이 창 안에만 저장되고 홈 화면에 추가할 수도 없어요. '+(ios?'사파리':'크롬')+'에서 열어 주세요. (⋮ / ⋯ 메뉴 → 다른 브라우저로 열기)'+
+      (ext?'<a href="'+ext.replace(/"/g,'&quot;')+'">'+(ios?'사파리로':'크롬으로')+' 열기</a>':'');}
+  var insBtn=document.getElementById('insBtn');
+  if(NR.isStandalone())insBtn.hidden=true;
+  insBtn.addEventListener('click',function(){NR.install();});
 
   // 이미 입장한 폰이면 바로 기록 화면으로(비밀번호가 바뀌었으면 기록 화면이 다시 여기로 보냄)
   if(!q.has('expired')&&NR.getCode()){location.replace(target);return;}

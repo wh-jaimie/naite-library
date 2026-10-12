@@ -1,9 +1,9 @@
-/* 나이테 스터디 — 회원 읽기 기록 (record.html 전용, member.html 은 비밀번호 저장 함수만 사용)
- * 회원 입장(member.html)에서 비밀번호를 넣은 기기만 record.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
+/* 나이테 스터디 — 회원 읽기 기록 (record/app.html 전용, record/index.html 입장 화면은 비밀번호 저장·설치 안내만 사용)
+ * 회원 입장(record/)에서 비밀번호를 넣은 기기만 app.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
  * 하단 메뉴: 이번 달 자료 · 우리 책장 · 읽기 통계.
  * 기록: 표지 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
- * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — record.html render() 뒤에 호출.
+ * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — app.html render() 뒤에 호출.
  */
 (function(){
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
@@ -164,6 +164,54 @@
     sh.querySelector('#rlLeave').onclick=function(){closeSheet();leave();};
   }
 
+  /* ── 홈 화면 설치 ──
+   * 안드로이드 크롬: 설치 창(beforeinstallprompt). 아이폰: 공유 → 홈 화면에 추가 안내.
+   * 카카오톡 등 앱 안 브라우저: 설치가 안 되고 저장소도 따로라 기록이 이어지지 않음 → 다른 브라우저로 열기 안내. */
+  var INSTALL_KEY='naite_install_offered',deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;});
+  window.addEventListener('appinstalled',function(){deferredPrompt=null;document.querySelectorAll('[data-rinstall]').forEach(function(el){el.hidden=true;});});
+  function isStandalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
+  function isiOS(){var u=navigator.userAgent;return /iphone|ipad|ipod/i.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1);}
+  function inAppName(){var u=navigator.userAgent;if(/KAKAOTALK/i.test(u))return '카카오톡';if(/NAVER\(inapp/i.test(u))return '네이버';if(/Instagram/i.test(u))return '인스타그램';if(/FBAN|FBAV/i.test(u))return '페이스북';if(/\bLine\//i.test(u))return '라인';return '';}
+  function externalHref(){return /KAKAOTALK/i.test(navigator.userAgent)?'kakaotalk://web/openExternal?url='+encodeURIComponent(location.href):'';}
+  function inAppHtml(name){
+    var ext=externalHref();
+    return '<p class="sub"><b>'+name+' 안에서 열려 있어요.</b> 여기서는 홈 화면에 추가할 수 없고, 기록도 이 창 안에만 따로 저장돼요. '+(isiOS()?'사파리':'크롬')+'에서 열어 주세요.</p>'+
+      (ext?'<a class="pri" href="'+esc(ext)+'">'+(isiOS()?'사파리로':'크롬으로')+' 열기</a>':'')+
+      '<ol class="steps"><li>화면 오른쪽 위나 아래의 <b>⋮ / ⋯</b> 버튼을 눌러요</li><li><b>다른 브라우저로 열기</b>를 골라요</li><li>열린 화면에서 다시 홈 화면에 추가해요</li></ol>';
+  }
+  function guideHtml(){
+    var app=inAppName();if(app)return inAppHtml(app);
+    if(isiOS())return '<p class="sub">아이폰은 사파리에서 직접 추가해요.</p><ol class="steps"><li>화면 아래 <b>공유 버튼(⬆︎)</b>을 눌러요</li><li>목록을 내려 <b>홈 화면에 추가</b>를 골라요</li><li>오른쪽 위 <b>추가</b>를 누르면 끝!</li></ol>';
+    return '<ol class="steps"><li>브라우저 오른쪽 위 <b>⋮ 메뉴</b>를 눌러요</li><li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 골라요</li><li><b>설치(추가)</b>를 누르면 끝!</li></ol>';
+  }
+  function install(){
+    if(deferredPrompt&&!inAppName()){var p=deferredPrompt;deferredPrompt=null;p.prompt();if(p.userChoice)p.userChoice.then(function(c){if(c&&c.outcome==='accepted')toast('홈 화면에 추가했어요. 다음부터는 앱으로 열어 주세요.');},function(){});return;}
+    var sh=openSheet('<h3>📲 홈 화면에 추가</h3>'+guideHtml()+'<button type="button" class="subtle" data-sclose>닫기</button>');
+    sh.querySelector('[data-sclose]').onclick=closeSheet;
+  }
+  // 처음 입장했을 때 한 번만: 설치 창을 띄울 수 있거나(안드로이드) 안내가 필요한 환경(아이폰·앱 안 브라우저)일 때
+  function offerInstallOnce(){
+    if(isStandalone())return;
+    try{if(localStorage.getItem(INSTALL_KEY))return;}catch(e){return;}
+    var waited=0;(function check(){
+      if(!S||document.visibilityState!=='visible')return;
+      var ok=deferredPrompt||isiOS()||inAppName();
+      if(!ok&&waited<3000){waited+=500;setTimeout(check,500);return;}
+      if(!ok)return; // 설치를 지원하지 않는 브라우저(데스크톱 등)는 조용히 넘어감
+      if(sheetEl&&!sheetEl.hidden)return;
+      try{localStorage.setItem(INSTALL_KEY,String(Date.now()));}catch(e){}
+      var app=inAppName();
+      var sh=openSheet('<h3>홈 화면에 추가해 두세요</h3>'+
+        (app?inAppHtml(app):'<p class="sub">매일 아이와 책을 읽고 바로 기록할 수 있게, 앱처럼 한 번에 열려요. 비밀번호도 다시 묻지 않아요.</p>'+
+          '<button type="button" class="pri" id="rlInstall">홈 화면에 추가</button>')+
+        '<button type="button" class="subtle" data-sclose>나중에 할게요</button>');
+      var b=sh.querySelector('#rlInstall');if(b)b.onclick=function(){closeSheet();install();};
+      sh.querySelector('[data-sclose]').onclick=closeSheet;
+      if(S.onEvent)S.onEvent('install_offer',{env:app||(isiOS()?'ios':'android')});
+    })();
+  }
+
   /* ── 그리기 ── */
   function coverImg(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}
   function paintTray(anim){
@@ -222,6 +270,7 @@
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
         :'<p class="rv-empty">아직 기록이 없어요. 이번 달 자료 맨 위의 표지를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
+      '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 홈 화면에 추가</button>'+
       '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
   }
   function paintStats(){
@@ -292,6 +341,7 @@
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintTray();return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
+      if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('online',function(){if(S)flush();});
@@ -299,7 +349,8 @@
   }
 
   window.NaiteReading={
-    getCode:getCode,setCode:setCode, // member.html 에서 사용
+    getCode:getCode,setCode:setCode, // 입장 화면(index.html)에서 사용
+    install:install,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,
     mount:function(o){
       var books=(o.books||[]).map(function(b){return {id:+b.id,title:b.title,cover:b.cover,type:b.tier_label||'',tier:b.tier};});
       var byId={};books.forEach(function(b){byId[b.id]=b;});
@@ -311,6 +362,7 @@
       var h=(location.hash||'').slice(1);
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
       compactOn=null;onScroll();flush();pull();verifyMember();
+      setTimeout(offerInstallOnce,1200);
     }
   };
 })();
