@@ -271,7 +271,8 @@
         :'<p class="rv-empty">아직 기록이 없어요. 이번 달 자료 맨 위의 표지를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
       '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 홈 화면에 추가</button>'+
-      '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
+      '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button>'+
+      '<a class="rv-leave" href="linktest.html">🔧 링크 테스트(임시)</a></div>';
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="/naite-library/record/manifest.webmanifest">
+<title>링크 테스트 — 나이테</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55;padding:20px 16px 60px}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-size:1.35rem;margin:0 0 4px}
+p{margin:0 0 12px;font-size:.92rem}
+.env{background:#FCFCF8;border:1px solid #E2E5DA;border-radius:12px;padding:12px;font-size:.78rem;word-break:break-all;margin-bottom:16px}
+.env b{display:inline-block;min-width:80px}
+.t{display:flex;align-items:center;gap:12px;background:#FCFCF8;border:1px solid #E2E5DA;border-radius:12px;padding:12px;margin:8px 0;text-decoration:none;color:#23291F;font:inherit;width:100%;text-align:left;cursor:pointer}
+.t .k{flex:0 0 34px;height:34px;border-radius:50%;background:#245648;color:#fff;font-weight:800;display:grid;place-items:center}
+.t .d{flex:1;min-width:0}
+.t .d b{display:block;font-size:.95rem}
+.t .d span{font-size:.78rem;color:#565E4E}
+.note{font-size:.84rem;background:#FFF3CD;border:1px solid #E0C97A;border-radius:10px;padding:10px 12px;margin:14px 0}
+a.back{display:inline-block;margin-top:18px;color:#245648;font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔧 쿠팡 링크 테스트 (임시)</h1>
+  <p>A부터 차례로 눌러 보고, <b>쿠팡이 열린 글자</b>를 알려주세요. 열리면 뒤로 가기로 이 화면에 돌아와서 다음 것도 눌러 주세요.</p>
+  <div class="env" id="env">불러오는 중…</div>
+  <div id="list"></div>
+  <div class="note">아무것도 안 열리면, 각 버튼을 눌렀을 때 <b>아무 반응 없음 / 빈 화면 / 잠깐 떴다 사라짐 / 오류 문구</b> 중 어땠는지 알려주세요.</div>
+  <a class="back" href="app.html#shelf">← 우리 책장으로</a>
+</div>
+<script src="../study/config.js"></script>
+<script src="reading-log.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var env=document.getElementById('env'),list=document.getElementById('list');
+  var dm=['standalone','fullscreen','minimal-ui','browser'].filter(function(m){try{return matchMedia('(display-mode: '+m+')').matches;}catch(e){return false;}})[0]||'?';
+  var client=supabase.createClient(window.SUPA_URL,window.SUPA_ANON);
+  function show(url,title){
+    env.innerHTML='<div><b>화면 모드</b>'+esc(dm)+'</div><div><b>브라우저</b>'+esc(navigator.userAgent)+'</div><div><b>책</b>'+esc(title)+'</div><div><b>구매 링크</b>'+esc(url)+'</div>';
+    if(!url){list.innerHTML='<div class="note">이번 달 책에 등록된 구매 링크가 없어요.</div>';return;}
+    var u=new URL(url),base='intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.replace(':','')+';',fb='S.browser_fallback_url='+encodeURIComponent(url)+';';
+    var T=[
+      ['A','지금 방식 (새 창)','<a class="t" href="'+esc(url)+'" target="_blank" rel="noopener">'],
+      ['B','같은 창에서 열기','<a class="t" href="'+esc(url)+'">'],
+      ['C','시스템에 넘기기','<a class="t" href="'+esc(base+fb+'end')+'">'],
+      ['D','쿠팡 앱 지정','<a class="t" href="'+esc(base+'package=com.coupang.mobile;'+fb+'end')+'">'],
+      ['E','크롬으로 열기','<a class="t" href="'+esc(base+'package=com.android.chrome;end')+'">'],
+      ['F','삼성 인터넷으로 열기','<a class="t" href="'+esc(base+'package=com.sec.android.app.sbrowser;end')+'">'],
+      ['G','window.open (새 창)','<button type="button" class="t" data-open>']
+    ];
+    list.innerHTML=T.map(function(t){var close=t[2].indexOf('<button')===0?'</button>':'</a>';return t[2]+'<span class="k">'+t[0]+'</span><span class="d"><b>'+t[1]+'</b><span>'+esc(t[0]==='A'||t[0]==='B'||t[0]==='G'?u.host:'intent://'+u.host)+'</span></span>'+close;}).join('')+
+      '<button type="button" class="t" data-copy><span class="k">H</span><span class="d"><b>링크 복사</b><span>브라우저 주소창에 붙여넣기</span></span></button>';
+    list.querySelector('[data-open]').onclick=function(){var w=window.open(url,'_blank');if(!w)alert('window.open 이 막혔어요(null)');};
+    list.querySelector('[data-copy]').onclick=function(){var b=this;(navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){b.querySelector('b').textContent='복사됐어요';},function(){prompt('아래 주소를 길게 눌러 복사하세요',url);});};
+  }
+  var code=window.NaiteReading?window.NaiteReading.getCode():'';
+  if(!code){env.textContent='회원 입장 후 이 화면을 열어 주세요.';return;}
+  client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(st){
+    var key=st.data&&st.data.current_theme;
+    return client.rpc('get_study_member',{p_key:key,p_code:code});
+  }).then(function(r){
+    var books=(r.data&&r.data.books)||[],b=books.filter(function(x){return x.buy_url;})[0];
+    show(b?b.buy_url:'',b?b.title:'(구매 링크 있는 책 없음)');
+  },function(e){env.textContent='불러오지 못했어요: '+(e&&e.message||e);});
+})();
+</script>
+</body>
+</html>
