@@ -1,4 +1,4 @@
--- 회원 읽기 기록 — 표지 한 번 탭 = 한 행 (study/v2.html 에서 사용)
+-- 회원 읽기 기록 — 표지 한 번 탭 = 한 행 (study/member.html 입장 → study/record.html 에서 사용)
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전(idempotent).
 -- 운영 중인 study/index.html·admin.html 은 이 테이블/함수를 쓰지 않으므로, 먼저 실행해도 영향 없음.
 
@@ -21,6 +21,23 @@ language sql stable security definer set search_path = public as $$
   select coalesce(m.member_code,'') <> '' and coalesce(p_code,'') = m.member_code
     from public.member_config m where m.id = 1;
 $$;
+
+-- 회원 기록 화면(record.html)용 자료 불러오기: 페이지별 비밀번호 대신 회원 비밀번호로 확인
+create or replace function public.get_study_member(p_key text, p_code text)
+returns jsonb
+language plpgsql stable security definer set search_path = public as $$
+declare v_pub boolean; v_theme jsonb; v_content jsonb; v_books jsonb;
+begin
+  if not coalesce(public.check_member(p_code), false) then return jsonb_build_object('ok', false, 'error', 'member'); end if;
+  select to_jsonb(t) into v_theme from public.themes t where t.key = p_key;
+  if v_theme is null then return jsonb_build_object('ok', false, 'error', 'notfound'); end if;
+  select coalesce(c.published,false) into v_pub from public.content c where c.theme_key = p_key;
+  if not coalesce(v_pub, false) then return jsonb_build_object('ok', false, 'error', 'unpublished'); end if;
+  select (to_jsonb(c) - 'passcode') into v_content from public.content c where c.theme_key = p_key;
+  select coalesce(jsonb_agg(to_jsonb(b) order by b.sort), '[]'::jsonb) into v_books
+    from public.books b where b.theme_key = p_key;
+  return jsonb_build_object('ok', true, 'theme', v_theme, 'content', v_content, 'books', v_books);
+end $$;
 
 -- ── 읽기 기록 ──
 create table if not exists public.reading_logs (
@@ -89,6 +106,7 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 grant execute on function public.check_member(text)                      to anon, authenticated;
+grant execute on function public.get_study_member(text, text)            to anon, authenticated;
 grant execute on function public.log_read(text, text, bigint, date, text) to anon, authenticated;
 grant execute on function public.undo_read(text, text)                    to anon, authenticated;
 grant execute on function public.my_reads(text, text)                     to anon, authenticated;

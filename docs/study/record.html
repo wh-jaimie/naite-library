@@ -6,12 +6,13 @@
 <link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
-<link rel="manifest" href="/naite-library/study/manifest.webmanifest">
-<meta name="apple-mobile-web-app-title" content="나이테">
+<link rel="manifest" href="/naite-library/study/manifest-record.webmanifest">
+<meta name="apple-mobile-web-app-title" content="나이테 기록">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#245648">
-<title>나이테 엄마표영어 스터디 — 이번 달 책</title>
+<title>나이테 스터디 — 회원 읽기 기록</title>
+<meta name="robots" content="noindex">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 *{box-sizing:border-box}html,body{margin:0}
@@ -104,9 +105,6 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 /* ── 회원 읽기 기록(reading-log.js) ── */
 [hidden]{display:none!important}
 body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
-.hero{position:relative}
-.rpill{position:absolute;top:12px;right:0;border:1px solid var(--line);background:var(--surface);color:var(--tealD);font:inherit;font-size:.78rem;font-weight:800;padding:6px 12px;border-radius:999px;cursor:pointer;box-shadow:var(--sh)}
-.rpill.on{background:#E3EEE8;border-color:transparent;box-shadow:none}
 /* 상단 기록 줄 */
 .rtray{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 6px 16px -14px rgba(43,42,38,.5)}
 .rtray.enter{animation:rlDown .45s cubic-bezier(.2,.8,.2,1)}
@@ -149,21 +147,6 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .book .rmeta b{color:#23291F}
 .book .rbtn{flex:0 0 auto;border:0;background:var(--coral);color:#fff;font:inherit;font-weight:800;font-size:.76rem;padding:8px 12px;border-radius:999px;cursor:pointer;touch-action:manipulation}
 .book .rbtn:active{transform:scale(.95)}
-/* 비회원: 회원 전용 안내 카드 */
-.rlock{margin:26px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
-.rlock .peek{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:14px 14px 0;max-width:460px}
-.rlock .peek img,.rlock .peek span{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;filter:saturate(.3) blur(1.2px);opacity:.6;background:#EBEDE3;display:block}
-.rlock .lk{position:absolute;inset:0;display:grid;place-items:center}
-.rlock .lk span{filter:none;opacity:1;aspect-ratio:auto;width:auto;background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:800;color:var(--tealD);box-shadow:var(--sh)}
-.rlock .body{padding:14px 16px 16px}
-.rlock h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.12rem;margin:0}
-.rlock p{margin:4px 0 10px;font-size:.86rem;color:var(--soft)}
-.rlock ul{margin:0 0 14px;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px;font-size:.84rem}
-.rlock li::before{content:'✓ ';color:var(--coral);font-weight:800}
-.rlock .btns{display:flex;gap:8px;flex-wrap:wrap}
-.rlock .btns>*{flex:1 1 140px;text-align:center;border-radius:11px;padding:11px 8px;font:inherit;font-size:.88rem;font-weight:800;cursor:pointer;text-decoration:none}
-.rlock .pri{border:0;background:var(--tealD);color:#fff}
-.rlock .sec{margin:0;background:#EEF0E8;color:var(--tealD);border:1px solid var(--line)}
 /* 하단 메뉴 */
 .rtabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px -14px rgba(43,42,38,.5)}
 .rtabs.enter{animation:rlUp .45s cubic-bezier(.2,.8,.2,1)}
@@ -171,10 +154,7 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .rtab{border:0;background:none;font:inherit;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.74rem;font-weight:700;color:var(--soft);padding:6px 0 5px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .rtab .ic{position:relative;font-size:1.2rem;line-height:1.15}
-.rtab .ic i{position:absolute;right:-12px;top:-3px;font-size:.62rem;font-style:normal}
 .rtab[aria-selected="true"]{color:var(--tealD);background:#E3EEE8}
-.rtab.locked{color:#8A9180}
-.rtab.locked .ic{filter:grayscale(.6);opacity:.75}
 /* 토스트 · 아래 창 */
 .rl-toast{position:fixed;left:12px;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:70;max-width:440px;margin:0 auto;background:#23291F;color:#F4F5EF;border-radius:14px;padding:10px 10px 10px 15px;display:flex;align-items:center;gap:10px;font-size:.84rem;box-shadow:0 10px 30px rgba(0,0,0,.3);transform:translateY(18px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .rl-toast.on{transform:none;opacity:1;pointer-events:auto}
@@ -204,6 +184,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .rv-hd p b{color:var(--coral)}
 .rv-h3{font-family:'Gowun Batang',Georgia,serif;font-size:1.15rem;color:var(--tealD);border-bottom:2px solid var(--line);padding-bottom:6px;margin:30px 0 8px}
 .rv-empty{color:var(--soft);font-size:.88rem;text-align:center}
+.rv-leave{display:block;margin:22px auto 0;border:0;background:none;color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;text-decoration:underline;cursor:pointer}
 .rv-note{font-size:.76rem;color:var(--soft);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:9px 12px;margin-top:18px}
 .rs-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
 .rs-kpi{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 11px;box-shadow:var(--sh);display:flex;flex-direction:column}
@@ -245,10 +226,6 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .br .bv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
 .insight{font-size:.8rem;background:#F6E6D8;border-radius:9px;padding:8px 10px;margin-top:10px;line-height:1.5}
 @media (prefers-reduced-motion:reduce){.rt-cov.bump,.rt-cov.bump .rp,.rtray.enter,.rtabs.enter,.rl-sheet{animation:none}.rl-toast{transition:none}}
-@media (max-width:560px){
-  body .hero{padding-top:54px}
-  .rpill{top:12px}
-}
 @media (max-width:560px){
   .wrap{padding:0 16px}
   .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
@@ -331,7 +308,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
         '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
         (stats?'<div class="stats">'+stats+'</div>':'')+
         (acts?'<div class="acts">'+acts+'</div>':'')+
-        '<div class="rrow" data-rrow="'+b.id+'" hidden></div></div></div>';
+        '<div class="rrow" data-rrow="'+b.id+'"></div></div></div>';
     }).join('');
     var hasBuy=books.some(function(b){return b.buy_url;});
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
@@ -342,12 +319,11 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
       return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
     }).join('');
     var h='<div class="rtray" id="rtray" hidden></div><div id="v-study"><div class="wrap">';
-    h+='<div class="hero"><button type="button" class="rpill" id="rpill">🔒 회원 입장</button><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
+    h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
        '<div class="herobtns"><a class="mlink" href="missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
        '<button type="button" id="installBtn" class="installbtn">📲 홈 화면에 추가</button></div></div>';
-    h+='<div id="rlock"></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
        '<div class="lvguide"><b>🌱 쉬움부터 시작하세요.</b> 3~4살은 🌱 2권만, 5살 이상은 5권 모두 도전! 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책 표지를 누르면</b> 책정보(구매처)를 볼 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
@@ -365,8 +341,11 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
        '<a href="admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
-    if(window.NaiteReading&&!PREVIEW)window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,onEvent:function(t,m){logEvent(t,m);}});
-    if(!PREVIEW)fillArchive(theme.key);
+    window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
+      onEvent:function(t,m){logEvent(t,m);},
+      onExpired:function(){toEntry(true);},
+      onLeave:function(){location.replace('index.html'+(curParam()?'?m='+encodeURIComponent(curParam()):''));}});
+    fillArchive(theme.key);
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});});});
     app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
@@ -383,7 +362,6 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 
   var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
-  function passKey(k){return 'joy_pass_'+k;}
 
   async function fillArchive(curk){
     try{
@@ -393,53 +371,34 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
       var el=document.getElementById('arch'); if(!el)return;
       if(!others.length){el.innerHTML='';return;}
       el.innerHTML='<div class="sec"><h2>🗂️ 지난 달 스터디</h2>'+
-        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">지난 달 페이지도 각자 비밀번호로 열 수 있어요.</p>'+
+        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">지난 달 자료와 그 달의 기록도 여기서 볼 수 있어요.</p>'+
         '<div class="archl">'+others.map(function(m){return '<a class="archi" href="?m='+encodeURIComponent(m.key)+'">'+esc(m.emoji||'📖')+' <b>'+esc(m.ko)+'</b><span>'+esc(m.month_label||m.en||'')+'</span></a>';}).join('')+'</div></div>';
     }catch(e){}
   }
 
-  function showGate(key,msg){
-    app.innerHTML='<div class="wrap"><div class="gate">'+RING+
-      '<h1>나이테 스터디</h1><p>이 페이지는 스터디 회원용이에요.<br>비밀번호를 입력해 주세요.</p>'+
-      (msg?'<div class="ge">'+esc(msg)+'</div>':'')+
-      '<input id="pw" type="password" autocomplete="off" placeholder="비밀번호"><button id="go">입력</button></div></div>';
-    var pw=document.getElementById('pw'),go=document.getElementById('go');
-    pw.focus();
-    function submit(){gate(key,pw.value||'',true);}
-    go.addEventListener('click',submit);
-    pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')submit();});
-  }
-
-  async function gate(key,pass,fromForm){
-    try{
-      var r=await client.rpc('get_study',{p_key:key,p_pass:pass||''});
-      if(r.error){notice('불러오지 못했어요.<br><small>'+esc(r.error.message)+'</small>');return;}
-      var d=r.data||{};
-      if(d.ok){try{if(pass)sessionStorage.setItem(passKey(key),pass);}catch(e){}render(d.theme,d.books||[],d.content||{});return;}
-      if(d.error==='badpass'){try{sessionStorage.removeItem(passKey(key));}catch(e){}showGate(key,fromForm?'비밀번호가 맞지 않아요.':'');return;}
-      if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
-      notice('페이지를 찾지 못했어요.');
-    }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
+  // 회원 입장 화면으로(비밀번호 없음·만료). 보던 달(?m=)은 입장 후 돌아오도록 넘겨줌
+  function toEntry(expired){
+    var q=[];if(expired)q.push('expired=1');var m=curParam();if(m)q.push('m='+encodeURIComponent(m));
+    location.replace('member.html'+(q.length?'?'+q.join('&'):''));
   }
 
   async function boot(){
-    if(PREVIEW){
-      window.addEventListener('message',function(ev){
-        if(location.origin!=='null'&&ev.origin!==location.origin)return;
-        var d=ev.data;if(!d||d.t!=='preview-data')return;
-        try{render(d.theme||{},d.books||[],d.content||{});}catch(e){notice('미리보기 오류: '+esc(e.message||e));}
-      });
-      try{parent.postMessage({t:'preview-ready'},'*');}catch(e){}
-      return;
-    }
+    var code=window.NaiteReading?window.NaiteReading.getCode():'';
+    if(!code){toEntry(false);return;}
     try{
       try{var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;IS_ADMIN=!!(u&&window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase());}catch(e){}
       var key=curParam();
       if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
-      if(!key){notice('아직 공개된 주제가 없어요. 관리자 페이지에서 이번 달 주제를 정해주세요.');return;}
-      var saved='';try{saved=sessionStorage.getItem(passKey(key))||'';}catch(e){}
-      gate(key,saved,false);
-    }catch(e){notice('데이터를 불러오지 못했어요. 연결 설정(config.js)과 DB 실행을 확인해주세요.<br><small>'+esc(e.message||e)+'</small>');}
+      if(!key){notice('아직 공개된 주제가 없어요.');return;}
+      // 회원 비밀번호로 자료를 불러옴(페이지별 비밀번호와 무관)
+      var r=await client.rpc('get_study_member',{p_key:key,p_code:code});
+      if(r.error){notice('불러오지 못했어요.<br><small>'+esc(r.error.message)+'</small>');return;}
+      var d=r.data||{};
+      if(d.ok){render(d.theme,d.books||[],d.content||{});return;}
+      if(d.error==='member'){window.NaiteReading.setCode('');toEntry(true);return;}
+      if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
+      notice('페이지를 찾지 못했어요.');
+    }catch(e){notice('데이터를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.<br><small>'+esc(e.message||e)+'</small>');}
   }
   boot();
 })();

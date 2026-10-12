@@ -1,0 +1,18 @@
+{
+  "name": "나이테 스터디 회원 기록",
+  "short_name": "나이테 기록",
+  "id": "/naite-library/study/record.html",
+  "description": "이번 달 영어 그림책 5권 읽기 기록",
+  "lang": "ko",
+  "start_url": "/naite-library/study/member.html",
+  "scope": "/naite-library/study/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1F4E42",
+  "theme_color": "#245648",
+  "icons": [
+    { "src": "/naite-library/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/naite-library/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/naite-library/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

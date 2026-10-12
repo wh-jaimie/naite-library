@@ -1,9 +1,9 @@
-/* 나이테 스터디 — 회원 읽기 기록 (v2.html 전용)
- * 자료는 누구나 보고, 회원 비밀번호를 넣은 기기에서만 기록 줄·'읽었어요'·책장·통계가 열림.
- * 하단 메뉴(이번 달 자료 · 우리 책장 · 읽기 통계)는 모두에게 보이고, 비회원이 책장·통계를 누르면 회원 입장 창.
+/* 나이테 스터디 — 회원 읽기 기록 (record.html 전용, member.html 은 비밀번호 저장 함수만 사용)
+ * 회원 입장(member.html)에서 비밀번호를 넣은 기기만 record.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
+ * 하단 메뉴: 이번 달 자료 · 우리 책장 · 읽기 통계.
  * 기록: 표지 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
- * 사용: NaiteReading.mount({client, theme, books, monthLabel}) — v2.html render() 뒤에 호출.
+ * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — record.html render() 뒤에 호출.
  */
 (function(){
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
@@ -56,7 +56,7 @@
     p.then(function(res){
       st.inflight=null;
       if(st!==S)return;
-      if(op.op==='add'&&res&&res.error==='member'){leaveMember('회원 비밀번호가 바뀌었어요. 새 비밀번호를 넣으면 남은 기록도 이어서 저장돼요.');return;} // 기록은 outbox에 그대로
+      if(op.op==='add'&&res&&res.error==='member'){expire();return;} // 기록은 outbox에 남겨 두고 새 비밀번호로 입장하면 이어서 전송
       S.outbox=S.outbox.filter(function(o){return o!==op;});
       if(op.op==='add'&&res&&res.ok===false){ // 날짜 범위·상한 등으로 거절 → 화면에서도 제거
         S.rows=S.rows.filter(function(r){return r.c!==op.c;});
@@ -89,27 +89,17 @@
     var st=S;
     rpc('check_member',{p_code:st.code}).then(function(ok){
       if(st!==S)return;
-      if(ok===false)leaveMember('회원 비밀번호가 바뀌었어요. 새 비밀번호를 넣어주세요. 지난 기록은 그대로 있어요.');
+      if(ok===false)expire();
     },function(){});
   }
 
-  /* ── 회원 입장·해제 ── */
-  function enterMember(code,keep,goTab){
-    setCode(code,keep);S.code=code;S.member=true;
-    paint(true);
-    if(goTab)showTab(goTab);
-    toast('회원 기록이 열렸어요. 표지를 누르면 기록돼요.');
-    flush();pull();
-  }
-  function leaveMember(msg){
-    setCode('');S.code='';S.member=false;
-    if(S.tab!=='study')showTab('study');
-    paint();toast(msg||'이 폰에서 회원을 해제했어요. 기록은 그대로 남아 있어요.');
-  }
+  /* ── 회원 만료·해제 ── */
+  function expire(){setCode('');S.member=false;if(S.onExpired)S.onExpired();}
+  function leave(){setCode('');S.member=false;if(S.onLeave)S.onLeave();}
 
   /* ── 기록 · 취소 ── */
   function record(bid){
-    if(!S.member){openLogin();return;}
+    if(!S.member)return;
     var now=Date.now();
     if(S.lastTap[bid]&&now-S.lastTap[bid]<DOUBLE_TAP_MS){bump(bid);return;}
     S.lastTap[bid]=now;
@@ -167,45 +157,18 @@
     return sheetEl.firstChild;
   }
   function closeSheet(){if(!sheetEl)return;sheetEl.hidden=true;document.documentElement.classList.remove('rl-lock');try{if(sheetReturn)sheetReturn.focus();}catch(e){}}
-  function openLogin(goTab){
-    var sh=openSheet('<h3>스터디 회원 입장</h3><p class="sub">이번 달 회원 비밀번호를 넣으면 읽기 기록과 우리 책장, 읽기 통계가 열려요. 비밀번호는 오픈채팅 공지에 있어요.</p>'+
-      '<form id="rlForm" autocomplete="off"><input id="rlPin" class="pin" type="password" inputmode="numeric" maxlength="20" placeholder="회원 비밀번호" aria-label="회원 비밀번호">'+
-      '<div class="err" id="rlErr" role="alert"></div>'+
-      '<label class="keep"><input type="checkbox" id="rlKeep" checked> 이 폰에서 계속 열어두기</label>'+
-      '<button type="submit" class="pri" id="rlGo">입장하기</button></form>'+
-      '<a class="joinlink" href="../join.html?from=study" data-join>아직 회원이 아니라면 · 스터디 참여 안내 ›</a>');
-    var pin=sh.querySelector('#rlPin'),err=sh.querySelector('#rlErr'),go=sh.querySelector('#rlGo');
-    setTimeout(function(){try{pin.focus();}catch(e){}},60);
-    pin.addEventListener('input',function(){err.textContent='';});
-    sh.querySelector('#rlForm').addEventListener('submit',function(e){
-      e.preventDefault();var code=(pin.value||'').trim();
-      if(!code){err.textContent='비밀번호를 넣어주세요.';return;}
-      go.disabled=true;go.textContent='확인 중…';
-      rpc('check_member',{p_code:code}).then(function(ok){
-        go.disabled=false;go.textContent='입장하기';
-        if(!ok){err.textContent='비밀번호가 맞지 않아요. 오픈채팅 공지를 확인해 주세요.';pin.select();return;}
-        var keep=sh.querySelector('#rlKeep').checked;closeSheet();enterMember(code,keep,goTab);
-      },function(){go.disabled=false;go.textContent='입장하기';err.textContent='연결이 불안정해요. 잠시 뒤 다시 눌러주세요.';});
-    });
-    if(S.onEvent)S.onEvent('member_login_open',{to:goTab||''});
-  }
-  function openMemberMenu(){
-    var sh=openSheet('<h3>회원으로 보고 있어요</h3><p class="sub">이 폰에 회원 비밀번호가 저장돼 있어요. 비밀번호가 바뀌면 한 번만 새로 넣으면 되고, 읽기 기록은 비밀번호와 따로 저장돼서 그대로 이어져요.</p>'+
-      '<button type="button" class="pri" data-sclose>계속 보기</button><button type="button" class="subtle" id="rlLeave">이 폰에서 회원 해제</button>');
+  function openLeave(){
+    var sh=openSheet('<h3>이 폰에서 회원 해제할까요?</h3><p class="sub">해제하면 다음에 들어올 때 회원 비밀번호를 다시 넣어야 해요. 읽기 기록은 지워지지 않고 그대로 남아요.</p>'+
+      '<button type="button" class="pri" data-sclose>계속 회원으로 보기</button><button type="button" class="subtle" id="rlLeave">회원 해제</button>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
-    sh.querySelector('#rlLeave').onclick=function(){closeSheet();leaveMember();};
+    sh.querySelector('#rlLeave').onclick=function(){closeSheet();leave();};
   }
 
   /* ── 그리기 ── */
   function coverImg(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}
-  function paintPill(){
-    var el=$('rpill');if(!el)return;
-    el.className='rpill'+(S.member?' on':'');el.innerHTML=S.member?'✓ 회원':'🔒 회원 입장';
-    el.setAttribute('aria-label',S.member?'회원 설정':'스터디 회원 입장');
-  }
   function paintTray(anim){
     var el=$('rtray');if(!el)return;
-    el.hidden=!S.member||S.tab!=='study';
+    el.hidden=S.tab!=='study';
     if(el.hidden){el.innerHTML='';return;}
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
     var today=logicalToday(),yest=addDays(today,-1),isT=S.recDay===today,sum=0;
@@ -225,17 +188,8 @@
     var el=document.querySelector('#rtray [data-rbook="'+bid+'"]');if(!el)return;
     el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
   }
-  function paintLock(){
-    var el=$('rlock');if(!el)return;
-    if(S.member){el.innerHTML='';return;}
-    el.innerHTML='<div class="rlock"><div class="peek" aria-hidden="true">'+S.books.map(function(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span></span>';}).join('')+'<div class="lk"><span>🔒 스터디 회원 전용</span></div></div>'+
-      '<div class="body"><h3>회원은 여기서 매일 읽은 책을 기록해요</h3><p>표지를 한 번 누르면 기록 끝. 쌓인 기록은 우리 아이 책장과 통계로 볼 수 있어요.</p>'+
-      '<ul><li>같은 책 반복 읽기까지 한 번 탭으로</li><li>표지로 보는 이번 달 책장</li><li>아이가 좋아하는 책 유형 통계</li></ul>'+
-      '<div class="btns"><button type="button" class="pri" data-rlogin>회원 비밀번호 입력</button><a class="sec" href="../join.html?from=study" data-join>스터디 참여 안내</a></div></div></div>';
-  }
   function paintCards(){
     document.querySelectorAll('[data-rrow]').forEach(function(el){
-      if(!S.member){el.hidden=true;el.innerHTML='';return;}
       el.hidden=false;
       var bid=+el.getAttribute('data-rrow'),n=count(bid),ld=lastDay(bid);
       el.innerHTML='<span class="rmeta">'+(n?'이번 달 <b>'+n+'번</b> · 마지막 '+dayLabel(ld,true):'아직 안 읽었어요')+'</span>'+
@@ -245,9 +199,8 @@
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
     var T={study:['📚','이번 달 자료'],shelf:['🗂️','우리 책장'],stats:['📊','읽기 통계']};
-    el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){var locked=!S.member&&id!=='study';
-      return '<button type="button" role="tab" class="rtab'+(locked?' locked':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"'+(locked?' aria-label="'+T[id][1]+' (회원 전용)"':'')+'>'+
-        '<span class="ic" aria-hidden="true">'+T[id][0]+(locked?'<i>🔒</i>':'')+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
+    el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
+      return '<button type="button" role="tab" class="rtab" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
   }
   function stack(n){var s=[],k=Math.min(n-1,5);for(var i=1;i<=k;i++){s.push((i*3)+'px '+(-i*3)+'px 0 -1px #FCFCF8');s.push((i*3)+'px '+(-i*3)+'px 0 0 #CBD0C1');}return s.length?'box-shadow:'+s.join(',')+';':'';}
@@ -268,7 +221,8 @@
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(이번 달 책 아님)'};
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
         :'<p class="rv-empty">아직 기록이 없어요. 이번 달 자료 맨 위의 표지를 누르면 여기에 쌓여요.</p>')+
-      '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p></div>';
+      '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
+      '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
@@ -305,13 +259,12 @@
     }
     el.innerHTML=h+'</div>';
   }
-  function paint(anim){paintPill();paintTray(anim);paintLock();paintCards();paintTabs(anim);paintShelf();paintStats();}
+  function paint(anim){paintTray(anim);paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
   var studyY=0;
   function showTab(id){
     if(TAB_IDS.indexOf(id)<0)id='study';
-    if(id!=='study'&&!S.member){openLogin(id);return;}
     if(S.tab==='study'&&id!=='study')studyY=window.scrollY;
     S.tab=id;
     ['study','shelf','stats'].forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
@@ -338,9 +291,7 @@
       if((t=e.target.closest('[data-rtab]'))){showTab(t.getAttribute('data-rtab'));return;}
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintTray();return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
-      if((t=e.target.closest('[data-rlogin]'))){openLogin();return;}
-      if((t=e.target.closest('#rpill'))){S.member?openMemberMenu():openLogin();return;}
-      if((t=e.target.closest('[data-join]'))){if(S.onEvent)S.onEvent('join_link_click',{from:'study'});return;} // join_click 은 join.html 버튼 전용이라 다른 이름
+      if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('online',function(){if(S)flush();});
@@ -348,16 +299,17 @@
   }
 
   window.NaiteReading={
+    getCode:getCode,setCode:setCode, // member.html 에서 사용
     mount:function(o){
       var books=(o.books||[]).map(function(b){return {id:+b.id,title:b.title,cover:b.cover,type:b.tier_label||'',tier:b.tier};});
       var byId={};books.forEach(function(b){byId[b.id]=b;});
       var code=getCode();
-      S={client:o.client,theme:o.theme||{},books:books,byId:byId,monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,
+      S={client:o.client,theme:o.theme||{},books:books,byId:byId,monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onExpired:o.onExpired||null,onLeave:o.onLeave||null,
          reader:readerId(),code:code,member:!!code,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[]};
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       wire();
       var h=(location.hash||'').slice(1);
-      if(TAB_IDS.indexOf(h)>0&&S.member)showTab(h);else{S.tab='study';paint();}
+      if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
       compactOn=null;onScroll();flush();pull();verifyMember();
     }
   };

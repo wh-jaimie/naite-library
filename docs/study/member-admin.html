@@ -67,7 +67,7 @@ a{color:var(--tealD);font-weight:700}
     var since=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
     var logs=await client.from('reading_logs').select('reader,read_on').gte('read_on',since);
     var rows=(logs.data||[]),readers={};rows.forEach(function(r){readers[r.reader]=1;});
-    app.innerHTML='<h1>회원 기록 관리</h1><p class="hint">스터디 자료 새 페이지(<a href="v2.html">study/v2.html</a>)의 회원 비밀번호와 기록 현황이에요.</p>'+
+    app.innerHTML='<h1>회원 기록 관리</h1><p class="hint">회원 입장(<a href="member.html">study/member.html</a>) → 기록 화면(<a href="record.html">study/record.html</a>)의 회원 비밀번호와 기록 현황이에요.</p>'+
       '<div class="card"><h2>회원 비밀번호</h2>'+
         '<div class="hint">지금 비밀번호</div><div class="cur">'+(code?esc(code):'<span class="bad" style="letter-spacing:0;font-size:1rem">설정 안 됨 (아무도 기록할 수 없어요)</span>')+'</div>'+
         '<label for="nc">새 비밀번호</label><input id="nc" inputmode="numeric" maxlength="20" placeholder="예: 1102" autocomplete="off">'+
