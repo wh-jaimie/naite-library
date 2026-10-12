@@ -7,7 +7,7 @@
 (function(){
   function standalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: fullscreen)').matches;}catch(e){return false;}}
   if(!standalone()||!/Android/i.test(navigator.userAgent))return;
-  var HOST=/(^|\.)coupang\.com$/i;
+  var HOST=/(^|\.)(coupang\.com|coupa\.ng)$/i; // 파트너스 링크(link.coupang.com)·짧은 주소(coupa.ng)
   // 캡처 단계: 페이지의 클릭 집계(buy_click)가 stopPropagation 해도 먼저 받음(집계는 그대로 실행됨)
   window.addEventListener('click',function(e){
     if(e.defaultPrevented||e.button!==0)return;
