@@ -1,10 +1,24 @@
 # -*- coding: utf-8 -*-
 """challenge.json -> 나이테 120 (파닉스 전 첫 영어책 코스) 페이지 (challenge.html)"""
-import json, os
+import json, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "output", "challenge.json")
 OUT = os.path.join(HERE, "output", "challenge.html")
 data = json.load(open(DATA, encoding="utf-8"))
+
+# 책별 쿠팡 파트너스 단축링크 주입 (coupang_links.py 에서 제목으로 매칭). 링크 없으면 buy_url="".
+def _bnorm(s): return re.sub(r"[^a-z0-9]+", " ", (s or "").lower()).strip()
+try:
+    import coupang_links
+    BUY = {_bnorm(k): (v or "").strip() for k, v in coupang_links.LINKS.items()}
+except Exception:
+    BUY = {}
+_buycnt = 0
+for _t in data["themes"]:
+    for _b in _t["books"]:
+        _b["buy_url"] = BUY.get(_bnorm(_b["title"]), "")
+        if _b["buy_url"]:
+            _buycnt += 1
 payload = json.dumps(data, ensure_ascii=False)
 
 TEMPLATE = r"""<!doctype html>
@@ -100,6 +114,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
   font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
 .step .tt{font-size:.76rem;font-weight:700;line-height:1.2}
 .step .au{font-size:.68rem;color:var(--ink-soft)}
+.step a.buy{text-decoration:none;color:inherit;display:block;border-radius:6px}
+.step a.buy:hover .tt{text-decoration:underline;color:var(--teal-deep)}
+.step a.buy .cart{font-size:.66rem;opacity:.8}
 .step .aw{font-size:.64rem;font-weight:800;color:#7a5a00;background:#f3e9c9;border-radius:6px;padding:2px 6px;align-self:flex-start;margin-top:2px}
 .step .lib{font-size:.64rem;font-weight:800;color:#8a5a1a;background:#fbeee0;border-radius:6px;padding:2px 6px;align-self:flex-start;margin-top:2px}
 .step .rs{font-size:.68rem;color:var(--ink-soft);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -192,6 +209,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <p class="note" style="margin-top:6px">※ <b>AR(추정)</b>은 글의 난이도를 나타내는 지수예요. 여기서는 <b>엄마가 읽어줄 때 얼마나 수월할지</b> 가늠하시라고 참고로 넣었어요 — 읽는 사람은 엄마니까요.</p>
     <p class="note" style="margin-top:6px">🌱 쉬움 · 🌿 보통 · 🌳 도전 — 3~4살은 🌱부터, 한 주제를 다 읽지 않아도 괜찮아요.</p>
     <p class="note" style="margin-top:6px">🧩 <a href="types.html"><b>이 5가지 유형을 왜 골랐는지</b> 자세히 보기 →</a></p>
+__BUY_DISCLOSURE__
   </section>
 
   <section><div id="course-body"></div></section>
@@ -247,8 +265,7 @@ function stepHTML(b){
       ${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}
       <div class="chk">✓</div>
     </div>
-    <div class="tt">${esc(b.title)}</div>
-    <div class="au">${esc(b.author)}</div>
+    ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
     ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.ar!=null)?`<span class="arb">AR ~${b.ar.toFixed(1)}</span>`:''}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
     ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
@@ -391,7 +408,10 @@ renderBody();updateProgress();
 </script>
 <script src="track.js" data-page="나이테 120"></script>
 """
-html_out = TEMPLATE.replace("/*DATA*/", payload)
+_disc = ('    <p class="note" style="margin-top:6px">※ 책 제목을 누르면 열리는 <b>🛒 쿠팡 링크</b>는 '
+         '쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>') if _buycnt else ''
+html_out = TEMPLATE.replace("/*DATA*/", payload).replace("__BUY_DISCLOSURE__", _disc)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html_out)
+print(f"쿠팡 링크 연결된 책: {_buycnt}/120")
 print(f"생성: {OUT} ({len(html_out)//1024} KB), 120권/24주제")
