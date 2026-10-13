@@ -155,17 +155,48 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
 
   // ---------- SHELL ----------
   function renderApp(){
+    var v=STATE.view||'content';
+    var nav='<button class="btn'+(v==='content'?' cor':'')+'" data-v="content">📝 스터디 내용</button>'+
+            '<button class="btn'+(v==='buyurls'?' cor':'')+'" data-v="buyurls">🛒 쿠팡 링크</button>';
     var h='<div class="top"><div class="wrap"><span class="brand">🛠️ 스터디 관리자</span>'+
-      '<span class="sp">'+
-      '<a class="btn cor" href="stats.html">📊 스터디 KPI</a>'+
-      '<a class="btn cor" href="stats-site.html">📊 메뉴 KPI</a>'+
-      '<a class="btn" href="index.html" target="_blank">공유 페이지 ↗</a>'+
+      '<span class="sp">'+nav+
+      '<a class="btn" href="stats.html">📊 스터디 KPI</a>'+
+      '<a class="btn" href="stats-site.html">📊 메뉴 KPI</a>'+
+      '<a class="btn" href="index.html" target="_blank">공유 ↗</a>'+
       '<button class="btn" id="logout">로그아웃</button></span></div></div>'+
       '<div class="wrap" id="body"></div>';
     root.innerHTML=h;
-    root.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){STATE.tab=t.dataset.tab;renderApp();});});
+    root.querySelectorAll('[data-v]').forEach(function(b){b.addEventListener('click',function(){STATE.view=b.dataset.v;renderApp();});});
     document.getElementById('logout').addEventListener('click',async function(){await client.auth.signOut();STATE.user=null;renderLogin(null);});
-    renderContent();
+    if(v==='buyurls')renderBuyUrls(); else renderContent();
+  }
+
+  // ---------- 쿠팡 링크 화면(전체 120권) ----------
+  function renderBuyUrls(){
+    var body=document.getElementById('body');
+    var html='<div class="card"><label class="f" style="margin-top:0">🛒 책별 쿠팡 링크 <span class="hint">(나이테 120에서 제목 클릭 시 열림)</span></label>'+
+      '<div class="hint" style="margin-bottom:10px">파트너스 단축링크(https://link.coupang.com/a/…)를 넣으세요. 넣은 책만 제목이 클릭돼요. 스터디 5권에 넣은 링크도 여기 함께 보여요. 저장하면 나이테 120에 바로 반영됩니다.</div>';
+    (STATE.themes||[]).forEach(function(t){
+      var books=STATE.booksByTheme[t.key]||[];
+      html+='<div style="margin-top:14px"><div style="font-weight:800;color:var(--tealD);font-size:.9rem;margin-bottom:4px">'+esc(t.emoji+' '+t.ko)+'</div>';
+      books.forEach(function(b){
+        html+='<div style="display:flex;gap:8px;align-items:center;margin:5px 0">'+
+          '<div style="flex:0 0 40%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem" title="'+esc(b.title)+'">'+esc(b.title)+'</div>'+
+          '<input class="t buyurl" data-bid="'+b.id+'" style="flex:1;font-size:.78rem;padding:7px 9px" placeholder="https://link.coupang.com/a/..." value="'+esc(b.buy_url||'')+'"></div>';
+      });
+      html+='</div>';
+    });
+    html+='<div style="display:flex;gap:10px;align-items:center;margin-top:18px;position:sticky;bottom:0;background:var(--surface);padding:10px 0"><button class="btn cor" id="saveBuy">저장</button><span class="status" id="buySt"></span></div></div>';
+    body.innerHTML=html;
+    document.getElementById('saveBuy').addEventListener('click',saveBuyUrls);
+  }
+  function findBook(id){var f=null;(STATE.themes||[]).some(function(t){return (STATE.booksByTheme[t.key]||[]).some(function(b){if(b.id===id){f=b;return true;}return false;});});return f;}
+  async function saveBuyUrls(){
+    var st=document.getElementById('buySt');st.textContent='저장 중…';
+    var inputs=document.querySelectorAll('.buyurl'),errs=0,n=0;
+    for(var i=0;i<inputs.length;i++){var inp=inputs[i],id=+inp.dataset.bid,val=(inp.value||'').trim(),b=findBook(id);
+      if(b&&(b.buy_url||'')!==val){var r=await client.from('books').update({buy_url:val}).eq('id',id);if(r.error)errs++;else{b.buy_url=val;n++;}}}
+    st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
   }
 
   // ---------- CONTENT TAB ----------

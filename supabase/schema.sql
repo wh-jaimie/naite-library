@@ -127,5 +127,13 @@ begin
   return jsonb_build_object('ok', true, 'theme', v_theme, 'content', v_content, 'books', v_books);
 end $$;
 
+-- ── 나이테 120 공개용: 책별 쿠팡 링크만 노출(books 테이블 자체는 비공개 유지) ──
+create or replace function public.list_buy_urls()
+returns table(title text, buy_url text)
+language sql stable security definer set search_path = public as $$
+  select title, buy_url from public.books where coalesce(buy_url,'') <> '';
+$$;
+
 grant execute on function public.list_published()      to anon, authenticated;
 grant execute on function public.get_study(text, text) to anon, authenticated;
+grant execute on function public.list_buy_urls()       to anon, authenticated;

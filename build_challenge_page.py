@@ -405,6 +405,17 @@ document.getElementById('ovShare').addEventListener('click',shareShare);
 document.getElementById('ovClose').addEventListener('click',()=>document.getElementById('ov').classList.remove('on'));
 document.getElementById('ov').addEventListener('click',e=>{if(e.target.id==='ov')document.getElementById('ov').classList.remove('on');});
 renderBody();updateProgress();
+// 쿠팡 링크(관리자 입력)를 불러와 제목에 연결 — 비공개 books 대신 공개 RPC 사용
+(function(){
+  var U="https://vvfqrewseibjdwcuscaz.supabase.co",A="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi";
+  function bn(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+  fetch(U+"/rest/v1/rpc/list_buy_urls",{method:"POST",headers:{"apikey":A,"Authorization":"Bearer "+A,"Content-Type":"application/json"},body:"{}"})
+    .then(function(r){return r.ok?r.json():[];})
+    .then(function(rows){if(!rows||!rows.length)return;var m={};rows.forEach(function(x){if(x&&x.buy_url)m[bn(x.title)]=x.buy_url;});
+      var hit=0;themes.forEach(function(t){t.books.forEach(function(b){var u=m[bn(b.title)];if(u){b.buy_url=u;hit++;}});});
+      if(hit)renderBody();
+    }).catch(function(){});
+})();
 </script>
 <script src="track.js" data-page="나이테 120"></script>
 """
