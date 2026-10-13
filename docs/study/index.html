@@ -6,7 +6,7 @@
 <link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
-<link rel="manifest" href="/naite-library/study/manifest.webmanifest">
+<link rel="manifest" href="/naite-library/manifest.webmanifest">
 <meta name="apple-mobile-web-app-title" content="나이테 영어도서관">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -295,7 +295,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 <script>
 /* 홈 화면 추가(PWA) — '📲 홈 화면에 추가' 버튼으로 설치(안드로이드: 설치창 / iOS: 안내) */
 (function(){
-  if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/study/'});}catch(e){}}
+  if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/study/'});navigator.serviceWorker.register('/naite-library/sw.js',{scope:'/naite-library/',updateViaCache:'none'});}catch(e){}}
   function standalone(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
   window.__naiteStandalone=standalone;
   var deferred=null;
