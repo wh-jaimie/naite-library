@@ -172,11 +172,16 @@ td img{width:30px;height:40px;object-fit:cover;border-radius:3px;display:block}
           '<td class="num"><div class="ibar"><i style="width:'+Math.round(p.total/maxT*80)+'px"></i><span>'+p.total+'</span></div></td>'+
           '<td class="num">'+(r?(p.total/r).toFixed(1)+'번':'–')+'</td><td class="num">'+(p.first?md(p.first):'–')+'</td></tr>';}).join('')+
       '</tbody></table></div>';
-    var byRep=list.filter(function(p){return cnt(p.readers);}).sort(function(a,b){return b.total/cnt(b.readers)-a.total/cnt(a.readers);});
-    var byReach=list.slice().sort(function(a,b){return cnt(a.readers)-cnt(b.readers);});
+    // 동점이면 모두 표시(목록 순서로 한 권만 고르지 않음)
+    var reps=list.filter(function(p){return cnt(p.readers);}).map(function(p){return {p:p,v:Math.round(p.total/cnt(p.readers)*10)/10};});
+    var repMax=Math.max.apply(null,reps.map(function(x){return x.v;}).concat([0]));
+    var repTop=reps.filter(function(x){return x.v===repMax;});
+    var reachMin=Math.min.apply(null,list.map(function(p){return cnt(p.readers);}));
+    var reachLow=list.filter(function(p){return cnt(p.readers)===reachMin;});
     var notes=[];
-    if(byRep[0])notes.push('가장 많이 반복한 책: <b>'+esc(byRep[0].b.title)+'</b> (읽은 폰당 '+(byRep[0].total/cnt(byRep[0].readers)).toFixed(1)+'번)');
-    if(byReach[0]&&nR>=3)notes.push('가장 적게 읽힌 책: <b>'+esc(byReach[0].b.title)+'</b> ('+cnt(byReach[0].readers)+'대'+(byReach[0].first?', 첫 기록 '+md(byReach[0].first):', 아직 기록 없음')+'). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');
+    if(repMax>1&&repTop.length<reps.length)notes.push('가장 많이 반복한 책: <b>'+repTop.map(function(x){return esc(x.p.b.title);}).join(', ')+'</b> (읽은 폰당 '+repMax.toFixed(1)+'번)');
+    else if(reps.length)notes.push(repMax>1?'모든 책이 비슷하게 반복되고 있어요 (읽은 폰당 '+repMax.toFixed(1)+'번).':'아직 반복해서 읽힌 책이 없어요.');
+    if(nR>=3&&reachLow.length<list.length)notes.push('가장 적게 읽힌 책: <b>'+reachLow.map(function(p){return esc(p.b.title);}).join(', ')+'</b> ('+reachMin+'대). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');
     if(notes.length)h+='<ul class="notes">'+notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
     // 유형별
     var types=[],tc={},tr={};

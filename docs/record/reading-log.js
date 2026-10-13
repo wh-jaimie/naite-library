@@ -292,16 +292,25 @@
         '<div class="rs-kpi"><span class="k">읽은 날</span><span class="v">'+rd+'<small>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</small></span></div>'+
       '</div>';
     if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">아직 기록이 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
-    // 가장 많이 반복한 책(같으면 자료 순서가 앞선 책)
-    var fav=null,fc=0;S.books.forEach(function(b){var n=count(b.id);if(n>fc){fc=n;fav=b;}});
-    if(fav)h+='<div class="rv-panel"><h3>가장 많이 반복한 책</h3><div class="fav">'+(fav.cover?'<img src="'+esc(fav.cover)+'" alt="">':'')+'<div><div class="ft">'+esc(fav.title)+'</div><div class="fx"><b>'+fc+'번</b> 읽었어요'+(fav.type?' · '+esc(fav.type):'')+'</div><div class="fx">아이가 계속 고르는 책은 표현이 귀에 붙고 있다는 신호예요.</div></div></div></div>';
-    // 유형별 횟수(책의 유형 순서대로)
+    // 가장 많이 반복한 책: 2번 이상 읽은 책 중 최다. 동점이면 모두 보여줌
+    var fmax=0;S.books.forEach(function(b){fmax=Math.max(fmax,count(b.id));});
+    var favs=fmax>=2?S.books.filter(function(b){return count(b.id)===fmax;}):[];
+    h+='<div class="rv-panel"><h3>가장 많이 반복한 책</h3>';
+    if(!favs.length)h+='<p class="rv-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
+    else if(favs.length===1){var fav=favs[0];
+      h+='<div class="fav">'+(fav.cover?'<img src="'+esc(fav.cover)+'" alt="">':'')+'<div><div class="ft">'+esc(fav.title)+'</div><div class="fx"><b>'+fmax+'번</b> 읽었어요'+(fav.type?' · '+esc(fav.type):'')+'</div><div class="fx">아이가 계속 고르는 책은 표현이 귀에 붙고 있다는 신호예요.</div></div></div>';}
+    else h+='<div class="favs">'+favs.map(function(b){return '<div>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+'</div>';}).join('')+'</div>'+
+      '<div class="fx">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
+    h+='</div>';
+    // 유형별 횟수(책의 유형 순서대로). 동점 1위는 모두 강조
     var types=[],tc={};S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
     S.rows.forEach(function(r){var b=S.byId[r.b];if(b){tc[b.type||'기타']++;}});
-    var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||1;
-    var topT=types.slice().sort(function(a,b){return tc[b]-tc[a];})[0],zeroT=types.filter(function(t){return !tc[t];});
-    h+='<div class="rv-panel"><h3>유형별 읽기 횟수</h3><div class="bars">'+types.map(function(t){return '<div class="br'+(t===topT?' top':'')+'"><span class="bl">'+esc(t)+'</span><span class="track"><i style="width:'+(tc[t]/tmax*100)+'%"></i></span><span class="bv">'+tc[t]+'</span></div>';}).join('')+'</div>'+
-      '<div class="insight">우리 아이는 <b>'+esc(topT)+'</b> 책을 가장 자주 골랐어요.'+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
+    var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||0;
+    var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
+    var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
+      :(tops.length===types.length?'여러 유형을 골고루 읽었어요.':'우리 아이는 <b>'+tops.map(esc).join(', ')+'</b> 책을 가장 자주 골랐어요.');
+    h+='<div class="rv-panel"><h3>유형별 읽기 횟수</h3><div class="bars">'+types.map(function(t){return '<div class="br'+(tops.indexOf(t)>=0&&tops.length<types.length?' top':'')+'"><span class="bl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="bv">'+tc[t]+'</span></div>';}).join('')+'</div>'+
+      '<div class="insight">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
     // 날짜별 흐름(스터디 달 기준)
     if(mi){
       var per=[],today=logicalToday();for(var d=1;d<=mi.days;d++){var ds=mi.year+'-'+pad(mi.month)+'-'+pad(d),n=0;S.rows.forEach(function(r){if(r.d===ds)n++;});per.push({d:d,ds:ds,n:n});}
