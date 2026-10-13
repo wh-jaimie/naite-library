@@ -379,7 +379,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 </script>
 <script>
 /* 홈 화면 앱(record/ 범위). 설치 안내·버튼은 reading-log.js(NaiteReading.install) */
-if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/'});}catch(e){}}
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/',updateViaCache:'none'});}catch(e){}}
 </script>
 </body>
 </html>
