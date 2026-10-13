@@ -1,7 +1,8 @@
 /* 나이테 스터디 — 회원 읽기 기록 (record/app.html 전용, record/index.html 입장 화면은 비밀번호 저장·설치 안내만 사용)
  * 회원 입장(record/)에서 비밀번호를 넣은 기기만 app.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
  * 하단 메뉴: 이번 달 자료 · 우리 책장 · 읽기 통계.
- * 기록: 표지 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
+ * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 우리 책장 표지(오늘/어제 선택).
+ * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
  * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — app.html render() 뒤에 호출.
  */
@@ -9,7 +10,7 @@
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
   var DOUBLE_TAP_MS=1500;  // 같은 책 1.5초 안 연속 탭은 1회
   var READER_KEY='naite_reader', MEMBER_KEY='naite_member';
-  var TAB_IDS=['study','shelf','stats'];
+  var TAB_IDS=['study','shelf','stats'],TAB_KEY='naite_last_tab';
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -98,28 +99,45 @@
   function leave(){setCode('');S.member=false;if(S.onLeave)S.onLeave();}
 
   /* ── 기록 · 취소 ── */
-  function record(bid){
-    if(!S.member)return;
-    var now=Date.now();
-    if(S.lastTap[bid]&&now-S.lastTap[bid]<DOUBLE_TAP_MS){bump(bid);return;}
-    S.lastTap[bid]=now;
-    var row={c:hex(12),b:bid,d:S.recDay,t:now};
-    S.rows.push(row);S.outbox.push({op:'add',c:row.c,b:bid,d:row.d,t:now});
-    save();paint();bump(bid);
-    try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}
-    var b=S.byId[bid];
-    toast('<b>'+esc(shortTitle(b.title))+'</b> '+dayLabel(row.d)+' '+count(bid,row.d)+'번째 기록 ✓','취소',function(){remove(row.c,true);});
-    flush();
+  function addRow(bid,day){
+    var row={c:hex(12),b:bid,d:day,t:Date.now()};
+    S.rows.push(row);S.outbox.push({op:'add',c:row.c,b:bid,d:day,t:row.t});
+    return row;
   }
-  function remove(c,silent){
-    var row=S.rows.filter(function(r){return r.c===c;})[0];if(!row)return;
+  // 화면에서 빼고, 아직 안 보낸 추가면 outbox에서 지우기만·이미 보냈거나 보내는 중이면 삭제 요청
+  function dropRow(c){
+    var row=S.rows.filter(function(r){return r.c===c;})[0];if(!row)return null;
     S.rows=S.rows.filter(function(r){return r.c!==c;});
     S.gone[c]=1;
-    // 아직 안 보낸 추가라면 outbox에서 지우기만, 이미 보냈거나 보내는 중이면 삭제 요청
     var pend=S.outbox.filter(function(o){return o.op==='add'&&o.c===c;})[0];
     if(pend&&S.inflight!==pend)S.outbox=S.outbox.filter(function(o){return o!==pend;});
     else S.outbox.push({op:'del',c:c});
-    S.lastTap[row.b]=0;
+    S.lastTap={};
+    return row;
+  }
+  // src: 'card'(자료 탭 '읽었어요' — 항상 오늘) | 'shelf'(우리 책장 표지 — 선택한 날짜)
+  function record(bid,src){
+    if(!S.member)return;
+    var now=Date.now(),key=src+bid;
+    if(S.lastTap[key]&&now-S.lastTap[key]<DOUBLE_TAP_MS){bump(bid,src);return;}
+    S.lastTap[key]=now;
+    var today=logicalToday(),row=addRow(bid,src==='shelf'?S.recDay:today);
+    save();paint();bump(bid,src);
+    try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}
+    var b=S.byId[bid],acts=[];
+    if(row.d===today)acts.push(['어제로',function(){moveToYesterday(row);}]);
+    acts.push(['취소',function(){remove(row.c,true);}]);
+    toast('<b>'+esc(shortTitle(b.title))+'</b> '+dayLabel(row.d)+' '+count(bid,row.d)+'번째 기록 ✓',acts);
+    flush();
+  }
+  function moveToYesterday(row){
+    if(!dropRow(row.c))return;
+    var y=addDays(logicalToday(),-1),moved=addRow(row.b,y);
+    save();paint();flush();
+    toast('어제('+md(y)+') 기록으로 옮겼어요 ✓',[['취소',function(){remove(moved.c,true);}]]);
+  }
+  function remove(c,silent){
+    var row=dropRow(c);if(!row)return;
     save();paint();flush();
     if(silent)toast('기록을 취소했어요.');
     else toast('기록을 지웠어요.','되돌리기',function(){restore(row);});
@@ -136,10 +154,12 @@
 
   /* ── 토스트 ── */
   var toastEl=null,toastT=null;
-  function toast(html,actLabel,act){
+  // acts: [[라벨, 함수], ...] 또는 (라벨, 함수)
+  function toast(html,acts,act){
+    if(typeof acts==='string')acts=[[acts,act]];acts=acts||[];
     if(!toastEl){toastEl=document.createElement('div');toastEl.className='rl-toast';toastEl.setAttribute('role','status');toastEl.setAttribute('aria-live','polite');document.body.appendChild(toastEl);}
-    toastEl.innerHTML='<span class="tx">'+html+'</span>'+(actLabel?'<button type="button">'+esc(actLabel)+'</button>':'');
-    if(actLabel)toastEl.querySelector('button').onclick=function(){hideToast();act();};
+    toastEl.innerHTML='<span class="tx">'+html+'</span>'+acts.map(function(a,i){return '<button type="button"'+(i?' class="sub"':'')+'>'+esc(a[0])+'</button>';}).join('');
+    toastEl.querySelectorAll('button').forEach(function(btn,i){btn.onclick=function(){hideToast();acts[i][1]();};});
     toastEl.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,4500);
   }
   function hideToast(){if(toastEl)toastEl.classList.remove('on');}
@@ -214,26 +234,8 @@
 
   /* ── 그리기 ── */
   function coverImg(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}
-  function paintTray(anim){
-    var el=$('rtray');if(!el)return;
-    el.hidden=S.tab!=='study';
-    if(el.hidden){el.innerHTML='';return;}
-    if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
-    var today=logicalToday(),yest=addDays(today,-1),isT=S.recDay===today,sum=0;
-    S.rows.forEach(function(r){if(r.d===S.recDay)sum++;});
-    el.innerHTML='<div class="rt-in">'+
-      '<div class="rt-hd"><span class="rt-tt">읽은 책 기록</span>'+
-        '<span class="rt-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span>'+
-        '<span class="rt-sum">'+(isT?'오늘':'어제')+' '+sum+'번</span></div>'+
-      '<div class="rt-row">'+S.books.map(function(b){var c=count(b.id,S.recDay);
-        return '<button type="button" class="rt-cov'+(c?'':' zero')+'" data-rbook="'+b.id+'" aria-label="'+esc(b.title)+' 읽음 기록, '+(isT?'오늘':'어제')+' '+c+'번">'+coverImg(b)+'<span class="pl" aria-hidden="true">+</span><span class="ct" aria-hidden="true">'+c+'</span><span class="rp" aria-hidden="true"></span></button>';}).join('')+
-        '<span class="rt-mini">'+(isT?'오늘':'<b>어제</b>')+' '+sum+'번</span></div>'+
-      '<div class="rt-ft">'+(isT?'표지를 누를 때마다 1번 읽음으로 기록돼요':'어제('+md(yest)+') 날짜로 기록 중이에요')+'</div>'+
-    '</div>';
-    compactOn=null;onScroll();
-  }
-  function bump(bid){
-    var el=document.querySelector('#rtray [data-rbook="'+bid+'"]');if(!el)return;
+  function bump(bid,src){
+    var el=document.querySelector('[data-rbook="'+bid+'"][data-src="'+src+'"]');if(!el)return;
     el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
   }
   function paintCards(){
@@ -241,7 +243,7 @@
       el.hidden=false;
       var bid=+el.getAttribute('data-rrow'),n=count(bid),ld=lastDay(bid);
       el.innerHTML='<span class="rmeta">'+(n?'이번 달 <b>'+n+'번</b> · 마지막 '+dayLabel(ld,true):'아직 안 읽었어요')+'</span>'+
-        '<button type="button" class="rbtn" data-rbook="'+bid+'">📖 읽었어요</button>';
+        '<button type="button" class="rbtn" data-rbook="'+bid+'" data-src="card">📖 읽었어요</button>';
     });
   }
   function paintTabs(anim){
@@ -260,15 +262,22 @@
     var mi=monthInfo(),met=metBooks(),total=S.rows.length;
     var planks=[];for(var i=0;i<S.books.length;i+=3)planks.push(S.books.slice(i,i+3));
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
+    var today=logicalToday(),yest=addDays(today,-1),isT=S.recDay===today,dn=isT?'오늘':'어제',sum=0;
+    S.rows.forEach(function(r){if(r.d===S.recDay)sum++;});
     el.innerHTML='<div class="rv">'+viewHead((mi?mi.month+'월 ':'')+esc(S.theme.ko||'')+' 책장',S.books.length+'권 중 <b>'+met+'권</b> 만났어요 · 모두 '+total+'번 읽었어요')+
-      '<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){var n=count(b.id);
-        return '<div class="rs-book'+(n?'':' unread')+'"><span class="cv">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" style="'+stack(n)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+(n?'<span class="x">×'+n+'</span>':'')+'</span>'+
-          '<span class="lb">'+(n?'마지막 '+dayLabel(lastDay(b.id),true):'아직이에요')+'</span></div>';}).join('')+'</div>';}).join('')+'</div>'+
+      '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
+        '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
+      '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
+      '<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){var n=count(b.id),dc=count(b.id,S.recDay);
+        return '<button type="button" class="rs-book'+(n?'':' unread')+'" data-rbook="'+b.id+'" data-src="shelf" aria-label="'+esc(b.title)+' '+dn+' 읽음 기록, '+dn+' '+dc+'번">'+
+          '<span class="cv">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="" style="'+stack(n)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+
+          (n?'':'<span class="pl" aria-hidden="true">+</span>')+(n?'<span class="x">×'+n+'</span>':'')+(dc?'<span class="td">'+dn+' '+dc+'</span>':'')+'</span>'+
+          '<span class="lb">'+(n?'마지막 '+dayLabel(lastDay(b.id),true):'아직이에요')+'</span></button>';}).join('')+'</div>';}).join('')+'</div>'+
       '<p class="rs-legend">많이 읽은 책일수록 뒤에 책장이 쌓여 두꺼워져요. 흐린 책은 아직 안 읽은 책이에요.</p>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(이번 달 책 아님)'};
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
-        :'<p class="rv-empty">아직 기록이 없어요. 이번 달 자료 맨 위의 표지를 누르면 여기에 쌓여요.</p>')+
+        :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
       '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 홈 화면에 추가</button>'+
       '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
@@ -308,7 +317,7 @@
     }
     el.innerHTML=h+'</div>';
   }
-  function paint(anim){paintTray(anim);paintCards();paintTabs(anim);paintShelf();paintStats();}
+  function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
   var studyY=0;
@@ -318,16 +327,10 @@
     S.tab=id;
     ['study','shelf','stats'].forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
     try{history.replaceState(null,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){}
+    try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();
     window.scrollTo(0,id==='study'?studyY:0);
     if(S.onEvent)S.onEvent('tab_view',{tab:id});
-  }
-
-  /* ── 스크롤하면 기록 줄을 작은 표지 줄로 ── */
-  var compactOn=null;
-  function onScroll(){
-    var on=window.scrollY>140;if(on===compactOn)return;compactOn=on;
-    var el=$('rtray');if(el)el.classList.toggle('compact',on);
   }
 
   /* ── 이벤트(한 번만 등록) ── */
@@ -336,14 +339,13 @@
     if(wired)return;wired=true;
     document.addEventListener('click',function(e){
       if(!S)return;var t;
-      if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'));return;}
+      if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'),t.getAttribute('data-src')||'card');return;}
       if((t=e.target.closest('[data-rtab]'))){showTab(t.getAttribute('data-rtab'));return;}
-      if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintTray();return;}
+      if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
-    window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('online',function(){if(S)flush();});
     document.addEventListener('visibilitychange',function(){if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();verifyMember();}});
   }
@@ -359,9 +361,11 @@
          reader:readerId(),code:code,member:!!code,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[]};
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       wire();
-      var h=(location.hash||'').slice(1);
+      // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
+      var h=(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
+      if(TAB_IDS.indexOf(h)<0)h=last;
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
-      compactOn=null;onScroll();flush();pull();verifyMember();
+      flush();pull();verifyMember();
       setTimeout(offerInstallOnce,1200);
     }
   };
