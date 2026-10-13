@@ -93,7 +93,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 <script src="reading-log.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/'});}catch(e){}}
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/',updateViaCache:'none'});}catch(e){}}
 </script>
 <script>
 (function(){
