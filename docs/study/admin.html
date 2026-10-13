@@ -101,7 +101,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   var STATE={tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, editKey:null, user:null};
   // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
   var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
-  var LV_LABEL={1:'🌱 쉬움',2:'🌿 보통',3:'🌳 도전'};
+  var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
   function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 
   // ---------- AUTH ----------
@@ -246,7 +246,6 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var b=books[i], badges=[], _lv=level(b);
       if(_lv) badges.push(LV_LABEL[_lv]);
       if(b.format) badges.push('형태: '+esc(b.format));
-      if(b.ar!=null&&b.ar!=='') badges.push('AR ~'+Number(b.ar).toFixed(1));
       if(b.award) badges.push(esc(b.award));
       if(b.kr_popular) badges.push('🇰🇷 국내 인기');
       if(b.pop_rank) badges.push('🌍 세계 인기');

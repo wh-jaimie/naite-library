@@ -124,7 +124,6 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .step .cp:hover{border-color:var(--teal);color:var(--teal-deep)}
 .step .cp.done{border-color:var(--teal);color:var(--teal-deep);background:color-mix(in srgb,var(--teal) 12%,var(--surface))}
 .step .fmt{font-size:.62rem;font-weight:800;color:#6a4a8a;background:#efe7f5;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
-.step .arb{font-size:.62rem;font-weight:800;color:#245648;background:#e7f1f0;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
 .step .lvb{font-size:.62rem;font-weight:800;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
 .step .lvb.l1{background:#e3f1df;color:#2f6e58}
 .step .lvb.l2{background:#d8ecee;color:#1f6f72}
@@ -206,8 +205,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 
     <div class="legend" id="legend"></div>
     <div id="statline" class="note"></div>
-    <p class="note" style="margin-top:6px">※ <b>AR(추정)</b>은 글의 난이도를 나타내는 지수예요. 여기서는 <b>엄마가 읽어줄 때 얼마나 수월할지</b> 가늠하시라고 참고로 넣었어요 — 읽는 사람은 엄마니까요.</p>
-    <p class="note" style="margin-top:6px">🌱 쉬움 · 🌿 보통 · 🌳 도전 — 3~4살은 🌱부터, 한 주제를 다 읽지 않아도 괜찮아요.</p>
+    <p class="note" style="margin-top:6px">※ <b>글밥 단계</b>는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요. 아이 수준을 매기는 게 아니라, <b>엄마가 읽어줄 때 얼마나 수월할지</b> 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>
+    <p class="note" style="margin-top:6px">🌱 글밥 적음 · 🌿 글밥 보통 · 🌳 글밥 많음 — 3~4살은 🌱부터, 한 주제를 다 읽지 않아도 괜찮아요. (글밥 기준: 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상)</p>
     <p class="note" style="margin-top:6px">🧩 <a href="types.html"><b>이 5가지 유형을 왜 골랐는지</b> 자세히 보기 →</a></p>
 __BUY_DISCLOSURE__
   </section>
@@ -234,9 +233,9 @@ const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"
 const tvar=t=>`var(--t${t})`;
 // 표시 순서: 조작북(1) → 반복(3) → 라임(2) → 유머(4) → 스토리(5). 번호·색은 표시 위치 기준.
 const DORD=[1,3,2,4,5];const POS={};DORD.forEach((t,i)=>POS[t]=i+1);
-// 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
+// 글밥 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상 (AR는 계산용, 화면엔 표시 안 함)
 const LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
-const LV_LABEL={1:'🌱 쉬움',2:'🌿 보통',3:'🌳 도전'};
+const LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
 function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;const a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 let course='2y';
 // 봤어요 기록
@@ -248,11 +247,10 @@ window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 // 범례
 document.getElementById('legend').innerHTML='<span class="lg" style="color:var(--ink)">5가지 유형:</span>'+
   DORD.map(t=>`<span class="lg"><span class="sw" style="background:var(--t${POS[t]})"></span>${POS[t]}. ${esc(tier_labels[t])}</span>`).join('');
-(function(){var fmt={'팝업':0,'플랩':0,'놀이북':0},band={},lvc={1:0,2:0,3:0};
- themes.forEach(t=>t.books.forEach(b=>{if(b.format)fmt[b.format]=(fmt[b.format]||0)+1;if(b.ar!=null){var k=Math.floor(b.ar);band[k]=(band[k]||0)+1;}var L=level(b);if(L)lvc[L]++;}));
- var bs=Object.keys(band).sort().map(k=>k+'점대 '+band[k]).join(' · ');
+(function(){var fmt={'팝업':0,'플랩':0,'놀이북':0},lvc={1:0,2:0,3:0};
+ themes.forEach(t=>t.books.forEach(b=>{if(b.format)fmt[b.format]=(fmt[b.format]||0)+1;var L=level(b);if(L)lvc[L]++;}));
  var el=document.getElementById('statline');
- if(el)el.innerHTML='<b>단계</b> 🌱 '+lvc[1]+' · 🌿 '+lvc[2]+' · 🌳 '+lvc[3]+' &nbsp;|&nbsp; <b>조작북 형태</b> 팝업 '+fmt['팝업']+' · 플랩 '+fmt['플랩']+' · 놀이북 '+fmt['놀이북']+' &nbsp;|&nbsp; <b>AR(추정, 96권)</b> '+bs;
+ if(el)el.innerHTML='<b>글밥</b> 🌱 '+lvc[1]+' · 🌿 '+lvc[2]+' · 🌳 '+lvc[3]+' &nbsp;|&nbsp; <b>조작북 형태</b> 팝업 '+fmt['팝업']+' · 플랩 '+fmt['플랩']+' · 놀이북 '+fmt['놀이북'];
 })();
 
 function stepHTML(b){
@@ -266,7 +264,7 @@ function stepHTML(b){
       <div class="chk">✓</div>
     </div>
     ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
-    ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.ar!=null)?`<span class="arb">AR ~${b.ar.toFixed(1)}</span>`:''}
+    ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
     ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
     ${b.lib_loans?`<div class="lib">📚 도서관 ${b.lib_loans}회</div>`:''}
@@ -370,11 +368,11 @@ function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{con
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
-  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · AR은 추정치 · 나이테 영어도서관 · ${now}</p></div>`;
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어도서관 · ${now}</p></div>`;
   themes.forEach((t,i)=>{
     const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
     h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
-    bks.forEach(b=>{const L=level(b);const emo=L?({1:'🌱',2:'🌿',3:'🌳'}[L]+' '):'';const lvl=emo+((b.ar!=null)?('AR '+b.ar.toFixed(1)):(b.format||''));h+=`<tr><td class="c1">${seen.has(b.id)?'✓':'☐'}</td><td class="c2">${POS[b.tier]}. ${esc(b.tier_label)}</td><td>${esc(b.title)}</td><td class="c4">${esc(b.author)}</td><td class="c5">${esc(lvl)}</td></tr>`;});
+    bks.forEach(b=>{const L=level(b);const lvl=(b.tier===1)?((L?'🌱 ':'')+(b.format||'')):(L?LV_LABEL[L]:'');h+=`<tr><td class="c1">${seen.has(b.id)?'✓':'☐'}</td><td class="c2">${POS[b.tier]}. ${esc(b.tier_label)}</td><td>${esc(b.title)}</td><td class="c4">${esc(b.author)}</td><td class="c5">${esc(lvl)}</td></tr>`;});
     h+=`</tbody></table></div>`;
   });
   document.getElementById('printable').innerHTML=h;
