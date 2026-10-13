@@ -93,41 +93,6 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 /* ── 회원 읽기 기록(reading-log.js) ── */
 [hidden]{display:none!important}
 body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
-/* 상단 기록 줄 */
-.rtray{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 6px 16px -14px rgba(43,42,38,.5)}
-.rtray.enter{animation:rlDown .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes rlDown{from{transform:translateY(-100%);opacity:0}to{transform:none;opacity:1}}
-.rt-in{max-width:520px;margin:0 auto;padding:10px 16px 11px}
-.rt-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.rt-tt{font-weight:800;font-size:.86rem}
-.rt-chip{display:inline-flex;gap:2px;background:#EEF0E8;border-radius:999px;padding:2px}
-.rt-chip button{border:0;background:none;border-radius:999px;font:inherit;font-size:.72rem;font-weight:800;padding:3px 10px;cursor:pointer;color:var(--soft)}
-.rt-chip button[aria-pressed="true"]{background:var(--tealD);color:#fff}
-.rt-sum{margin-left:auto;font-size:.74rem;color:var(--soft);font-weight:700}
-.rt-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;align-items:center}
-.rt-cov{position:relative;border:0;padding:0;background:#EBEDE3;border-radius:7px;aspect-ratio:3/4;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font:inherit;max-width:84px;width:100%;justify-self:center}
-.rt-cov img{width:100%;height:100%;object-fit:cover;border-radius:7px;display:block;transition:filter .2s,opacity .2s}
-.rt-cov .nt{display:grid;place-items:center;height:100%;padding:4px;font-size:.6rem;font-weight:700;line-height:1.2;color:var(--soft)}
-.rt-cov.zero img{filter:saturate(.25);opacity:.55}
-.rt-cov .pl{position:absolute;inset:0;display:grid;place-items:center;font-size:1.35rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:none}
-.rt-cov:not(.zero) .pl{display:none}
-.rt-cov .ct{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:var(--coral);color:#fff;font-size:.72rem;font-weight:800;display:grid;place-items:center;border:2px solid var(--surface);font-variant-numeric:tabular-nums}
-.rt-cov.zero .ct{display:none}
-.rt-cov .rp{position:absolute;inset:-4px;border-radius:10px;border:3px solid var(--coral);opacity:0;pointer-events:none}
-.rt-cov.bump{animation:rtBump .42s ease}
-.rt-cov.bump .rp{animation:rtRipple .55s ease-out}
-@keyframes rtBump{0%{transform:scale(1)}35%{transform:scale(.9)}70%{transform:scale(1.06)}100%{transform:scale(1)}}
-@keyframes rtRipple{0%{opacity:.9;transform:scale(.92)}100%{opacity:0;transform:scale(1.18)}}
-.rt-ft{margin-top:8px;font-size:.72rem;color:var(--soft)}
-.rt-mini{display:none}
-.rtray.compact .rt-in{padding:6px 16px}
-.rtray.compact .rt-hd,.rtray.compact .rt-ft{display:none}
-.rtray.compact .rt-row{grid-template-columns:repeat(5,34px) 1fr;gap:8px}
-.rtray.compact .rt-cov,.rtray.compact .rt-cov img{border-radius:5px}
-.rtray.compact .rt-cov .pl{font-size:.9rem}
-.rtray.compact .rt-cov .ct{top:-5px;right:-7px;min-width:17px;height:17px;font-size:.6rem;padding:0 3px;border-width:1.5px}
-.rtray.compact .rt-mini{display:block;font-size:.74rem;color:var(--soft);font-weight:700;text-align:right}
-.rtray.compact .rt-mini b{color:var(--coral)}
 /* 책 카드 '읽었어요' */
 .book .rrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
 .book .acts+.rrow{margin-top:0;padding-top:8px}
@@ -183,6 +148,20 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .rs-kpi .k{font-size:.72rem;font-weight:800;color:var(--soft)}
 .rs-kpi .v{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.55rem;line-height:1.2;font-variant-numeric:tabular-nums}
 .rs-kpi .v small{font-family:'Noto Sans KR',sans-serif;font-size:.72rem;color:var(--soft);font-weight:700}
+/* 우리 책장: 오늘/어제 + 표지 탭 기록 */
+.rs-rec{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:10px 12px;margin-top:16px;box-shadow:var(--sh)}
+.rs-rec .big{font-family:'Gowun Batang',Georgia,serif;font-weight:700;font-size:1.08rem}
+.rs-rec .big b{color:var(--coral)}
+.rs-chip{margin-left:auto;display:inline-flex;gap:2px;background:#EEF0E8;border-radius:999px;padding:2px}
+.rs-chip button{border:0;background:none;border-radius:999px;font:inherit;font-size:.76rem;font-weight:800;padding:4px 12px;cursor:pointer;color:var(--soft)}
+.rs-chip button[aria-pressed="true"]{background:var(--tealD);color:#fff}
+.rs-hint{font-size:.78rem;color:var(--soft);text-align:center;margin:8px 0 0}
+button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.rs-book .pl{position:absolute;inset:0;display:grid;place-items:center;font-size:1.5rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:none}
+.rs-book .td{position:absolute;top:-8px;left:-8px;background:var(--tealD);color:#fff;font-weight:800;font-size:.66rem;border-radius:999px;padding:1px 7px;border:2px solid #E4E7DD;white-space:nowrap}
+.rs-book.bump .cv,.book .rbtn.bump{animation:rsPop .4s ease}
+@keyframes rsPop{0%{transform:scale(1)}40%{transform:scale(.9)}75%{transform:scale(1.06)}100%{transform:scale(1)}}
+.rl-toast button.sub{background:transparent;color:#F4F5EF;text-decoration:underline;padding:7px 6px}
 .rs-shelf{margin-top:24px;display:flex;flex-direction:column;gap:26px}
 .rs-plank{display:flex;justify-content:center;align-items:flex-end;gap:20px;padding:0 8px 12px;border-bottom:8px solid #CBD0C1;border-radius:0 0 3px 3px}
 .rs-book{width:96px;display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -217,7 +196,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .rv-panel .br.top .track i{background:var(--coral)}
 .rv-panel .br .bv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
 .rv-panel .insight{font-size:.8rem;background:#F6E6D8;border-radius:9px;padding:8px 10px;margin-top:10px;line-height:1.5}
-@media (prefers-reduced-motion:reduce){.rt-cov.bump,.rt-cov.bump .rp,.rtray.enter,.rtabs.enter,.rl-sheet{animation:none}.rl-toast{transition:none}}
+@media (prefers-reduced-motion:reduce){.rs-book.bump .cv,.book .rbtn.bump,.rtabs.enter,.rl-sheet{animation:none}.rl-toast{transition:none}}
 @media (max-width:560px){
   .wrap{padding:0 16px}
   .hero{padding:30px 0 10px}.hero .em{font-size:2.6rem;margin:8px 0}
@@ -310,7 +289,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
       if(id)return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(x.title||'부가자료')+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(x.title||'부가 영상')+'"><div class="pl">'+PLAYSVG+'</div></div>'+(x.title?'<div class="vt">'+esc(x.title)+'</div>':'')+'</div>';
       return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
     }).join('');
-    var h='<div class="rtray" id="rtray" hidden></div><div id="v-study"><div class="wrap">';
+    var h='<div id="v-study"><div class="wrap">';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
