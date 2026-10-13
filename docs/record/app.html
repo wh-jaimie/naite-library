@@ -90,6 +90,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .installbtn:hover{filter:brightness(1.06)}
 .herobtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:18px}
 .herobtns .mlink{margin-top:0}
+.mlink.alt{background:var(--surface);color:var(--tealD);border:1px solid var(--line)}
 /* ── 회원 읽기 기록(reading-log.js) ── */
 [hidden]{display:none!important}
 body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
@@ -299,6 +300,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
        '<div class="herobtns"><a class="mlink" href="../study/missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
+       '<a class="mlink alt" href="../challenge.html">📚 나이테 120 전체 보기 →</a>'+
        (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 홈 화면에 추가</button>')+'</div></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
        '<div class="lvguide"><b>🌱 쉬움부터 시작하세요.</b> 3~4살은 🌱 2권만, 5살 이상은 5권 모두 도전! 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
