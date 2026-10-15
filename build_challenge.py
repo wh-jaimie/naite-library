@@ -31,6 +31,13 @@ CURRICULUM = [
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
 ]),
+("🎄","Christmas","크리스마스",[
+ (1,"Dear Santa","Rod Campbell","플랩으로 산타의 선물을 여는 플랩북"),
+ (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
+ (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
+ (4,"Santa Bruce","Ryan T. Higgins","투덜이 곰 브루스가 얼떨결에 산타가 되는 반전 유머"),
+ (5,"Bear Stays Up for Christmas","Karma Wilson","잠 많은 곰이 친구들과 크리스마스를 준비하는 따뜻한 이야기"),
+]),
 ("🍎","Food","음식",[
  (1,"Ketchup on Your Cornflakes?","Nick Sharratt","위아래 플랩을 뒤섞어 엉뚱한 조합을 만드는 플랩북"),
  (2,"Jamberry","Bruce Degen","곰과 소년이 베리를 따는 말놀이 라임"),
@@ -142,13 +149,6 @@ CURRICULUM = [
  (3,"The Little Old Lady Who Was Not Afraid of Anything","Linda Williams","쫓아오는 물건들의 누적 반복"),
  (4,"Creepy Carrots!","Aaron Reynolds","당근이 쫓아온다?! 오싹+반전 유머"),
  (5,"Skeleton Hiccups","Margery Cuyler","딸꾹질 멈추려는 해골의 우스운 소동"),
-]),
-("🎄","Christmas","크리스마스",[
- (1,"Dear Santa","Rod Campbell","플랩으로 산타의 선물을 여는 플랩북"),
- (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
- (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
- (4,"Santa Bruce","Ryan T. Higgins","투덜이 곰 브루스가 얼떨결에 산타가 되는 반전 유머"),
- (5,"Bear Stays Up for Christmas","Karma Wilson","잠 많은 곰이 친구들과 크리스마스를 준비하는 따뜻한 이야기"),
 ]),
 ("🎶","Songs & Rhymes","노래·마더구스",[
  (1,"The Wheels on the Bus","Annie Kubler","손유희로 함께 부르는 참여형 노래책"),
@@ -266,11 +266,20 @@ def ol(title, author):
         time.sleep(DELAY)
     return None,"",""
 
+# 책 id(c1~c120)는 나이테 120 '봤어요' 체크(localStorage) 키라서 순서를 바꿔도 유지해야 함
+# → 기존 challenge.json의 (테마 key, 유형) 자리의 gid를 재사용하고, 새 자리만 새 번호를 붙임
+try:
+    _prev={(t["key"],b["tier"]):b["gid"] for t in json.load(open(OUT,encoding="utf-8"))["themes"] for b in t["books"]}
+except Exception:
+    _prev={}
+_next=max(_prev.values(),default=0)
 themes,misses,gid=[],[],0
 for emoji,en,ko,books in CURRICULUM:
     tb=[]
+    tkey=re.sub(r"[^a-z0-9]+","-",en.lower()).strip("-")
     for tier,title,author,reason in books:
-        gid+=1
+        if (tkey,tier) in _prev: gid=_prev[(tkey,tier)]
+        else: _next+=1; gid=_next
         cover,isbn,year=ol(title,author)
         n=norm(title)
         if n in COVER_OVERRIDE: cover=COVER_OVERRIDE[n]
@@ -282,10 +291,10 @@ for emoji,en,ko,books in CURRICULUM:
                    "format":(ar_data.FORMAT.get(n) if tier==1 else None),
                    "ar":(None if tier==1 else ar_data.AR.get(n))})
         time.sleep(DELAY)
-    themes.append({"emoji":emoji,"en":en,"ko":ko,"key":re.sub(r"[^a-z0-9]+","-",en.lower()).strip("-"),"books":tb})
+    themes.append({"emoji":emoji,"en":en,"ko":ko,"key":tkey,"books":tb})
     print(f"  {emoji} {ko} — 표지 {sum(1 for b in tb if b['cover'])}/5 · 국내인기 {sum(1 for b in tb if b['kr_popular'])}")
 
-json.dump({"themes":themes,"tier_labels":TIER_LABELS,"total":gid},open(OUT,"w",encoding="utf-8"),ensure_ascii=False,indent=1)
+json.dump({"themes":themes,"tier_labels":TIER_LABELS,"total":sum(len(t["books"]) for t in themes)},open(OUT,"w",encoding="utf-8"),ensure_ascii=False,indent=1)
 kr=sum(1 for t in themes for b in t['books'] if b['kr_popular'])
-print(f"\n총 {gid}권 · 국내인기 {kr}권 · 표지미확보 {len(misses)}권")
+print(f"\n총 {sum(len(t['books']) for t in themes)}권 · 국내인기 {kr}권 · 표지미확보 {len(misses)}권")
 for m in misses: print("  -",m)

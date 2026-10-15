@@ -20,12 +20,12 @@
 
 - 파일: `supabase/content_<theme_key>.sql` (예: `content_vehicles.sql`). 테마 키·책 5권은 `output/challenge.json`에서 확인한다.
 - 월 순서는 커리큘럼(`build_challenge.py` CURRICULUM) 순서와 같다.
-  - 2026년 10월 동물(1개월차) → 11월 탈것(2) → 12월 음식(3) → 2027년 1월 색깔(4) → 숫자 → 가족 …
+  - 2026년 10월 동물(1개월차) → 11월 탈것(2) → 12월 크리스마스(3) → 2027년 1월 음식(4) → 2월 색깔(5) → 숫자 → 가족 …
+  - 순서를 바꾸면 `build_challenge.py` CURRICULUM과 `output/challenge.json` 테마 순서를 같이 옮기고, `reseed_books.sql`을 실행해야 DB 주제 순서도 바뀐다(CLAUDE.md 3절).
 - 형식은 `update public.content set … where theme_key = '<key>';` 하나에, 필요하면 `books.workbook` 업데이트를 덧붙인다. **`content_vehicles.sql`을 기준 예시로 삼는다.**
 - 파일 맨 위 주석에는 개월차, 현재 5권(유형), 실행 후 할 일(관리자에서 링크·비밀번호·발행)을 적는다.
 - SQL 문자열 안의 작은따옴표는 `''`로 쓴다(`don''t`, `Gumpy''s`). 다 쓴 뒤 따옴표 짝이 맞는지 검사한다.
-- **커밋 OK**: 스터디 자료는 공개 페이지라 커밋한다. `.gitignore`에 규칙이 남아 있으니 새 파일은 `git add -f`로 추가한다. **비밀번호 값은 절대 파일에 넣지 않는다**(관리자에서 설정).
-- 커밋해도 DB는 바뀌지 않는다. 사용자가 Supabase SQL Editor에서 직접 실행한다.
+- **커밋하지 않는다(2026-10-15 사용자 지시)**: content SQL은 로컬 파일로만 두고 DB에만 반영한다. `.gitignore`의 `supabase/content_*.sql` 규칙 그대로 두고, `git add -f` 쓰지 않는다. 비밀번호 값도 파일에 넣지 않는다(관리자에서 설정).
 
 ---
 
@@ -77,7 +77,7 @@
 1. 따옴표 짝 검사, 표현 줄의 영어/뜻 분리가 맞는지 검사한다(파서와 같은 정규식 `\s*[|\-–]\s*`).
 2. 화면 확인: `python -m http.server -d docs 8765`로 서버를 띄운다. `study/index.html#preview`를 열고, 같은 출처에서 `postMessage({t:'preview-data', theme, books, content})`로 데이터를 넣는다. 이때 books는 `output/challenge.json`의 해당 테마를 쓴다.
 3. 모바일 390px 스크린샷을 사용자에게 보내 확인받는다.
-4. 사용자가 OK하면 커밋하고 push한다(push 전에 `git pull --rebase --autostash`).
+4. 사용자가 OK하면 DB에 반영한다(사용자가 Supabase SQL Editor에서 실행 — 파일은 커밋하지 않음).
 5. 끝나면 사용자에게 알린다:
    - 미확인 내용이 있으면 어디인지
    - Supabase에서 실행할 파일

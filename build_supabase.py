@@ -171,7 +171,6 @@ SCHEMA = SCHEMA.replace("__MISSIONS_DEFAULT__", q(DEFAULT_MISSIONS))
 # ── seed.sql ──
 lines = ["-- 조이네 엄마표영어 스터디 — 시드 데이터 (24주제 × 120권)",
          "-- schema.sql 실행 후 이 파일을 SQL Editor 에 붙여넣어 실행하세요.\n"]
-book_lines = []  # reseed용(책만)
 order = [t["key"] for t in ch["themes"]]
 for i, t in enumerate(ch["themes"]):
     lines.append(f"insert into public.themes(key,emoji,en,ko,sort) values "
@@ -184,7 +183,7 @@ for i, t in enumerate(ch["themes"]):
         arv = ('null' if b.get('ar') is None else str(b.get('ar')))
         ins=("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,format,ar,sort) values "
              f"({q(t['key'])},{b['tier']},{q(b['tier_label'])},{q(b['title'])},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{kr},{fmt},{arv},{j});")
-        lines.append(ins); book_lines.append(ins)
+        lines.append(ins)
     lines.append("")
 lines.append(f"insert into public.settings(id,current_theme) values (1,{q(order[0])}) "
              "on conflict (id) do update set current_theme=excluded.current_theme;")
@@ -192,9 +191,13 @@ lines.append(f"insert into public.settings(id,current_theme) values (1,{q(order[
 open(os.path.join(SQLDIR, "schema.sql"), "w", encoding="utf-8").write(SCHEMA)
 open(os.path.join(SQLDIR, "seed.sql"), "w", encoding="utf-8").write("\n".join(lines))
 
-# ── reseed_books.sql: 기존 DB의 책만 새 120권으로 교체(테마·콘텐츠·설정 보존) ──
-reseed = ["-- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수상/국내인기 컬럼 (재실행 안전)",
-          "-- 테마·콘텐츠·설정은 건드리지 않음. 수동 입력한 워크북/구매 링크는 (theme_key,title)로 보존. SQL Editor 에서 Run.",
+# ── reseed_books.sql: 기존 DB의 책을 challenge.json 기준으로 갱신(테마 순서·콘텐츠·설정 보존) ──
+# ⚠️ 절대 delete 후 재삽입하지 말 것: reading_logs.book_id 가 books(id)를 on delete cascade 로 참조 →
+#    책을 지우면 회원 읽기 기록이 전부 삭제됨. 그래서 (theme_key, tier) 자리의 행을 제자리 update(id 유지)하고,
+#    자리가 없을 때만 insert 한다. 제목이 바뀐 자리는 이전 책의 영상/워크지/쿠팡 링크를 비운다.
+reseed = ["-- 책 목록 갱신 (재실행 안전 · 회원 읽기 기록 보존)",
+          "-- 각 주제의 유형(tier) 자리를 제자리 update 해서 책 id 를 유지합니다(읽기 기록이 책 id 를 참조).",
+          "-- 제목이 바뀐 자리만 영상/워크지/쿠팡 링크를 비웁니다. 콘텐츠·설정은 건드리지 않고, 주제 순서(sort)는 갱신합니다.",
           "alter table public.books add column if not exists pop_rank int default 0;",
           "alter table public.books add column if not exists lib_loans int default 0;",
           "alter table public.books add column if not exists award text default '';",
@@ -203,20 +206,31 @@ reseed = ["-- 책 목록 갱신: 국내 베스트30 통합 + 인기/대출/수�
           "alter table public.books add column if not exists workbook text default '';",
           "alter table public.books add column if not exists buy_url text default '';",
           "alter table public.books add column if not exists format text default '';",
-          "alter table public.books add column if not exists ar real;",
-          "-- 낭독/워크북/구매 링크 임시 보관 후 재삽입",
-          "drop table if exists _book_links;",
-          "create temporary table _book_links as select theme_key, title, read_aloud, workbook, buy_url from public.books;",
-          "delete from public.books;", ""]
-reseed += book_lines
-reseed += ["",
-           "-- 보존해 둔 낭독/워크북/구매 링크 복원",
-           "update public.books b set read_aloud=l.read_aloud, workbook=l.workbook, buy_url=l.buy_url",
-           "  from _book_links l",
-           "  where l.theme_key=b.theme_key and l.title=b.title",
-           "    and (coalesce(l.read_aloud,'')<>'' or coalesce(l.workbook,'')<>'' or coalesce(l.buy_url,'')<>'');",
-           "drop table _book_links;"]
-open(os.path.join(SQLDIR, "reseed_books.sql"), "w", encoding="utf-8").write("\n".join(reseed)+"\n")
+          "alter table public.books add column if not exists ar real;", ""]
+for i, t in enumerate(ch["themes"]):
+    reseed.append(f"-- {t['emoji']} {t['ko']} ({i+1}번째)")
+    reseed.append(f"insert into public.themes(key,emoji,en,ko,sort) values "
+                  f"({q(t['key'])},{q(t['emoji'])},{q(t['en'])},{q(t['ko'])},{i}) "
+                  f"on conflict (key) do update set emoji=excluded.emoji,en=excluded.en,ko=excluded.ko,sort=excluded.sort;")
+    reseed.append(f"insert into public.content(theme_key) values ({q(t['key'])}) on conflict (theme_key) do nothing;")
+    for j, b in enumerate(t["books"]):
+        kr = 'true' if b.get('kr_popular') else 'false'
+        fmt = q(b.get('format') or '')
+        arv = ('null' if b.get('ar') is None else str(b.get('ar')))
+        k, tier, ti = q(t['key']), b['tier'], q(b['title'])
+        # UPDATE 의 우변은 모두 '이전 행' 값 기준 → case 의 title 은 이전 제목
+        reseed.append(f"update public.books set tier_label={q(b['tier_label'])},title={ti},author={q(b['author'])},cover={q(b['cover'])},"
+                      f"reason={q(b['reason'])},pop_rank={b.get('pop_rank',0)},lib_loans={b.get('lib_loans',0)},award={q(b.get('award',''))},"
+                      f"kr_popular={kr},format={fmt},ar={arv},sort={j},"
+                      f"read_aloud=case when title={ti} then read_aloud else '' end,"
+                      f"workbook=case when title={ti} then workbook else '' end,"
+                      f"buy_url=case when title={ti} then buy_url else '' end "
+                      f"where theme_key={k} and tier={tier};")
+        reseed.append("insert into public.books(theme_key,tier,tier_label,title,author,cover,reason,pop_rank,lib_loans,award,kr_popular,format,ar,sort) "
+                      f"select {k},{tier},{q(b['tier_label'])},{ti},{q(b['author'])},{q(b['cover'])},{q(b['reason'])},{b.get('pop_rank',0)},{b.get('lib_loans',0)},{q(b.get('award',''))},{kr},{fmt},{arv},{j} "
+                      f"where not exists (select 1 from public.books where theme_key={k} and tier={tier});")
+    reseed.append("")
+open(os.path.join(SQLDIR, "reseed_books.sql"), "w", encoding="utf-8").write(chr(10).join(reseed)+chr(10))
 
 # ── migrate_missions.sql: 기존 DB에 미션 컬럼 추가(모든 달에 기본 미션 채워짐) ──
 mig = ["-- 이번 달 미션 컬럼 추가(관리자에서 달마다 수정 가능). SQL Editor 에서 Run.",
