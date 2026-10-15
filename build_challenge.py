@@ -27,7 +27,7 @@ CURRICULUM = [
 ("🚗","Vehicles","탈것",[
  (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
  (2,"Nee Naw the Little Fire Engine","Deano Yipadee","삐뽀 소리와 라임이 신나는 꼬마 소방차 이야기"),
- (3,"Mr Gumpy's Outing","John Burningham","배에 동물이 하나씩 타며 \"Can I come?\"이 쌓이는 누적 반복 — 그리너웨이 메달"),
+ (3,"Mr Gumpy's Outing","John Burningham","동물마다 태워 달라는 부탁과 \"Yes, but don't…\" 대답이 반복되는 패턴 — 그리너웨이 메달"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
 ]),
