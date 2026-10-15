@@ -312,6 +312,8 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
     if(exhtml)h+='<div class="sec"><h2>📎 부가자료</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="vids">'+exhtml+'</div></div>';
     h+='<div id="arch"></div>';
+    h+='<div class="sec" style="text-align:center;margin-top:28px"><a href="../" target="_blank" rel="noopener" style="display:inline-block;font-family:\'Gowun Batang\',serif;font-weight:700;font-size:1rem;color:#fff;background:linear-gradient(135deg,#B87343,#D1965C);padding:14px 24px;border-radius:14px;text-decoration:none;box-shadow:0 8px 22px rgba(43,42,38,.14)">🌿 나이테 — 엄마표영어 읽을거리 둘러보기 →</a>'+
+       '<div style="font-size:.78rem;color:var(--soft);margin-top:8px">기본 개념·Q&amp;A·ORT·픽처북 vs 리더스북 등 (새 창)</div></div>';
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
        '<div style="margin-top:12px"><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="color:var(--tealD);font-weight:700;text-decoration:none">📷 Instagram @naite_library</a></div>'+
        '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+

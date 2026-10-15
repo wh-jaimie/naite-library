@@ -78,6 +78,15 @@ create table if not exists public.settings (
   current_theme text
 );
 
+-- 엄마표영어 가이드(공개 읽을거리 · 블로그 링크). 관리자가 추가/수정.
+create table if not exists public.guides (
+  id         bigint generated always as identity primary key,
+  title      text not null,
+  url        text not null,
+  sort       int default 0,
+  created_at timestamptz default now()
+);
+
 -- KPI 이벤트(방문/클릭/체류 등)
 create table if not exists public.events (
   id         bigint generated always as identity primary key,
@@ -97,17 +106,20 @@ alter table public.themes   enable row level security;
 alter table public.books    enable row level security;
 alter table public.content  enable row level security;
 alter table public.settings enable row level security;
+alter table public.guides   enable row level security;
 alter table public.events   enable row level security;
 
--- 공개 읽기: themes/settings 만 공개(목록·현재 달 표시용). content/books 는 비공개 → RPC로만.
+-- 공개 읽기: themes/settings/guides 공개. content/books 는 비공개 → RPC로만.
 create policy "public read themes"   on public.themes   for select using (true);
 create policy "public read settings" on public.settings for select using (true);
+create policy "public read guides"   on public.guides   for select using (true);
 
 -- 관리자만 쓰기(및 관리자 읽기 포함)
 create policy "admin write themes"   on public.themes   for all using (public.is_admin()) with check (public.is_admin());
 create policy "admin write books"    on public.books    for all using (public.is_admin()) with check (public.is_admin());
 create policy "admin write content"  on public.content  for all using (public.is_admin()) with check (public.is_admin());
 create policy "admin write settings" on public.settings for all using (public.is_admin()) with check (public.is_admin());
+create policy "admin write guides"   on public.guides   for all using (public.is_admin()) with check (public.is_admin());
 
 -- KPI: 누구나 삽입 가능(방문자 로그), 조회는 관리자만
 create policy "anyone insert events" on public.events for insert with check (true);
@@ -229,6 +241,17 @@ mig3 = ["-- 나이테 120 페이지가 책별 쿠팡 링크를 읽을 수 있는
         "$$;",
         "grant execute on function public.list_buy_urls() to anon, authenticated;"]
 open(os.path.join(SQLDIR, "migrate_buy_urls.sql"), "w", encoding="utf-8").write("\n".join(mig3)+"\n")
+
+# ── migrate_guides.sql: 엄마표영어 가이드(공개 읽을거리) 테이블 ──
+mig4 = ["-- 엄마표영어 가이드(블로그 링크 목록) 테이블. SQL Editor 에서 Run.",
+        "create table if not exists public.guides (",
+        "  id bigint generated always as identity primary key,",
+        "  title text not null, url text not null, sort int default 0,",
+        "  created_at timestamptz default now());",
+        "alter table public.guides enable row level security;",
+        'create policy "public read guides" on public.guides for select using (true);',
+        'create policy "admin write guides" on public.guides for all using (public.is_admin()) with check (public.is_admin());']
+open(os.path.join(SQLDIR, "migrate_guides.sql"), "w", encoding="utf-8").write("\n".join(mig4)+"\n")
 
 print("생성: supabase/schema.sql, supabase/seed.sql, supabase/reseed_books.sql, supabase/migrate_missions.sql, supabase/migrate_extras.sql, supabase/migrate_buy_urls.sql")
 print(f"주제 {len(order)}개, 책 {sum(len(t['books']) for t in ch['themes'])}권 시드")
