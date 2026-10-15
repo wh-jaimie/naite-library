@@ -27,7 +27,7 @@ CURRICULUM = [
 ("🚗","Vehicles","탈것",[
  (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
  (2,"Nee Naw the Little Fire Engine","Deano Yipadee","삐뽀 소리와 라임이 신나는 꼬마 소방차 이야기"),
- (3,"Truck Full of Ducks","Ross Burach","\"truck full of ducks!\" 후렴이 반복되는 배달 소동"),
+ (3,"Mr Gumpy's Outing","John Burningham","배에 동물이 하나씩 타며 \"Can I come?\"이 쌓이는 누적 반복 — 그리너웨이 메달"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
 ]),
@@ -223,12 +223,15 @@ HONOR={'madeline':1940,'blueberries for sal':1949,'swimmy':1964,'strega nona':19
 MEDAL['hot dog']=2023
 NEWBERY={'last stop on market street':2016}
 GEISEL={'the watermelon seed':2014,'i want my hat back':2012}
+# 영국 케이트 그리너웨이 메달(그림책 일러스트 최고상)
+GREENAWAY={'mr gumpys outing':1970,'this is not my hat':2014}
 def award(title):
     n=norm(title); parts=[]
     if n in NEWBERY: parts.append('🎖️ 뉴베리 메달 '+str(NEWBERY[n]))
     if n in GEISEL: parts.append('🎖️ 가이젤상 '+str(GEISEL[n]))
     if n in MEDAL: parts.append('🥇 칼데콧 메달 '+str(MEDAL[n]))
     if n in HONOR: parts.append('🏅 칼데콧 아너 '+str(HONOR[n]))
+    if n in GREENAWAY: parts.append('🥇 그리너웨이 메달 '+str(GREENAWAY[n]))
     return ' · '.join(parts)
 
 # 세계인기(새 통합순위) + 도서관 대출(gr_master)

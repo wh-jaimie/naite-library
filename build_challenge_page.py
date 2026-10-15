@@ -108,9 +108,11 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .step .cover.noimg .ph{display:flex}
 .step .cover .chk{position:absolute;inset:0;background:rgba(36,86,72,.55);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff}
 .step.seen .cover .chk{display:flex}
-.step .pop{position:absolute;top:6px;right:6px;background:color-mix(in srgb,var(--ink) 80%,transparent);color:#fff;
+/* 표지 배지: 좁은 화면에서 겹치지 않게 왼쪽 위에 세로로 쌓음 */
+.step .cbg{position:absolute;top:6px;left:6px;right:6px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;pointer-events:none}
+.step .pop{background:color-mix(in srgb,var(--ink) 80%,transparent);color:#fff;
   font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
-.step .krb{position:absolute;top:6px;left:6px;background:#c0392b;color:#fff;
+.step .krb{background:#c0392b;color:#fff;
   font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:6px;box-shadow:var(--shadow)}
 .step .tt{font-size:.76rem;font-weight:700;line-height:1.2}
 .step .au{font-size:.68rem;color:var(--ink-soft)}
@@ -259,8 +261,7 @@ function stepHTML(b){
     <div class="cover${b.cover?'':' noimg'}" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
-      ${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}
-      ${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}
+      ${(b.pop_rank||b.kr_popular)?`<div class="cbg">${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}</div>`:''}
       <div class="chk">✓</div>
     </div>
     ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}

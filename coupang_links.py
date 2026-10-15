@@ -13,7 +13,7 @@ LINKS = {
   "The Crocodile Who Didn't Like Water": "",
   # 🚗 탈것
   "Fire Engine": "",
-  "Truck Full of Ducks": "",
+  "Mr Gumpy's Outing": "",
   "Nee Naw the Little Fire Engine": "",
   "Don't Let the Pigeon Drive the Bus!": "",
   "Goodnight, Goodnight, Construction Site": "",
