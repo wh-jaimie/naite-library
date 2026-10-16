@@ -214,11 +214,11 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     app.innerHTML=h;
     if(!PREVIEW)fillArchive(theme.key);
     // 카드 어디를 눌러도 구매 링크(표지 링크)를 엶. 워크지·읽었어요 등 카드 안의 링크·버튼은 각자 동작
-    app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(ev){logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});if(ev.target.closest('a,button,.rrow'))return;var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
+    // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
+    app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
     app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
-    app.querySelectorAll('.act.buy').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
-    app.querySelectorAll('.book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('buy_click',{title:el.dataset.buy});});});
+    app.querySelectorAll('.book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
     var ib=document.getElementById('installBtn');
     if(ib){ if(window.__naiteStandalone&&window.__naiteStandalone()){ib.style.display='none';}
       else{ib.addEventListener('click',function(){logEvent('install_click',{});if(window.__naiteInstall)window.__naiteInstall();});} }
