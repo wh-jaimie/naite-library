@@ -312,8 +312,11 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       (noSrc?' 출처 기록 전(2026-10-16 이전) 방문자 '+noSrc+'명은 표에서 빠져요.':'')+'</p></div>';
     var srcs=countBy(X.cur.filter(function(e){return e.type==='join_click';}),function(e){return srcName((e.meta&&e.meta.from)||(e.meta&&e.meta.page)||'기타');});
     var pages={},pageV={};a.pv.forEach(function(e){var p=pageOf(e);pages[p]=(pages[p]||0)+1;(pageV[p]=pageV[p]||{})[e.session_id]=1;});
-    h+='<div class="two"><div class="card"><h3>🙋 참여 클릭 출처</h3>'+table(['출처','클릭'],sortedRows(srcs),1)+'</div>'+
-      '<div class="card"><h3>📚 많이 누른 가이드 글</h3>'+table(['글','클릭'],sortedRows(countBy(X.cur.filter(function(e){return e.type==='guide_click';}),function(e){return (e.meta&&e.meta.title)||'?';})),1)+'</div></div>';
+    // 어느 화면에서 눌렀나(meta.page): 참여 안내 화면 / 나이테 120 — 출처와 별개
+    var where=countBy(X.cur.filter(function(e){return e.type==='join_click';}),function(e){var pg=(e.meta&&e.meta.page)||'';return pg==='나이테 120'?'🌳 나이테 120 페이지':(pg==='스터디 참여'?'🙋 참여 안내 화면':(pg||'기타'));});
+    h+='<div class="two"><div class="card"><h3>🙋 참여 클릭 출처 <span class="hint">어디서 온 사람이 눌렀나</span></h3>'+table(['출처','클릭'],sortedRows(srcs),1)+'</div>'+
+      '<div class="card"><h3>🖱 참여 클릭 화면 <span class="hint">어느 화면에서 눌렀나</span></h3>'+table(['화면','클릭'],sortedRows(where),1)+'<p class="hint">메인의 ‘스터디 참여하기’는 참여 안내 화면으로 넘어가요.</p></div></div>';
+    h+='<div class="card"><h3>📚 많이 누른 가이드 글</h3>'+table(['글','클릭'],sortedRows(countBy(X.cur.filter(function(e){return e.type==='guide_click';}),function(e){return (e.meta&&e.meta.title)||'?';})),1)+'</div>';
     h+='<div class="card"><h3>📄 화면별 방문</h3>'+table(['화면','방문','방문자'],Object.keys(pages).sort(function(x,y){return pages[y]-pages[x];}).map(function(p){return [esc(p),pages[p],cnt(pageV[p])];}),1)+'</div>';
     h+='<div class="card"><div class="shd"><h3>📈 날짜별 방문자 · 참여 클릭</h3><select class="t sm r" id="nm"><option value="v">방문자</option><option value="j">참여 클릭</option></select></div><div id="nchart"></div></div>';
     body.innerHTML=h;
