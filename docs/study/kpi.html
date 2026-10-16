@@ -353,6 +353,29 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     sel.onchange=draw;draw();
   }
 
+  // 책별 메모: 적게 읽힌 책(읽은 폰 수)과 많이 반복한 책(읽은 폰당 횟수)이 겹치지 않게.
+  // 읽은 폰이 적으면 한 집 기록에 평균이 크게 흔들리므로, '많이 반복'은 적게 읽힌 책을 뺀 나머지에서 고르고
+  // 둘 다 해당하는 책은 "적게 읽혔지만 읽은 집에선 반복" 으로 따로 알려줌. 동점이면 모두 표시.
+  function readNotes(items,nR){
+    var notes=[],read=items.filter(function(x){return x.r;});
+    if(!read.length)return notes;
+    function rep(x){return Math.round(x.total/x.r*10)/10;}
+    var reachMin=Math.min.apply(null,items.map(function(x){return x.r;}));
+    var low=(nR>=3)?items.filter(function(x){return x.r===reachMin;}):[];
+    if(low.length===items.length)low=[];
+    var pool=read.filter(function(x){return low.indexOf(x)<0;});
+    var repMax=Math.max.apply(null,pool.map(rep).concat([0]));
+    var top=pool.filter(function(x){return rep(x)===repMax;});
+    if(repMax>1&&top.length<pool.length)notes.push('가장 많이 반복한 책: <b>'+top.map(function(x){return esc(x.title);}).join(', ')+'</b> (읽은 폰당 '+repMax.toFixed(1)+'번)');
+    else if(pool.length)notes.push(repMax>1?'책들이 비슷하게 반복되고 있어요 (읽은 폰당 '+repMax.toFixed(1)+'번).':'아직 반복해서 읽힌 책이 없어요.');
+    if(low.length){
+      var lowRep=low.filter(function(x){return x.r&&rep(x)>1&&rep(x)>=repMax;});
+      notes.push('가장 적게 읽힌 책: <b>'+low.map(function(x){return esc(x.title);}).join(', ')+'</b> ('+reachMin+'대). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');
+      if(lowRep.length)notes.push('그중 <b>'+lowRep.map(function(x){return esc(x.title);}).join(', ')+'</b>은(는) 읽은 폰은 적지만 읽은 집에서는 반복해서 읽혀요 (읽은 폰당 '+lowRep.map(function(x){return rep(x).toFixed(1);}).join('·')+'번). 아이들이 좋아하는 책일 수 있어요.');
+    }
+    return notes;
+  }
+
   // 스터디 달 읽기 리포트 (옛 회원 기록 관리 화면 그대로)
   async function monthReport(key){
     var body=document.getElementById('sbody');if(!body)return;body.innerHTML='<p class="empty">불러오는 중…</p>';
@@ -388,16 +411,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
           '<td class="num"><div class="ibar"><i style="width:'+Math.round(p.total/maxT*80)+'px"></i><span>'+p.total+'</span></div></td>'+
           '<td class="num">'+(r?(p.total/r).toFixed(1)+'번':'–')+'</td><td class="num">'+(p.first?md(p.first):'–')+'</td></tr>';}).join('')+
       '</tbody></table></div>';
-    // 동점이면 모두 표시(목록 순서로 한 권만 고르지 않음)
-    var reps=list.filter(function(p){return cnt(p.readers);}).map(function(p){return {p:p,v:Math.round(p.total/cnt(p.readers)*10)/10};});
-    var repMax=Math.max.apply(null,reps.map(function(x){return x.v;}).concat([0]));
-    var repTop=reps.filter(function(x){return x.v===repMax;});
-    var reachMin=Math.min.apply(null,list.map(function(p){return cnt(p.readers);}));
-    var reachLow=list.filter(function(p){return cnt(p.readers)===reachMin;});
-    var notes=[];
-    if(repMax>1&&repTop.length<reps.length)notes.push('가장 많이 반복한 책: <b>'+repTop.map(function(x){return esc(x.p.b.title);}).join(', ')+'</b> (읽은 폰당 '+repMax.toFixed(1)+'번)');
-    else if(reps.length)notes.push(repMax>1?'모든 책이 비슷하게 반복되고 있어요 (읽은 폰당 '+repMax.toFixed(1)+'번).':'아직 반복해서 읽힌 책이 없어요.');
-    if(nR>=3&&reachLow.length<list.length)notes.push('가장 적게 읽힌 책: <b>'+reachLow.map(function(p){return esc(p.b.title);}).join(', ')+'</b> ('+reachMin+'대). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');
+    var notes=readNotes(list.map(function(p){return {title:p.b.title,r:cnt(p.readers),total:p.total};}),nR);
     if(notes.length)h+='<ul class="notes">'+notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
     // 유형별
     var types=[],tc={},tr={};
@@ -450,12 +464,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       '</tbody></table></div>'+
       '<p class="hint">이 달 자료의 전체 기록이에요(위 기간 선택과 무관). 공개 = 나이테의 스터디 자료 페이지, 회원 = 나이테 기록 앱. 책 클릭은 카드를 누른 횟수, 쿠팡은 그중 쿠팡이 열린 횟수예요(2026-10-16부터 이 기준).</p>';
     // 메모
-    var notes=[];
-    if(nR){var rep=books.map(function(b){var p=per[b.id],r=cnt(p.readers);return {b:b,v:r?p.total/r:0,r:r};});
-      var mx=Math.max.apply(null,rep.map(function(x){return x.v;})),top=rep.filter(function(x){return x.v===mx&&x.r;});
-      if(mx>1&&top.length<rep.length)notes.push('가장 많이 반복한 책: <b>'+top.map(function(x){return esc(x.b.title);}).join(', ')+'</b> (읽은 폰당 '+mx.toFixed(1)+'번)');
-      var mn=Math.min.apply(null,rep.map(function(x){return x.r;})),low=rep.filter(function(x){return x.r===mn;});
-      if(nR>=3&&low.length<rep.length)notes.push('가장 적게 읽힌 책: <b>'+low.map(function(x){return esc(x.b.title);}).join(', ')+'</b> ('+mn+'대). 구하기 어렵거나 시작이 어려운 책일 수 있어요.');}
+    var notes=nR?readNotes(books.map(function(b){var p=per[b.id];return {title:b.title,r:cnt(p.readers),total:p.total};}),nR):[];
     var noLink=books.filter(function(b){return !b.buy_url;});
     if(noLink.length)notes.push('쿠팡 링크가 없는 책: '+noLink.map(function(b){return esc(b.title);}).join(', ')+' → 관리 › 🛒 쿠팡 링크에서 넣어 주세요.');
     if(notes.length)h+='<ul class="notes">'+notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
