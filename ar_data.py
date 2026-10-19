@@ -35,7 +35,8 @@ _FORMAT = {
 _AR = {
  "Giraffes Can't Dance": 3.1, "Brown Bear, Brown Bear, What Do You See?": 1.5,
  "Interrupting Chicken": 2.7, "The Crocodile Who Didn't Like Water": 2.5,
- "Nee Naw the Little Fire Engine": 2.8, "Mr Gumpy's Outing": 1.7, "Mr Gumpys Outing": 1.7,
+ "Nee Naw the Little Fire Engine": 2.8, "Nee Naw and the Cowtastrophe": 2.8,  # 공식 AR 없음 → 같은 시리즈·같은 판형(24쪽) 1권 값으로 추정
+ "Mr Gumpy's Outing": 1.7, "Mr Gumpys Outing": 1.7,
  "Don't Let the Pigeon Drive the Bus!": 1.3, "Goodnight, Goodnight, Construction Site": 3.1,
  "Jamberry": 2.0, "Today Is Monday": 2.0, "The Watermelon Seed": 1.3,
  "I Will Not Ever Never Eat a Tomato": 2.6,

@@ -13,6 +13,7 @@ TIER_LABELS = {1: "조작북", 2: "라임·운율", 3: "반복·패턴", 4: "유
 COVER_OVERRIDE = {
   "fire engine": "https://wh-jaimie.github.io/naite-library/covers/fire-engine.jpg",
   "nee naw the little fire engine": "https://wh-jaimie.github.io/naite-library/covers/nee-naw.jpg",
+  "nee naw and the cowtastrophe": "https://wh-jaimie.github.io/naite-library/covers/nee-naw-cowtastrophe.jpg",
 }
 
 # (emoji, en, ko, [(type, title, author, reason)×5])
@@ -26,7 +27,7 @@ CURRICULUM = [
 ]),
 ("🚗","Vehicles","탈것",[
  (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
- (2,"Nee Naw the Little Fire Engine","Deano Yipadee","삐뽀 소리와 라임이 신나는 꼬마 소방차 이야기"),
+ (2,"Nee Naw and the Cowtastrophe","Deano Yipadee","할머니네 소가 나무 위에 올라가 버린 소동 — 따라 부르는 노래 그림책(쉬운 후렴)"),
  (3,"Mr Gumpy's Outing","John Burningham","동물마다 태워 달라는 부탁과 \"Yes, but don't…\" 대답이 반복되는 패턴 — 그리너웨이 메달"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),

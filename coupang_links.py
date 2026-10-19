@@ -14,7 +14,7 @@ LINKS = {
   # 🚗 탈것
   "Fire Engine": "",
   "Mr Gumpy's Outing": "",
-  "Nee Naw the Little Fire Engine": "",
+  "Nee Naw and the Cowtastrophe": "",
   "Don't Let the Pigeon Drive the Bus!": "",
   "Goodnight, Goodnight, Construction Site": "",
   # 🍎 음식
