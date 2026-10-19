@@ -26,9 +26,9 @@ CURRICULUM = [
  (5,"The Crocodile Who Didn't Like Water","Gemma Merino","물을 싫어하던 아기 악어의 반전 성장 이야기"),
 ]),
 ("🚗","Vehicles","탈것",[
- (1,"Fire Engine","Melanie Whittington","소방차를 움직이며 노는 불자동차 조작북 (Pictory)"),
+ (1,"Fire Engine","Melanie Whittington","소방차 모양으로 잘린 큰 보드북 — 소방관들의 생일 나들이 속 그림 찾기 (Pictory)"),
  (2,"Nee Naw and the Cowtastrophe","Deano Yipadee","할머니네 소가 나무 위에 올라가 버린 소동 — 따라 부르는 노래 그림책(쉬운 후렴)"),
- (3,"Mr Gumpy's Outing","John Burningham","동물마다 태워 달라는 부탁과 \"Yes, but don't…\" 대답이 반복되는 패턴 — 그리너웨이 메달"),
+ (3,"Mr Gumpy's Outing","John Burningham","동물마다 태워 달라고 하면 \"좋아, 대신 ~하지 마\" 하는 대답이 반복되는 패턴 — 그리너웨이 메달"),
  (4,"Don't Let the Pigeon Drive the Bus!","Mo Willems","버스 몰고 싶은 비둘기에게 \"No!\" 외치는 참여형 유머"),
  (5,"Goodnight, Goodnight, Construction Site","Sherri Duskey Rinker","공사장 차들이 하루를 마치고 잠드는 이야기"),
 ]),
