@@ -10,6 +10,9 @@ create table if not exists public.member_config (
 );
 insert into public.member_config(id) values (1) on conflict (id) do nothing;
 alter table public.member_config enable row level security;
+-- Data API 권한(2026-10-30부터 새 테이블은 자동 부여 안 됨) — 예전 자동 부여와 같은 수준으로 명시.
+-- 실제로 누가 무엇을 읽고 쓰는지는 위 RLS 정책이 결정함.
+grant select, insert, update, delete on public.member_config to anon, authenticated, service_role;
 drop policy if exists "admin all member_config" on public.member_config;
 create policy "admin all member_config" on public.member_config
   for all using (public.is_admin()) with check (public.is_admin());
@@ -57,6 +60,9 @@ create index if not exists reading_logs_theme_idx  on public.reading_logs(theme_
 
 -- 직접 접근 금지(anon 정책 없음) → 아래 RPC로만 읽고 씀. 관리자는 KPI용으로 조회 가능.
 alter table public.reading_logs enable row level security;
+-- Data API 권한(2026-10-30부터 새 테이블은 자동 부여 안 됨) — 예전 자동 부여와 같은 수준으로 명시.
+-- 실제로 누가 무엇을 읽고 쓰는지는 위 RLS 정책이 결정함.
+grant select, insert, update, delete on public.reading_logs to anon, authenticated, service_role;
 drop policy if exists "admin read reading_logs" on public.reading_logs;
 create policy "admin read reading_logs" on public.reading_logs for select using (public.is_admin());
 

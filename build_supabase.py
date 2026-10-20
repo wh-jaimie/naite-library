@@ -109,6 +109,15 @@ alter table public.settings enable row level security;
 alter table public.guides   enable row level security;
 alter table public.events   enable row level security;
 
+-- Data API 권한(2026-10-30부터 새 테이블은 자동 부여 안 됨) — 예전 자동 부여와 같은 수준으로 명시.
+-- 실제로 누가 무엇을 읽고 쓰는지는 위 RLS 정책이 결정함.
+grant select, insert, update, delete on public.themes to anon, authenticated, service_role;
+grant select, insert, update, delete on public.books to anon, authenticated, service_role;
+grant select, insert, update, delete on public.content to anon, authenticated, service_role;
+grant select, insert, update, delete on public.settings to anon, authenticated, service_role;
+grant select, insert, update, delete on public.guides to anon, authenticated, service_role;
+grant select, insert, update, delete on public.events to anon, authenticated, service_role;
+
 -- 공개 읽기: themes/settings/guides 공개. content/books 는 비공개 → RPC로만.
 create policy "public read themes"   on public.themes   for select using (true);
 create policy "public read settings" on public.settings for select using (true);
@@ -263,6 +272,7 @@ mig4 = ["-- 엄마표영어 가이드(블로그 링크 목록) 테이블. SQL Ed
         "  title text not null, url text not null, sort int default 0,",
         "  created_at timestamptz default now());",
         "alter table public.guides enable row level security;",
+        "grant select, insert, update, delete on public.guides to anon, authenticated, service_role;  -- 2026-10-30부터 새 테이블 자동 권한 없음",
         'create policy "public read guides" on public.guides for select using (true);',
         'create policy "admin write guides" on public.guides for all using (public.is_admin()) with check (public.is_admin());']
 open(os.path.join(SQLDIR, "migrate_guides.sql"), "w", encoding="utf-8").write("\n".join(mig4)+"\n")

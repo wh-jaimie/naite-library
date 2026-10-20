@@ -3,6 +3,7 @@ create table if not exists public.home_books (
   id bigint generated always as identity primary key,
   series text, title text, age text, pref text, sort int default 0);
 alter table public.home_books enable row level security;
+grant select, insert, update, delete on public.home_books to anon, authenticated, service_role;  -- 2026-10-30부터 새 테이블 자동 권한 없음
 drop policy if exists "public read home_books" on public.home_books;
 create policy "public read home_books" on public.home_books for select using (true);
 drop policy if exists "admin write home_books" on public.home_books;
