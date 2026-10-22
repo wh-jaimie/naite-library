@@ -2,6 +2,8 @@
  * 회원 입장(record/)에서 비밀번호를 넣은 기기만 app.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
  * 하단 메뉴: 이번 달 자료 · 우리 책장 · 읽기 통계.
  * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 우리 책장 표지(오늘/어제 선택).
+ * 우리 책장 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
+ * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
  * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
  * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — app.html render() 뒤에 호출.
@@ -29,16 +31,42 @@
   function getCode(){try{return localStorage.getItem(MEMBER_KEY)||sessionStorage.getItem(MEMBER_KEY)||'';}catch(e){return '';}}
   function setCode(code,keep){try{localStorage.removeItem(MEMBER_KEY);sessionStorage.removeItem(MEMBER_KEY);if(code)(keep?localStorage:sessionStorage).setItem(MEMBER_KEY,code);}catch(e){}}
 
-  /* ── 기록 저장소 ── */
-  function storeKey(){return 'naite_reads_'+S.theme.key;}
-  function load(){try{var j=JSON.parse(localStorage.getItem(storeKey())||'null');if(j&&j.rows&&j.outbox)return j;}catch(e){}return {rows:[],outbox:[]};}
-  function save(){try{localStorage.setItem(storeKey(),JSON.stringify({rows:S.rows,outbox:S.outbox}));}catch(e){}}
+  /* ── 기록 저장소: 모든 달 기록을 한 곳에(행마다 k=주제) ── */
+  var STORE_KEY='naite_reads_v2',META_KEY='naite_bookmeta';
+  function load(){
+    var st={rows:[],outbox:[]};
+    try{var j=JSON.parse(localStorage.getItem(STORE_KEY)||'null');if(j&&j.rows&&j.outbox)st=j;}catch(e){}
+    // 예전 달별 저장소(naite_reads_<주제>)가 남아 있으면 합치고 지움
+    try{
+      var old=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('naite_reads_')===0&&k!==STORE_KEY)old.push(k);}
+      old.forEach(function(k){
+        var theme=k.slice('naite_reads_'.length),j=null;try{j=JSON.parse(localStorage.getItem(k)||'null');}catch(e){}
+        if(j&&j.rows){
+          j.rows.forEach(function(r){if(!st.rows.some(function(x){return x.c===r.c;})){r.k=r.k||theme;st.rows.push(r);}});
+          (j.outbox||[]).forEach(function(o){if(!st.outbox.some(function(x){return x.op===o.op&&x.c===o.c;}))st.outbox.push(o);});
+        }
+        localStorage.removeItem(k);
+      });
+      if(old.length)localStorage.setItem(STORE_KEY,JSON.stringify(st));
+    }catch(e){}
+    return st;
+  }
+  function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify({rows:S.rows,outbox:S.outbox}));}catch(e){}}
+  // 책 정보(제목·표지·유형·주제)를 기억 → 지난 달 책도 통계·최근 기록에 이름이 나옴
+  function loadMeta(){try{return JSON.parse(localStorage.getItem(META_KEY)||'{}')||{};}catch(e){return {};}}
+  function rememberBooks(key,books){
+    var list=(books||[]).map(function(b){var m={id:+b.id,title:b.title,cover:b.cover,type:b.tier_label||b.type||'',tier:b.tier,k:key};S.byId[m.id]=m;return m;});
+    try{localStorage.setItem(META_KEY,JSON.stringify(S.byId));}catch(e){}
+    return list;
+  }
 
   /* ── 집계 ── */
   function count(bid,day){var n=0;S.rows.forEach(function(r){if(r.b===bid&&(day==null||r.d===day))n++;});return n;}
   function lastDay(bid){var m='';S.rows.forEach(function(r){if(r.b===bid&&r.d>m)m=r.d;});return m;}
-  function readDays(){var o={};S.rows.forEach(function(r){o[r.d]=1;});return Object.keys(o).length;}
-  function metBooks(){return S.books.filter(function(b){return count(b.id);}).length;}
+  function met(books){return books.filter(function(b){return count(b.id);}).length;}
+  function themeTotal(books){var ids={};books.forEach(function(b){ids[b.id]=1;});return S.rows.filter(function(r){return ids[r.b];}).length;}
+  // 날짜 기준: 이번 스터디 달(yyyy-mm)에 읽은 기록
+  function monthRows(mi){if(!mi)return S.rows.slice();var pre=mi.year+'-'+pad(mi.month)+'-';return S.rows.filter(function(r){return r.d.indexOf(pre)===0;});}
   function monthInfo(){ // month_label "2026년 10월 · 1개월차" → 스터디 달과 오늘까지 경과 일수
     var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(S.monthLabel||'');if(!m)return null;
     var y=+m[1],mo=+m[2],t=logicalToday().split('-'),ty=+t[0],tm=+t[1],td=+t[2];
@@ -67,22 +95,26 @@
       save();flush();
     },function(){st.inflight=null;}); // 네트워크 오류 등 → outbox에 남겨 두고 다음 기회에 재시도
   }
-  function pull(){
-    if(!S.reader||!S.member)return;
-    var key=S.theme.key,since=Date.now();
+  function pull(key){
+    key=key||S.home.key;
+    if(!S.reader||!S.member||!key)return;
+    var since=Date.now();
     rpc('my_reads',{p_reader:S.reader,p_theme:key}).then(function(list){
-      if(!S||S.theme.key!==key)return;
-      var rows=(list||[]).map(function(r){return {c:r.client_id,b:+r.book_id,d:r.read_on,t:Date.parse(r.created_at)||0};});
+      if(!S)return;
+      var rows=(list||[]).map(function(r){return {c:r.client_id,b:+r.book_id,d:r.read_on,t:Date.parse(r.created_at)||0,k:key};});
       function has(c){return rows.some(function(r){return r.c===c;});}
-      // 아직 서버에 못 보낸 변경, 조회 중에 생긴 기록·삭제를 위에 덮어씀
+      var mine=function(r){return r.k===key;};
+      // 아직 서버에 못 보낸 변경, 조회 중에 생긴 기록·삭제를 위에 덮어씀(이 주제 것만)
       S.outbox.forEach(function(op){
-        if(op.op==='add'){if(!has(op.c))rows.push({c:op.c,b:op.b,d:op.d,t:op.t||Date.now()});}
+        var bk=(S.byId[op.b]||{}).k;
+        if(op.op==='add'){if((bk===key||op.k===key)&&!has(op.c))rows.push({c:op.c,b:op.b,d:op.d,t:op.t||Date.now(),k:key});}
         else rows=rows.filter(function(r){return r.c!==op.c;});
       });
-      S.rows.forEach(function(r){if(r.t>=since&&!has(r.c))rows.push(r);});
+      S.rows.forEach(function(r){if(mine(r)&&r.t>=since&&!has(r.c))rows.push(r);});
       rows=rows.filter(function(r){return !S.gone[r.c];});
-      rows.sort(function(a,b){return a.t-b.t;});
-      S.rows=rows;save();paint();
+      S.rows=S.rows.filter(function(r){return !mine(r);}).concat(rows);
+      S.rows.sort(function(a,b){return a.t-b.t;});
+      save();paint();
     },function(){});
   }
   function verifyMember(){ // 저장된 비밀번호가 아직 유효한지 조용히 확인(오프라인이면 그대로 둠)
@@ -100,8 +132,9 @@
 
   /* ── 기록 · 취소 ── */
   function addRow(bid,day){
-    var row={c:hex(12),b:bid,d:day,t:Date.now()};
-    S.rows.push(row);S.outbox.push({op:'add',c:row.c,b:bid,d:day,t:row.t});
+    var k=(S.byId[bid]||{}).k||S.home.key;
+    var row={c:hex(12),b:bid,d:day,t:Date.now(),k:k};
+    S.rows.push(row);S.outbox.push({op:'add',c:row.c,b:bid,d:day,t:row.t,k:k});
     return row;
   }
   // 화면에서 빼고, 아직 안 보낸 추가면 outbox에서 지우기만·이미 보냈거나 보내는 중이면 삭제 요청
@@ -148,7 +181,7 @@
     // 삭제 요청이 아직 대기 중이면 취소만, 이미 보냈거나(보내는 중) 추가 자체를 안 보냈으면 다시 추가
     var del=S.outbox.filter(function(o){return o.op==='del'&&o.c===row.c;})[0];
     if(del&&S.inflight!==del)S.outbox=S.outbox.filter(function(o){return o!==del;});
-    else S.outbox.push({op:'add',c:row.c,b:row.b,d:row.d,t:row.t});
+    else S.outbox.push({op:'add',c:row.c,b:row.b,d:row.d,t:row.t,k:row.k});
     save();paint();flush();toast('기록을 되돌렸어요.');
   }
 
@@ -239,9 +272,11 @@
     el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
   }
   function paintCards(){
+    var mi=monthInfo();
     document.querySelectorAll('[data-rrow]').forEach(function(el){
       el.hidden=false;
-      var bid=+el.getAttribute('data-rrow'),n=count(bid),ld=lastDay(bid);
+      var bid=+el.getAttribute('data-rrow'),pre=mi?mi.year+'-'+pad(mi.month)+'-':'',n=0,ld=lastDay(bid);
+      S.rows.forEach(function(r){if(r.b===bid&&(!pre||r.d.indexOf(pre)===0))n++;});
       el.innerHTML='<span class="rmeta">'+(n?'이번 달 <b>'+n+'번</b> · 마지막 '+dayLabel(ld,true):'아직 안 읽었어요')+'</span>'+
         '<button type="button" class="rbtn" data-rbook="'+bid+'" data-src="card">📖 읽었어요</button>';
     });
@@ -254,47 +289,91 @@
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
   }
   function stack(n){var s=[],k=Math.min(n-1,5);for(var i=1;i<=k;i++){s.push((i*3)+'px '+(-i*3)+'px 0 -1px #FCFCF8');s.push((i*3)+'px '+(-i*3)+'px 0 0 #CBD0C1');}return s.length?'box-shadow:'+s.join(',')+';':'';}
-  function viewHead(title,sub){
-    return '<div class="rv-hd"><div class="em">'+esc(S.theme.emoji||'📚')+'</div><h2>'+title+'</h2>'+(sub?'<p>'+sub+'</p>':'')+'</div>';
+  function viewHead(title,sub,emoji){
+    return '<div class="rv-hd"><div class="em">'+esc(emoji||S.theme.emoji||'📚')+'</div><h2>'+title+'</h2>'+(sub?'<p>'+sub+'</p>':'')+'</div>';
+  }
+  function monthOf(label){var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(label||'');return m?{y:+m[1],m:+m[2]}:null;}
+  function themeName(t){var mo=monthOf(t.month_label);return (mo?mo.m+'월 ':'')+(t.ko||'');}
+  // 공개된 달 목록(최근 달 먼저). 이번 달(home)은 항상 맨 앞
+  function shelfThemes(){
+    var list=(S.pubs||[]).slice();
+    if(!list.some(function(t){return t.key===S.home.key;}))list.push({key:S.home.key,ko:S.home.ko,emoji:S.home.emoji,month_label:S.home.monthLabel});
+    list.sort(function(a,b){if(a.key===S.home.key)return -1;if(b.key===S.home.key)return 1;var x=monthOf(a.month_label),y=monthOf(b.month_label);return (y?y.y*12+y.m:-1)-(x?x.y*12+x.m:-1)||((a.sort||0)-(b.sort||0));});
+    return list;
+  }
+  // 고른 달의 책(이번 달은 이미 있음, 지난 달은 처음 고를 때 불러옴)
+  function shelfBooks(key){
+    if(key===S.home.key)return S.books;
+    var t=S.loaded[key];if(t&&t.books)return t.books;
+    if(!t||!t.loading){
+      S.loaded[key]={loading:true};
+      rpc('get_study_member',{p_key:key,p_code:S.code}).then(function(d){
+        if(!S)return;
+        if(d&&d.error==='member'){expire();return;}
+        S.loaded[key]={books:d&&d.ok?rememberBooks(key,d.books):[],failed:!(d&&d.ok)};
+        paintShelf();pull(key);
+      },function(){if(S){S.loaded[key]={failed:true};paintShelf();}});
+    }
+    return null;
   }
   function paintShelf(){
     var el=$('v-shelf');if(!el||!S.member||S.tab!=='shelf')return;
-    var mi=monthInfo(),met=metBooks(),total=S.rows.length;
-    var planks=[];for(var i=0;i<S.books.length;i+=3)planks.push(S.books.slice(i,i+3));
+    var themes=shelfThemes(),key=S.shelfKey||S.home.key,th=themes.filter(function(t){return t.key===key;})[0]||themes[0];
+    key=th.key;S.shelfKey=key;
+    var books=shelfBooks(key),isHome=key===S.home.key;
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
     var today=logicalToday(),yest=addDays(today,-1),isT=S.recDay===today,dn=isT?'오늘':'어제',sum=0;
     S.rows.forEach(function(r){if(r.d===S.recDay)sum++;});
-    el.innerHTML='<div class="rv">'+viewHead((mi?mi.month+'월 ':'')+esc(S.theme.ko||'')+' 책장',S.books.length+'권 중 <b>'+met+'권</b> 만났어요 · 모두 '+total+'번 읽었어요')+
-      '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
-        '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
-      '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
-      '<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){var n=count(b.id),dc=count(b.id,S.recDay);
+    var chips=themes.length>1?'<div class="rs-months" role="group" aria-label="책장 달 고르기">'+themes.map(function(t){
+      return '<button type="button" data-rshelf="'+esc(t.key)+'" aria-pressed="'+(t.key===key)+'">'+esc(t.emoji||'')+' '+esc(themeName(t))+(t.key===S.home.key?' <small>이번 달</small>':'')+'</button>';}).join('')+'</div>':'';
+    var body;
+    if(!books){
+      var lt=S.loaded[key]||{};
+      body=lt.failed?'<p class="rv-empty">책을 불러오지 못했어요. 잠시 뒤 다시 눌러 주세요.</p>':'<p class="rv-empty">책장을 불러오는 중…</p>';
+    }else{
+      var planks=[];for(var i=0;i<books.length;i+=3)planks.push(books.slice(i,i+3));
+      body='<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){var n=count(b.id),dc=count(b.id,S.recDay);
         return '<button type="button" class="rs-book'+(n?'':' unread')+'" data-rbook="'+b.id+'" data-src="shelf" aria-label="'+esc(b.title)+' '+dn+' 읽음 기록, '+dn+' '+dc+'번">'+
           '<span class="cv">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="" style="'+stack(n)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+
           (n?'':'<span class="pl" aria-hidden="true">+</span>')+(n?'<span class="x">×'+n+'</span>':'')+(dc?'<span class="td">'+dn+' '+dc+'</span>':'')+'</span>'+
           '<span class="lb">'+(n?'마지막 '+dayLabel(lastDay(b.id),true):'아직이에요')+'</span></button>';}).join('')+'</div>';}).join('')+'</div>'+
-      '<p class="rs-legend">많이 읽은 책일수록 뒤에 책장이 쌓여 두꺼워져요. 흐린 책은 아직 안 읽은 책이에요.</p>'+
+        '<p class="rs-legend">'+(isHome?'많이 읽은 책일수록 뒤에 책장이 쌓여 두꺼워져요. 흐린 책은 아직 안 읽은 책이에요.':'지난 달 책도 다시 읽으면 표지를 눌러 기록해요. 이번 달 통계에 함께 들어가요.')+'</p>';
+    }
+    el.innerHTML='<div class="rv">'+chips+
+      viewHead(esc(themeName(th))+' 책장',books?books.length+'권 중 <b>'+met(books)+'권</b> 만났어요 · 모두 '+themeTotal(books)+'번 읽었어요':'',th.emoji)+
+      '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
+        '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
+      '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
-      (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(이번 달 책 아님)'};
+      (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(지난 달 책)'};
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
         :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
       '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 홈 화면에 추가</button>'+
       '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
+    var on=el.querySelector('.rs-months [aria-pressed="true"]');if(on&&on.scrollIntoView&&S.shelfScroll){try{on.scrollIntoView({block:'nearest',inline:'center'});}catch(e){}S.shelfScroll=false;}
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
-    var mi=monthInfo(),met=metBooks(),total=S.rows.length,rd=readDays();
+    var mi=monthInfo(),rows=monthRows(mi),total=rows.length,days={},homeIds={};
+    rows.forEach(function(r){days[r.d]=1;});
+    S.books.forEach(function(b){homeIds[b.id]=1;});
+    var past=rows.filter(function(r){return !homeIds[r.b];}).length;
+    function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
     var h='<div class="rv">'+viewHead((mi?mi.month+'월 ':'')+'읽기 통계','')+
       '<div class="rs-kpis">'+
-        '<div class="rs-kpi"><span class="k">만난 책</span><span class="v">'+met+'<small> / '+S.books.length+'권</small></span></div>'+
+        '<div class="rs-kpi"><span class="k">이번 달 책</span><span class="v">'+met(S.books)+'<small> / '+S.books.length+'권</small></span></div>'+
         '<div class="rs-kpi"><span class="k">총 읽기</span><span class="v">'+total+'<small> 번</small></span></div>'+
-        '<div class="rs-kpi"><span class="k">읽은 날</span><span class="v">'+rd+'<small>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</small></span></div>'+
-      '</div>';
-    if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">아직 기록이 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
+        '<div class="rs-kpi"><span class="k">읽은 날</span><span class="v">'+cntKeys(days)+'<small>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</small></span></div>'+
+      '</div>'+
+      (past?'<p class="rs-past">🔁 이 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+    if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
+    // 이번 달에 읽은 책들(지난 달 책 포함)
+    var readIds={};rows.forEach(function(r){readIds[r.b]=1;});
+    var readBooks=Object.keys(readIds).map(function(id){return S.byId[+id]||{id:+id,title:'(지난 달 책)',type:''};});
     // 가장 많이 반복한 책: 2번 이상 읽은 책 중 최다. 동점이면 모두 보여줌
-    var fmax=0;S.books.forEach(function(b){fmax=Math.max(fmax,count(b.id));});
-    var favs=fmax>=2?S.books.filter(function(b){return count(b.id)===fmax;}):[];
+    var fmax=0;readBooks.forEach(function(b){fmax=Math.max(fmax,cnt(b.id));});
+    var favs=fmax>=2?readBooks.filter(function(b){return cnt(b.id)===fmax;}):[];
     h+='<div class="rv-panel"><h3>가장 많이 반복한 책</h3>';
     if(!favs.length)h+='<p class="rv-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
     else if(favs.length===1){var fav=favs[0];
@@ -302,9 +381,10 @@
     else h+='<div class="favs">'+favs.map(function(b){return '<div>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+'</div>';}).join('')+'</div>'+
       '<div class="fx">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
     h+='</div>';
-    // 유형별 횟수(책의 유형 순서대로). 동점 1위는 모두 강조
-    var types=[],tc={};S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
-    S.rows.forEach(function(r){var b=S.byId[r.b];if(b){tc[b.type||'기타']++;}});
+    // 유형별 횟수(이번 달 책의 유형 순서 + 지난 달 책에만 있는 유형). 동점 1위는 모두 강조
+    var types=[],tc={};
+    S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
+    rows.forEach(function(r){var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
     var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||0;
     var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
     var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
@@ -313,7 +393,7 @@
       '<div class="insight">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
     // 날짜별 흐름(스터디 달 기준)
     if(mi){
-      var per=[],today=logicalToday();for(var d=1;d<=mi.days;d++){var ds=mi.year+'-'+pad(mi.month)+'-'+pad(d),n=0;S.rows.forEach(function(r){if(r.d===ds)n++;});per.push({d:d,ds:ds,n:n});}
+      var per=[],today=logicalToday();for(var d=1;d<=mi.days;d++){var ds=mi.year+'-'+pad(mi.month)+'-'+pad(d),n=0;rows.forEach(function(r){if(r.d===ds)n++;});per.push({d:d,ds:ds,n:n});}
       var pm=Math.max(3,Math.max.apply(null,per.map(function(p){return p.n;}))),W=320,H=84,bw=W/mi.days;
       var svg='<svg viewBox="0 0 '+W+' '+(H+14)+'" role="img" aria-label="'+mi.month+'월 날짜별 읽기 횟수"><line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#E2E5DA"/>'+
         '<text x="'+W+'" y="9" text-anchor="end" font-size="8" fill="#565E4E">최대 '+pm+'번</text>';
@@ -326,6 +406,7 @@
     }
     el.innerHTML=h+'</div>';
   }
+  function cntKeys(o){return Object.keys(o).length;}
   function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
@@ -351,24 +432,28 @@
       if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'),t.getAttribute('data-src')||'card');return;}
       if((t=e.target.closest('[data-rtab]'))){showTab(t.getAttribute('data-rtab'));return;}
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
+      if((t=e.target.closest('[data-rshelf]'))){S.shelfKey=t.getAttribute('data-rshelf');S.shelfScroll=true;paintShelf();if(S.onEvent)S.onEvent('shelf_month',{theme:S.shelfKey});return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     window.addEventListener('online',function(){if(S)flush();});
-    document.addEventListener('visibilitychange',function(){if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();verifyMember();}});
+    document.addEventListener('visibilitychange',function(){if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);verifyMember();}});
   }
 
   window.NaiteReading={
     getCode:getCode,setCode:setCode, // 입장 화면(index.html)에서 사용
     install:install,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,
     mount:function(o){
-      var books=(o.books||[]).map(function(b){return {id:+b.id,title:b.title,cover:b.cover,type:b.tier_label||'',tier:b.tier};});
-      var byId={};books.forEach(function(b){byId[b.id]=b;});
-      var code=getCode();
-      S={client:o.client,theme:o.theme||{},books:books,byId:byId,monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onExpired:o.onExpired||null,onLeave:o.onLeave||null,
-         reader:readerId(),code:code,member:!!code,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[]};
+      var code=getCode(),theme=o.theme||{};
+      S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onExpired:o.onExpired||null,onLeave:o.onLeave||null,
+         reader:readerId(),code:code,member:!!code,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
+         home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key};
+      S.books=rememberBooks(theme.key,o.books);
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
+      S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
+      // 공개된 달 목록(우리 책장 달 칩)
+      rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];paintShelf();},function(){});
       wire();
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
       var h=(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
