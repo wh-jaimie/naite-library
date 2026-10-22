@@ -36,7 +36,7 @@ CURRICULUM = [
  (1,"Dear Santa","Rod Campbell","플랩으로 산타의 선물을 여는 플랩북"),
  (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
  (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
- (4,"Santa Bruce","Ryan T. Higgins","투덜이 곰 브루스가 얼떨결에 산타가 되는 반전 유머"),
+ (4,"Olivia Helps with Christmas","Ian Falconer","산타를 기다리다 못해 크리스마스 준비를 \"돕겠다고\" 나서는 돼지 올리비아"),
  (5,"Bear Stays Up for Christmas","Karma Wilson","잠 많은 곰이 친구들과 크리스마스를 준비하는 따뜻한 이야기"),
 ]),
 ("🍎","Food","음식",[

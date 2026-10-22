@@ -117,7 +117,7 @@ LINKS = {
   "Dear Santa": "",
   "Pick a Pine Tree": "",
   "Little Blue Truck's Christmas": "",
-  "Santa Bruce": "",
+  "Olivia Helps with Christmas": "",
   "Bear Stays Up for Christmas": "",
   # 🎶 노래·마더구스
   "The Wheels on the Bus": "",

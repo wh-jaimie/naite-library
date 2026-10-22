@@ -72,7 +72,8 @@ _AR = {
  "Creepy Carrots!": 3.1, "Skeleton Hiccups": 1.9,
  "Pick a Pine Tree": 2.4,
  "Little Blue Truck's Christmas": 1.7, "Little Blue Trucks Christmas": 1.7,
- "Santa Bruce": 2.6, "Bear Stays Up for Christmas": 2.9,
+ "Olivia Helps with Christmas": 2.4,  # AR BL 2.4 (도서관 목록, Quiz 114748)
+ "Bear Stays Up for Christmas": 2.9,
  "Walking Through the Jungle": 1.5, "Polar Bear, Polar Bear, What Do You Hear?": 1.5,
  "There's a Wocket in My Pocket!": 1.9, "We're Going on a Bear Hunt": 1.9,
  "Llama Llama Misses Mama": 2.4, "Do You Want to Be My Friend?": 0.9,
