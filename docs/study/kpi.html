@@ -214,6 +214,22 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     days.forEach(function(k,i){if(i%every===0)s+='<text x="'+((i+.5)*bw)+'" y="'+(H+14)+'" text-anchor="middle" font-size="10" fill="#565E4E">'+md(k)+'</text>';});
     return '<div class="chart">'+s+'</svg></div>';
   }
+  // 누적 막대: series=[{name,color,vals[]}] — 날짜마다 출처별 사람 수를 쌓아서 그림
+  function stackChart(days,series){
+    var narrow=window.innerWidth<700,tot=days.map(function(_,i){return series.reduce(function(a,s){return a+s.vals[i];},0);});
+    var max=Math.max.apply(null,tot.concat([3])),W=narrow?380:700,H=narrow?170:150,bw=W/days.length,every=days.length>20?7:(days.length>10?(narrow?3:2):1);
+    var s='<svg viewBox="0 0 '+W+' '+(H+20)+'" role="img"><line x1="0" y1="16" x2="'+W+'" y2="16" stroke="#E2E5DA" stroke-dasharray="3 4"/><text x="'+W+'" y="12" text-anchor="end" font-size="10" fill="#565E4E">'+max+'명</text>';
+    days.forEach(function(k,i){var x=i*bw,w=Math.max(bw-3,1),y=H,tip=md(k)+' · 합계 '+tot[i]+'명';
+      series.forEach(function(se){if(se.vals[i])tip+=' / '+se.name+' '+se.vals[i];});
+      s+='<g><title>'+esc(tip)+'</title><rect class="hit" x="'+x+'" y="0" width="'+bw+'" height="'+H+'"/>';
+      series.forEach(function(se){var v=se.vals[i];if(!v)return;var bh=v/max*(H-16);y-=bh;s+='<rect class="bar" x="'+(x+1.5)+'" y="'+y+'" width="'+w+'" height="'+bh+'" fill="'+se.color+'"/>';});
+      if(tot[i]&&days.length<=(narrow?8:14))s+='<text x="'+(x+bw/2)+'" y="'+(y-3)+'" text-anchor="middle" font-size="10" fill="#23291F">'+tot[i]+'</text>';
+      s+='</g>';});
+    s+='<line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#CBD0C1"/>';
+    days.forEach(function(k,i){if(i%every===0)s+='<text x="'+((i+.5)*bw)+'" y="'+(H+14)+'" text-anchor="middle" font-size="10" fill="#565E4E">'+md(k)+'</text>';});
+    var lg='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:.8rem">'+series.map(function(se){return '<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:'+se.color+';margin-right:5px;vertical-align:-1px"></i>'+esc(se.name)+'</span>';}).join('')+'</div>';
+    return '<div class="chart">'+s+'</svg>'+lg+'</div>';
+  }
   function hbars(rows,base){ // rows: [label, value, goal?]
     var max=base||Math.max.apply(null,rows.map(function(r){return r[1];}).concat([1]));
     return '<div class="bars">'+rows.map(function(r){var pct=max?Math.round(r[1]/max*100):0;
@@ -310,6 +326,18 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     h+='<div class="card"><h3>🧭 방문자 출처 <span class="hint">사람마다 처음 들어온 경로</span></h3>'+table(['출처','방문자','참여 버튼 누른 사람','참여율'],srcRows,1)+
       '<p class="hint">출처는 링크의 <b>?from=</b> 꼬리표 → 없으면 넘어온 사이트 → 둘 다 없으면 직접이에요. 인스타 앱은 넘어온 사이트를 알려주지 않는 경우가 많아서, 인스타 링크에는 <b>?from=insta</b>, 블로그 링크에는 <b>?from=blog</b>를 붙여 주세요(어느 페이지 주소든 돼요).'+
       (noSrc?' 출처 기록 전(2026-10-16 이전) 방문자 '+noSrc+'명은 표에서 빠져요.':'')+'</p></div>';
+    // 날짜별 출처: 그날 처음 본 페이지의 출처로 사람(세션)을 셈. 많은 출처 5개 + 기타, 기록 전(10/16 이전)은 회색
+    var dayFirst={};a.pv.slice().reverse().forEach(function(e){if(!e.session_id)return;var k=dstr(e.created_at)+'|'+e.session_id;if(!(k in dayFirst))dayFirst[k]=(e.meta&&e.meta.src)?srcName(e.meta.src):'출처 기록 전';});
+    var tot={};Object.keys(dayFirst).forEach(function(k){var v=dayFirst[k];if(v!=='출처 기록 전')tot[v]=(tot[v]||0)+1;});
+    var top=Object.keys(tot).sort(function(x,y){return tot[y]-tot[x];}).slice(0,5);
+    var PAL=['#2F6E58','#B87343','#4F9A72','#D1965C','#7A6BA8'],names=top.concat(Object.keys(tot).length>5?['🔸 기타']:[]).concat(Object.keys(dayFirst).some(function(k){return dayFirst[k]==='출처 기록 전';})?['출처 기록 전']:[]);
+    var grid={};R.days.forEach(function(d){grid[d]={};});
+    Object.keys(dayFirst).forEach(function(k){var d=k.split('|')[0];if(!grid[d])return;var v=dayFirst[k];var n=(v==='출처 기록 전'||top.indexOf(v)>=0)?v:'🔸 기타';grid[d][n]=(grid[d][n]||0)+1;});
+    var series=names.map(function(n,i){return {name:n,color:n==='출처 기록 전'?'#D9DCD2':(n==='🔸 기타'?'#A9B0A0':PAL[i]),vals:R.days.map(function(d){return grid[d][n]||0;})};});
+    var drows=R.days.slice().reverse().filter(function(d){return cnt(grid[d]);}).map(function(d){var sum=0;var cells=names.map(function(n){var v=grid[d][n]||0;sum+=v;return v||'·';});return [md(d)].concat(cells).concat(['<b>'+sum+'</b>']);});
+    h+='<div class="card"><h3>📅 날짜별 방문자 출처 <span class="hint">그날 처음 들어온 경로 · 사람 수</span></h3>'+(names.length?stackChart(R.days,series):'<p class="empty">아직 데이터가 없어요.</p>')+
+      '<details class="raw" style="margin-top:12px"><summary>날짜별 표로 보기</summary><div style="margin-top:10px">'+table(['날짜'].concat(names.map(esc)).concat(['합계']),drows,1)+'</div></details>'+
+      '<p class="hint">같은 사람이 다른 날 다시 오면 그날 출처로 또 세요(위 출처 표는 기간 전체에서 처음 들어온 경로로 한 번만 세요).</p></div>';
     var srcs=countBy(X.cur.filter(function(e){return e.type==='join_click';}),function(e){return srcName((e.meta&&e.meta.from)||(e.meta&&e.meta.page)||'기타');});
     var pages={},pageV={};a.pv.forEach(function(e){var p=pageOf(e);pages[p]=(pages[p]||0)+1;(pageV[p]=pageV[p]||{})[e.session_id]=1;});
     // 어느 화면에서 눌렀나(meta.page): 참여 안내 화면 / 나이테 120 — 출처와 별개
