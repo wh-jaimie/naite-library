@@ -1,7 +1,7 @@
 -- 메인(랜딩) 화면용 공개 집계 — "이번 달 5권"과 "지금 우리 방" 숫자
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전(idempotent).
 -- 새 테이블은 만들지 않음(함수만). 회원 개인 정보·기기 ID는 돌려주지 않고 합계만 반환.
---   reads   : 이번 달 주제 책에 남긴 읽기 기록 수(기록앱 표지 탭 합계)
+--   reads   : 이번 달(한국 날짜 기준) 남긴 읽기 기록 수 — 지난 달 책 다시 읽기도 포함(기록 앱 통계와 같은 기준)
 --   readers : 이번 달 기록을 남긴 기기 수
 --   books   : 이번 달 5권(제목·작가·표지·유형) — 나이테 120에 이미 공개된 정보만
 --   next    : 다음 주제와 5권(다음 달 책 미리보기용, 화면에서 15일 이후에만 표시)
@@ -10,6 +10,8 @@ create or replace function public.landing_stats()
 returns jsonb
 language plpgsql stable security definer set search_path = public as $$
 declare v_key text; v_sort int; v_next text; v_out jsonb;
+  v_from date := date_trunc('month', (now() at time zone 'Asia/Seoul'))::date;
+  v_to   date := (date_trunc('month', (now() at time zone 'Asia/Seoul')) + interval '1 month')::date;
 begin
   select s.current_theme into v_key from public.settings s where s.id = 1;
   if v_key is null then return jsonb_build_object('ok', false); end if;
@@ -19,8 +21,8 @@ begin
     'ok', true,
     'key', t.key, 'emoji', t.emoji, 'ko', t.ko, 'en', t.en,
     'month_label', coalesce(c.month_label, ''),
-    'reads',   (select count(*) from public.reading_logs r where r.theme_key = v_key),
-    'readers', (select count(distinct r.reader) from public.reading_logs r where r.theme_key = v_key),
+    'reads',   (select count(*) from public.reading_logs r where r.read_on >= v_from and r.read_on < v_to),
+    'readers', (select count(distinct r.reader) from public.reading_logs r where r.read_on >= v_from and r.read_on < v_to),
     'books', (select coalesce(jsonb_agg(jsonb_build_object(
                 'title', b.title, 'author', b.author, 'cover', b.cover, 'tier_label', b.tier_label)
                 order by b.sort), '[]'::jsonb)
