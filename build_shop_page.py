@@ -159,6 +159,13 @@ a{color:var(--tealD)}
 .buy{display:block;text-align:center;text-decoration:none;font-weight:800;font-size:.82rem;border-radius:9px;padding:8px 6px;margin-top:6px}
 .buy.cp{background:var(--coral);color:#fff}
 .buy.find{border:1px solid var(--line);color:var(--soft);background:#fff}
+.copy{display:block;width:100%;margin-top:5px;border:0;background:none;color:var(--tealD);font:inherit;font-weight:800;font-size:.78rem;padding:4px;cursor:pointer}
+.copy.ok{color:var(--coral)}
+.joinbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:22px 18px;text-align:center;margin:0 0 28px}
+.joinbox h2{font-family:'Gowun Batang',serif;font-size:1.2rem;margin:0;line-height:1.35;word-break:keep-all}
+.joinbox p{color:var(--soft);font-size:.88rem;margin:8px 0 0;word-break:keep-all}
+.joinbox a{display:inline-block;margin-top:14px;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);padding:13px 22px;border-radius:12px}
+.joinbox small{display:block;color:var(--soft);font-size:.76rem;margin-top:7px}
 .empty{padding:40px 0;text-align:center;color:var(--soft)}
 .foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
@@ -166,7 +173,7 @@ a{color:var(--tealD)}
 <div class="wrap">
   <div class="top"><a class="back" href="./">← 나이테</a></div>
   <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>🇰🇷 국내 인기 책장</h1>
-    <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. (나이테 120은 매달 함께 읽는 맛보기·스터디용이에요.)</p></div>
+    <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</p></div>
 </div>
 <div class="bar"><div class="wrap">
   <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select></div>
@@ -176,6 +183,7 @@ a{color:var(--tealD)}
   <div class="chips" id="f-more"><span class="lb">더보기</span></div>
 </div></div>
 <div class="wrap"><div class="count" id="count"></div><div class="grid" id="grid"></div>
+<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
 <p class="foot" id="foot"></p></div>
 <script>
 var DATA=__DATA__;
@@ -218,7 +226,8 @@ function card(it){
     '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
     (bd?'<div class="bd">'+bd+'</div>':'')+price+
     (L?'<a class="buy cp" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.en)+'">🛒 쿠팡에서 보기</a>':
-       '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+'</div></article>';}
+       '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+
+    '<button type="button" class="copy" data-copy="'+esc(it.en)+'">📋 제목 복사</button></div></article>';}
 function paint(){
   document.querySelectorAll('#f-age .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.age);});
   document.querySelectorAll('#f-kind .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.kind);});
@@ -245,6 +254,19 @@ paint();
 document.addEventListener('click',function(e){var a=e.target.closest('a.buy');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
   fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
     body:JSON.stringify({type:a.classList.contains('cp')?'buy_click':'shop_search_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
+</script>
+<script>
+// 📋 제목 복사(영어 원제) — 웬디북·동방북스 등 다른 서점 검색용
+function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t);
+  return new Promise(function(ok,no){try{var x=document.createElement('textarea');x.value=t;x.setAttribute('readonly','');x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.select();var r=document.execCommand('copy');x.remove();r?ok():no();}catch(e){no(e);}});}
+function ev(type,meta){try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+  fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:type,session_id:sid,path:location.pathname,meta:meta}),keepalive:true}).catch(function(){});}catch(x){}}
+document.addEventListener('click',function(e){var b=e.target.closest('button.copy');if(!b)return;var t=b.dataset.copy;
+  copyText(t).then(function(){b.textContent='복사됨 ✓ 서점에서 붙여넣기 하세요';b.classList.add('ok');setTimeout(function(){b.textContent='📋 제목 복사';b.classList.remove('ok');},1800);},
+    function(){b.textContent=t;});
+  ev('title_copy',{title:t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'});});
+// 스터디 참여 클릭(join_click) — 메인·나이테 120과 같은 방식
+document.getElementById('joinBtn').addEventListener('click',function(){ev('join_click',{page:'국내 인기 책장',from:window.NAITE_SRC||'direct'});});
 </script>
 <script src="track.js" data-page="국내 인기 책장"></script>
 </body></html>"""
