@@ -68,7 +68,7 @@ AUTHORS = {  # en(검색 제목) → [작가(한글 표기)]
  "Swimmy": ["레오 리오니"], "The Tale of Peter Rabbit": ["베아트릭스 포터"], "The Giving Tree": ["쉘 실버스타인"],
  "The Dot": ["피터 레이놀즈"], "Kitten's First Full Moon": ["케빈 헹크스"], "Where Is the Green Sheep": ["멤 폭스"],
  "It's Okay to Be Different": ["토드 파"], "I Will Not Ever Never Eat a Tomato": ["로렌 차일드"],
- "Where's Wally? 세트": ["마틴 핸드포드"], "Pete the Cat: I Love My White Shoes": ["에릭 리트윈", "제임스 딘"],
+ "Where's Wally? 세트": ["마틴 핸드포드"], "Fireworks": ["매슈 버제스", "카티아 치엔"], "Pete the Cat: I Love My White Shoes": ["에릭 리트윈", "제임스 딘"],
 }
 
 def clean_note(note):

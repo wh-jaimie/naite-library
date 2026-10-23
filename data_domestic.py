@@ -106,6 +106,11 @@ DOMESTIC_ALL = [
 
 # 국내 리스트 비고에서 뽑은 수상 정보 (norm 제목 -> 배지 라벨)
 AWARDS_EXTRA = {
+"the gardener":"🏅 칼데콧 아너 1998",
+"there is a bird on your head":"🎖️ 가이젤상 2008·2009 외 (시리즈)",
+"mr putter and tabby":"🎖️ 가이젤 아너 2015 (Turn the Page)",
+"henry and mudge":"🎖️ 가이젤상 2006 (The Great Grandpas)",
+"fireworks":"🥇 칼데콧 메달 2026",
 "they all saw a cat":"🏅 칼데콧 아너 2017",
 "hot dog":"🥇 칼데콧 메달 2023",
 "i want my hat back":"🎖️ 가이젤 아너 2012",

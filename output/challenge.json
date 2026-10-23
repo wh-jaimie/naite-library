@@ -40,7 +40,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.1
+     "ar": 3.8
     },
     {
      "gid": 3,
@@ -76,7 +76,7 @@
      "award": "🏅 칼데콧 아너 2011",
      "kr_popular": false,
      "format": null,
-     "ar": 2.7
+     "ar": 2.2
     },
     {
      "gid": 5,
@@ -94,7 +94,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 2.5
+     "ar": 2.0
     }
    ]
   },
@@ -174,7 +174,7 @@
      "award": "🏅 칼데콧 아너 2004",
      "kr_popular": true,
      "format": null,
-     "ar": 1.3
+     "ar": 0.9
     },
     {
      "gid": 10,
@@ -192,7 +192,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.1
+     "ar": 3.8
     }
    ]
   },
@@ -236,7 +236,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.4
+     "ar": 2.6
     },
     {
      "gid": 93,
@@ -254,7 +254,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.7
+     "ar": 1.1
     },
     {
      "gid": 94,
@@ -290,7 +290,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.9
+     "ar": 2.7
     }
    ]
   },
@@ -370,7 +370,7 @@
      "award": "🎖️ 가이젤상 2014",
      "kr_popular": true,
      "format": null,
-     "ar": 1.3
+     "ar": 1.0
     },
     {
      "gid": 15,
@@ -388,7 +388,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 2.6
+     "ar": 2.7
     }
    ]
   },
@@ -486,7 +486,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.8
+     "ar": 2.2
     }
    ]
   },
@@ -566,7 +566,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.5
+     "ar": 1.2
     },
     {
      "gid": 25,
@@ -584,7 +584,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.5
+     "ar": 1.9
     }
    ]
   },
@@ -628,7 +628,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.4
+     "ar": 1.6
     },
     {
      "gid": 28,
@@ -682,7 +682,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.0
+     "ar": 2.8
     }
    ]
   },
@@ -762,7 +762,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.8
+     "ar": 1.1
     },
     {
      "gid": 35,
@@ -780,7 +780,7 @@
      "award": "🏅 칼데콧 아너 2019",
      "kr_popular": true,
      "format": null,
-     "ar": 2.5
+     "ar": 2.2
     }
    ]
   },
@@ -842,7 +842,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 2.0
+     "ar": 1.7
     },
     {
      "gid": 39,
@@ -860,7 +860,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.5
+     "ar": 2.0
     },
     {
      "gid": 40,
@@ -878,7 +878,7 @@
      "award": "🏅 칼데콧 아너 2005",
      "kr_popular": true,
      "format": null,
-     "ar": 2.2
+     "ar": 1.6
     }
    ]
   },
@@ -940,7 +940,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 1.3
+     "ar": 1.0
     },
     {
      "gid": 44,
@@ -1020,7 +1020,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.0
+     "ar": 2.6
     },
     {
      "gid": 48,
@@ -1056,7 +1056,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 2.9
+     "ar": 2.8
     },
     {
      "gid": 50,
@@ -1216,7 +1216,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 3.5
+     "ar": 2.8
     },
     {
      "gid": 58,
@@ -1270,7 +1270,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.5
+     "ar": 4.0
     }
    ]
   },
@@ -1368,7 +1368,7 @@
      "award": "🥇 칼데콧 메달 1963",
      "kr_popular": false,
      "format": null,
-     "ar": 2.7
+     "ar": 2.5
     }
    ]
   },
@@ -1430,7 +1430,7 @@
      "gid": 68,
      "id": "c68",
      "format": null,
-     "ar": 1.1
+     "ar": 1.2
     },
     {
      "gid": 69,
@@ -1448,7 +1448,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.7
+     "ar": 1.3
     },
     {
      "gid": 70,
@@ -1546,7 +1546,7 @@
      "award": "🏅 칼데콧 아너 2001",
      "kr_popular": false,
      "format": null,
-     "ar": 3.7
+     "ar": 2.3
     },
     {
      "gid": 75,
@@ -1662,7 +1662,7 @@
      "award": "🏅 칼데콧 아너 1964",
      "kr_popular": true,
      "format": null,
-     "ar": 3.2
+     "ar": 2.9
     }
    ]
   },
@@ -1706,7 +1706,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 2.9
+     "ar": 2.3
     },
     {
      "gid": 83,
@@ -1804,7 +1804,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.0
+     "ar": 3.7
     },
     {
      "gid": 88,
@@ -1822,7 +1822,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.3
+     "ar": 3.5
     },
     {
      "gid": 89,
@@ -1840,7 +1840,7 @@
      "award": "🏅 칼데콧 아너 2013",
      "kr_popular": true,
      "format": null,
-     "ar": 3.1
+     "ar": 2.3
     },
     {
      "gid": 90,
@@ -1858,7 +1858,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 1.9
+     "ar": 1.3
     }
    ]
   },
@@ -1920,7 +1920,7 @@
      "award": "",
      "kr_popular": true,
      "format": null,
-     "ar": 1.5
+     "ar": 2.1
     },
     {
      "gid": 99,
@@ -1938,7 +1938,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.9
+     "ar": 2.1
     },
     {
      "gid": 100,
@@ -1956,7 +1956,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 1.9
+     "ar": 1.3
     }
    ]
   },
@@ -2036,7 +2036,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.2
+     "ar": 2.3
     },
     {
      "tier": 5,
@@ -2054,7 +2054,7 @@
      "gid": 105,
      "id": "c105",
      "format": null,
-     "ar": 3.2
+     "ar": 3.3
     }
    ]
   },
@@ -2116,7 +2116,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.9
+     "ar": 2.8
     },
     {
      "gid": 109,
@@ -2152,7 +2152,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 0.9
+     "ar": 1.1
     }
    ]
   },
@@ -2196,7 +2196,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 2.5
+     "ar": 2.9
     },
     {
      "gid": 113,
@@ -2229,10 +2229,10 @@
      "id": "c114",
      "pop_rank": 1,
      "lib_loans": 131,
-     "award": "🎖️ 가이젤상 2012",
+     "award": "🎖️ 가이젤 아너 2012",
      "kr_popular": true,
      "format": null,
-     "ar": 1.6
+     "ar": 1.0
     },
     {
      "gid": 115,
@@ -2250,7 +2250,7 @@
      "award": "🏅 칼데콧 아너 2017",
      "kr_popular": true,
      "format": null,
-     "ar": 2.1
+     "ar": 1.9
     }
    ]
   },
@@ -2294,7 +2294,7 @@
      "award": "",
      "kr_popular": false,
      "format": null,
-     "ar": 3.5
+     "ar": 2.7
     },
     {
      "gid": 118,
@@ -2309,7 +2309,7 @@
      "id": "c118",
      "pop_rank": 0,
      "lib_loans": 0,
-     "award": "",
+     "award": "🎖️ 가이젤 아너 2007",
      "kr_popular": false,
      "format": null,
      "ar": 0.7
@@ -2330,7 +2330,7 @@
      "award": "🏅 칼데콧 아너 2015",
      "kr_popular": true,
      "format": null,
-     "ar": 2.6
+     "ar": 1.9
     },
     {
      "gid": 120,

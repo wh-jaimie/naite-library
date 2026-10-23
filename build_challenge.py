@@ -223,13 +223,15 @@ HONOR={'madeline':1940,'blueberries for sal':1949,'swimmy':1964,'strega nona':19
 'they all saw a cat':2017,'interrupting chicken':2011}
 MEDAL['hot dog']=2023
 NEWBERY={'last stop on market street':2016}
-GEISEL={'the watermelon seed':2014,'i want my hat back':2012}
+GEISEL={'the watermelon seed':2014}  # 가이젤 메달
+GEISEL_HONOR={'i want my hat back':2012,'not a box':2007}  # 가이젤 아너 (ALA 명단·웬디북 수상작 자료로 확인 2026-10-23)
 # 영국 케이트 그리너웨이 메달(그림책 일러스트 최고상)
 GREENAWAY={'mr gumpys outing':1970,'this is not my hat':2014}
 def award(title):
     n=norm(title); parts=[]
     if n in NEWBERY: parts.append('🎖️ 뉴베리 메달 '+str(NEWBERY[n]))
     if n in GEISEL: parts.append('🎖️ 가이젤상 '+str(GEISEL[n]))
+    if n in GEISEL_HONOR: parts.append('🎖️ 가이젤 아너 '+str(GEISEL_HONOR[n]))
     if n in MEDAL: parts.append('🥇 칼데콧 메달 '+str(MEDAL[n]))
     if n in HONOR: parts.append('🏅 칼데콧 아너 '+str(HONOR[n]))
     if n in GREENAWAY: parts.append('🥇 그리너웨이 메달 '+str(GREENAWAY[n]))
