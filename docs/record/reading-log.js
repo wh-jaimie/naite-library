@@ -285,7 +285,10 @@
     var el=$('rtabs');if(!el)return;
     var T={study:['📚','이번 달 자료'],shelf:['🗂️','우리 책장'],stats:['📊','읽기 통계']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
-      return '<button type="button" role="tab" class="rtab" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
+      return '<button type="button" role="tab" class="rtab" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+
+      // 앱 밖 주요 메뉴(나이테 공개 페이지로 이동)
+      '<a class="rtab go" href="../challenge.html"><span class="ic" aria-hidden="true">🎯</span>나이테 120</a>'+
+      '<a class="rtab go" href="../domestic.html"><span class="ic" aria-hidden="true">🛒</span>인기 책장</a></div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
   }
   function stack(n){var s=[],k=Math.min(n-1,5);for(var i=1;i<=k;i++){s.push((i*3)+'px '+(-i*3)+'px 0 -1px #FCFCF8');s.push((i*3)+'px '+(-i*3)+'px 0 0 #CBD0C1');}return s.length?'box-shadow:'+s.join(',')+';':'';}
