@@ -133,7 +133,9 @@ a{color:var(--tealD)}
 .search input{flex:1;min-width:0;border:1px solid var(--line);background:#fff;font:inherit;font-size:.95rem;padding:10px 12px;border-radius:11px;color:#23291F}
 .search select{flex:none;max-width:104px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;padding:8px;border-radius:11px;color:#23291F}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.quick{margin-top:8px}
+.quick{margin-top:8px;gap:5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.quick .chip{padding:6px 9px}
 .fbtn{flex:none;border:1px solid var(--tealD);background:var(--surface);color:var(--tealD);font:inherit;font-size:.85rem;font-weight:800;padding:8px 12px;border-radius:11px;cursor:pointer}
 .fbtn b{display:inline-block;min-width:18px;margin-left:4px;background:var(--coral);color:#fff;border-radius:999px;font-size:.72rem;padding:0 5px}
 .fbtn b[hidden],.morea[hidden],.chip[hidden]{display:none}
@@ -166,7 +168,7 @@ a{color:var(--tealD)}
 .chips .lb{flex:none;font-size:.75rem;color:var(--soft);font-weight:800;align-self:center;padding:0 2px 0 4px}
 .count{font-size:.85rem;color:var(--soft);margin:8px 2px}
 .count button{border:0;background:none;color:var(--coral);font:inherit;font-weight:800;cursor:pointer;padding:0 0 0 6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding-bottom:40px}
+.grid{display:grid;grid-auto-flow:row dense;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding-bottom:40px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0}
 .cv{position:relative;aspect-ratio:3/4;background:#EBEDE3}
 .cv img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
@@ -193,6 +195,7 @@ a{color:var(--tealD)}
 .joinbox p{color:var(--soft);font-size:.88rem;margin:8px 0 0;word-break:keep-all}
 .joinbox a{display:inline-block;margin-top:14px;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);padding:13px 22px;border-radius:12px}
 .joinbox small{display:block;color:var(--soft);font-size:.76rem;margin-top:7px}
+.grid .joinbox{grid-column:1/-1;margin:4px 0;background:#F3EEE4;border-color:#E7DCCB}
 .empty{padding:40px 0;text-align:center;color:var(--soft)}
 .foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
@@ -218,7 +221,7 @@ a{color:var(--tealD)}
 </aside>
 <div class="dim" id="dim" hidden></div>
 <main><div class="count" id="count"></div><div class="grid" id="grid"></div>
-<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
+<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a class="joinlink" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
 <p class="foot" id="foot"></p></main></div></div>
 <script>
 var DATA=__DATA__;
@@ -236,6 +239,9 @@ function chip(g,arr,multi){document.querySelectorAll('[data-g="'+g+'"]').forEach
 // 작가: 100권 안에 2권 이상인 작가(많은 순)
 var AC={};DATA.items.forEach(function(it){it.authors.forEach(function(a){AC[a]=(AC[a]||0)+1;});});
 var AUTH=[['all','전체']].concat(Object.keys(AC).filter(function(a){return AC[a]>=2;}).sort(function(a,b){return AC[b]-AC[a]||a.localeCompare(b);}).map(function(a){return [a,a+' '+AC[a]];}));
+// 나이 칩에 권수(작가 칩처럼 전체 100권 기준, 나이 범위가 겹치는 책)
+AGES=AGES.map(function(a){if(a[0]==='all')return a;var p=a[0].split('-'),lo=+p[0],hi=p[1]?+p[1]:99;
+  var n=DATA.items.filter(function(it){return it.age&&!(it.age[1]<lo||it.age[0]>hi);}).length;return [a[0],a[1]+' '+n];});
 chip('age',AGES);chip('kind',KINDS);chip('price',PRICES);chip('more',MORE,true);chip('author',AUTH);
 // 작가는 처음엔 6명(전체 포함 7칸)만, 나머지는 더보기
 var AUTH_N=7,authOpen=false;
@@ -288,7 +294,12 @@ function paint(){
   document.getElementById('fdone').textContent=list.length+'권 보기';
   document.getElementById('count').innerHTML=list.length+'권'+(filtered?' <button id="reset">필터 지우기</button>':'');
   var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
-  document.getElementById('grid').innerHTML=list.length?list.map(card).join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
+  var cards=list.map(card);
+  // 스터디 참여 카드: 6권 뒤(목록이 짧으면 맨 끝) — 맨 아래까지 안 내려가도 보이게
+  if(cards.length)cards.splice(Math.min(6,cards.length),0,JOIN_CARD);
+  document.getElementById('grid').innerHTML=list.length?cards.join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
+var JOIN_CARD='<div class="joinbox"><h2>📚 고르는 것보다 어려운 건, 꾸준히 읽어주기</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p>'+
+  '<a class="joinlink" data-at="list" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>';
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
 document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
@@ -314,7 +325,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button.cop
     function(){b.textContent=t;});
   ev('title_copy',{title:t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'});});
 // 스터디 참여 클릭(join_click) — 메인·나이테 120과 같은 방식
-document.getElementById('joinBtn').addEventListener('click',function(){ev('join_click',{page:'국내 인기 책장',from:window.NAITE_SRC||'direct'});});
+document.addEventListener('click',function(e){var a=e.target.closest('a.joinlink');if(!a)return;ev('join_click',{page:'국내 인기 책장',from:window.NAITE_SRC||'direct',at:a.dataset.at||'bottom'});});
 </script>
 <script src="track.js" data-page="국내 인기 책장"></script>
 </body></html>"""
