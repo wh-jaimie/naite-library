@@ -130,10 +130,37 @@ a{color:var(--tealD)}
 .hero p{color:var(--soft);margin:6px 0 0;font-size:.92rem;max-width:62ch}
 .bar{position:sticky;top:0;z-index:20;background:rgba(228,231,221,.95);backdrop-filter:blur(8px);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:6px}
 .search{display:flex;gap:8px}
-.search input{flex:1;border:1px solid var(--line);background:#fff;font:inherit;font-size:.95rem;padding:10px 12px;border-radius:11px;color:#23291F}
-.search select{border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;padding:8px;border-radius:11px;color:#23291F}
-.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:8px;padding-bottom:2px}
-.chips::-webkit-scrollbar{display:none}
+.search input{flex:1;min-width:0;border:1px solid var(--line);background:#fff;font:inherit;font-size:.95rem;padding:10px 12px;border-radius:11px;color:#23291F}
+.search select{flex:none;max-width:104px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;padding:8px;border-radius:11px;color:#23291F}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.quick{margin-top:8px}
+.fbtn{flex:none;border:1px solid var(--tealD);background:var(--surface);color:var(--tealD);font:inherit;font-size:.85rem;font-weight:800;padding:8px 12px;border-radius:11px;cursor:pointer}
+.fbtn b{display:inline-block;min-width:18px;margin-left:4px;background:var(--coral);color:#fff;border-radius:999px;font-size:.72rem;padding:0 5px}
+.fbtn b[hidden],.morea[hidden],.chip[hidden]{display:none}
+.layout{display:block}
+.fp .grp{padding:12px 0;border-bottom:1px solid var(--line)}
+.fp .grp:last-of-type{border-bottom:0}
+.fp h3{font-family:'Noto Sans KR',sans-serif;font-size:.8rem;font-weight:800;color:var(--soft);margin:0 0 8px}
+.fp .morea{border:0;background:none;color:var(--coral);font:inherit;font-size:.78rem;font-weight:800;cursor:pointer;padding:6px 4px}
+.fp .sh{display:none}
+.fp .done{display:none}
+/* 모바일: 필터는 아래에서 올라오는 시트 */
+@media (max-width:899px){
+  .fp{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:82vh;overflow:auto;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);padding:6px 18px 18px;transform:translateY(105%);transition:transform .22s;visibility:hidden}
+  .fp.open{transform:none;visibility:visible}
+  .fp .sh{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);padding:10px 0 6px;z-index:1}
+  .fp .sh b{font-size:1rem}
+  .fp .sh button{border:0;background:none;font:inherit;color:var(--soft);font-size:1.3rem;cursor:pointer}
+  .fp .done{display:block;width:100%;margin-top:12px;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;padding:12px;border-radius:12px;cursor:pointer}
+  .fp .g-age{display:none}
+  .dim{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:49}
+}
+/* PC: 왼쪽 사이드바 + 오른쪽 책 목록 */
+@media (min-width:900px){
+  .layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:26px;align-items:start}
+  .fp{position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:4px 16px 10px}
+  .fbtn,.quick,.dim{display:none!important}
+}
 .chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;padding:6px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--tealD);border-color:var(--tealD);color:#fff}
 .chips .lb{flex:none;font-size:.75rem;color:var(--soft);font-weight:800;align-self:center;padding:0 2px 0 4px}
@@ -172,19 +199,27 @@ a{color:var(--tealD)}
 </style></head><body>
 <div class="wrap">
   <div class="top"><a class="back" href="./">← 나이테</a></div>
-  <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>🇰🇷 국내 인기 책장</h1>
+  <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>국내 인기 책장</h1>
     <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</p></div>
 </div>
 <div class="bar"><div class="wrap">
-  <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select></div>
-  <div class="chips" id="f-age"><span class="lb">나이</span></div>
-  <div class="chips" id="f-kind"><span class="lb">종류</span></div>
-  <div class="chips" id="f-author"><span class="lb">작가</span></div>
-  <div class="chips" id="f-more"><span class="lb">더보기</span></div>
+  <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select><button type="button" class="fbtn" id="fopen">필터<b id="fcnt" hidden></b></button></div>
+  <div class="chips quick" data-g="age"></div>
 </div></div>
-<div class="wrap"><div class="count" id="count"></div><div class="grid" id="grid"></div>
+<div class="wrap"><div class="layout">
+<aside class="fp" id="fp" aria-label="필터">
+  <div class="sh"><b>필터</b><button type="button" id="fclose" aria-label="닫기">✕</button></div>
+  <div class="grp g-age"><h3>나이</h3><div class="chips" data-g="age"></div></div>
+  <div class="grp"><h3>종류</h3><div class="chips" data-g="kind"></div></div>
+  <div class="grp"><h3>가격</h3><div class="chips" data-g="price"></div></div>
+  <div class="grp"><h3>골라 보기</h3><div class="chips" data-g="more"></div></div>
+  <div class="grp"><h3>작가</h3><div class="chips" data-g="author"></div><button type="button" class="morea" id="amore"></button></div>
+  <button type="button" class="done" id="fdone">책 보기</button>
+</aside>
+<div class="dim" id="dim" hidden></div>
+<main><div class="count" id="count"></div><div class="grid" id="grid"></div>
 <div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a id="joinBtn" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
-<p class="foot" id="foot"></p></div>
+<p class="foot" id="foot"></p></main></div></div>
 <script>
 var DATA=__DATA__;
 var URL_="https://vvfqrewseibjdwcuscaz.supabase.co",ANON="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi";
@@ -192,15 +227,25 @@ function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){retu
 function norm(t){t=(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/'/g,'');return t.replace(/[^a-z0-9]+/g,' ').trim();}
 var AGES=[['all','전체'],['0-2','0~2세'],['3-4','3~4세'],['5-7','5~7세'],['8-','8세+']];
 var KINDS=[['all','전체'],['single','단권'],['series','시리즈·세트'],['touch','만지고 노는 책'],['song','노래책'],['board','보드북'],['reader','리더스·얼리리더'],['nonfic','논픽션']];
-var MORE=[['n120','나이테 120에 있는 책'],['award','수상작'],['world','세계에서도 인기'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
-var S={age:'all',kind:'all',author:'all',more:{},q:'',sort:'rank'},LINKS={};
-function chip(box,arr,key,multi){var el=document.getElementById(box);arr.forEach(function(a){var b=document.createElement('button');b.className='chip';b.textContent=a[1];b.dataset.v=a[0];
-  b.onclick=function(){if(multi){S.more[a[0]]=!S.more[a[0]];if((a[0]||'').charAt(0)==='p'&&S.more[a[0]])['p1','p2','p3'].forEach(function(x){if(x!==a[0])S.more[x]=false;});}else S[key]=a[0];paint();};el.appendChild(b);});}
+var PRICES=[['all','전체'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
+var MORE=[['n120','🎯 나이테 120에 있는 책'],['award','🏅 수상작'],['world','🌍 세계에서도 인기']];
+var S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:'rank'},LINKS={};
+// 같은 묶음(data-g)이 여러 곳에 있어도(모바일 빠른 나이 줄 + 필터) 상태는 하나
+function chip(g,arr,multi){document.querySelectorAll('[data-g="'+g+'"]').forEach(function(el){arr.forEach(function(a){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=a[1];b.dataset.v=a[0];
+  b.onclick=function(){if(multi)S.more[a[0]]=!S.more[a[0]];else S[g]=a[0];paint();};el.appendChild(b);});});}
 // 작가: 100권 안에 2권 이상인 작가(많은 순)
 var AC={};DATA.items.forEach(function(it){it.authors.forEach(function(a){AC[a]=(AC[a]||0)+1;});});
 var AUTH=[['all','전체']].concat(Object.keys(AC).filter(function(a){return AC[a]>=2;}).sort(function(a,b){return AC[b]-AC[a]||a.localeCompare(b);}).map(function(a){return [a,a+' '+AC[a]];}));
-S.author='all';chip('f-author',AUTH,'author');
-chip('f-age',AGES,'age');chip('f-kind',KINDS,'kind');chip('f-more',MORE,'more',true);
+chip('age',AGES);chip('kind',KINDS);chip('price',PRICES);chip('more',MORE,true);chip('author',AUTH);
+// 작가는 처음엔 6명(전체 포함 7칸)만, 나머지는 더보기
+var AUTH_N=7,authOpen=false;
+function paintAuthors(){var bs=document.querySelectorAll('[data-g="author"] .chip');bs.forEach(function(b,i){b.hidden=!authOpen&&i>=AUTH_N&&b.dataset.v!==S.author;});
+  var m=document.getElementById('amore');m.hidden=AUTH.length<=AUTH_N;m.textContent=authOpen?'접기':'작가 '+(AUTH.length-AUTH_N)+'명 더보기';}
+document.getElementById('amore').onclick=function(){authOpen=!authOpen;paintAuthors();};
+// 모바일 필터 시트 열고 닫기
+function sheet(open){document.getElementById('fp').classList.toggle('open',open);document.getElementById('dim').hidden=!open;document.body.style.overflow=open?'hidden':'';}
+document.getElementById('fopen').onclick=function(){sheet(true);};
+['fclose','fdone','dim'].forEach(function(id){document.getElementById(id).onclick=function(){sheet(false);};});
 function link(it){return LINKS[it.key]||(it.in120&&LINKS[norm(it.in120.title)])||'';}
 function ok(it){
   if(S.q){var q=S.q.toLowerCase();if((it.ko+' '+it.en+' '+it.authors.join(' ')).toLowerCase().indexOf(q)<0&&norm(it.ko+' '+it.en).indexOf(norm(q))<0)return false;}
@@ -209,9 +254,9 @@ function ok(it){
   if(S.author!=='all'&&it.authors.indexOf(S.author)<0)return false;
   if(S.kind==='single'&&it.series)return false;if(S.kind==='series'&&!it.series)return false;
   if(['touch','song','board','reader','nonfic'].indexOf(S.kind)>=0&&it.tags.indexOf(S.kind)<0)return false;
-  var m=S.more,pr=it.price&&it.price.price;
+  var m=S.more,pr=it.price&&!it.series&&it.price.price;
   if(m.n120&&!it.in120)return false;if(m.award&&!it.award)return false;if(m.world&&!it.world)return false;
-  if(m.p1&&!(pr&&pr<=10000))return false;if(m.p2&&!(pr&&pr>10000&&pr<=15000))return false;if(m.p3&&!(pr&&pr>15000))return false;
+  if(S.price==='p1'&&!(pr&&pr<=10000))return false;if(S.price==='p2'&&!(pr&&pr>10000&&pr<=15000))return false;if(S.price==='p3'&&!(pr&&pr>15000))return false;
   return true;}
 function won(n){return n.toLocaleString('ko-KR')+'원';}
 function md(d){var p=(d||'').split('-');return p.length===3?(+p[1])+'/'+(+p[2]):'';}
@@ -229,17 +274,20 @@ function card(it){
        '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+
     '<button type="button" class="copy" data-copy="'+esc(it.en)+'">📋 제목 복사</button></div></article>';}
 function paint(){
-  document.querySelectorAll('#f-age .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.age);});
-  document.querySelectorAll('#f-kind .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.kind);});
-  document.querySelectorAll('#f-author .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.author);});
-  document.querySelectorAll('#f-more .chip').forEach(function(b){b.classList.toggle('on',!!S.more[b.dataset.v]);});
+  ['age','kind','price','author'].forEach(function(g){document.querySelectorAll('[data-g="'+g+'"] .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S[g]);});});
+  document.querySelectorAll('[data-g="more"] .chip').forEach(function(b){b.classList.toggle('on',!!S.more[b.dataset.v]);});
+  paintAuthors();
+  // 필터 버튼의 숫자: 나이 빼고 고른 필터 수(나이는 바깥 줄에 보임)
+  var n=(S.kind!=='all')+(S.price!=='all')+(S.author!=='all')+Object.keys(S.more).filter(function(k){return S.more[k];}).length;
+  var fc=document.getElementById('fcnt');fc.hidden=!n;fc.textContent=n;
   var list=DATA.items.filter(ok);
   if(S.sort==='price')list.sort(function(a,b){var x=a.price&&!a.series?a.price.price:1e9,y=b.price&&!b.series?b.price.price:1e9;return x-y||a.rank-b.rank;});
   else if(S.sort==='age')list.sort(function(a,b){return ((a.age||[99])[0]-(b.age||[99])[0])||a.rank-b.rank;});
   else list.sort(function(a,b){return a.rank-b.rank;});
-  var filtered=S.q||S.age!=='all'||S.kind!=='all'||S.author!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
+  var filtered=S.q||S.age!=='all'||S.kind!=='all'||S.price!=='all'||S.author!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
+  document.getElementById('fdone').textContent=list.length+'권 보기';
   document.getElementById('count').innerHTML=list.length+'권'+(filtered?' <button id="reset">필터 지우기</button>':'');
-  var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',author:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
+  var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
   document.getElementById('grid').innerHTML=list.length?list.map(card).join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
