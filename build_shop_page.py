@@ -47,6 +47,30 @@ pp = os.path.join(HERE, "output", "shop_prices.json")
 if os.path.exists(pp): prices = json.load(open(pp, encoding="utf-8"))
 PRICE_DAY = prices.get("checked", "")
 
+AUTHORS = {  # en(검색 제목) → [작가(한글 표기)]
+ "Ketchup on Your Cornflakes": ["닉 샤랫"], "Shark in the Park": ["닉 샤랫"],
+ "Piggybook": ["앤서니 브라운"], "My Mum": ["앤서니 브라운"],
+ "Mo Willems: Pigeon 시리즈": ["모 윌렘스"], "Don't Let the Pigeon Drive the Bus": ["모 윌렘스"], "Elephant & Piggie 시리즈": ["모 윌렘스"],
+ "Knuffle Bunny 세트": ["모 윌렘스"], "That Is Not a Good Idea": ["모 윌렘스"], "Time to Pee": ["모 윌렘스"],
+ "The Grouchy Ladybug": ["에릭 칼"], "From Head to Toe": ["에릭 칼"], "Today Is Monday": ["에릭 칼"], "The Very Hungry Caterpillar": ["에릭 칼"],
+ "Brown Bear Brown Bear What Do You See": ["빌 마틴 주니어", "에릭 칼"], "Polar Bear Polar Bear What Do You Hear": ["빌 마틴 주니어", "에릭 칼"],
+ "The Gruffalo": ["줄리아 도널드슨"], "Stick Man": ["줄리아 도널드슨"],
+ "This Is Not My Hat": ["존 클라센"], "I Want My Hat Back": ["존 클라센"], "Sam and Dave Dig a Hole": ["맥 바넷", "존 클라센"],
+ "Frog and Toad Are Friends": ["아널드 로벨"], "Mouse Soup": ["아널드 로벨"],
+ "Press Here": ["에르베 튈레"], "Mix It Up": ["에르베 튈레"],
+ "Go Away Big Green Monster": ["에드 엠벌리"], "Glad Monster Sad Monster": ["에드 엠벌리"],
+ "Henry and Mudge": ["신시아 라일런트"], "Mr. Putter and Tabby": ["신시아 라일런트"],
+ "600 Black Spots": ["데이비드 A. 카터"], "The Happy Little Yellow Box": ["데이비드 A. 카터"],
+ "Hi Fly Guy": ["테드 아널드"], "Vincent Paints His House": ["테드 아널드"],
+ "Goodnight I Love You": ["캐럴라인 제인 처치"], "Ten Tiny Toes": ["캐럴라인 제인 처치"],
+ "Maisy": ["루시 커즌스"], "Miffy": ["딕 브루너"], "Where's Spot": ["에릭 힐"], "Dear Zoo": ["로드 캠벨"],
+ "No David": ["데이비드 섀넌"], "How the Grinch Stole Christmas": ["닥터 수스"], "Where the Wild Things Are": ["모리스 샌닥"],
+ "Swimmy": ["레오 리오니"], "The Tale of Peter Rabbit": ["베아트릭스 포터"], "The Giving Tree": ["쉘 실버스타인"],
+ "The Dot": ["피터 레이놀즈"], "Kitten's First Full Moon": ["케빈 헹크스"], "Where Is the Green Sheep": ["멤 폭스"],
+ "It's Okay to Be Different": ["토드 파"], "I Will Not Ever Never Eat a Tomato": ["로렌 차일드"],
+ "Where's Wally? 세트": ["마틴 핸드포드"], "Pete the Cat: I Love My White Shoes": ["에릭 리트윈", "제임스 딘"],
+}
+
 def clean_note(note):
     n = re.sub(r"\(?\s*AR\s*[\d.~\-]+\s*\)?", "", note or "")
     n = re.sub(r"쉬움", "", n)
@@ -74,8 +98,13 @@ for rank, ko, en, age, note in DOMESTIC_ALL:
     items.append({"rank": rank, "ko": ko, "en": en, "key": n, "age": [int(a.group(1)), int(a.group(2))] if a else None,
                   "note": clean_note(note), "cover": covers.get(rank, ""), "award": aw, "world": n in world,
                   "lib": lib.get(n, 0), "series": series, "tags": tags(ko, note, n, inn),
-                  "in120": inn, "price": pr.get("best"), "price_n": len(pr.get("all") or [])})
+                  "in120": inn, "price": pr.get("best"), "price_n": len(pr.get("all") or []),
+                  "authors": AUTHORS.get(en) or AUTHORS.get(ko) or []})
 
+# 특징 메모에서 작가 줄과 겹치는 이름은 뺌(예: "에릭 칼·노부영" → "노부영")
+for it in items:
+    if it["authors"] and it["note"]:
+        it["note"] = "·".join(t for t in re.split(r"\s*·\s*", it["note"]) if t.strip() and t.strip() not in it["authors"])
 json.dump({"checked": PRICE_DAY, "items": items}, open(os.path.join(DOCS, "shop_data.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
 PAGE = r"""<!doctype html>
@@ -140,9 +169,10 @@ a{color:var(--tealD)}
     <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. (나이테 120은 매달 함께 읽는 맛보기·스터디용이에요.)</p></div>
 </div>
 <div class="bar"><div class="wrap">
-  <div class="search"><input id="q" type="search" placeholder="책 제목으로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select></div>
+  <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select></div>
   <div class="chips" id="f-age"><span class="lb">나이</span></div>
   <div class="chips" id="f-kind"><span class="lb">종류</span></div>
+  <div class="chips" id="f-author"><span class="lb">작가</span></div>
   <div class="chips" id="f-more"><span class="lb">더보기</span></div>
 </div></div>
 <div class="wrap"><div class="count" id="count"></div><div class="grid" id="grid"></div>
@@ -154,20 +184,25 @@ function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){retu
 function norm(t){t=(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/'/g,'');return t.replace(/[^a-z0-9]+/g,' ').trim();}
 var AGES=[['all','전체'],['0-2','0~2세'],['3-4','3~4세'],['5-7','5~7세'],['8-','8세+']];
 var KINDS=[['all','전체'],['single','단권'],['series','시리즈·세트'],['touch','만지고 노는 책'],['song','노래책'],['board','보드북'],['reader','리더스·얼리리더'],['nonfic','논픽션']];
-var MORE=[['n120','나이테 120에 있는 책'],['award','수상작'],['world','세계에서도 인기'],['link','쿠팡 링크 있음'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
-var S={age:'all',kind:'all',more:{},q:'',sort:'rank'},LINKS={};
+var MORE=[['n120','나이테 120에 있는 책'],['award','수상작'],['world','세계에서도 인기'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
+var S={age:'all',kind:'all',author:'all',more:{},q:'',sort:'rank'},LINKS={};
 function chip(box,arr,key,multi){var el=document.getElementById(box);arr.forEach(function(a){var b=document.createElement('button');b.className='chip';b.textContent=a[1];b.dataset.v=a[0];
   b.onclick=function(){if(multi){S.more[a[0]]=!S.more[a[0]];if((a[0]||'').charAt(0)==='p'&&S.more[a[0]])['p1','p2','p3'].forEach(function(x){if(x!==a[0])S.more[x]=false;});}else S[key]=a[0];paint();};el.appendChild(b);});}
+// 작가: 100권 안에 2권 이상인 작가(많은 순)
+var AC={};DATA.items.forEach(function(it){it.authors.forEach(function(a){AC[a]=(AC[a]||0)+1;});});
+var AUTH=[['all','전체']].concat(Object.keys(AC).filter(function(a){return AC[a]>=2;}).sort(function(a,b){return AC[b]-AC[a]||a.localeCompare(b);}).map(function(a){return [a,a+' '+AC[a]];}));
+S.author='all';chip('f-author',AUTH,'author');
 chip('f-age',AGES,'age');chip('f-kind',KINDS,'kind');chip('f-more',MORE,'more',true);
 function link(it){return LINKS[it.key]||(it.in120&&LINKS[norm(it.in120.title)])||'';}
 function ok(it){
-  if(S.q){var q=S.q.toLowerCase();if((it.ko+' '+it.en).toLowerCase().indexOf(q)<0&&norm(it.ko+' '+it.en).indexOf(norm(q))<0)return false;}
+  if(S.q){var q=S.q.toLowerCase();if((it.ko+' '+it.en+' '+it.authors.join(' ')).toLowerCase().indexOf(q)<0&&norm(it.ko+' '+it.en).indexOf(norm(q))<0)return false;}
   if(S.age!=='all'&&it.age){var p=S.age.split('-'),lo=+p[0],hi=p[1]?+p[1]:99;if(it.age[1]<lo||it.age[0]>hi)return false;}
   if(S.age!=='all'&&!it.age)return false;
+  if(S.author!=='all'&&it.authors.indexOf(S.author)<0)return false;
   if(S.kind==='single'&&it.series)return false;if(S.kind==='series'&&!it.series)return false;
   if(['touch','song','board','reader','nonfic'].indexOf(S.kind)>=0&&it.tags.indexOf(S.kind)<0)return false;
   var m=S.more,pr=it.price&&it.price.price;
-  if(m.n120&&!it.in120)return false;if(m.award&&!it.award)return false;if(m.world&&!it.world)return false;if(m.link&&!link(it))return false;
+  if(m.n120&&!it.in120)return false;if(m.award&&!it.award)return false;if(m.world&&!it.world)return false;
   if(m.p1&&!(pr&&pr<=10000))return false;if(m.p2&&!(pr&&pr>10000&&pr<=15000))return false;if(m.p3&&!(pr&&pr>15000))return false;
   return true;}
 function won(n){return n.toLocaleString('ko-KR')+'원';}
@@ -180,21 +215,22 @@ function card(it){
     (pr?'<div class="price">최저 <b>'+won(pr.price)+'</b><small>'+esc(pr.store)+(pr.fmt?' · '+esc(pr.fmt):'')+' · '+md(DATA.checked)+' 기준'+(it.tags.indexOf('touch')>=0&&pr.fmt==='페이퍼백'?'<br>⚠️ 페이퍼백이라 플랩·팝업이 없을 수 있어요':'')+'</small></div>':'<div class="price"><small>교보·동방북스 국내 재고 없음 (쿠팡에서 확인)</small></div>');
   return '<article class="card"><div class="cv">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
     '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</div>'+
-    '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
+    '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
     (bd?'<div class="bd">'+bd+'</div>':'')+price+
     (L?'<a class="buy cp" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.en)+'">🛒 쿠팡에서 보기</a>':
        '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+'</div></article>';}
 function paint(){
   document.querySelectorAll('#f-age .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.age);});
   document.querySelectorAll('#f-kind .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.kind);});
+  document.querySelectorAll('#f-author .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.author);});
   document.querySelectorAll('#f-more .chip').forEach(function(b){b.classList.toggle('on',!!S.more[b.dataset.v]);});
   var list=DATA.items.filter(ok);
   if(S.sort==='price')list.sort(function(a,b){var x=a.price&&!a.series?a.price.price:1e9,y=b.price&&!b.series?b.price.price:1e9;return x-y||a.rank-b.rank;});
   else if(S.sort==='age')list.sort(function(a,b){return ((a.age||[99])[0]-(b.age||[99])[0])||a.rank-b.rank;});
   else list.sort(function(a,b){return a.rank-b.rank;});
-  var filtered=S.q||S.age!=='all'||S.kind!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
+  var filtered=S.q||S.age!=='all'||S.kind!=='all'||S.author!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
   document.getElementById('count').innerHTML=list.length+'권'+(filtered?' <button id="reset">필터 지우기</button>':'');
-  var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
+  var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',author:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
   document.getElementById('grid').innerHTML=list.length?list.map(card).join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
