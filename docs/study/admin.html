@@ -162,6 +162,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     STATE.guides=(gd&&gd.data)||[];STATE.guidesErr=gd&&gd.error;
     var st=await client.from('settings').select('*').eq('id',1).maybeSingle();
     STATE.current=st.data?st.data.current_theme:(STATE.themes[0]&&STATE.themes[0].key);
+    STATE.chatMembers=(st.data&&'chat_members' in st.data)?(st.data.chat_members||0):null; // null = 컬럼 없음(migrate_chat_members.sql 전)
     STATE.editKey=STATE.editKey||STATE.current||(STATE.themes[0]&&STATE.themes[0].key);
   }
 
@@ -244,9 +245,26 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       });
       html+='</div>';
     });
+    html+='<div id="shopSec" style="margin-top:22px;border-top:1px dashed var(--line);padding-top:14px"><div style="font-weight:800;color:var(--tealD);font-size:.9rem">🇰🇷 국내 인기 책장 <span class="hint">(나이테 120에 없는 책 · 구매 참고 페이지에 표시)</span></div><p class="hint">불러오는 중…</p></div>';
     html+='<div style="display:flex;gap:10px;align-items:center;margin-top:18px;position:sticky;bottom:0;background:var(--surface);padding:10px 0"><button class="btn cor" id="saveBuy">저장</button><span class="status" id="buySt"></span></div></div>';
     body.innerHTML=html;
     document.getElementById('saveBuy').addEventListener('click',saveBuyUrls);
+    loadShopLinks();
+  }
+  // 국내 인기 책장(구매 참고 페이지) 중 나이테 120에 없는 책의 쿠팡 링크 → shop_links (120에 있는 책은 위 칸 링크를 같이 씀)
+  async function loadShopLinks(){
+    var sec=document.getElementById('shopSec');if(!sec)return;
+    var data=null,rows=[];
+    try{data=await fetch('../shop_data.json?v='+Date.now()).then(function(r){return r.json();});}catch(e){}
+    var q=await client.from('shop_links').select('en,buy_url');
+    if(q.error){sec.innerHTML+='<div class="warn">shop_links 테이블이 아직 없어요. Supabase에서 <b>supabase/migrate_shop_links.sql</b>을 먼저 실행해 주세요.</div>';sec.querySelector('p.hint').remove();return;}
+    var have={};(q.data||[]).forEach(function(r){have[r.en]=r.buy_url||'';});STATE.shopLinks=have;
+    var items=((data&&data.items)||[]).filter(function(it){return !it.in120;});
+    var h='<div style="font-weight:800;color:var(--tealD);font-size:.9rem">🇰🇷 국내 인기 책장 <span class="hint">(나이테 120에 없는 '+items.length+'권 · 구매 참고 페이지에 표시)</span></div>';
+    items.forEach(function(it){h+='<div style="display:flex;gap:8px;align-items:center;margin:5px 0">'+
+      '<div style="flex:0 0 40%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem" title="'+esc(it.ko)+'">#'+it.rank+' '+esc(it.ko)+'</div>'+
+      '<input class="t shopurl" data-en="'+esc(it.en)+'" style="flex:1;font-size:.78rem;padding:7px 9px" placeholder="https://link.coupang.com/a/..." value="'+esc(have[it.en]||'')+'"></div>';});
+    sec.innerHTML=h;
   }
   function findBook(id){var f=null;(STATE.themes||[]).some(function(t){return (STATE.booksByTheme[t.key]||[]).some(function(b){if(b.id===id){f=b;return true;}return false;});});return f;}
   async function saveBuyUrls(){
@@ -254,6 +272,9 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var inputs=document.querySelectorAll('.buyurl'),errs=0,n=0;
     for(var i=0;i<inputs.length;i++){var inp=inputs[i],id=+inp.dataset.bid,val=(inp.value||'').trim(),b=findBook(id);
       if(b&&(b.buy_url||'')!==val){var r=await client.from('books').update({buy_url:val}).eq('id',id);if(r.error)errs++;else{b.buy_url=val;n++;}}}
+    var sh=document.querySelectorAll('.shopurl'),have=STATE.shopLinks||{};
+    for(var j=0;j<sh.length;j++){var en=sh[j].dataset.en,v=(sh[j].value||'').trim();
+      if((have[en]||'')!==v){var r2=await client.from('shop_links').upsert({en:en,buy_url:v,updated_at:new Date().toISOString()});if(r2.error)errs++;else{have[en]=v;n++;}}}
     st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
   }
 
@@ -265,6 +286,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div class="card"><label class="f" style="margin-top:0">이번 달 공개 주제 <span class="hint">(부모가 링크 열면 보이는 주제)</span></label>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap"><select class="t" id="curSel" style="flex:1;min-width:220px">'+opt(STATE.current)+'</select>'+
         '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
+      '<div class="card"><label class="f" style="margin-top:0">오픈채팅 참여 인원 <span class="hint">(메인 화면 "지금 ○명의 엄마가 함께하고 있어요" · 10명 미만이면 숨김)</span></label>'+
+        (STATE.chatMembers===null
+          ? '<div class="hint">⚙️ Supabase에서 <b>supabase/migrate_chat_members.sql</b>을 먼저 실행해 주세요.</div>'
+          : '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input class="t" id="memN" type="number" min="0" step="1" value="'+(STATE.chatMembers||0)+'" style="width:120px">명'+
+            '<button class="btn cor" id="setMem">저장</button><span class="status" id="memSt"></span></div>')+
+      '</div>'+
       '<div class="card"><label class="f" style="margin-top:0">편집할 주제</label><select class="t" id="edSel">'+opt(STATE.editKey)+'</select>'+
         '<div id="form"></div>'+
         '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="preview">👁 미리보기</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
@@ -276,6 +303,15 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       if(!r.error){await client.from('content').upsert({theme_key:k,published:true});if(STATE.contentByTheme[k])STATE.contentByTheme[k].published=true;}
       document.getElementById('curSt').textContent=r.error?('실패: '+r.error.message):('✓ 현재 공개 주제: '+k+' (자동 발행됨)');
       if(!r.error)STATE.current=k;
+    });
+    var sm=document.getElementById('setMem');
+    if(sm)sm.addEventListener('click',async function(){
+      var n=parseInt(document.getElementById('memN').value,10);
+      if(!(n>=0)){document.getElementById('memSt').textContent='숫자를 넣어주세요.';return;}
+      document.getElementById('memSt').textContent='저장 중…';
+      var r=await client.from('settings').update({chat_members:n}).eq('id',1);
+      document.getElementById('memSt').textContent=r.error?('실패: '+r.error.message):('✓ '+n+'명으로 저장했어요');
+      if(!r.error)STATE.chatMembers=n;
     });
     document.getElementById('edSel').addEventListener('change',function(e){STATE.editKey=e.target.value;renderForm();});
     document.getElementById('save').addEventListener('click',saveContent);

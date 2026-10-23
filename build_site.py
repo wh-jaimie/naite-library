@@ -142,7 +142,8 @@ for d in domestic:
     extra=f'<div class="ba">권장 {esc(d["age"])}세</div>'
     cards.append(card(d["cover"],d["ko"],"",rank=d["rank"],badges=badges,extra=extra))
 body=f'<main class="wrap"><div class="hero"><div class="eyebrow">국내 서점 통합 순위</div><h1>🇰🇷 국내 인기 책장</h1><p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권. 순위·권장연령·특징·수상을 함께 담았어요.</p></div><section><p class="count">100권</p><div class="grid">{"".join(cards)}</div></section></main>'
-open(os.path.join(DOCS,"domestic.html"),"w",encoding="utf-8").write(page("국내 인기 책장",body))
+# domestic.html 은 이제 build_shop_page.py(구매 참고 페이지)가 만듦 — 여기서 덮어쓰지 않음
+# open(os.path.join(DOCS,"domestic.html"),"w",encoding="utf-8").write(page("국내 인기 책장",body))
 
 # 주제별 컬렉션
 THEMES=[("🌙","잠들기 전, 잠자리 그림책",[2,23,29,9,53]),("🎵","노래처럼 읽는 첫 책",[4,10,94,35,85]),

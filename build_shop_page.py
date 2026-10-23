@@ -1,0 +1,218 @@
+# -*- coding: utf-8 -*-
+"""국내 인기 책장 = '책 살 때 참고하는' 구매용 페이지 → docs/domestic.html + docs/shop_data.json
+
+데이터: data_domestic.DOMESTIC_ALL(국내 서점 통합순위 100) + output/shop_prices.json(교보·동방북스 최저가, 구매처조사/shop_prices.py)
+      + 표지(기존 domestic.html에서 재사용) + 수상(build_site와 같은 소스) + 나이테 120 포함 여부.
+쿠팡 링크는 페이지가 열릴 때 DB에서 읽음: 나이테 120 책 = list_buy_urls(), 그 밖 = shop_links 테이블(관리자 입력).
+나이테 철학: AR·레벨 숫자는 화면에 내지 않음(특징 메모의 'AR…'·'쉬움' 표기 제거).
+"""
+import os, re, json, html
+from data_domestic import DOMESTIC_ALL, AWARDS_EXTRA
+from data_global import GLOBAL_100
+
+HERE = os.path.dirname(os.path.abspath(__file__)); DOCS = os.path.join(HERE, "docs")
+def norm(t):
+    t = (t or "").lower(); t = re.split(r"[:(]", t)[0]; t = t.replace("&", "and").replace("'", "")
+    return re.sub(r"[^a-z0-9]+", " ", t).strip()
+
+# 표지: 기존 국내 책장 페이지에서 순위별로 가져옴(재조회 안 함)
+covers = {}
+CV = os.path.join(HERE, "output", "shop_covers.json")
+old = "" if os.path.exists(CV) else open(os.path.join(DOCS, "domestic.html"), encoding="utf-8").read()
+if not os.path.exists(CV):  # 처음 한 번만: 예전 카드형 페이지에서 표지 추출 → shop_covers.json (이후엔 이 파일만 씀)
+    for m in re.finditer(r'<article class="card".*?</article>', old, re.S):
+        a = m.group(0); rk = re.search(r'class="rk">#(\d+)<', a); im = re.search(r'<img[^>]+src="([^"]+)"', a)
+        if rk and im: covers[int(rk.group(1))] = im.group(1)
+    json.dump(covers, open(os.path.join(HERE, "output", "shop_covers.json"), "w"), indent=0)
+else:
+    covers = {int(k): v for k, v in json.load(open(os.path.join(HERE, "output", "shop_covers.json"))).items()}
+
+# 수상·도서관(build_site와 같은 소스)
+gm = json.load(open(os.path.join(HERE, "output", "gr_master.json"), encoding="utf-8"))["books"]
+ch = json.load(open(os.path.join(HERE, "output", "challenge.json"), encoding="utf-8"))["themes"]
+award, lib = {}, {}
+for b in gm:
+    if b.get("award"): award[norm(b["title"])] = b["award"]
+    if b.get("lib_loans"): lib[norm(b["title"])] = b["lib_loans"]
+in120 = {}
+for i, t in enumerate(ch):
+    for b in t["books"]:
+        n = norm(b["title"]); in120[n] = {"title": b["title"], "theme": t["ko"], "emoji": t["emoji"], "month": i + 1, "tier": b["tier_label"]}
+        if b.get("award"): award.setdefault(n, b["award"])
+        if b.get("lib_loans"): lib.setdefault(n, b["lib_loans"])
+for k, v in AWARDS_EXTRA.items(): award[k] = v
+world = {norm(t) for _, t, _ in GLOBAL_100}
+prices = {}
+pp = os.path.join(HERE, "output", "shop_prices.json")
+if os.path.exists(pp): prices = json.load(open(pp, encoding="utf-8"))
+PRICE_DAY = prices.get("checked", "")
+
+def clean_note(note):
+    n = re.sub(r"\(?\s*AR\s*[\d.~\-]+\s*\)?", "", note or "")
+    n = re.sub(r"쉬움", "", n)
+    n = re.sub(r"\s*·\s*·\s*", "·", n).strip(" ·/")
+    return n
+
+def tags(ko, note, n, inn):
+    s = ko + " " + (note or "")
+    t = []
+    if re.search(r"플랩|팝업|조작|인터랙티브|Photicular|움직이는|Press Here|Pop", s, re.I) or (inn and inn["tier"] == "조작북"): t.append("touch")
+    if re.search(r"노래|노부영|Sausages|Walking Through", s, re.I) or (inn and inn["tier"] == "라임·운율" and "노래" in s): t.append("song")
+    if re.search(r"리더스|얼리리더|I Can Read|파닉스|Readers", s, re.I): t.append("reader")
+    if re.search(r"논픽션|Science|Solar|Who Would Win|Magic School", s, re.I): t.append("nonfic")
+    if re.search(r"보드북|Baby|츄잉|Peekaboo|Making Faces|Ten Tiny Toes|First 100", s, re.I): t.append("board")
+    return t
+
+items = []
+for rank, ko, en, age, note in DOMESTIC_ALL:
+    n = norm(en); inn = in120.get(n) or in120.get(norm(ko))
+    a = re.match(r"(\d+)\s*~\s*(\d+)", age or "")
+    aw = award.get(n, "") or award.get(norm(ko), "")
+    if not aw and re.search(r"칼데콧|뉴베리|가이젤", note or ""): aw = clean_note(note)
+    series = bool(re.search(r"시리즈|세트|\s/\s|12종", ko))
+    pr = (prices.get("items") or {}).get(en) or {}
+    items.append({"rank": rank, "ko": ko, "en": en, "key": n, "age": [int(a.group(1)), int(a.group(2))] if a else None,
+                  "note": clean_note(note), "cover": covers.get(rank, ""), "award": aw, "world": n in world,
+                  "lib": lib.get(n, 0), "series": series, "tags": tags(ko, note, n, inn),
+                  "in120": inn, "price": pr.get("best"), "price_n": len(pr.get("all") or [])})
+
+json.dump({"checked": PRICE_DAY, "items": items}, open(os.path.join(DOCS, "shop_data.json"), "w", encoding="utf-8"), ensure_ascii=False)
+
+PAGE = r"""<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>국내 인기 책장 — 책 살 때 참고하세요 · 나이테</title>
+<meta name="description" content="국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·쿠팡 링크와 시리즈·유형 필터로 처음 살 책을 골라 보세요.">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml"><link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png"><link rel="manifest" href="/naite-library/manifest.webmanifest">
+<meta name="theme-color" content="#245648">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--teal:#2F6E58;--tealD:#245648;--coral:#B87343;--chip:#F1F3EB;--sh:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
+a{color:var(--tealD)}
+.top{display:flex;align-items:center;gap:10px;padding:14px 0 4px}
+.top a.back{font-weight:800;text-decoration:none;font-size:.9rem}
+.hero{padding:10px 0 6px}
+.hero .eyebrow{color:var(--coral);font-weight:800;font-size:.85rem}
+.hero h1{font-size:clamp(1.5rem,5vw,2rem);margin-top:2px}
+.hero p{color:var(--soft);margin:6px 0 0;font-size:.92rem;max-width:62ch}
+.bar{position:sticky;top:0;z-index:20;background:rgba(228,231,221,.95);backdrop-filter:blur(8px);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:6px}
+.search{display:flex;gap:8px}
+.search input{flex:1;border:1px solid var(--line);background:#fff;font:inherit;font-size:.95rem;padding:10px 12px;border-radius:11px;color:#23291F}
+.search select{border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;padding:8px;border-radius:11px;color:#23291F}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:8px;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--soft);font:inherit;font-size:.8rem;font-weight:700;padding:6px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--tealD);border-color:var(--tealD);color:#fff}
+.chips .lb{flex:none;font-size:.75rem;color:var(--soft);font-weight:800;align-self:center;padding:0 2px 0 4px}
+.count{font-size:.85rem;color:var(--soft);margin:8px 2px}
+.count button{border:0;background:none;color:var(--coral);font:inherit;font-weight:800;cursor:pointer;padding:0 0 0 6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0}
+.cv{position:relative;aspect-ratio:3/4;background:#EBEDE3}
+.cv img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
+.cv .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;color:#fff;font-family:'Gowun Batang',serif;font-weight:700;background:linear-gradient(150deg,var(--teal),var(--tealD))}
+.cv .rk{z-index:2;position:absolute;top:6px;left:6px;background:rgba(35,41,31,.82);color:#fff;font-size:.72rem;font-weight:800;border-radius:7px;padding:2px 7px}
+.cv .ser{z-index:2;position:absolute;top:6px;right:6px;background:var(--coral);color:#fff;font-size:.68rem;font-weight:800;border-radius:7px;padding:2px 6px}
+.bb{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;flex:1;overflow-wrap:anywhere}
+.bt{font-weight:800;font-size:.9rem;line-height:1.3}
+.age{font-size:.78rem;color:var(--tealD);font-weight:800}
+.note{font-size:.76rem;color:var(--soft)}
+.bd{display:flex;flex-wrap:wrap;gap:4px}
+.bd span{font-size:.68rem;font-weight:800;border-radius:6px;padding:1px 6px;background:var(--chip);color:var(--tealD)}
+.bd .aw{background:#FBF1DC;color:#8A5A12}.bd .n120{background:#E1EEE7;color:#245648}.bd .w{background:#ECEBF5;color:#4B4380}
+.price{margin-top:auto;font-size:.82rem}
+.price b{font-size:.98rem;color:#23291F}
+.price small{display:block;color:var(--soft);font-size:.7rem}
+.buy{display:block;text-align:center;text-decoration:none;font-weight:800;font-size:.82rem;border-radius:9px;padding:8px 6px;margin-top:6px}
+.buy.cp{background:var(--coral);color:#fff}
+.buy.find{border:1px solid var(--line);color:var(--soft);background:#fff}
+.empty{padding:40px 0;text-align:center;color:var(--soft)}
+.foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
+</style></head><body>
+<div class="wrap">
+  <div class="top"><a class="back" href="./">← 나이테</a></div>
+  <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>🇰🇷 국내 인기 책장</h1>
+    <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. (나이테 120은 매달 함께 읽는 맛보기·스터디용이에요.)</p></div>
+</div>
+<div class="bar"><div class="wrap">
+  <div class="search"><input id="q" type="search" placeholder="책 제목으로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select></div>
+  <div class="chips" id="f-age"><span class="lb">나이</span></div>
+  <div class="chips" id="f-kind"><span class="lb">종류</span></div>
+  <div class="chips" id="f-more"><span class="lb">더보기</span></div>
+</div></div>
+<div class="wrap"><div class="count" id="count"></div><div class="grid" id="grid"></div>
+<p class="foot" id="foot"></p></div>
+<script>
+var DATA=__DATA__;
+var URL_="https://vvfqrewseibjdwcuscaz.supabase.co",ANON="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi";
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function norm(t){t=(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/'/g,'');return t.replace(/[^a-z0-9]+/g,' ').trim();}
+var AGES=[['all','전체'],['0-2','0~2세'],['3-4','3~4세'],['5-7','5~7세'],['8-','8세+']];
+var KINDS=[['all','전체'],['single','단권'],['series','시리즈·세트'],['touch','만지고 노는 책'],['song','노래책'],['board','보드북'],['reader','리더스·얼리리더'],['nonfic','논픽션']];
+var MORE=[['n120','나이테 120에 있는 책'],['award','수상작'],['world','세계에서도 인기'],['link','쿠팡 링크 있음'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
+var S={age:'all',kind:'all',more:{},q:'',sort:'rank'},LINKS={};
+function chip(box,arr,key,multi){var el=document.getElementById(box);arr.forEach(function(a){var b=document.createElement('button');b.className='chip';b.textContent=a[1];b.dataset.v=a[0];
+  b.onclick=function(){if(multi){S.more[a[0]]=!S.more[a[0]];if((a[0]||'').charAt(0)==='p'&&S.more[a[0]])['p1','p2','p3'].forEach(function(x){if(x!==a[0])S.more[x]=false;});}else S[key]=a[0];paint();};el.appendChild(b);});}
+chip('f-age',AGES,'age');chip('f-kind',KINDS,'kind');chip('f-more',MORE,'more',true);
+function link(it){return LINKS[it.key]||(it.in120&&LINKS[norm(it.in120.title)])||'';}
+function ok(it){
+  if(S.q){var q=S.q.toLowerCase();if((it.ko+' '+it.en).toLowerCase().indexOf(q)<0&&norm(it.ko+' '+it.en).indexOf(norm(q))<0)return false;}
+  if(S.age!=='all'&&it.age){var p=S.age.split('-'),lo=+p[0],hi=p[1]?+p[1]:99;if(it.age[1]<lo||it.age[0]>hi)return false;}
+  if(S.age!=='all'&&!it.age)return false;
+  if(S.kind==='single'&&it.series)return false;if(S.kind==='series'&&!it.series)return false;
+  if(['touch','song','board','reader','nonfic'].indexOf(S.kind)>=0&&it.tags.indexOf(S.kind)<0)return false;
+  var m=S.more,pr=it.price&&it.price.price;
+  if(m.n120&&!it.in120)return false;if(m.award&&!it.award)return false;if(m.world&&!it.world)return false;if(m.link&&!link(it))return false;
+  if(m.p1&&!(pr&&pr<=10000))return false;if(m.p2&&!(pr&&pr>10000&&pr<=15000))return false;if(m.p3&&!(pr&&pr>15000))return false;
+  return true;}
+function won(n){return n.toLocaleString('ko-KR')+'원';}
+function md(d){var p=(d||'').split('-');return p.length===3?(+p[1])+'/'+(+p[2]):'';}
+function card(it){
+  var L=link(it),pr=it.price,cq=encodeURIComponent(it.en);
+  var bd='';if(it.in120)bd+='<span class="n120">🎯 나이테 120 · '+esc(it.in120.month+'개월차 '+it.in120.theme)+'</span>';
+  if(it.award)bd+='<span class="aw">'+esc(it.award)+'</span>';if(it.world)bd+='<span class="w">🌍 세계 인기</span>';
+  var price=it.series?'<div class="price"><small>시리즈·세트라 권마다 가격이 달라요</small></div>':
+    (pr?'<div class="price">최저 <b>'+won(pr.price)+'</b><small>'+esc(pr.store)+(pr.fmt?' · '+esc(pr.fmt):'')+' · '+md(DATA.checked)+' 기준'+(it.tags.indexOf('touch')>=0&&pr.fmt==='페이퍼백'?'<br>⚠️ 페이퍼백이라 플랩·팝업이 없을 수 있어요':'')+'</small></div>':'<div class="price"><small>교보·동방북스 국내 재고 없음 (쿠팡에서 확인)</small></div>');
+  return '<article class="card"><div class="cv">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
+    '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</div>'+
+    '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
+    (bd?'<div class="bd">'+bd+'</div>':'')+price+
+    (L?'<a class="buy cp" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.en)+'">🛒 쿠팡에서 보기</a>':
+       '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+'</div></article>';}
+function paint(){
+  document.querySelectorAll('#f-age .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.age);});
+  document.querySelectorAll('#f-kind .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.kind);});
+  document.querySelectorAll('#f-more .chip').forEach(function(b){b.classList.toggle('on',!!S.more[b.dataset.v]);});
+  var list=DATA.items.filter(ok);
+  if(S.sort==='price')list.sort(function(a,b){var x=a.price&&!a.series?a.price.price:1e9,y=b.price&&!b.series?b.price.price:1e9;return x-y||a.rank-b.rank;});
+  else if(S.sort==='age')list.sort(function(a,b){return ((a.age||[99])[0]-(b.age||[99])[0])||a.rank-b.rank;});
+  else list.sort(function(a,b){return a.rank-b.rank;});
+  var filtered=S.q||S.age!=='all'||S.kind!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
+  document.getElementById('count').innerHTML=list.length+'권'+(filtered?' <button id="reset">필터 지우기</button>':'');
+  var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
+  document.getElementById('grid').innerHTML=list.length?list.map(card).join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
+document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
+document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
+document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
+paint();
+// 쿠팡 링크: 나이테 120 책(list_buy_urls) + 그 밖(shop_links)
+(async function(){var h={apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json'};
+  try{var a=await fetch(URL_+'/rest/v1/rpc/list_buy_urls',{method:'POST',headers:h,body:'{}'});if(a.ok)(await a.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.title)]=r.buy_url;});}catch(e){}
+  try{var b=await fetch(URL_+'/rest/v1/shop_links?select=en,buy_url',{headers:h});if(b.ok)(await b.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.en)]=r.buy_url;});}catch(e){}
+  paint();})();
+// 쿠팡 클릭 집계(관리자·notrack 기기 제외)
+document.addEventListener('click',function(e){var a=e.target.closest('a.buy');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+  fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
+    body:JSON.stringify({type:a.classList.contains('cp')?'buy_click':'shop_search_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
+</script>
+<script src="track.js" data-page="국내 인기 책장"></script>
+</body></html>"""
+
+open(os.path.join(DOCS, "domestic.html"), "w", encoding="utf-8").write(PAGE.replace("__DATA__", json.dumps({"checked": PRICE_DAY, "items": items}, ensure_ascii=False)))
+print("생성: docs/domestic.html, docs/shop_data.json ·", len(items), "권 · 가격", sum(1 for i in items if i["price"]), "· 표지", sum(1 for i in items if i["cover"]),
+      "· 시리즈", sum(1 for i in items if i["series"]), "· 120포함", sum(1 for i in items if i["in120"]))
