@@ -62,6 +62,10 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .brand{display:flex;align-items:center;gap:10px;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.05rem;white-space:nowrap}
 .brand .mark{width:30px;height:30px;border-radius:9px;flex:0 0 auto;background:linear-gradient(135deg,var(--coral),var(--amber));display:grid;place-items:center;color:#fff;font-size:1rem;box-shadow:var(--shadow)}
 .top .back{margin-left:auto;font-size:.85rem;font-weight:700;text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 13px;border-radius:999px}
+.sharebtn{border:0;background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:var(--shadow);flex:0 0 auto}
+.more{margin-top:8px}.more summary{cursor:pointer;color:var(--teal-deep,#245648);font-weight:800;font-size:.85rem;list-style:none;display:inline-flex;align-items:center;gap:4px}.more summary::-webkit-details-marker{display:none}.more[open] summary{margin-bottom:6px}.more .mbody{font-size:.9rem;color:var(--ink-soft);line-height:1.7}
+@media (max-width:420px){.top .back{padding:7px 10px}.sharebtn{padding:8px 11px}.top .wrap{gap:8px}.brand span:not(.mark){display:none}}
+.top .back{white-space:nowrap}
 .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:1rem;flex:0 0 auto}
 .hero{padding-block:42px 8px}
 .eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--coral)}
@@ -171,8 +175,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 
 <header class="top"><div class="wrap">
   <div class="brand"><span class="mark">120</span><span>나이테 120</span></div>
-  <a class="back" href="index.html">← 전체 책장</a><script>if(/[?&]embed=/.test(location.search))document.write('<style>.back{display:none}</style>')</script>
-  <button class="themebtn" id="prLink" title="페이지 공유">🔗</button>
+  <a class="back" href="./">← 나이테</a><script>if(/[?&]embed=/.test(location.search))document.write('<style>.back{display:none}</style>')</script>
+  <button class="sharebtn" id="prLink" title="이 페이지 공유하기">📤 공유하기</button>
   <button class="themebtn" id="theme" title="테마 전환">◐</button>
 </div></header>
 
@@ -180,10 +184,11 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <section class="hero">
     <div class="eyebrow">파닉스 전, 첫 영어책 코스</div>
     <h1>나이테 120</h1>
-    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong><br>
+    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong> 24개 주제 × 5권, 순서는 자유예요.</p>
+    <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
       뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
-      <strong>24개 주제 × 5권</strong>, 각 주제는 <strong>조작북·반복·라임·유머·스토리</strong>
-      5가지 유형을 골고루 담았습니다. 순서·반복은 자유예요.</p>
+      각 주제는 <strong>조작북·반복·라임·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
+      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
 
     <div class="panel">
       <div class="r1">
@@ -385,7 +390,7 @@ function sharePage(){
   var url=location.origin+location.pathname;
   var btn=document.getElementById('prLink');
   if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
-  function done(){btn.textContent='✓';btn.title='링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='🔗';btn.title='페이지 공유';},1400);}
+  function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유하기';},1600);}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}
   else{try{var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
 }

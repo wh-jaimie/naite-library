@@ -122,8 +122,13 @@ body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-appl
 .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
 h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 a{color:var(--tealD)}
-.top{display:flex;align-items:center;gap:10px;padding:14px 0 4px}
-.top a.back{font-weight:800;text-decoration:none;font-size:.9rem}
+.top{display:flex;align-items:center;gap:10px;padding:12px 0 4px}
+.top .brand{display:flex;align-items:center;gap:9px;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.02rem;white-space:nowrap}
+.top .brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--tealD));display:grid;place-items:center;color:#fff;font-size:.82rem;font-family:'Noto Sans KR',sans-serif;font-weight:800}
+.top a.back{margin-left:auto;font-size:.85rem;font-weight:700;text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 13px;border-radius:999px;white-space:nowrap}
+.sharebtn{border:0;background:linear-gradient(135deg,var(--coral),#D1965C);color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:var(--sh)}
+@media (max-width:420px){.top .brand span.t{display:none}.top a.back{padding:7px 10px}.sharebtn{padding:8px 11px}}
+.more{margin-top:6px}.more summary{cursor:pointer;color:var(--tealD);font-weight:800;font-size:.85rem;list-style:none}.more summary::-webkit-details-marker{display:none}.more[open] summary{margin-bottom:4px}.more .mbody{color:var(--soft);font-size:.88rem;line-height:1.7;max-width:62ch}
 .hero{padding:10px 0 6px}
 .hero .eyebrow{color:var(--coral);font-weight:800;font-size:.85rem}
 .hero h1{font-size:clamp(1.5rem,5vw,2rem);margin-top:2px}
@@ -201,9 +206,10 @@ a{color:var(--tealD)}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
 </style></head><body>
 <div class="wrap">
-  <div class="top"><a class="back" href="./">← 나이테</a></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top{display:none}</style>')</script>
+  <div class="top"><span class="brand"><span class="mark">100</span><span class="t">국내 인기 책장</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유하기</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top{display:none}</style>')</script>
   <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>국내 인기 책장</h1>
-    <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</p></div>
+    <p>국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·종류로 골라 보세요.</p>
+    <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</div></details></div>
 </div>
 <div class="bar"><div class="wrap">
   <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select><button type="button" class="fbtn" id="fopen">필터<b id="fcnt" hidden></b></button></div>
@@ -304,6 +310,11 @@ document.getElementById('q').addEventListener('input',function(){S.q=this.value.
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
 document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
 paint();
+// 📤 페이지 공유 — 모바일은 공유시트, 아니면 링크 복사
+document.getElementById('shareBtn').addEventListener('click',function(){var btn=this,url=location.origin+location.pathname;
+  if(navigator.share){navigator.share({title:'국내 인기 책장 — 나이테',text:'국내에서 많이 팔린 영어 그림책 100권 · 나이·가격·종류로 골라 보기',url:url}).catch(function(){});return;}
+  function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유하기';},1600);}
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,done);else done();});
 // 쿠팡 링크: 나이테 120 책(list_buy_urls) + 그 밖(shop_links)
 (async function(){var h={apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json'};
   try{var a=await fetch(URL_+'/rest/v1/rpc/list_buy_urls',{method:'POST',headers:h,body:'{}'});if(a.ok)(await a.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.title)]=r.buy_url;});}catch(e){}
