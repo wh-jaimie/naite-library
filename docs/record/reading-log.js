@@ -12,7 +12,9 @@
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
   var DOUBLE_TAP_MS=1500;  // 같은 책 1.5초 안 연속 탭은 1회
   var READER_KEY='naite_reader', MEMBER_KEY='naite_member';
-  var TAB_IDS=['study','shelf','stats'],TAB_KEY='naite_last_tab';
+  var TAB_IDS=['study','shelf','stats','c120','shop'],TAB_KEY='naite_last_tab';
+  // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
+  var EMBED={c120:'../challenge.html?embed=record',shop:'../domestic.html?embed=record'};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -283,12 +285,9 @@
   }
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:['📚','이번 달 자료'],shelf:['🗂️','우리 책장'],stats:['📊','읽기 통계']};
+    var T={study:['📚','이번 달 자료'],shelf:['🗂️','우리 책장'],stats:['📊','읽기 통계'],c120:['🎯','나이테 120'],shop:['🛒','인기 책장']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
-      return '<button type="button" role="tab" class="rtab" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+
-      // 앱 밖 주요 메뉴(나이테 공개 페이지로 이동)
-      '<a class="rtab go" href="../challenge.html"><span class="ic" aria-hidden="true">🎯</span>나이테 120</a>'+
-      '<a class="rtab go" href="../domestic.html"><span class="ic" aria-hidden="true">🛒</span>인기 책장</a></div>';
+      return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
   }
   function stack(n){var s=[],k=Math.min(n-1,5);for(var i=1;i<=k;i++){s.push((i*3)+'px '+(-i*3)+'px 0 -1px #FCFCF8');s.push((i*3)+'px '+(-i*3)+'px 0 0 #CBD0C1');}return s.length?'box-shadow:'+s.join(',')+';':'';}
@@ -413,16 +412,19 @@
   function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
-  var studyY=0;
+  var studyY=0,T_NAME={c120:'나이테 120',shop:'국내 인기 책장'};
   function showTab(id){
     if(TAB_IDS.indexOf(id)<0)id='study';
     if(S.tab==='study'&&id!=='study')studyY=window.scrollY;
     S.tab=id;
-    ['study','shelf','stats'].forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
+    TAB_IDS.forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
+    if(EMBED[id]){var v=$('v-'+id),tb=$('rtabs');
+      if(v){v.style.bottom=(tb?tb.offsetHeight:64)+'px';
+        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.loading='eager';v.appendChild(f);}}}
     try{history.replaceState(null,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){}
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();
-    window.scrollTo(0,id==='study'?studyY:0);
+    if(!EMBED[id])window.scrollTo(0,id==='study'?studyY:0);
     if(S.onEvent)S.onEvent('tab_view',{tab:id});
   }
 
@@ -461,6 +463,7 @@
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
       var h=(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
       if(TAB_IDS.indexOf(h)<0)h=last;
+      if(EMBED[h])h='study';
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
       flush();pull();verifyMember();
       setTimeout(offerInstallOnce,1200);

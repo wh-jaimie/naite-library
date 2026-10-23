@@ -201,7 +201,7 @@ a{color:var(--tealD)}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
 </style></head><body>
 <div class="wrap">
-  <div class="top"><a class="back" href="./">← 나이테</a></div>
+  <div class="top"><a class="back" href="./">← 나이테</a></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top{display:none}</style>')</script>
   <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>국내 인기 책장</h1>
     <p>교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</p></div>
 </div>

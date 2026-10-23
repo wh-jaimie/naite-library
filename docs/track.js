@@ -26,6 +26,7 @@
     return h.replace(/^www\./,'').slice(0,40);
   }
   var src=null;try{src=sessionStorage.getItem('naite_src');}catch(e){}
+  try{if(new URLSearchParams(location.search).get('embed')==='record')src='record';}catch(e){} // 기록앱 안(iframe)에서 연 페이지 → 출처 '기록 앱'으로 집계
   if(!src){src=srcNow()||'direct';try{sessionStorage.setItem('naite_src',src);}catch(e){}}
   window.NAITE_SRC=src;
   // 방문 집계 제외 옵션: ?notrack=1 로 이 기기 제외(=0 해제). 관리자 본인 방문 제외용.
