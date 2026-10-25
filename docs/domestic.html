@@ -66,7 +66,7 @@ a{color:var(--tealD)}
 .count button{border:0;background:none;color:var(--coral);font:inherit;font-weight:800;cursor:pointer;padding:0 0 0 6px}
 .grid{display:grid;grid-auto-flow:row dense;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding-bottom:40px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0}
-.cv{position:relative;aspect-ratio:3/4;background:#EBEDE3}
+.cv{position:relative;aspect-ratio:3/4;background:#EBEDE3;display:block}
 .cv img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
 .cv .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;color:#fff;font-family:'Gowun Batang',serif;font-weight:700;background:linear-gradient(150deg,var(--teal),var(--tealD))}
 .cv .rk{z-index:2;position:absolute;top:6px;left:6px;background:rgba(35,41,31,.82);color:#fff;font-size:.72rem;font-weight:800;border-radius:7px;padding:2px 7px}
@@ -169,8 +169,10 @@ function card(it){
   if(it.award)bd+='<span class="aw">'+esc(it.award)+'</span>';if(it.world)bd+='<span class="w">🌍 세계 인기</span>';
   var price=it.series?'<div class="price"><small>시리즈·세트라 권마다 가격이 달라요</small></div>':
     (pr?'<div class="price">최저 <b>'+won(pr.price)+'</b><small>'+esc(pr.store)+(pr.fmt?' · '+esc(pr.fmt):'')+' · '+md(DATA.checked)+' 기준'+(it.tags.indexOf('touch')>=0&&pr.fmt==='페이퍼백'?'<br>⚠️ 페이퍼백이라 플랩·팝업이 없을 수 있어요':'')+'</small></div>':'<div class="price"><small>교보·동방북스 국내 재고 없음 (쿠팡에서 확인)</small></div>');
-  return '<article class="card"><div class="cv">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
-    '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</div>'+
+  var href=L||('https://www.coupang.com/np/search?q='+cq);
+  // 표지를 누르면 쿠팡(링크 있으면 상품, 없으면 검색) — 나이테 120·스터디 앱과 같은 동작
+  return '<article class="card"><a class="cv cvl" href="'+esc(href)+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(it.en)+'" data-k="'+(L?'cp':'find')+'" aria-label="'+esc(it.ko)+' 쿠팡에서 보기">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
+    '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</a>'+
     '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
     (bd?'<div class="bd">'+bd+'</div>':'')+price+
     (L?'<a class="buy cp" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.en)+'">🛒 쿠팡에서 보기</a>':
@@ -212,9 +214,9 @@ document.getElementById('shareBtn').addEventListener('click',function(){var btn=
   try{var b=await fetch(URL_+'/rest/v1/shop_links?select=en,buy_url',{headers:h});if(b.ok)(await b.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.en)]=r.buy_url;});}catch(e){}
   paint();})();
 // 쿠팡 클릭 집계(관리자·notrack 기기 제외)
-document.addEventListener('click',function(e){var a=e.target.closest('a.buy');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+document.addEventListener('click',function(e){var a=e.target.closest('a.buy,a.cvl');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
   fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
-    body:JSON.stringify({type:a.classList.contains('cp')?'buy_click':'shop_search_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
+    body:JSON.stringify({type:(a.classList.contains('cp')||a.dataset.k==='cp')?'buy_click':'shop_search_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
 </script>
 <script>
 // 📋 제목 복사(영어 원제) — 웬디북·동방북스 등 다른 서점 검색용
