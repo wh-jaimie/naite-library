@@ -1,4 +1,4 @@
-// 나이테 공통 '📤 공유하기' 버튼 — 페이지 위쪽(header.top)에 넣고, 없으면 오른쪽 위에 떠 있는 버튼으로.
+// 나이테 공통 '📤 공유' 버튼 — 페이지 위쪽(header.top)에 넣고, 없으면 오른쪽 위에 떠 있는 버튼으로.
 // 모바일은 공유시트(카톡·인스타 등), 아니면 링크 복사. 나이테 120·국내 인기 책장은 자체 버튼이 있어 건너뜀.
 (function(){
   if(document.getElementById('prLink')||document.getElementById('shareBtn'))return;
@@ -9,7 +9,7 @@
     'header.top .back{white-space:nowrap;flex:0 0 auto}header.top .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto}'+
     '@media (max-width:420px){.nt-share{padding:8px 11px;font-size:.8rem}header.top .back{padding:7px 10px}}';
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-  var b=document.createElement('button');b.type='button';b.className='nt-share';b.textContent='📤 공유하기';b.title='이 페이지 공유하기';
+  var b=document.createElement('button');b.type='button';b.className='nt-share';b.textContent='📤 공유';b.title='이 페이지 공유하기';
   var top=document.querySelector('header.top'),host=top&&(top.querySelector('.wrap')||top);
   if(host){
     var back=host.querySelector('.back');
@@ -22,7 +22,7 @@
   b.addEventListener('click',function(){
     var u=url(),t=document.title||'나이테';
     if(navigator.share){navigator.share({title:t,text:desc(),url:u}).catch(function(){});return;}
-    function done(){b.textContent='✓ 링크 복사됨';clearTimeout(b._t);b._t=setTimeout(function(){b.textContent='📤 공유하기';},1600);}
+    function done(){b.textContent='✓ 링크 복사됨';clearTimeout(b._t);b._t=setTimeout(function(){b.textContent='📤 공유';},1600);}
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(done,done);
     else{try{var ta=document.createElement('textarea');ta.value=u;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
   });

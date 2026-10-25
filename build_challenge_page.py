@@ -176,7 +176,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 <header class="top"><div class="wrap">
   <div class="brand"><span class="mark">120</span><span>나이테 120</span></div>
   <a class="back" href="./">← 나이테</a><script>if(/[?&]embed=/.test(location.search))document.write('<style>.back{display:none}</style>')</script>
-  <button class="sharebtn" id="prLink" title="이 페이지 공유하기">📤 공유하기</button>
+  <button class="sharebtn" id="prLink" title="이 페이지 공유하기">📤 공유</button>
   <button class="themebtn" id="theme" title="테마 전환">◐</button>
 </div></header>
 
@@ -390,7 +390,7 @@ function sharePage(){
   var url=location.origin+location.pathname;
   var btn=document.getElementById('prLink');
   if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
-  function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유하기';},1600);}
+  function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유';},1600);}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}
   else{try{var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
 }
