@@ -227,7 +227,7 @@ a{color:var(--tealD)}
 </aside>
 <div class="dim" id="dim" hidden></div>
 <main><div class="count" id="count"></div><div class="grid" id="grid"></div>
-<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a class="joinlink" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
+<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a class="joinlink" href="https://open.kakao.com/o/pwFqj3Ti" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
 <p class="foot" id="foot"></p></main></div></div>
 <script>
 var DATA=__DATA__;
@@ -305,7 +305,7 @@ function paint(){
   if(cards.length)cards.splice(Math.min(6,cards.length),0,JOIN_CARD);
   document.getElementById('grid').innerHTML=list.length?cards.join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
 var JOIN_CARD='<div class="joinbox"><h2>📚 고르는 것보다 어려운 건, 꾸준히 읽어주기</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p>'+
-  '<a class="joinlink" data-at="list" href="https://open.kakao.com/o/p7PGdcPi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>';
+  '<a class="joinlink" data-at="list" href="https://open.kakao.com/o/pwFqj3Ti" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>';
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
 document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
