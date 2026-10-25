@@ -393,7 +393,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     }).join('');
     f.innerHTML=
       '<label class="f">월 라벨 <span class="hint">(예: 2026년 10월 · 1개월차)</span></label><input class="t" id="fml" value="'+esc(c.month_label)+'">'+
-      '<label class="f">📝 이 달 책 블로그 글 주소 <span class="hint">(나이테 스터디 앱의 '다음 달 미리보기'에서 연결돼요 · 비워도 돼요)</span></label><input class="t" id="fblog" placeholder="https://blog.naver.com/..." value="'+esc(((STATE.themes||[]).filter(function(t){return t.key===STATE.editKey;})[0]||{}).blog_url||'')+'">'+
+      '<label class="f">📝 이 달 책 블로그 글 주소 <span class="hint">(나이테 스터디 앱의 「다음 달 미리보기」에서 연결돼요 · 비워도 돼요)</span></label><input class="t" id="fblog" placeholder="https://blog.naver.com/..." value="'+esc(((STATE.themes||[]).filter(function(t){return t.key===STATE.editKey;})[0]||{}).blog_url||'')+'">'+
       '<label class="f">주제 소개 (엄마용)</label><textarea class="t" id="fsub" style="min-height:70px">'+esc(c.subject)+'</textarea>'+
       '<label class="f">읽어주는 방법</label><textarea class="t" id="frm">'+esc(c.read_method)+'</textarea>'+
       '<label class="f">책 활용 아이디어 <span class="hint">(한 줄에 하나)</span></label><textarea class="t" id="fact">'+esc(c.activities)+'</textarea>'+
