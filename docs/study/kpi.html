@@ -119,7 +119,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     root.innerHTML='<div class="wrap"><div class="warn" style="margin-top:40px">⚙️ 먼저 <code>config.js</code> 설정이 필요해요.</div></div>';return;
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
-  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 기록<span class="x"> (회원)</span>'],['books','📚 이번 달 책']];
+  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (회원)</span>'],['books','📚 이번 달 책']];
   var PERIODS=[['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
   try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
@@ -135,7 +135,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   function appOf(e){var p=e.path||'';if(p.indexOf('/record/')>=0)return 'record';if(p.indexOf('/study/')>=0)return 'study';if(e.theme_key)return 'study';return 'naite';}
   function isPublic(e){var a=appOf(e);return a==='naite'||a==='study';}
   function pageOf(e){var p=e.path||'';
-    if(p.indexOf('/record/')>=0)return '📖 나이테 기록';
+    if(p.indexOf('/record/')>=0)return '📖 나이테 스터디';
     if(/\/study\/missions/.test(p))return '🎯 스터디 미션';
     if(/\/study\//.test(p))return '📘 스터디 자료';
     if(/challenge\.html/.test(p))return '🌳 나이테 120';
@@ -144,7 +144,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     if(/join\.html/.test(p))return '🙋 스터디 참여';
     if(/\/naite-library\/?$/.test(p)||/\/naite-library\/index\.html$/.test(p)||p==='/'||p==='/index.html')return '🏠 메인';
     return (e.meta&&e.meta.page)||p||'?';}
-  function srcName(s){var m={blog:'📝 블로그',insta:'📷 인스타',instagram:'📷 인스타',direct:'🔗 직접(주소·북마크·앱)','스터디 참여':'🔗 직접(주소·북마크·앱)','나이테 120':'🌳 나이테 120 페이지',member:'📖 나이테 기록 입장 화면',record:'📖 나이테 기록 앱',
+  function srcName(s){var m={blog:'📝 블로그',insta:'📷 인스타',instagram:'📷 인스타',direct:'🔗 직접(주소·북마크·앱)','스터디 참여':'🔗 직접(주소·북마크·앱)','나이테 120':'🌳 나이테 120 페이지',member:'📖 나이테 스터디 입장 화면',record:'📖 나이테 스터디 앱',
     naver:'🟢 네이버 검색',google:'🔍 구글',daum:'🔎 다음',kakao:'💬 카카오톡',threads:'🧵 스레드',youtube:'▶️ 유튜브',facebook:'📘 페이스북',carrot:'🥕 당근',daangn:'🥕 당근',karrot:'🥕 당근'};return m[s]||('🔸 '+s);}
   function sessions(list){var o={};list.forEach(function(e){if(e.session_id)o[e.session_id]=1;});return o;}
   function themeLabel(t){return t?(t.emoji||'')+' '+(t.ko||t.key):'';}
@@ -250,7 +250,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     root.innerHTML='<div class="top"><div class="wrap">'+
       '<div class="bar1"><span class="brand">📊 나이테 KPI</span><span class="sp"><a class="btn" href="admin.html">🛠 관리</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
-          '<a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 기록 열기 ↗</a><button id="logout">로그아웃</button></div></span></span></div>'+
+          '<a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a><button id="logout">로그아웃</button></div></span></span></div>'+
       '<div class="bar2"><div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(S.tab===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
         (S.tab==='books'?'':'<div class="seg">'+PERIODS.map(function(p){return '<button class="'+(S.period===p[0]?'on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';}).join('')+'</div>')+
       '</div></div></div><div class="wrap" id="body"><div class="card"><p class="status">불러오는 중…</p></div></div>';
@@ -353,7 +353,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     sel.onchange=draw;draw();
   }
 
-  // 나이테 기록 (회원)
+  // 나이테 스터디 (회원)
   function renderRecord(body,X){
     var R=X.R;
     if(!X.lc){body.innerHTML='<div class="card"><div class="warn">읽기 기록 DB(reading_logs)를 읽지 못했어요. migrate_reading_logs.sql 실행 여부를 확인해 주세요.</div></div>';return;}
@@ -493,7 +493,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       rows.map(function(r){return '<tr>'+r.map(function(x,i){return '<td'+(i?' class="num"':'')+'>'+x+'</td>';}).join('')+'</tr>';}).join('')+
       '<tr class="sum"><td>합계</td><td class="num">'+tcell('book_click')+'</td><td class="num">'+tcell('buy_click')+'</td><td class="num">'+tcell('read_aloud_click')+'</td><td class="num">'+tcell('workbook_click')+'</td><td class="num">'+nR+'<small>기록한 폰</small></td><td class="num">'+logs.length+'</td></tr>'+
       '</tbody></table></div>'+
-      '<p class="hint">이 달 자료의 전체 기록이에요(위 기간 선택과 무관). 공개 = 나이테의 스터디 자료 페이지, 회원 = 나이테 기록 앱. 책 클릭은 카드를 누른 횟수, 쿠팡은 그중 쿠팡이 열린 횟수예요(2026-10-16부터 이 기준).</p>';
+      '<p class="hint">이 달 자료의 전체 기록이에요(위 기간 선택과 무관). 공개 = 나이테의 스터디 자료 페이지, 회원 = 나이테 스터디 앱. 책 클릭은 카드를 누른 횟수, 쿠팡은 그중 쿠팡이 열린 횟수예요(2026-10-16부터 이 기준).</p>';
     // 메모
     var notes=nR?readNotes(books.map(function(b){var p=per[b.id];return {title:b.title,r:cnt(p.readers),total:p.total};}),nR):[];
     var noLink=books.filter(function(b){return !b.buy_url;});

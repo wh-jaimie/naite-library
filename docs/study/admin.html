@@ -173,7 +173,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var h='<div class="top"><div class="wrap" style="display:block;padding:0 18px">'+
       '<div class="bar1"><span class="brand">🛠️ 나이테 관리</span><span class="sp"><a class="btn" href="kpi.html">📊 KPI</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
-          '<a href="index.html" target="_blank">📘 스터디 자료 공유 페이지 ↗</a><a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 기록 열기 ↗</a>'+
+          '<a href="index.html" target="_blank">📘 스터디 자료 공유 페이지 ↗</a><a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a>'+
           '<button id="logout">로그아웃</button></div></span></span></div>'+
       '<div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(v===t[0]?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
       '</div></div><div class="wrap" id="body"></div>';
@@ -452,7 +452,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   }
   function val(id){var e=document.getElementById(id);return e?e.value:'';}
 
-  // ---------- 회원 비밀번호 (나이테 기록 입장용) ----------
+  // ---------- 회원 비밀번호 (나이테 스터디 입장용) ----------
   async function renderMembers(){
     var body=document.getElementById('body');
     body.innerHTML='<div class="card"><p class="status">불러오는 중…</p></div>';
@@ -460,11 +460,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     if(cfg.error){body.innerHTML='<div class="card"><div class="warn">회원 기록용 DB가 아직 없어요. Supabase SQL Editor에서 <b>supabase/migrate_reading_logs.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(cfg.error.message)+'</small></div></div>';return;}
     var code=(cfg.data&&cfg.data.member_code)||'';
     body.innerHTML='<div class="card" style="max-width:520px"><h3>🔑 회원 비밀번호</h3>'+
-      '<p class="hint">나이테 기록 앱(<a href="../record/" target="_blank">record/</a>)에 들어갈 때 쓰는 회원 비밀번호예요.</p>'+
+      '<p class="hint">나이테 스터디 앱(<a href="../record/" target="_blank">record/</a>)에 들어갈 때 쓰는 회원 비밀번호예요.</p>'+
       '<div class="hint" style="margin-top:12px">지금 비밀번호</div><div class="cur">'+(code?esc(code):'<span style="color:#a2231d;letter-spacing:0;font-size:1rem">설정 안 됨 (아무도 기록할 수 없어요)</span>')+'</div>'+
       '<label class="f" for="nc">새 비밀번호</label><input class="t" id="nc" inputmode="numeric" maxlength="20" placeholder="예: 1102" autocomplete="off">'+
       '<button class="btn cor" id="msave" style="margin-top:10px">저장</button> <span class="status" id="mst"></span>'+
-      '<p class="hint" style="margin-top:12px">바꾸면 회원들은 다음 접속 때 새 비밀번호를 한 번 넣어야 해요. 읽기 기록은 비밀번호와 따로 저장돼서 그대로 이어져요. 읽기 통계는 📊 KPI › 📖 나이테 기록 / 📚 이번 달 책에서 봐요.</p></div>';
+      '<p class="hint" style="margin-top:12px">바꾸면 회원들은 다음 접속 때 새 비밀번호를 한 번 넣어야 해요. 읽기 기록은 비밀번호와 따로 저장돼서 그대로 이어져요. 읽기 통계는 📊 KPI › 📖 나이테 스터디 / 📚 이번 달 책에서 봐요.</p></div>';
     document.getElementById('msave').addEventListener('click',async function(){
       var v=document.getElementById('nc').value.trim(),st=document.getElementById('mst');
       if(!v){st.textContent='새 비밀번호를 넣어주세요.';return;}
