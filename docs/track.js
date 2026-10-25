@@ -23,6 +23,7 @@
     if(/(^|\.)threads\.(net|com)$/.test(h))return 'threads';
     if(/(^|\.)(youtube\.com|youtu\.be)$/.test(h))return 'youtube';
     if(/(^|\.)(facebook\.com|fb\.com)$/.test(h))return 'facebook';
+    if(/(^|\.)(daangn\.com|karrot\.com)$/.test(h))return 'carrot';
     return h.replace(/^www\./,'').slice(0,40);
   }
   var src=null;try{src=sessionStorage.getItem('naite_src');}catch(e){}

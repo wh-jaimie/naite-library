@@ -145,7 +145,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     if(/\/naite-library\/?$/.test(p)||/\/naite-library\/index\.html$/.test(p)||p==='/'||p==='/index.html')return '🏠 메인';
     return (e.meta&&e.meta.page)||p||'?';}
   function srcName(s){var m={blog:'📝 블로그',insta:'📷 인스타',instagram:'📷 인스타',direct:'🔗 직접(주소·북마크·앱)','스터디 참여':'🔗 직접(주소·북마크·앱)','나이테 120':'🌳 나이테 120 페이지',member:'📖 나이테 기록 입장 화면',record:'📖 나이테 기록 앱',
-    naver:'🟢 네이버 검색',google:'🔍 구글',daum:'🔎 다음',kakao:'💬 카카오톡',threads:'🧵 스레드',youtube:'▶️ 유튜브',facebook:'📘 페이스북'};return m[s]||('🔸 '+s);}
+    naver:'🟢 네이버 검색',google:'🔍 구글',daum:'🔎 다음',kakao:'💬 카카오톡',threads:'🧵 스레드',youtube:'▶️ 유튜브',facebook:'📘 페이스북',carrot:'🥕 당근',daangn:'🥕 당근',karrot:'🥕 당근'};return m[s]||('🔸 '+s);}
   function sessions(list){var o={};list.forEach(function(e){if(e.session_id)o[e.session_id]=1;});return o;}
   function themeLabel(t){return t?(t.emoji||'')+' '+(t.ko||t.key):'';}
   function themeBy(k){return S.themes.filter(function(t){return t.key===k;})[0];}
