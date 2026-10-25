@@ -32,7 +32,8 @@ create table if not exists public.themes (
   emoji text,
   en    text,
   ko    text,
-  sort  int default 0
+  sort  int default 0,
+  blog_url text default ''   -- 그 달 책 블로그 글(나이테 스터디 앱 '다음 달 미리보기'에서 연결)
 );
 
 create table if not exists public.books (

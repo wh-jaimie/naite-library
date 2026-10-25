@@ -429,4 +429,10 @@ html_out = TEMPLATE.replace("/*DATA*/", payload).replace("__BUY_DISCLOSURE__", _
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html_out)
 print(f"쿠팡 링크 연결된 책: {_buycnt}/120")
-print(f"생성: {OUT} ({len(html_out)//1024} KB), 120권/24주제")
+# 나이테 스터디 앱의 '다음 달 미리보기'가 읽는 공개 데이터(아직 비공개인 달의 책도 120 페이지엔 공개돼 있음)
+_mini = {"themes": [{"key": t["key"], "emoji": t["emoji"], "ko": t["ko"], "en": t["en"],
+          "books": [{"title": b["title"], "author": b["author"], "cover": b.get("cover") or "", "tier": b["tier"],
+                     "tier_label": b["tier_label"], "ar": b.get("ar"), "format": b.get("format") or ""} for b in sorted(t["books"], key=lambda x: x["tier"])]}
+         for t in data["themes"]]}
+json.dump(_mini, open(os.path.join(os.path.dirname(OUT), "..", "docs", "c120_data.json"), "w", encoding="utf-8"), ensure_ascii=False)
+print(f"생성: {OUT} ({len(html_out)//1024} KB), 120권/24주제 + docs/c120_data.json")

@@ -393,6 +393,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     }).join('');
     f.innerHTML=
       '<label class="f">월 라벨 <span class="hint">(예: 2026년 10월 · 1개월차)</span></label><input class="t" id="fml" value="'+esc(c.month_label)+'">'+
+      '<label class="f">📝 이 달 책 블로그 글 주소 <span class="hint">(나이테 스터디 앱의 '다음 달 미리보기'에서 연결돼요 · 비워도 돼요)</span></label><input class="t" id="fblog" placeholder="https://blog.naver.com/..." value="'+esc(((STATE.themes||[]).filter(function(t){return t.key===STATE.editKey;})[0]||{}).blog_url||'')+'">'+
       '<label class="f">주제 소개 (엄마용)</label><textarea class="t" id="fsub" style="min-height:70px">'+esc(c.subject)+'</textarea>'+
       '<label class="f">읽어주는 방법</label><textarea class="t" id="frm">'+esc(c.read_method)+'</textarea>'+
       '<label class="f">책 활용 아이디어 <span class="hint">(한 줄에 하나)</span></label><textarea class="t" id="fact">'+esc(c.activities)+'</textarea>'+
@@ -447,8 +448,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var errs=0;
     for(var id in byId){var u=byId[id];var r=await client.from('books').update({title:u.title,author:u.author,reason:u.reason,read_aloud:u.read_aloud,workbook:u.workbook,buy_url:u.buy_url}).eq('id',u.id);if(r.error)errs++;}
     STATE.contentByTheme[key]=content;
+    // 블로그 글 주소(themes.blog_url) — 칸이 아직 없으면(migrate_theme_blog.sql 미실행) 안내만
+    var th=(STATE.themes||[]).filter(function(t){return t.key===key;})[0],bl=val('fblog').trim(),blogMsg='';
+    if(th&&(th.blog_url||'')!==bl){var rb=await client.from('themes').update({blog_url:bl}).eq('key',key);if(rb.error)blogMsg=' (블로그 주소는 저장 못 함: supabase/migrate_theme_blog.sql을 먼저 실행해 주세요)';else th.blog_url=bl;}
     (STATE.booksByTheme[key]||[]).forEach(function(b){var u=byId[b.id];if(u){b.title=u.title;b.author=u.author;b.reason=u.reason;b.read_aloud=u.read_aloud;b.workbook=u.workbook;b.buy_url=u.buy_url;}});
-    st.textContent=errs?('내용 저장됨, 책 '+errs+'건 실패'):'✓ 저장 완료';
+    st.textContent=(errs?('내용 저장됨, 책 '+errs+'건 실패'):'✓ 저장 완료')+blogMsg;
   }
   function val(id){var e=document.getElementById(id);return e?e.value:'';}
 
