@@ -448,7 +448,7 @@
 
   window.NaiteReading={
     getCode:getCode,setCode:setCode, // 입장 화면(index.html)에서 사용
-    install:install,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,
+    install:install,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,toast:toast,
     mount:function(o){
       var code=getCode(),theme=o.theme||{};
       S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onExpired:o.onExpired||null,onLeave:o.onLeave||null,

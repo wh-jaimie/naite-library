@@ -57,6 +57,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
 .book .act:hover{filter:brightness(.96)}
 .book .act.wb{background:#eef3ea;color:var(--tealD)}
 .book .act.buy{background:var(--coral);color:#fff;border-color:var(--coral)}
+.book .act.cp{background:#fff;color:var(--tealD);font-family:inherit;cursor:pointer}
 .disc{font-size:.74rem;color:var(--soft);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin-top:12px}
 .vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .vid{background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
@@ -123,6 +124,8 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .np-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .np-row::-webkit-scrollbar{display:none}
 .np-b{flex:0 0 104px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:4px}
+.np-b .np-l{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:inherit}
+.np-b .np-cp{margin-top:auto;border:1px solid var(--line);background:#fff;color:var(--tealD);font:inherit;font-size:.68rem;font-weight:800;border-radius:7px;padding:5px 2px;cursor:pointer}
 .np-b .cv{aspect-ratio:3/4;border-radius:9px;overflow:hidden;background:#EBEDE3;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .np-b .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .np-b .ty{font-size:.66rem;font-weight:800;color:var(--tealD)}
@@ -132,6 +135,8 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .np-btns a,.np-btns button{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.88rem;border-radius:11px;padding:11px;cursor:pointer}
 .np-btns .blog{background:linear-gradient(135deg,#2F6E58,#245648);color:#fff;border:0}
 .np-btns .more{background:#fff;border:1px solid var(--line);color:var(--tealD)}
+.np-btns .cpall{background:#F3EEE4;border:1px solid #E7DCCB;color:#8A5A2E}
+.np-btns .cpall small{display:block;font-weight:600;font-size:.72rem;color:var(--soft);margin-top:2px}
 /* 토스트 · 아래 창 */
 .rl-toast{position:fixed;left:12px;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:70;max-width:440px;margin:0 auto;background:#23291F;color:#F4F5EF;border-radius:14px;padding:10px 10px 10px 15px;display:flex;align-items:center;gap:10px;font-size:.84rem;box-shadow:0 10px 30px rgba(0,0,0,.3);transform:translateY(18px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .rl-toast.on{transform:none;opacity:1;pointer-events:auto}
@@ -309,6 +314,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       if(b.format) stats+='<span class="st fmt">'+esc(b.format)+'</span>';
       var acts='';
       if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크지</a>';
+      acts+='<button type="button" class="act cp" data-copy="'+esc(b.title)+'" data-cpfrom="study">📋 제목 복사</button>';
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.buy_url?'<a href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" class="cvlink" data-buy="'+esc(b.title)+'">':'')+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+(b.buy_url?'</a>':'')+'</div>'+
         '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
@@ -331,10 +337,11 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
        '<div class="herobtns"><a class="mlink" href="../study/missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
        '<a class="mlink alt" href="../challenge.html">📚 나이테 120 전체 보기 →</a>'+
+       (theme.blog_url?'<a class="mlink alt" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">📝 이 5권을 고른 이유 →</a>':'')+
        (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 홈 화면에 추가</button>')+'</div></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
        '<div class="lvguide"><b>🌱 글밥 적은 책부터 시작해 보세요.</b> 3~4살은 🌱 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">글밥 기준(AR 추정): 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
-       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
+       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>📋 제목 복사</b> 후 검색창에 붙여넣으세요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
        '<p class="wbnote" style="font-size:.78rem;color:var(--soft);margin:10px 0 0">※ <b>글밥 단계</b>는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
        (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 <b>📖 책정보</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
     if(vids)h+='<div class="sec"><h2>📺 Read Aloud 영상</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="vids">'+vids+'</div></div>';
@@ -369,6 +376,14 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){logEvent('dwell',{seconds:Math.round((Date.now()-start)/1000)});}});
   }
 
+  // 📋 제목 복사 — 클립보드 API가 막힌 앱 안 브라우저에서는 textarea로 대신
+  function copyOld(t){return new Promise(function(ok,no){try{var x=document.createElement('textarea');x.value=t;x.setAttribute('readonly','');x.style.position='fixed';x.style.top='0';x.style.opacity='0';document.body.appendChild(x);x.focus();x.select();x.setSelectionRange(0,t.length);var r=document.execCommand('copy');x.remove();r?ok():no();}catch(e){no(e);}});}
+  function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).catch(function(){return copyOld(t);});return copyOld(t);}
+  document.addEventListener('click',function(ev){var b=ev.target.closest('[data-copy]');if(!b)return;ev.preventDefault();ev.stopPropagation();
+    var t=b.dataset.copy,many=t.indexOf('\n')>=0,say=function(h){if(window.NaiteReading&&window.NaiteReading.toast)window.NaiteReading.toast(h);};
+    copyText(t).then(function(){say(many?'📋 5권 제목을 복사했어요. 메모나 검색창에 붙여넣으세요':'📋 제목을 복사했어요. 서점·도서관 검색창에 붙여넣으세요');},
+      function(){say('복사가 안 되는 화면이에요. 제목을 길게 눌러 복사해 주세요');});
+    logEvent('title_copy',{title:many?'(5권 전체)':t,from:b.dataset.cpfrom||''});},true);
   var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
 
@@ -386,10 +401,13 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       var books=t.books.slice().sort(function(a,b){return (level(a)||9)-(level(b)||9)||a.tier-b.tier;});
       var cards=books.map(function(b){var lv=level(b),L=links[b.title];
         var inner='<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div><div class="ty">'+esc(b.tier_label)+'</div><div class="tt">'+esc(b.title)+'</div>'+(lv?'<div class="lv">'+LV_LABEL[lv]+'</div>':'');
-        return L?'<a class="np-b" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-np="'+esc(b.title)+'">'+inner+'</a>':'<div class="np-b">'+inner+'</div>';}).join('');
+        return '<div class="np-b">'+(L?'<a class="np-l" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-np="'+esc(b.title)+'">'+inner+'</a>':'<div class="np-l">'+inner+'</div>')+
+          '<button type="button" class="np-cp" data-copy="'+esc(b.title)+'" data-cpfrom="next">📋 제목 복사</button></div>';}).join('');
+      var all=books.map(function(b,k){return (k+1)+'. '+b.title+(b.author?' ('+b.author+')':'');}).join('\n');
       el.innerHTML='<div class="sec"><div class="np"><div class="nh"><h2>👀 다음 달 미리보기</h2><span class="nm">'+esc(mon+' · '+t.emoji+' '+t.ko)+'</span></div>'+
-        '<p class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보(구매처)가 열려요.</p><div class="np-row">'+cards+'</div>'+
-        '<div class="np-btns">'+(nx.blog_url?'<a class="blog" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1">📝 블로그에서 다음 달 책 자세히 보기</a>':'')+
+        '<p class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보(구매처)가 열리고, 📋로 제목을 복사할 수 있어요.</p><div class="np-row">'+cards+'</div>'+
+        '<div class="np-btns"><button type="button" class="cpall" data-copy="'+esc(all)+'" data-cpfrom="next_all">📋 5권 제목 한 번에 복사<small>도서관 희망도서 신청 · 장바구니 검색할 때 편해요</small></button>'+
+        (nx.blog_url?'<a class="blog" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1">📝 이 5권을 고른 이유 (블로그)</a>':'')+
         '<button type="button" class="more" data-rtab="c120">🎯 나이테 120에서 전체 보기</button></div></div></div>';
       el.querySelectorAll('[data-np]').forEach(function(a){a.addEventListener('click',function(){logEvent('buy_click',{title:a.dataset.np,from:'next_preview'});});});
       var bl=el.querySelector('[data-npblog]');if(bl)bl.addEventListener('click',function(){logEvent('blog_click',{theme:nx.key,from:'next_preview'});});
