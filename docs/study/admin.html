@@ -108,7 +108,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var _hv=(location.hash||'').slice(1);
-  var STATE={view:(['content','buyurls','guides','members'].indexOf(_hv)>=0?_hv:'content'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, editKey:null, user:null};
+  var DEFAULT_STUDY_ROOM_URL='https://open.kakao.com/o/p8qXEfUi';
+  var STATE={view:(['content','buyurls','guides','members'].indexOf(_hv)>=0?_hv:'content'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
   // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
   var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
@@ -162,6 +163,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     STATE.guides=(gd&&gd.data)||[];STATE.guidesErr=gd&&gd.error;
     var st=await client.from('settings').select('*').eq('id',1).maybeSingle();
     STATE.current=st.data?st.data.current_theme:(STATE.themes[0]&&STATE.themes[0].key);
+    STATE.studyRoomUrl=(st.data&&'study_room_url' in st.data)?(st.data.study_room_url||''):null; // null = 컬럼 없음(migrate_study_room_url.sql 전)
     STATE.chatMembers=(st.data&&'chat_members' in st.data)?(st.data.chat_members||0):null; // null = 컬럼 없음(migrate_chat_members.sql 전)
     STATE.editKey=STATE.editKey||STATE.current||(STATE.themes[0]&&STATE.themes[0].key);
   }
@@ -286,6 +288,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div class="card"><label class="f" style="margin-top:0">이번 달 공개 주제 <span class="hint">(부모가 링크 열면 보이는 주제)</span></label>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap"><select class="t" id="curSel" style="flex:1;min-width:220px">'+opt(STATE.current)+'</select>'+
         '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
+      '<div class="card"><label class="f" style="margin-top:0">스터디 방 링크 <span class="hint">(메인·나이테 120·국내 인기 책장·참여 페이지)</span></label>'+
+        '<div class="hint" style="margin-bottom:10px">카카오톡 오픈채팅 주소를 입력하세요. 저장하면 공개 페이지에 바로 반영됩니다.</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input class="t" id="roomUrl" type="url" value="'+esc(STATE.studyRoomUrl===null?DEFAULT_STUDY_ROOM_URL:(STATE.studyRoomUrl||DEFAULT_STUDY_ROOM_URL))+'" placeholder="https://open.kakao.com/o/..." style="flex:1;min-width:240px" '+(STATE.studyRoomUrl===null?'disabled':'')+'>'+
+        '<button class="btn cor" id="setRoomUrl" '+(STATE.studyRoomUrl===null?'disabled':'')+'>저장</button><span class="status" id="roomUrlSt"></span></div>'+
+        (STATE.studyRoomUrl===null?'<div class="hint" style="margin-top:8px">⚙️ 먼저 Supabase에서 <b>supabase/migrate_study_room_url.sql</b>을 실행해 주세요.</div>':'')+
+      '</div>'+
       '<div class="card"><label class="f" style="margin-top:0">오픈채팅 참여 인원 <span class="hint">(메인 화면 "지금 ○명의 엄마가 함께하고 있어요" · 10명 미만이면 숨김)</span></label>'+
         (STATE.chatMembers===null
           ? '<div class="hint">⚙️ Supabase에서 <b>supabase/migrate_chat_members.sql</b>을 먼저 실행해 주세요.</div>'
@@ -304,6 +312,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       document.getElementById('curSt').textContent=r.error?('실패: '+r.error.message):('✓ 현재 공개 주제: '+k+' (자동 발행됨)');
       if(!r.error)STATE.current=k;
     });
+    var roomSave=document.getElementById('setRoomUrl');
+    if(roomSave)roomSave.addEventListener('click',saveStudyRoomUrl);
     var sm=document.getElementById('setMem');
     if(sm)sm.addEventListener('click',async function(){
       var n=parseInt(document.getElementById('memN').value,10);
@@ -318,6 +328,16 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     document.getElementById('preview').addEventListener('click',openPreview);
     document.getElementById('pdf').addEventListener('click',function(){buildPdf(STATE.editKey);});
     renderForm();
+  }
+
+  async function saveStudyRoomUrl(){
+    var input=document.getElementById('roomUrl'),st=document.getElementById('roomUrlSt'),value=(input.value||'').trim(),parsed;
+    try{parsed=new URL(value);}catch(e){st.textContent='유효한 주소를 입력해 주세요.';return;}
+    if(parsed.protocol!=='https:'||parsed.hostname!=='open.kakao.com'){st.textContent='https://open.kakao.com 주소를 입력해 주세요.';return;}
+    st.textContent='저장 중…';
+    var r=await client.from('settings').update({study_room_url:value}).eq('id',1);
+    st.textContent=r.error?('실패: '+r.error.message):'✓ 저장했어요. 공개 페이지에 반영됩니다.';
+    if(!r.error)STATE.studyRoomUrl=value;
   }
 
   // ---------- PDF(인쇄) 생성 ----------

@@ -60,7 +60,8 @@ create table if not exists public.content (
 -- 공개 설정(어떤 주제를 부모에게 보여줄지)
 create table if not exists public.settings (
   id            int primary key default 1,
-  current_theme text
+  current_theme text,
+  study_room_url text default 'https://open.kakao.com/o/p8qXEfUi'
 );
 
 -- 엄마표영어 가이드(공개 읽을거리 · 블로그 링크). 관리자가 추가/수정.

@@ -201,7 +201,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
         <button data-c="2y" class="active"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
         <button data-c="1y"><div class="ct">🚀 1년 코스</div><div class="cd">월 2주제 · 10권 × 12개월</div></button>
       </div>
-      <a class="join" id="joinBtn" href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
+      <a class="join" id="joinBtn" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
@@ -422,6 +422,7 @@ renderBody();updateProgress();
 })();
 </script>
 <script src="track.js" data-page="나이테 120"></script>
+<script src="study-room.js" defer></script>
 """
 _disc = ('    <p class="note" style="margin-top:6px">※ 책 제목을 누르면 열리는 <b>🛒 쿠팡 링크</b>는 '
          '쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>') if _buycnt else ''
