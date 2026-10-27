@@ -71,7 +71,7 @@ a{color:inherit;text-decoration:none}
 .month .ml{text-align:center;color:var(--coral);font-weight:800;font-size:.9rem}
 .month .mt{text-align:center;font-family:'Gowun Batang',Georgia,serif;font-size:1.3rem;font-weight:700;margin-top:2px}
 .books{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px}
-.bk5 .cv{aspect-ratio:3/4;border-radius:10px;background:#EBEDE3;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.bk5 .cv{display:block;aspect-ratio:3/4;border-radius:10px;background:#EBEDE3;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .bk5 .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .bk5 .tl{font-size:.78rem;font-weight:700;margin-top:6px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .bk5 .ty{font-size:.7rem;color:var(--soft)}
@@ -283,13 +283,18 @@ a{color:inherit;text-decoration:none}
     }catch(e){}
   });});
 
+  // 표지를 누르면 쿠팡(관리자가 넣은 파트너스 링크, 없으면 쿠팡 검색) — 나이테 120·국내 책장·스터디 앱과 같은 동작
+  var LINKS={},LASTM=null;
+  function buyHref(b){return LINKS[b.title]||b.buy_url||('https://www.coupang.com/np/search?q='+encodeURIComponent(b.title));}
   function bookHTML(b){
-    return '<div class="bk5"><div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div>'+
+    var L=LINKS[b.title]||b.buy_url;
+    return '<div class="bk5"><a class="cv cvl" href="'+esc(buyHref(b))+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(b.title)+'" data-k="'+(L?'cp':'find')+'" aria-label="'+esc(b.title)+' 쿠팡에서 보기">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</a>'+
       '<div class="tl">'+esc(b.title)+'</div>'+(b.tier_label?'<div class="ty">'+esc(b.tier_label)+'</div>':'')+'</div>';
   }
   function renderMonth(d){
     var books=d.books||[];
     if(!books.length){$('monthSec').hidden=true;return;}
+    LASTM=d;
     $('mLabel').textContent=d.month_label||'';
     $('mTheme').textContent=((d.emoji||'')+' '+(d.ko||'')).trim();
     $('mBooks').innerHTML=books.map(bookHTML).join('');
@@ -300,7 +305,7 @@ a{color:inherit;text-decoration:none}
     var nx=d.next;
     if(nx&&nx.books&&nx.books.length&&new Date().getDate()>=15){
       $('nextHead').textContent='다음 달 미리보기 · '+((nx.emoji||'')+' '+(nx.ko||'')).trim();
-      $('nextBooks').innerHTML=nx.books.map(function(b){return b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" title="'+esc(b.title)+'">':'';}).join('');
+      $('nextBooks').innerHTML=nx.books.map(function(b){var L=LINKS[b.title]||b.buy_url;return b.cover?'<a class="cvl" href="'+esc(buyHref(b))+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(b.title)+'" data-k="'+(L?'cp':'find')+'"><img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" title="'+esc(b.title)+'"></a>':'';}).join('');
       $('nextBox').hidden=false;
     }
   }
@@ -333,6 +338,10 @@ a{color:inherit;text-decoration:none}
     }catch(e){$('monthSec').hidden=true;}
     renderRoom();
   }
+  fetch(SU+"/rest/v1/rpc/list_buy_urls",{method:"POST",headers:H,body:"{}"}).then(function(r){return r.ok?r.json():[];})
+    .then(function(rows){(rows||[]).forEach(function(x){if(x.buy_url)LINKS[x.title]=x.buy_url;});if(LASTM)renderMonth(LASTM);}).catch(function(){});
+  document.addEventListener('click',function(e){var a=e.target.closest('a.cvl');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;
+    fetch(SU+"/rest/v1/events",{method:"POST",headers:Object.assign({},H,{Prefer:"return=minimal"}),body:JSON.stringify({type:a.dataset.k==='cp'?'buy_click':'shop_search_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{title:a.dataset.t,page:'메인',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
   fetch(SU+"/rest/v1/rpc/landing_stats",{method:"POST",headers:H,body:"{}"})
     .then(function(r){if(!r.ok)throw 0;return r.json();})
     .then(function(d){if(!d||!d.ok)throw 0;renderMonth(d);ROOM.stats=d;renderRoom();})
