@@ -374,6 +374,15 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var dayBy={};X.lc.forEach(function(l){(dayBy[l.reader]=dayBy[l.reader]||{})[l.read_on]=1;});
     var buckets=[['1일',0],['2~3일',0],['4~7일',0],['8일 이상',0]];
     Object.keys(dayBy).forEach(function(r){var n=cnt(dayBy[r]);buckets[n<=1?0:n<=3?1:n<=7?2:3][1]++;});
+    // 같은 폰이 앱을 며칠·몇 번 열었나(스터디 앱 page_view, 폰별 익명 session_id)
+    var opv=X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view'&&e.session_id;}),oDay={},oCnt={};
+    opv.forEach(function(e){(oDay[e.session_id]=oDay[e.session_id]||{})[dstr(e.created_at)]=1;oCnt[e.session_id]=(oCnt[e.session_id]||0)+1;});
+    var oIds=Object.keys(oDay),ob=[['1일',0],['2~3일',0],['4~7일',0],['8일 이상',0]],oDays=0;
+    oIds.forEach(function(k){var n=cnt(oDay[k]);oDays+=n;ob[n<=1?0:n<=3?1:n<=7?2:3][1]++;});
+    var oAvgD=oIds.length?Math.round(oDays/oIds.length*10)/10:0,oAvgN=oIds.length?Math.round(opv.length/oIds.length*10)/10:0,oMulti=oIds.length-ob[0][1];
+    h+='<div class="card"><h3>📱 며칠이나 앱을 열었나요 <span class="hint">폰 수</span></h3>'+(oIds.length?hbars(ob)+
+      '<p class="hint">앱을 연 '+oIds.length+'대 중 <b>'+oMulti+'대('+Math.round(oMulti/oIds.length*100)+'%)가 이틀 이상</b> 열었어요. 폰당 평균 <b>'+oAvgD+'일, '+oAvgN+'번</b>. 같은 날 여러 번 연 것도 횟수에 들어가요.</p>'
+      :'<p class="empty">이 기간에 스터디 앱을 연 기록이 없어요.</p>')+'</div>';
     h+='<div class="two"><div class="card"><h3>🔁 며칠이나 기록했나요 <span class="hint">폰 수</span></h3>'+hbars(buckets)+'<p class="hint">기간 안에서 기록한 날짜 수예요. 꾸준히 기록하는 폰이 늘면 좋아요.</p></div>'+
       '<div class="card"><h3>📘 주제별 읽기</h3>'+table(['주제','읽기','폰'],(function(){var o={},rr={};X.lc.forEach(function(l){var k=l.book_id==null?'_other':(l.theme_key||'?');o[k]=(o[k]||0)+1;(rr[k]=rr[k]||{})[l.reader]=1;});
         return Object.keys(o).sort(function(x,y){return o[y]-o[x];}).map(function(k){return [k==='_other'?'📚 다른 책(스터디 외)':esc(themeLabel(themeBy(k))||k),o[k],cnt(rr[k])];});})(),1)+
