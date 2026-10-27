@@ -291,6 +291,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     '</div>'+rangeNote(R)+'</div>';
     var M={visitors:['나이테 방문자','#2F6E58',function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
       join:['스터디 참여 클릭','#B87343',function(){return perDay(X.cur.filter(function(e){return e.type==='join_click';}),R,function(e){return dstr(e.created_at);});}],
+      opens:['스터디 앱 연 폰','#6A4A8A',function(){return perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
       readers:['기록한 폰','#4F9A72',function(){return X.lc?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):R.days.map(function(){return 0;});}],
       reads:['읽기 기록','#245648',function(){return X.lc?perDay(X.lc,R,function(l){return l.read_on;}):R.days.map(function(){return 0;});}],
       buy:['쿠팡 클릭','#a2231d',function(){return perDay(X.cur.filter(function(e){return e.type==='buy_click';}),R,function(e){return dstr(e.created_at);});}]};
@@ -368,7 +369,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     h+='<h3 style="margin:22px 2px 0;font-size:1.05rem">🗓 기간별 이용 <span class="hint">'+esc(R.label)+'</span></h3>';
     h+='<div class="kgrid" style="margin-top:10px">'+kpi('기록한 폰',a.readers,b.readers,R)+kpi('읽기 기록',a.reads,b.reads,R)+kpi('폰당 평균 읽기',a.avg,b.avg,R,'번')+
       kpi('기록앱 연 폰',a.open,b.open,R)+kpi('영상 재생',a.ra,b.ra,R)+kpi('워크지 열기',a.wb,b.wb,R)+kpi('쿠팡 클릭',a.buy,b.buy,R)+'</div>'+rangeNote(R);
-    h+='<div class="card"><div class="shd"><h3>📈 날짜별 읽기</h3><select class="t sm r" id="rm"><option value="n">읽기 기록</option><option value="r">기록한 폰</option></select></div><div id="rchart"></div></div>';
+    h+='<div class="card"><div class="shd"><h3>📈 날짜별 읽기</h3><select class="t sm r" id="rm"><option value="n">읽기 기록</option><option value="r">기록한 폰</option><option value="o">앱 연 폰</option></select></div><div id="rchart"></div></div>';
     // 꾸준함: 기간 중 며칠 기록했나
     var dayBy={};X.lc.forEach(function(l){(dayBy[l.reader]=dayBy[l.reader]||{})[l.read_on]=1;});
     var buckets=[['1일',0],['2~3일',0],['4~7일',0],['8일 이상',0]];
@@ -381,8 +382,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     body.innerHTML=h;
     var rsel=document.getElementById('rk');if(rsel)rsel.onchange=function(){S.repKey=rsel.value;monthReport(rsel.value);};
     if(rk)monthReport(rk);else document.getElementById('sbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';
-    var sel=document.getElementById('rm');function draw(){var v=sel.value==='r'?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):perDay(X.lc,R,function(l){return l.read_on;});
-      document.getElementById('rchart').innerHTML=barChart(R.days,v,sel.value==='r'?'#4F9A72':'#245648',sel.value==='r'?'대':'번');}
+    var sel=document.getElementById('rm');function draw(){var o=sel.value==='o',v=o?perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;})
+        :sel.value==='r'?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):perDay(X.lc,R,function(l){return l.read_on;});
+      document.getElementById('rchart').innerHTML=barChart(R.days,v,o?'#6A4A8A':sel.value==='r'?'#4F9A72':'#245648',sel.value==='n'?'번':'대');}
     sel.onchange=draw;draw();
   }
 
