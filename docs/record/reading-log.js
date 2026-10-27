@@ -4,6 +4,8 @@
  * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 우리 책장 표지(오늘/어제 선택).
  * 우리 책장 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
  * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
+ * 다른 책(스터디 책 아님): 우리 책장 '📚 다른 책도 읽었어요 +1' → 행 {b:0, o:제목, k:'_other'}, 서버 log_other/my_other_reads.
+ *   통계 '총 읽기'·'오늘 N번'·인증 카드에는 포함, 반복한 책·유형별·책별 반응에는 넣지 않음.
  * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
  * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — app.html render() 뒤에 호출.
@@ -82,7 +84,8 @@
   function flush(){
     if(!S.reader||S.inflight||!S.outbox.length||!S.member)return;
     var st=S,op=S.outbox[0];st.inflight=op;
-    var p=op.op==='add'?rpc('log_read',{p_reader:st.reader,p_client_id:op.c,p_book_id:op.b,p_read_on:op.d,p_code:st.code})
+    var p=op.op==='add'?(op.k==='_other'?rpc('log_other',{p_reader:st.reader,p_client_id:op.c,p_title:op.o||'',p_read_on:op.d,p_code:st.code})
+                                         :rpc('log_read',{p_reader:st.reader,p_client_id:op.c,p_book_id:op.b,p_read_on:op.d,p_code:st.code}))
                        :rpc('undo_read',{p_reader:st.reader,p_client_id:op.c});
     p.then(function(res){
       st.inflight=null;
@@ -118,6 +121,25 @@
       S.rows.sort(function(a,b){return a.t-b.t;});
       save();paint();
     },function(){});
+  }
+  function pullOther(){
+    if(!S.reader||!S.member)return;
+    var since=Date.now();
+    rpc('my_other_reads',{p_reader:S.reader}).then(function(list){
+      if(!S)return;
+      var rows=(list||[]).map(function(r){return {c:r.client_id,b:0,o:r.other_title||'',d:r.read_on,t:Date.parse(r.created_at)||0,k:'_other'};});
+      function has(c){return rows.some(function(r){return r.c===c;});}
+      var mine=function(r){return r.k==='_other';};
+      S.outbox.forEach(function(op){
+        if(op.op==='add'){if(op.k==='_other'&&!has(op.c))rows.push({c:op.c,b:0,o:op.o||'',d:op.d,t:op.t||Date.now(),k:'_other'});}
+        else rows=rows.filter(function(r){return r.c!==op.c;});
+      });
+      S.rows.forEach(function(r){if(mine(r)&&r.t>=since&&!has(r.c))rows.push(r);});
+      rows=rows.filter(function(r){return !S.gone[r.c];});
+      S.rows=S.rows.filter(function(r){return !mine(r);}).concat(rows);
+      S.rows.sort(function(a,b){return a.t-b.t;});
+      save();paint();
+    },function(){}); // DB에 아직 함수가 없거나 오프라인이면 기기 기록 그대로
   }
   function verifyMember(){ // 저장된 비밀번호가 아직 유효한지 조용히 확인(오프라인이면 그대로 둠)
     if(!S.code)return;
@@ -165,9 +187,51 @@
     toast('<b>'+esc(shortTitle(b.title))+'</b> '+dayLabel(row.d)+' '+count(bid,row.d)+'번째 기록 ✓',acts);
     flush();
   }
+  function addOther(title,day){
+    var row={c:hex(12),b:0,o:title||'',d:day,t:Date.now(),k:'_other'};
+    S.rows.push(row);S.outbox.push({op:'add',c:row.c,b:0,o:row.o,d:day,t:row.t,k:'_other'});
+    return row;
+  }
+  // 다른 책 기록(제목은 선택). 같은 제목 1.5초 안 연타는 1회
+  function recordOther(title){
+    if(!S.member)return;
+    title=String(title||'').trim().slice(0,80);
+    var now=Date.now(),key='other:'+title;
+    if(S.lastTap[key]&&now-S.lastTap[key]<DOUBLE_TAP_MS)return;
+    S.lastTap[key]=now;
+    var today=logicalToday(),row=addOther(title,S.recDay);
+    save();paint();flush();
+    try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}
+    var acts=[];
+    if(!title)acts.push(['제목 넣기',function(){askTitle(row);}]);
+    else if(row.d===today)acts.push(['어제로',function(){moveToYesterday(row);}]);
+    acts.push(['취소',function(){remove(row.c,true);}]);
+    toast('<b>📚 '+esc(title?shortTitle(title):'다른 책')+'</b> '+dayLabel(row.d)+' 기록 ✓',acts);
+    if(S.onEvent)S.onEvent('other_read',{titled:!!title});
+  }
+  // 방금 기록에 제목 붙이기(지우고 같은 날짜로 제목 넣어 다시 저장)
+  function askTitle(row){
+    var sh=openSheet('<h3>어떤 책을 읽었나요?</h3><p class="sub">한 번 넣은 제목은 다음부터 버튼으로 떠서, 같은 책을 또 읽으면 누르기만 하면 돼요.</p>'+
+      '<form id="otForm" autocomplete="off"><input id="otTitle" class="pin" style="letter-spacing:0;font-size:1.05rem;text-align:left" maxlength="80" placeholder="예: 엄마랑 읽은 Goodnight Moon"><button type="submit" class="pri">저장</button></form>'+
+      '<button type="button" class="subtle" data-sclose>제목 없이 둘게요</button>');
+    var inp=sh.querySelector('#otTitle');setTimeout(function(){try{inp.focus();}catch(e){}},60);
+    sh.querySelector('[data-sclose]').onclick=closeSheet;
+    sh.querySelector('#otForm').addEventListener('submit',function(e){
+      e.preventDefault();var t=String(inp.value||'').trim().slice(0,80);closeSheet();if(!t)return;
+      if(!dropRow(row.c))return;
+      addOther(t,row.d);save();paint();flush();
+      toast('<b>📚 '+esc(shortTitle(t))+'</b> 제목을 넣었어요 ✓');
+    });
+  }
+  // 지금까지 넣은 다른 책 제목(최근 순, 중복 없이)
+  function otherTitles(){
+    var seen={},list=[];
+    S.rows.slice().sort(function(a,b){return b.t-a.t;}).forEach(function(r){if(r.k==='_other'&&r.o&&!seen[r.o]){seen[r.o]=1;list.push(r.o);}});
+    return list.slice(0,8);
+  }
   function moveToYesterday(row){
     if(!dropRow(row.c))return;
-    var y=addDays(logicalToday(),-1),moved=addRow(row.b,y);
+    var y=addDays(logicalToday(),-1),moved=row.k==='_other'?addOther(row.o,y):addRow(row.b,y);
     save();paint();flush();
     toast('어제('+md(y)+') 기록으로 옮겼어요 ✓',[['취소',function(){remove(moved.c,true);}]]);
   }
@@ -183,7 +247,7 @@
     // 삭제 요청이 아직 대기 중이면 취소만, 이미 보냈거나(보내는 중) 추가 자체를 안 보냈으면 다시 추가
     var del=S.outbox.filter(function(o){return o.op==='del'&&o.c===row.c;})[0];
     if(del&&S.inflight!==del)S.outbox=S.outbox.filter(function(o){return o!==del;});
-    else S.outbox.push({op:'add',c:row.c,b:row.b,d:row.d,t:row.t,k:row.k});
+    else S.outbox.push({op:'add',c:row.c,b:row.b,o:row.o,d:row.d,t:row.t,k:row.k});
     save();paint();flush();toast('기록을 되돌렸어요.');
   }
 
@@ -273,14 +337,15 @@
   function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
   function wrapText(c,t,x,y,maxW,lh,maxLines){var words=String(t).split(' '),line='',n=0;for(var i=0;i<words.length;i++){var test=line?line+' '+words[i]:words[i];if(c.measureText(test).width>maxW&&line){c.fillText(line,x,y+n*lh);n++;line=words[i];if(n>=maxLines-1){break;}}else line=test;}if(n<maxLines)c.fillText(line,x,y+n*lh);}
   function drawCard(day){
-    var dl=S.rows.filter(function(r){return r.d===day;}),order=[],cnt={};
-    dl.slice().sort(function(a,b){return a.t-b.t;}).forEach(function(r){if(!(r.b in cnt)){cnt[r.b]=0;order.push(r.b);}cnt[r.b]++;});
+    var dl=S.rows.filter(function(r){return r.d===day;}),order=[],cnt={},info={};
+    dl.slice().sort(function(a,b){return a.t-b.t;}).forEach(function(r){var id=r.k==='_other'?'o:'+(r.o||''):r.b;
+      if(!(id in cnt)){cnt[id]=0;order.push(id);info[id]=r.k==='_other'?{title:r.o||'다른 책',other:true}:(S.byId[r.b]||{title:''});}cnt[id]++;});
     var p=day.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]),mi=monthInfo();
     var pre=p[0]+'-'+p[1]+'-',days={};S.rows.forEach(function(r){if(r.d.indexOf(pre)===0&&r.d<=day)days[r.d]=1;});
     var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
     var shown=order.slice(0,6),more=order.length-shown.length;
     return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 72px "Gowun Batang"'),document.fonts.load('700 36px "Noto Sans KR"')]).catch(function(){}):null]
-      .concat(shown.map(function(id){return loadImg((S.byId[id]||{}).cover);}))).then(function(res){
+      .concat(shown.map(function(id){return loadImg(info[id].other?null:info[id].cover);}))).then(function(res){
       var imgs=res.slice(1);
       var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#2E6B58');g.addColorStop(1,'#1D463A');c.fillStyle=g;c.fillRect(0,0,W,H);
       // 나이테 링(오른쪽 위 장식)
@@ -294,10 +359,11 @@
       // 표지 격자(최대 6권: 3열)
       var n=shown.length,cols=n<=2?n:3,cw=n<=2?300:270,ch=Math.round(cw*4/3),gap=40,gw=cols*cw+(cols-1)*gap,x0=(W-gw)/2,rowsN=Math.ceil(n/cols)||1,gh=rowsN*ch+(rowsN-1)*50,y0=Math.round(400+Math.max(0,(H-200-400-gh)/2));
       shown.forEach(function(id,i){
-        var b=S.byId[id]||{title:''},col=i%cols,row=Math.floor(i/cols),x=x0+col*(cw+gap),y=y0+row*(ch+50),im=imgs[i];
+        var b=info[id],col=i%cols,row=Math.floor(i/cols),x=x0+col*(cw+gap),y=y0+row*(ch+50),im=imgs[i];
         c.save();c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=24;c.shadowOffsetY=10;rrect(c,x,y,cw,ch,14);c.fillStyle='#EBEDE3';c.fill();c.restore();
         c.save();rrect(c,x,y,cw,ch,14);c.clip();
         if(im){var r=Math.max(cw/im.width,ch/im.height),iw=im.width*r,ih=im.height*r;c.drawImage(im,x+(cw-iw)/2,y+(ch-ih)/2,iw,ih);}
+        else if(b.other){c.fillStyle='#F6E6D8';c.fillRect(x,y,cw,ch);c.font='88px sans-serif';c.textAlign='center';c.fillText('📚',x+cw/2,y+ch*0.42);c.textAlign='left';c.fillStyle='#6b4220';c.font='700 30px "Noto Sans KR",sans-serif';wrapText(c,b.title,x+24,y+ch*0.6,cw-48,40,4);}
         else{c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';wrapText(c,b.title,x+20,y+60,cw-40,40,5);}
         c.restore();
         if(cnt[id]>1){var bx=x+cw-20,by=y+20;c.fillStyle='#D1965C';c.beginPath();c.arc(bx,by,40,0,Math.PI*2);c.fill();c.fillStyle='#1f1a14';c.font='800 34px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('×'+cnt[id],bx,by+12);c.textAlign='left';}
@@ -413,9 +479,12 @@
       '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
         '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
       '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
+      '<div class="rs-other"><button type="button" class="rs-other-btn" data-rother="">📚 다른 책도 읽었어요 <b>+1</b></button>'+
+        (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책">'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
+          return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+'</div>'+
       (sum?'<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>':'')+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
-      (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(지난 달 책)'};
+      (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
         :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
@@ -428,7 +497,8 @@
     var mi=monthInfo(),rows=monthRows(mi),total=rows.length,days={},homeIds={};
     rows.forEach(function(r){days[r.d]=1;});
     S.books.forEach(function(b){homeIds[b.id]=1;});
-    var past=rows.filter(function(r){return !homeIds[r.b];}).length;
+    var others=rows.filter(function(r){return r.k==='_other';}).length,study=total-others;
+    var past=rows.filter(function(r){return r.k!=='_other'&&!homeIds[r.b];}).length;
     function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
     var h='<div class="rv">'+viewHead((mi?mi.month+'월 ':'')+'읽기 통계','')+
       '<div class="rs-kpis">'+
@@ -436,10 +506,11 @@
         '<div class="rs-kpi"><span class="k">총 읽기</span><span class="v">'+total+'<small> 번</small></span></div>'+
         '<div class="rs-kpi"><span class="k">읽은 날</span><span class="v">'+cntKeys(days)+'<small>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</small></span></div>'+
       '</div>'+
-      (past?'<p class="rs-past">🔁 이 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+      (others?'<p class="rs-past">📘 스터디 책 <b>'+study+'번</b> · 📚 다른 책 <b>'+others+'번</b></p>':'')+
+      (past?'<p class="rs-past">🔁 스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
     if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
     // 이번 달에 읽은 책들(지난 달 책 포함)
-    var readIds={};rows.forEach(function(r){readIds[r.b]=1;});
+    var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
     var readBooks=Object.keys(readIds).map(function(id){return S.byId[+id]||{id:+id,title:'(지난 달 책)',type:''};});
     // 가장 많이 반복한 책: 2번 이상 읽은 책 중 최다. 동점이면 모두 보여줌
     var fmax=0;readBooks.forEach(function(b){fmax=Math.max(fmax,cnt(b.id));});
@@ -454,7 +525,7 @@
     // 유형별 횟수(이번 달 책의 유형 순서 + 지난 달 책에만 있는 유형). 동점 1위는 모두 강조
     var types=[],tc={};
     S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
-    rows.forEach(function(r){var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
+    rows.forEach(function(r){if(r.k==='_other')return;var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
     var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||0;
     var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
     var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
@@ -509,10 +580,11 @@
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
+      if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     window.addEventListener('online',function(){if(S)flush();});
-    document.addEventListener('visibilitychange',function(){if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);verifyMember();}});
+    document.addEventListener('visibilitychange',function(){if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);verifyMember();}});
   }
 
   window.NaiteReading={
@@ -534,7 +606,7 @@
       if(TAB_IDS.indexOf(h)<0)h=last;
       if(EMBED[h])h='study';
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
-      flush();pull();verifyMember();
+      flush();pull();pullOther();verifyMember();
       setTimeout(offerInstallOnce,1200);
     }
   };
