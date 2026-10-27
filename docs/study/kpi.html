@@ -374,8 +374,10 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var buckets=[['1일',0],['2~3일',0],['4~7일',0],['8일 이상',0]];
     Object.keys(dayBy).forEach(function(r){var n=cnt(dayBy[r]);buckets[n<=1?0:n<=3?1:n<=7?2:3][1]++;});
     h+='<div class="two"><div class="card"><h3>🔁 며칠이나 기록했나요 <span class="hint">폰 수</span></h3>'+hbars(buckets)+'<p class="hint">기간 안에서 기록한 날짜 수예요. 꾸준히 기록하는 폰이 늘면 좋아요.</p></div>'+
-      '<div class="card"><h3>📘 주제별 읽기</h3>'+table(['주제','읽기','폰'],(function(){var o={},rr={};X.lc.forEach(function(l){var k=l.theme_key||'?';o[k]=(o[k]||0)+1;(rr[k]=rr[k]||{})[l.reader]=1;});
-        return Object.keys(o).sort(function(x,y){return o[y]-o[x];}).map(function(k){return [esc(themeLabel(themeBy(k))||k),o[k],cnt(rr[k])];});})(),1)+'</div></div>';
+      '<div class="card"><h3>📘 주제별 읽기</h3>'+table(['주제','읽기','폰'],(function(){var o={},rr={};X.lc.forEach(function(l){var k=l.book_id==null?'_other':(l.theme_key||'?');o[k]=(o[k]||0)+1;(rr[k]=rr[k]||{})[l.reader]=1;});
+        return Object.keys(o).sort(function(x,y){return o[y]-o[x];}).map(function(k){return [k==='_other'?'📚 다른 책(스터디 외)':esc(themeLabel(themeBy(k))||k),o[k],cnt(rr[k])];});})(),1)+
+      (function(){var ot=X.lc.filter(function(l){return l.book_id==null;}),otp=X.lp?X.lp.filter(function(l){return l.book_id==null;}):null;
+        return '<p class="hint">📚 다른 책 기록: <b>'+ot.length+'번 · '+cnt(countBy(ot,function(l){return l.reader;}))+'대</b>'+(otp?' (이전 기간 '+otp.length+'번 · '+cnt(countBy(otp,function(l){return l.reader;}))+'대)':'')+'. 책별·주제별 반응 통계에는 넣지 않아요.</p>';})()+'</div></div>';
     body.innerHTML=h;
     var rsel=document.getElementById('rk');if(rsel)rsel.onchange=function(){S.repKey=rsel.value;monthReport(rsel.value);};
     if(rk)monthReport(rk);else document.getElementById('sbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';
