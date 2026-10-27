@@ -267,6 +267,73 @@
     })();
   }
 
+  /* ── 인증 카드: 그날 읽은 표지·횟수를 4:5 이미지로 → 공유(카카오톡 등)·저장 ── */
+  var WD=['일','월','화','수','목','금','토'];
+  function loadImg(src){return new Promise(function(res){if(!src){res(null);return;}var im=new Image();im.crossOrigin='anonymous';im.onload=function(){res(im);};im.onerror=function(){res(null);};im.src=src;});}
+  function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+  function wrapText(c,t,x,y,maxW,lh,maxLines){var words=String(t).split(' '),line='',n=0;for(var i=0;i<words.length;i++){var test=line?line+' '+words[i]:words[i];if(c.measureText(test).width>maxW&&line){c.fillText(line,x,y+n*lh);n++;line=words[i];if(n>=maxLines-1){break;}}else line=test;}if(n<maxLines)c.fillText(line,x,y+n*lh);}
+  function drawCard(day){
+    var dl=S.rows.filter(function(r){return r.d===day;}),order=[],cnt={};
+    dl.slice().sort(function(a,b){return a.t-b.t;}).forEach(function(r){if(!(r.b in cnt)){cnt[r.b]=0;order.push(r.b);}cnt[r.b]++;});
+    var p=day.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]),mi=monthInfo();
+    var pre=p[0]+'-'+p[1]+'-',days={};S.rows.forEach(function(r){if(r.d.indexOf(pre)===0&&r.d<=day)days[r.d]=1;});
+    var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
+    var shown=order.slice(0,6),more=order.length-shown.length;
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 72px "Gowun Batang"'),document.fonts.load('700 36px "Noto Sans KR"')]).catch(function(){}):null]
+      .concat(shown.map(function(id){return loadImg((S.byId[id]||{}).cover);}))).then(function(res){
+      var imgs=res.slice(1);
+      var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#2E6B58');g.addColorStop(1,'#1D463A');c.fillStyle=g;c.fillRect(0,0,W,H);
+      // 나이테 링(오른쪽 위 장식)
+      c.strokeStyle='rgba(246,244,236,.10)';c.lineWidth=10;[300,230,160,90].forEach(function(r){c.beginPath();c.arc(W-60,90,r,0,Math.PI*2);c.stroke();});
+      c.fillStyle='#F6F4EC';c.textBaseline='alphabetic';
+      c.font='700 34px "Noto Sans KR",sans-serif';c.globalAlpha=.8;
+      c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 스터디',80,140);c.globalAlpha=1;
+      c.font='700 78px "Gowun Batang",Georgia,serif';
+      c.fillText((day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일')+' 영어책',80,250);
+      c.fillText(dl.length+'번 읽었어요',80,350);
+      // 표지 격자(최대 6권: 3열)
+      var n=shown.length,cols=n<=2?n:3,cw=n<=2?300:270,ch=Math.round(cw*4/3),gap=40,gw=cols*cw+(cols-1)*gap,x0=(W-gw)/2,rowsN=Math.ceil(n/cols)||1,gh=rowsN*ch+(rowsN-1)*50,y0=Math.round(400+Math.max(0,(H-200-400-gh)/2));
+      shown.forEach(function(id,i){
+        var b=S.byId[id]||{title:''},col=i%cols,row=Math.floor(i/cols),x=x0+col*(cw+gap),y=y0+row*(ch+50),im=imgs[i];
+        c.save();c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=24;c.shadowOffsetY=10;rrect(c,x,y,cw,ch,14);c.fillStyle='#EBEDE3';c.fill();c.restore();
+        c.save();rrect(c,x,y,cw,ch,14);c.clip();
+        if(im){var r=Math.max(cw/im.width,ch/im.height),iw=im.width*r,ih=im.height*r;c.drawImage(im,x+(cw-iw)/2,y+(ch-ih)/2,iw,ih);}
+        else{c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';wrapText(c,b.title,x+20,y+60,cw-40,40,5);}
+        c.restore();
+        if(cnt[id]>1){var bx=x+cw-20,by=y+20;c.fillStyle='#D1965C';c.beginPath();c.arc(bx,by,40,0,Math.PI*2);c.fill();c.fillStyle='#1f1a14';c.font='800 34px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('×'+cnt[id],bx,by+12);c.textAlign='left';}
+      });
+      if(more>0){c.fillStyle='#F6F4EC';c.font='700 34px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('+ '+more+'권 더',W/2,H-230);c.textAlign='left';}
+      // 아래 줄
+      c.fillStyle='rgba(246,244,236,.16)';c.fillRect(80,H-170,W-160,2);
+      c.fillStyle='#F6F4EC';c.font='700 36px "Noto Sans KR",sans-serif';
+      c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · 이번 달 '+Object.keys(days).length+'일째 함께 읽는 중',80,H-100);
+      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('나이테 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
+      return new Promise(function(res){try{cv.toBlob(function(bl){res(bl);},'image/png');}catch(e){res(null);}});
+    });
+  }
+  function openShareCard(day){
+    var sh=openSheet('<h3>'+(day===logicalToday()?'오늘':'어제')+'의 인증 카드</h3><p class="sub">오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!</p><div class="sc-wrap"><p class="rv-empty">카드를 만드는 중…</p></div>');
+    if(S.onEvent)S.onEvent('share_card_open',{day:day});
+    drawCard(day).then(function(blob){
+      var wrap=sh.querySelector('.sc-wrap');if(!wrap)return;
+      if(!blob){wrap.innerHTML='<p class="rv-empty">이미지를 만들지 못했어요. 이 화면을 캡처해서 올려 주세요.</p>';return;}
+      var url=URL.createObjectURL(blob),name='naite-'+day+'.png',file=null;
+      try{file=new File([blob],name,{type:'image/png'});}catch(e){}
+      var canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
+      wrap.innerHTML='<img class="sc-img" src="'+url+'" alt="'+day+' 인증 카드">'+
+        (canShare?'<button type="button" class="pri" id="scShare">공유하기 (카카오톡 등)</button>':'')+
+        '<a class="pri sc-save'+(canShare?' sec':'')+'" href="'+url+'" download="'+name+'">이미지 저장</a>'+
+        '<p class="sc-tip">저장이 안 되면 카드를 길게 눌러 저장하거나, 화면을 캡처해 주세요.</p>'+
+        '<button type="button" class="subtle" data-sclose>닫기</button>';
+      wrap.querySelector('[data-sclose]').onclick=closeSheet;
+      wrap.querySelector('.sc-save').addEventListener('click',function(){if(S.onEvent)S.onEvent('share_card_save',{day:day});});
+      var sb=wrap.querySelector('#scShare');
+      if(sb)sb.onclick=function(){
+        navigator.share({files:[file],title:'나이테 스터디 인증'}).then(function(){if(S.onEvent)S.onEvent('share_card_share',{day:day});},function(){});
+      };
+    });
+  }
+
   /* ── 그리기 ── */
   function coverImg(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}
   function bump(bid,src){
@@ -345,7 +412,8 @@
       viewHead(esc(themeName(th))+' 책장',books?books.length+'권 중 <b>'+met(books)+'권</b> 만났어요 · 모두 '+themeTotal(books)+'번 읽었어요':'',th.emoji)+
       '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
         '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
-      '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+body+
+      '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
+      (sum?'<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>':'')+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=S.byId[r.b]||{title:'(지난 달 책)'};
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
@@ -440,6 +508,7 @@
       if((t=e.target.closest('[data-rshelf]'))){S.shelfKey=t.getAttribute('data-rshelf');S.shelfScroll=true;paintShelf();if(S.onEvent)S.onEvent('shelf_month',{theme:S.shelfKey});return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
+      if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     window.addEventListener('online',function(){if(S)flush();});
