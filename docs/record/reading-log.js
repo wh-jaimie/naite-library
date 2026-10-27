@@ -1,10 +1,10 @@
 /* 나이테 스터디 — 회원 읽기 기록 (record/app.html 전용, record/index.html 입장 화면은 비밀번호 저장·설치 안내만 사용)
  * 회원 입장(record/)에서 비밀번호를 넣은 기기만 app.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
- * 하단 메뉴: 이번 달 자료 · 우리 책장 · 읽기 통계.
- * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 우리 책장 표지(오늘/어제 선택).
- * 우리 책장 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
+ * 하단 메뉴: 이번 달 자료 · 기록하기 탭 · 읽기 통계.
+ * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 기록하기 탭 표지(오늘/어제 선택).
+ * 기록하기 탭 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
  * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
- * 다른 책(스터디 책 아님): 우리 책장 '📚 다른 책도 읽었어요 +1' → 행 {b:0, o:제목, k:'_other'}, 서버 log_other/my_other_reads.
+ * 다른 책(스터디 책 아님): 기록하기 탭 '📚 다른 책도 읽었어요 +1' → 행 {b:0, o:제목, k:'_other'}, 서버 log_other/my_other_reads.
  *   통계 '총 읽기'·'오늘 N번'·인증 카드에는 포함, 반복한 책·유형별·책별 반응에는 넣지 않음.
  * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
@@ -172,7 +172,7 @@
     S.lastTap={};
     return row;
   }
-  // src: 'card'(자료 탭 '읽었어요' — 항상 오늘) | 'shelf'(우리 책장 표지 — 선택한 날짜)
+  // src: 'card'(자료 탭 '읽었어요' — 항상 오늘) | 'shelf'(기록하기 탭 표지 — 선택한 날짜)
   function record(bid,src){
     if(!S.member)return;
     var now=Date.now(),key=src+bid;
@@ -418,7 +418,7 @@
   }
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:['📚','이번 달 자료'],shelf:['🗂️','우리 책장'],stats:['📊','읽기 통계'],c120:['🎯','나이테 120'],shop:['🛒','인기 책장']};
+    var T={study:['📚','이번 달 자료'],shelf:['✏️','기록하기'],stats:['📊','읽기 통계'],c120:['🎯','나이테 120'],shop:['🛒','인기 책장']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
       return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
@@ -598,7 +598,7 @@
       S.books=rememberBooks(theme.key,o.books);
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
-      // 공개된 달 목록(우리 책장 달 칩)
+      // 공개된 달 목록(기록하기 탭 달 칩)
       rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];paintShelf();},function(){});
       wire();
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
