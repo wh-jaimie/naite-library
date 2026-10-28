@@ -361,7 +361,7 @@
       c.strokeStyle='rgba(246,244,236,.10)';c.lineWidth=10;[300,230,160,90].forEach(function(r){c.beginPath();c.arc(W-60,90,r,0,Math.PI*2);c.stroke();});
       c.fillStyle='#F6F4EC';c.textBaseline='alphabetic';
       c.font='700 34px "Noto Sans KR",sans-serif';c.globalAlpha=.8;
-      c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 스터디',80,140);c.globalAlpha=1;
+      c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 한달5권 스터디',80,140);c.globalAlpha=1;
       c.font='700 78px "Gowun Batang",Georgia,serif';
       c.fillText((day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일')+' 영어책',80,250);
       c.fillText(dl.length+'번 읽었어요',80,350);
@@ -382,31 +382,118 @@
       c.fillStyle='rgba(246,244,236,.16)';c.fillRect(80,H-170,W-160,2);
       c.fillStyle='#F6F4EC';c.font='700 36px "Noto Sans KR",sans-serif';
       c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · 이번 달 '+Object.keys(days).length+'일째 함께 읽는 중',80,H-100);
-      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('나이테 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
+      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
       return new Promise(function(res){try{cv.toBlob(function(bl){res(bl);},'image/png');}catch(e){res(null);}});
     });
   }
-  function openShareCard(day){
-    var sh=openSheet('<h3>'+(day===logicalToday()?'오늘':'어제')+'의 인증 카드</h3><p class="sub">오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!</p><div class="sc-wrap"><p class="rv-empty">카드를 만드는 중…</p></div>');
-    if(S.onEvent)S.onEvent('share_card_open',{day:day});
-    drawCard(day).then(function(blob){
+  // 이미지 공유·저장 창(인증 카드·달력 공용)
+  function shareSheet(title,sub,blobP,name,kind,meta){
+    var sh=openSheet('<h3>'+title+'</h3><p class="sub">'+sub+'</p><div class="sc-wrap"><p class="rv-empty">이미지를 만드는 중…</p></div>');
+    if(S.onEvent)S.onEvent(kind+'_open',meta||{});
+    blobP.then(function(blob){
       var wrap=sh.querySelector('.sc-wrap');if(!wrap)return;
       if(!blob){wrap.innerHTML='<p class="rv-empty">이미지를 만들지 못했어요. 이 화면을 캡처해서 올려 주세요.</p>';return;}
-      var url=URL.createObjectURL(blob),name='naite-'+day+'.png',file=null;
+      var url=URL.createObjectURL(blob),file=null;
       try{file=new File([blob],name,{type:'image/png'});}catch(e){}
       var canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
-      wrap.innerHTML='<img class="sc-img" src="'+url+'" alt="'+day+' 인증 카드">'+
-        (canShare?'<button type="button" class="pri" id="scShare">공유하기 (카카오톡 등)</button>':'')+
+      wrap.innerHTML='<img class="sc-img" src="'+url+'" alt="'+esc(title)+'">'+
+        (canShare?'<button type="button" class="pri" id="scShare">공유하기 (인스타·카카오톡 등)</button>':'')+
         '<a class="pri sc-save'+(canShare?' sec':'')+'" href="'+url+'" download="'+name+'">이미지 저장</a>'+
-        '<p class="sc-tip">저장이 안 되면 카드를 길게 눌러 저장하거나, 화면을 캡처해 주세요.</p>'+
+        '<p class="sc-tip">저장이 안 되면 이미지를 길게 눌러 저장하거나, 화면을 캡처해 주세요.</p>'+
         '<button type="button" class="subtle" data-sclose>닫기</button>';
       wrap.querySelector('[data-sclose]').onclick=closeSheet;
-      wrap.querySelector('.sc-save').addEventListener('click',function(){if(S.onEvent)S.onEvent('share_card_save',{day:day});});
+      wrap.querySelector('.sc-save').addEventListener('click',function(){if(S.onEvent)S.onEvent(kind+'_save',meta||{});});
       var sb=wrap.querySelector('#scShare');
-      if(sb)sb.onclick=function(){
-        navigator.share({files:[file],title:'나이테 스터디 인증'}).then(function(){if(S.onEvent)S.onEvent('share_card_share',{day:day});},function(){});
-      };
+      if(sb)sb.onclick=function(){navigator.share({files:[file],title:'나이테 스터디'}).then(function(){if(S.onEvent)S.onEvent(kind+'_share',meta||{});},function(){});};
     });
+  }
+  function openShareCard(day){
+    shareSheet((day===logicalToday()?'오늘':'어제')+'의 인증 카드','오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day),'naite-'+day+'.png','share_card',{day:day});
+  }
+
+  /* ── 이번 달 읽기 달력: 날짜 칸마다 그날 읽은 표지(같은 책은 한 번, ×횟수) ── */
+  // 하루 기록 → 책별로 묶기(스터디 책은 표지, 다른 책은 📚 칸)
+  function dayItems(day){
+    var list=[],at={};
+    S.rows.filter(function(r){return r.d===day;}).sort(function(a,b){return a.t-b.t;}).forEach(function(r){
+      var id=r.k==='_other'?'o:'+(r.o||''):'b:'+r.b;
+      if(!(id in at)){var b=r.k==='_other'?null:S.byId[r.b];at[id]=list.length;list.push({id:id,n:0,other:r.k==='_other',title:r.k==='_other'?(r.o||'다른 책'):((b&&b.title)||''),cover:b&&b.cover});}
+      list[at[id]].n++;
+    });
+    return list;
+  }
+  function monthGrid(mi){ // [[null|'yyyy-mm-dd' x7] x 주]
+    var first=new Date(mi.year,mi.month-1,1).getDay(),cells=[],w=[];
+    for(var i=0;i<first;i++)w.push(null);
+    for(var d=1;d<=mi.days;d++){w.push(mi.year+'-'+pad(mi.month)+'-'+pad(d));if(w.length===7){cells.push(w);w=[];}}
+    if(w.length){while(w.length<7)w.push(null);cells.push(w);}
+    return cells;
+  }
+  function calendarHtml(mi){
+    var today=logicalToday();
+    return '<div class="cal"><div class="cal-wd">'+['일','월','화','수','목','금','토'].map(function(x,i){return '<span'+(i===0?' class="sun"':'')+'>'+x+'</span>';}).join('')+'</div>'+
+      monthGrid(mi).map(function(w){return '<div class="cal-row">'+w.map(function(ds,i){
+        if(!ds)return '<div class="cal-d empty"></div>';
+        var it=dayItems(ds),show=it.length>4?it.slice(0,3):it,more=it.length-show.length;
+        return '<div class="cal-d'+(ds===today?' today':'')+(ds>today?' future':'')+'"><span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>'+
+          (it.length?'<div class="cv n'+Math.min(it.length,4)+'">'+show.map(function(x){return '<span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+(x.n>1?'<b>'+x.n+'</b>':'')+'</span>';}).join('')+(more?'<span class="c m">+'+more+'</span>':'')+'</div>':'')+'</div>';
+      }).join('')+'</div>';}).join('')+'</div>';
+  }
+  function drawMonthCard(mi){
+    var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
+    var grid=monthGrid(mi),rows=monthRows(mi),days={},items={},covers={};
+    rows.forEach(function(r){days[r.d]=1;});
+    grid.forEach(function(w){w.forEach(function(ds){if(ds){items[ds]=dayItems(ds);items[ds].forEach(function(x){if(x.cover)covers[x.cover]=1;});}});});
+    var srcs=Object.keys(covers);
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 64px "Gowun Batang"'),document.fonts.load('700 30px "Noto Sans KR"')]).catch(function(){}):null]
+      .concat(srcs.map(loadImg))).then(function(res){
+      var img={};srcs.forEach(function(s2,i){img[s2]=res[i+1];});
+      c.fillStyle='#E4E7DD';c.fillRect(0,0,W,H);
+      // 나이테 링 장식
+      c.strokeStyle='rgba(36,86,72,.08)';c.lineWidth=8;[200,150,100,50].forEach(function(r){c.beginPath();c.arc(W-70,110,r,0,Math.PI*2);c.stroke();});
+      c.textBaseline='alphabetic';c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';
+      c.fillText(mi.year+'년 '+mi.month+'월 · '+(S.home.emoji||'')+' '+(S.home.ko||'')+' · 나이테 한달5권 스터디',60,100);
+      c.fillStyle='#245648';c.font='700 66px "Gowun Batang",Georgia,serif';c.fillText('우리 아이 영어책 기록',60,182);
+      // 달력 카드
+      var X=40,Y=226,CW=W-80,CH=920,hd=58;
+      c.save();c.shadowColor='rgba(43,42,38,.12)';c.shadowBlur=24;c.shadowOffsetY=6;rrect(c,X,Y,CW,CH,26);c.fillStyle='#FCFCF8';c.fill();c.restore();
+      var cw=CW/7,rh=(CH-hd)/grid.length;
+      c.font='700 26px "Noto Sans KR",sans-serif';c.textAlign='center';
+      ['일','월','화','수','목','금','토'].forEach(function(x,i){c.fillStyle=i===0?'#C0503C':'#565E4E';c.fillText(x,X+cw*i+cw/2,Y+40);});
+      c.fillStyle='#E2E5DA';c.fillRect(X+16,Y+hd,CW-32,2);
+      grid.forEach(function(w,ri){w.forEach(function(ds,ci){
+        var x=X+ci*cw,y=Y+hd+ri*rh;
+        if(ri>0){c.fillStyle='#EEF0E8';c.fillRect(X+16,y,CW-32,1);}
+        if(!ds)return;
+        c.textAlign='left';c.fillStyle=ci===0?'#C0503C':'#23291F';c.font='700 24px "Noto Sans KR",sans-serif';c.fillText(String(+ds.slice(8)),x+12,y+32);
+        var it=items[ds]||[];if(!it.length)return;
+        var show=it.length>4?it.slice(0,3):it,more=it.length-show.length,n=show.length+(more?1:0);
+        var ax=x+8,ay=y+42,aw=cw-16,ah=rh-50,cols=n===1?1:2,rws=n<=2?1:2;
+        var ih=Math.min((ah-(rws-1)*6)/rws,(aw-(cols-1)*6)/cols/0.75),iw=ih*0.75;
+        if(n===2&&ih*0.75*2+6>aw){iw=(aw-6)/2;ih=iw/0.75;}
+        var gw=cols*iw+(cols-1)*6,ox=ax+(aw-gw)/2;
+        show.concat(more?[{more:more}]:[]).forEach(function(t,k){
+          var cx=ox+(k%cols)*(iw+6),cy=ay+Math.floor(k/cols)*(ih+6);
+          c.save();rrect(c,cx,cy,iw,ih,6);c.clip();
+          if(t.more){c.fillStyle='#EEF0E8';c.fillRect(cx,cy,iw,ih);c.fillStyle='#565E4E';c.font='800 '+Math.round(iw*0.32)+'px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('+'+t.more,cx+iw/2,cy+ih/2+iw*0.12);}
+          else if(t.cover&&img[t.cover]){var im=img[t.cover],r=Math.max(iw/im.width,ih/im.height);c.drawImage(im,cx+(iw-im.width*r)/2,cy+(ih-im.height*r)/2,im.width*r,im.height*r);}
+          else{c.fillStyle='#F6E6D8';c.fillRect(cx,cy,iw,ih);c.font=Math.round(iw*0.5)+'px sans-serif';c.textAlign='center';c.fillText('📚',cx+iw/2,cy+ih/2+iw*0.18);}
+          c.restore();
+          if(t.n>1){var bx=cx+iw-4,by=cy+4,br=Math.max(12,Math.round(iw*0.2));c.fillStyle='#D1965C';c.beginPath();c.arc(bx,by,br,0,Math.PI*2);c.fill();c.fillStyle='#1f1a14';c.font='800 '+Math.round(br*1.15)+'px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText(String(t.n),bx,by+br*0.42);}
+        });
+        c.textAlign='left';
+      });});
+      // 아래 줄
+      c.textAlign='center';c.fillStyle='#23291F';c.font='700 34px "Noto Sans KR",sans-serif';
+      c.fillText(mi.month+'월, '+Object.keys(days).length+'일 동안 영어책 '+rows.length+'권을 읽었어요',W/2,Y+CH+70);
+      c.fillStyle='#245648';c.font='700 30px "Gowun Batang",Georgia,serif';c.fillText('@naite_library · 나이테 한달5권 스터디',W/2,Y+CH+124);
+      c.textAlign='left';
+      return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/png');}catch(e){r2(null);}});
+    });
+  }
+  function openMonthCard(){
+    var mi=monthInfo();if(!mi)return;
+    shareSheet(mi.month+'월 읽기 달력','인스타·카카오톡에 올려 이번 달을 자랑해 보세요.',drawMonthCard(mi),'naite-'+mi.year+'-'+pad(mi.month)+'.png','month_card',{month:mi.year+'-'+pad(mi.month)});
   }
 
   /* ── 그리기 ── */
@@ -517,6 +604,8 @@
       '</div>'+
       (others?'<p class="rs-past">📘 스터디 책 <b>'+study+'번</b> · 📚 다른 책 <b>'+others+'번</b></p>':'')+
       (past?'<p class="rs-past">🔁 스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+    if(mi&&total)h+='<div class="rv-panel"><h3>'+mi.month+'월 읽기 달력</h3>'+calendarHtml(mi)+
+      '<button type="button" class="rs-share" data-rmonth>📸 달력 이미지로 저장·공유</button></div>';
     if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
     // 이번 달에 읽은 책들(지난 달 책 포함)
     var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
@@ -589,6 +678,7 @@
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
+      if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
