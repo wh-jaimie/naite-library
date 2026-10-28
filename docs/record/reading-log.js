@@ -357,10 +357,11 @@
       .concat(shown.map(function(id){return loadImg(info[id].other?null:info[id].cover);}))).then(function(res){
       var imgs=res.slice(1);
       var dateTxt=(+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 한달5권 스터디';
-      var head=(day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일')+' 영어책 '+dl.length+'번 읽었어요';
+      var dw=(day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일'),head=dl.length?dw+' 영어책 '+dl.length+'번 읽었어요':dw+'도 영어책 읽었어요';
+      var together=Object.keys(days).length?'이번 달 '+Object.keys(days).length+'일째 함께 읽는 중':'이번 달도 함께 읽는 중';
       if(photo){
         // ── 사진 카드: 위 엄마가 찍은 사진(가운데 맞춰 자르기) + 아래 기록 요약
-        var PH=860;
+        var PH=dl.length?860:1080;
         c.fillStyle='#1D463A';c.fillRect(0,0,W,H);
         var pr=Math.max(W/photo.width,PH/photo.height),pw=photo.width*pr,ph=photo.height*pr;
         c.save();c.beginPath();c.rect(0,0,W,PH);c.clip();c.drawImage(photo,(W-pw)/2,(PH-ph)/2,pw,ph);c.restore();
@@ -382,7 +383,7 @@
         if(more>0){c.fillStyle='#F6F4EC';c.font='700 30px "Noto Sans KR",sans-serif';c.fillText('+'+more+'권',x2+n2*(tw2+gap2),y2+th2/2+10);}
         c.fillStyle='rgba(246,244,236,.16)';c.fillRect(60,H-130,W-120,2);
         c.fillStyle='#F6F4EC';c.font='700 32px "Noto Sans KR",sans-serif';
-        c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · 이번 달 '+Object.keys(days).length+'일째 함께 읽는 중',60,H-74);
+        c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · '+together,60,H-74);
         c.font='700 28px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-60,H-30);c.globalAlpha=1;c.textAlign='left';
         return new Promise(function(r3){try{cv.toBlob(function(bl){r3(bl);},'image/png');}catch(e){r3(null);}});
       }
@@ -393,8 +394,9 @@
       c.font='700 34px "Noto Sans KR",sans-serif';c.globalAlpha=.8;
       c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 한달5권 스터디',80,140);c.globalAlpha=1;
       c.font='700 78px "Gowun Batang",Georgia,serif';
-      c.fillText((day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일')+' 영어책',80,250);
-      c.fillText(dl.length+'번 읽었어요',80,350);
+      c.fillText(dw+(dl.length?' 영어책':'도 영어책'),80,250);
+      c.fillText(dl.length?dl.length+'번 읽었어요':'읽었어요',80,350);
+      if(!dl.length){c.font='220px sans-serif';c.textAlign='center';c.fillText('📚',W/2,820);c.textAlign='left';}
       // 표지 격자(최대 6권: 3열)
       var n=shown.length,cols=n<=2?n:3,cw=n<=2?300:270,ch=Math.round(cw*4/3),gap=40,gw=cols*cw+(cols-1)*gap,x0=(W-gw)/2,rowsN=Math.ceil(n/cols)||1,gh=rowsN*ch+(rowsN-1)*50,y0=Math.round(400+Math.max(0,(H-200-400-gh)/2));
       shown.forEach(function(id,i){
@@ -411,7 +413,7 @@
       // 아래 줄
       c.fillStyle='rgba(246,244,236,.16)';c.fillRect(80,H-170,W-160,2);
       c.fillStyle='#F6F4EC';c.font='700 36px "Noto Sans KR",sans-serif';
-      c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · 이번 달 '+Object.keys(days).length+'일째 함께 읽는 중',80,H-100);
+      c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · '+together,80,H-100);
       c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
       return new Promise(function(res){try{cv.toBlob(function(bl){res(bl);},'image/png');}catch(e){res(null);}});
     });
@@ -450,16 +452,21 @@
   }
   function openShareCard(day){
     var title=(day===logicalToday()?'오늘':'어제')+'의 인증 카드',name='naite-'+day+'.png',photo=null;
-    var sh=shareSheet(title,'오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day,null),name,'share_card',{day:day},
+    var empty=!S.rows.some(function(r){return r.d===day;});
+    var sh=shareSheet(title,'오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day,null),name,'share_card',{day:day,empty:empty},
+      (empty?'<div class="sc-nudge" id="scNudge"><p>📝 아직 '+(day===logicalToday()?'오늘':'어제')+' 기록이 없어요. 기록도 같이 하면 달력·통계에 남아요.</p>'+
+        '<button type="button" id="scOther">📚 다른 책도 읽었어요 <b>+1</b></button><span>스터디 책은 기록하기 탭에서 표지를 눌러요</span></div>':'')+
       '<div class="sc-photo"><label class="sc-pbtn">📷 <span>읽은 책 사진 넣기</span><input type="file" accept="image/*" id="scPhoto"></label>'+
       '<button type="button" class="sc-pdel" id="scPdel" hidden>사진 빼기</button></div>');
     var inp=sh.querySelector('#scPhoto'),del=sh.querySelector('#scPdel'),lab=sh.querySelector('.sc-pbtn span'),wrap=sh.querySelector('.sc-wrap');
-    function redraw(){fillShare(wrap,drawCard(day,photo),name,'share_card',{day:day,photo:!!photo},title);del.hidden=!photo;lab.textContent=photo?'다른 사진으로 바꾸기':'읽은 책 사진 넣기';}
+    function redraw(){var em=!S.rows.some(function(r){return r.d===day;});fillShare(wrap,drawCard(day,photo),name,'share_card',{day:day,photo:!!photo,empty:em},title);del.hidden=!photo;lab.textContent=photo?'다른 사진으로 바꾸기':'읽은 책 사진 넣기';}
     inp.onchange=function(){
       var f=inp.files&&inp.files[0];if(!f)return;inp.value='';
       loadPhoto(f).then(function(im){photo=im;redraw();if(S.onEvent)S.onEvent('share_card_photo',{day:day});},function(){toast('사진을 열지 못했어요. 다른 사진으로 해 주세요.');});
     };
     del.onclick=function(){photo=null;redraw();};
+    var ob=sh.querySelector('#scOther');
+    if(ob)ob.onclick=function(){var keep=S.recDay;S.recDay=day;recordOther('');S.recDay=keep;var nd=sh.querySelector('#scNudge');if(nd)nd.hidden=true;redraw();};
   }
 
   /* ── 이번 달 읽기 달력: 날짜 칸마다 그날 읽은 표지(같은 책은 한 번, ×횟수) ── */
@@ -629,7 +636,7 @@
       '<div class="rs-other"><button type="button" class="rs-other-btn" data-rother="">📚 다른 책도 읽었어요 <b>+1</b></button>'+
         (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책">'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
           return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+'</div>'+
-      (sum?'<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>':'')+body+
+      '<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>'+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
