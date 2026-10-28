@@ -361,7 +361,7 @@
       c.strokeStyle='rgba(246,244,236,.10)';c.lineWidth=10;[300,230,160,90].forEach(function(r){c.beginPath();c.arc(W-60,90,r,0,Math.PI*2);c.stroke();});
       c.fillStyle='#F6F4EC';c.textBaseline='alphabetic';
       c.font='700 34px "Noto Sans KR",sans-serif';c.globalAlpha=.8;
-      c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 스터디',80,140);c.globalAlpha=1;
+      c.fillText((+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+') · 나이테 한달5권 스터디',80,140);c.globalAlpha=1;
       c.font='700 78px "Gowun Batang",Georgia,serif';
       c.fillText((day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일')+' 영어책',80,250);
       c.fillText(dl.length+'번 읽었어요',80,350);
@@ -382,7 +382,7 @@
       c.fillStyle='rgba(246,244,236,.16)';c.fillRect(80,H-170,W-160,2);
       c.fillStyle='#F6F4EC';c.font='700 36px "Noto Sans KR",sans-serif';
       c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · 이번 달 '+Object.keys(days).length+'일째 함께 읽는 중',80,H-100);
-      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('나이테 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
+      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
       return new Promise(function(res){try{cv.toBlob(function(bl){res(bl);},'image/png');}catch(e){res(null);}});
     });
   }
@@ -452,7 +452,7 @@
       // 나이테 링 장식
       c.strokeStyle='rgba(36,86,72,.08)';c.lineWidth=8;[200,150,100,50].forEach(function(r){c.beginPath();c.arc(W-70,110,r,0,Math.PI*2);c.stroke();});
       c.textBaseline='alphabetic';c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';
-      c.fillText(mi.year+'년 '+mi.month+'월 · '+(S.home.emoji||'')+' '+(S.home.ko||'')+' 스터디',60,100);
+      c.fillText(mi.year+'년 '+mi.month+'월 · '+(S.home.emoji||'')+' '+(S.home.ko||'')+' · 나이테 한달5권 스터디',60,100);
       c.fillStyle='#245648';c.font='700 66px "Gowun Batang",Georgia,serif';c.fillText('우리 아이 영어책 기록',60,182);
       // 달력 카드
       var X=40,Y=226,CW=W-80,CH=920,hd=58;
