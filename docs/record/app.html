@@ -115,6 +115,11 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtab{border:0;background:none;font:inherit;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.7rem;white-space:nowrap;font-weight:700;color:var(--soft);padding:6px 0 5px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .rtab .ic{position:relative;font-size:1.2rem;line-height:1.15}
 .rtab[aria-selected="true"]{color:var(--tealD);background:#E3EEE8}
+/* 앱 설치 띠(브라우저로 쓰는 동안, 아래 탭 바로 위) */
+.rl-instbar{position:fixed;left:8px;right:8px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:45;max-width:544px;margin:0 auto;display:flex;align-items:center;gap:8px;background:#245648;color:#fff;border-radius:14px;padding:9px 8px 9px 14px;box-shadow:0 8px 22px rgba(43,42,38,.25);font-size:.84rem}
+.rl-instbar .t{flex:1;min-width:0;font-weight:700;line-height:1.3}
+.rl-instbar .go{flex:0 0 auto;border:0;background:#fff;color:#245648;font:inherit;font-weight:800;padding:8px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.rl-instbar .x{flex:0 0 auto;border:0;background:none;color:#fff;font-size:1.2rem;line-height:1;padding:4px 6px;cursor:pointer;opacity:.8}
 /* 다음 달 미리보기 */
 .np{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh);margin-top:6px}
 .np .nh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -350,7 +355,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        '<div class="herobtns"><a class="mlink" href="../study/missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
        '<a class="mlink alt" href="../challenge.html">📚 나이테 120 전체 보기 →</a>'+
        (theme.blog_url?'<a class="mlink alt" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">📝 이 5권을 고른 이유 →</a>':'')+
-       (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 홈 화면에 추가</button>')+'</div></div>';
+       (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 앱 설치하기</button>')+'</div></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
        '<div class="lvguide"><b>🌱 글밥 적은 책부터 시작해 보세요.</b> 3~4살은 🌱 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">글밥 기준(AR 추정): 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>📋 제목 복사</b> 후 검색창에 붙여넣으세요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+

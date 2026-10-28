@@ -44,7 +44,7 @@ label.l{display:block;font-size:.8rem;font-weight:800;color:var(--soft);margin-b
 .inapp{background:#FFF3CD;border:1px solid #E0C97A;color:#5c4a00;border-radius:14px;padding:12px 14px;margin:0 0 16px;text-align:left;font-size:.86rem;line-height:1.55}
 .inapp b{display:block;font-size:.92rem;margin-bottom:2px}
 .inapp a{display:block;text-align:center;margin-top:10px;background:#5c4a00;color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:10px}
-.links button.ins{border:0;background:none;font:inherit;color:var(--tealD);font-weight:800;cursor:pointer;padding:0}
+.links button.ins{order:-1;margin:0 0 6px;border:1.5px solid var(--tealD);background:#fff;font:inherit;color:var(--tealD);font-weight:800;font-size:.98rem;cursor:pointer;padding:11px 22px;border-radius:999px;box-shadow:0 4px 14px rgba(36,86,72,.14)}
 /* 아래에서 올라오는 창·토스트(reading-log.js) */
 html.rl-lock,html.rl-lock body{overflow:hidden}
 .rl-scrim{position:fixed;inset:0;z-index:80;background:rgba(20,26,18,.5);display:flex;align-items:flex-end;justify-content:center}
@@ -85,7 +85,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
       <span class="sub">비밀번호는 오픈채팅 공지에 있어요.</span>
       <a href="../study/" id="pubLink">스터디 자료만 둘러보기 ›</a>
       <a href="../join.html?from=member">아직 회원이 아니라면 · 스터디 참여 안내 ›</a>
-      <button type="button" class="ins" id="insBtn" data-rinstall="entry">📲 이 화면을 홈 화면에 추가</button>
+      <button type="button" class="ins" id="insBtn" data-rinstall="entry">📲 앱 설치하기</button>
     </div>
   </div>
 </main>
@@ -106,7 +106,7 @@ if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{s
   // 카카오톡 등 앱 안 브라우저: 설치가 안 되고 기록도 따로 저장됨 → 크롬/사파리로 열기 안내
   var app=NR.inAppName(),ios=/iphone|ipad|ipod/i.test(navigator.userAgent),ext=NR.externalHref();
   if(app){var ia=document.getElementById('inapp');ia.hidden=false;
-    ia.innerHTML='<b>'+app+' 안에서 열려 있어요</b>여기서 기록하면 이 창 안에만 저장되고 홈 화면에 추가할 수도 없어요. '+(ios?'사파리':'크롬')+'에서 열어 주세요. (⋮ / ⋯ 메뉴 → 다른 브라우저로 열기)'+
+    ia.innerHTML='<b>'+app+' 안에서 열려 있어요</b>여기서 기록하면 이 창 안에만 저장되고 앱 설치도 안 돼요. '+(ios?'사파리':'크롬')+'에서 열어 주세요. (⋮ / ⋯ 메뉴 → 다른 브라우저로 열기)'+
       (ext?'<a href="'+ext.replace(/"/g,'&quot;')+'">'+(ios?'사파리로':'크롬으로')+' 열기</a>':'');}
   var insBtn=document.getElementById('insBtn');
   if(NR.isStandalone())insBtn.hidden=true;
