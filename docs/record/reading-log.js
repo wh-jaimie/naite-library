@@ -453,7 +453,7 @@
       c.strokeStyle='rgba(36,86,72,.08)';c.lineWidth=8;[200,150,100,50].forEach(function(r){c.beginPath();c.arc(W-70,110,r,0,Math.PI*2);c.stroke();});
       c.textBaseline='alphabetic';c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';
       c.fillText(mi.year+'년 '+mi.month+'월 · '+(S.home.emoji||'')+' '+(S.home.ko||'')+' 스터디',60,100);
-      c.fillStyle='#245648';c.font='700 66px "Gowun Batang",Georgia,serif';c.fillText('우리 아이 영어책 달력',60,182);
+      c.fillStyle='#245648';c.font='700 66px "Gowun Batang",Georgia,serif';c.fillText('우리 아이 영어책 기록',60,182);
       // 달력 카드
       var X=40,Y=226,CW=W-80,CH=920,hd=58;
       c.save();c.shadowColor='rgba(43,42,38,.12)';c.shadowBlur=24;c.shadowOffsetY=6;rrect(c,X,Y,CW,CH,26);c.fillStyle='#FCFCF8';c.fill();c.restore();
