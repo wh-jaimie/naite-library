@@ -486,7 +486,7 @@
       // 아래 줄
       c.textAlign='center';c.fillStyle='#23291F';c.font='700 34px "Noto Sans KR",sans-serif';
       c.fillText(mi.month+'월, '+Object.keys(days).length+'일 동안 영어책 '+rows.length+'권을 읽었어요',W/2,Y+CH+70);
-      c.fillStyle='#245648';c.font='700 30px "Gowun Batang",Georgia,serif';c.fillText('@naite_library · 나이테 스터디',W/2,Y+CH+124);
+      c.fillStyle='#245648';c.font='700 30px "Gowun Batang",Georgia,serif';c.fillText('@naite_library · 나이테 한달5권 스터디',W/2,Y+CH+124);
       c.textAlign='left';
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/png');}catch(e){r2(null);}});
     });
