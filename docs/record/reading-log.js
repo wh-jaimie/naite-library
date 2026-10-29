@@ -384,7 +384,7 @@
         c.fillStyle='rgba(246,244,236,.16)';c.fillRect(60,H-130,W-120,2);
         c.fillStyle='#F6F4EC';c.font='700 32px "Noto Sans KR",sans-serif';
         c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · '+together,60,H-74);
-        c.font='700 28px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-60,H-30);c.globalAlpha=1;c.textAlign='left';
+        c.font='700 28px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테',W-60,H-30);c.globalAlpha=1;c.textAlign='left';
         return new Promise(function(r3){try{cv.toBlob(function(bl){r3(bl);},'image/png');}catch(e){r3(null);}});
       }
       var g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#2E6B58');g.addColorStop(1,'#1D463A');c.fillStyle=g;c.fillRect(0,0,W,H);
@@ -414,7 +414,7 @@
       c.fillStyle='rgba(246,244,236,.16)';c.fillRect(80,H-170,W-160,2);
       c.fillStyle='#F6F4EC';c.font='700 36px "Noto Sans KR",sans-serif';
       c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · '+together,80,H-100);
-      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테 한달5권 스터디',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
+      c.font='700 30px "Gowun Batang",Georgia,serif';c.textAlign='right';c.globalAlpha=.85;c.fillText('@naite_library · 나이테',W-80,H-50);c.globalAlpha=1;c.textAlign='left';
       return new Promise(function(res){try{cv.toBlob(function(bl){res(bl);},'image/png');}catch(e){res(null);}});
     });
   }
