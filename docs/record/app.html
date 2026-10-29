@@ -120,6 +120,35 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rl-instbar .t{flex:1;min-width:0;font-weight:700;line-height:1.3}
 .rl-instbar .go{flex:0 0 auto;border:0;background:#fff;color:#245648;font:inherit;font-weight:800;padding:8px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
 .rl-instbar .x{flex:0 0 auto;border:0;background:none;color:#fff;font-size:1.2rem;line-height:1;padding:4px 6px;cursor:pointer;opacity:.8}
+/* 📢 소식 · 🌱 처음 오셨나요? */
+.newsbar{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.newsbar button{flex:1 1 140px;border:1px solid var(--line);background:var(--surface);color:var(--tealD);font:inherit;font-weight:800;font-size:.88rem;padding:10px 12px;border-radius:12px;cursor:pointer;box-shadow:var(--sh);position:relative}
+.newsbar .dot{display:inline-block;min-width:18px;margin-left:6px;background:#D2453A;color:#fff;border-radius:999px;font-size:.7rem;padding:1px 6px;vertical-align:1px}
+.newscard{display:block;width:100%;text-align:left;margin-top:10px;background:#FBF1DC;border:1px solid #E7CF9E;border-radius:12px;padding:11px 14px;font:inherit;color:#5E4318;cursor:pointer}
+.newscard b{display:block;font-size:.92rem;color:#23291F}
+.newscard small{color:#7A5212;font-size:.76rem}
+.pn{position:fixed;inset:0;z-index:80;background:#E4E7DD;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pn-top{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(228,231,221,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.pn-top button{border:1px solid var(--line);background:var(--surface);font:inherit;font-weight:800;font-size:.85rem;padding:7px 12px;border-radius:9px;cursor:pointer;color:var(--tealD)}
+.pn-top b{font-family:'Gowun Batang',Georgia,serif;font-size:1.1rem}
+.pn-body{max-width:720px;margin:0 auto;padding:14px 16px 60px}
+.nitem{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;box-shadow:var(--sh)}
+.nitem.new{border-color:#E7CF9E}
+.nitem .nh2{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.nitem h3{font-size:1.02rem;margin:0}
+.nitem .nd{font-size:.74rem;color:var(--soft);white-space:nowrap}
+.nitem .nb{white-space:pre-wrap;word-break:break-word;font-size:.9rem;margin-top:8px;line-height:1.6}
+.nitem .nb a{color:var(--tealD);word-break:break-all}
+.wsec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;box-shadow:var(--sh)}
+.wsec h3{font-size:1.05rem;color:var(--tealD);margin:0 0 10px}
+.wsec ol,.wsec ul{margin:0;padding-left:20px;font-size:.92rem;line-height:1.65}
+.wsec li{margin:6px 0}
+.wsec .wsub{display:block;color:var(--soft);font-size:.84rem}
+.wsec a,.wsec .wbtn{color:var(--tealD);font-weight:800}
+.wsec .wbtn{display:inline-block;margin-top:6px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;cursor:pointer;text-decoration:none}
+.whero{text-align:center;padding:12px 4px 4px}
+.whero h2{font-size:1.4rem}
+.whero p{color:var(--soft);font-size:.92rem;margin:8px 0 0}
 /* 다음 달 미리보기 */
 .np{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh);margin-top:6px}
 .np .nh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -375,6 +404,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
     }).join('');
     var h='<div id="v-study"><div class="wrap">';
+    if(!PREVIEW)h+='<div class="newsbar"><button type="button" data-pn="news">📢 소식<span class="dot" id="newsDot" hidden></span></button><button type="button" data-pn="welcome">🌱 처음 오셨나요?</button></div><div id="newsLatest"></div>';
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
@@ -407,6 +437,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       onLeave:function(){location.replace('../study/'+(curParam()?'?m='+encodeURIComponent(curParam()):''));}});
     fillArchive(theme.key);
     fillNext(theme.key,c.month_label);
+    if(!PREVIEW)initPanels();
     // 카드 어디를 눌러도 구매 링크(표지 링크)를 엶. 워크지·읽었어요 등 카드 안의 링크·버튼은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
     app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
@@ -429,6 +460,88 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     logEvent('title_copy',{title:many?'(5권 전체)':t,from:b.dataset.cpfrom||''});},true);
   var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
+
+  // 📢 소식(관리자 공지) · 🌱 처음 오셨나요? — 탭이 아니라 위에 덮이는 화면. 주소 #news / #welcome 로도 열림
+  var NEWS=[],NEWS_SEEN_KEY='naite_news_seen',WELCOME_KEY='naite_welcome_seen';
+  var DAANGN_URL='https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5';
+  var GUIDE_POST_URL='https://blog.naver.com/naite_library/224453531592';
+  function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
+  function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function linkify(s){return esc(s).replace(/https?:\/\/[^\s<]+/g,function(u){return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';});}
+  function seenId(){return +lsGet(NEWS_SEEN_KEY)||0;}
+  function paintNewsBar(){
+    var dot=document.getElementById('newsDot'),box=document.getElementById('newsLatest');if(!dot||!box)return;
+    var s=seenId(),fresh=NEWS.filter(function(n){return n.id>s;});
+    dot.hidden=!fresh.length;dot.textContent=fresh.length;
+    var top=fresh[0];
+    box.innerHTML=top?'<button type="button" class="newscard" data-pn="news"><small>📢 새 소식 · '+esc(fmtDay(top.created_at))+'</small><b>'+esc(top.title||(top.body||'').split('\n')[0].slice(0,60))+'</b></button>':'';
+  }
+  function fmtDay(t){var d=new Date(t);return (d.getMonth()+1)+'월 '+d.getDate()+'일';}
+  async function loadNews(){
+    try{var r=await client.rpc('list_app_notices',{p_code:window.NaiteReading.getCode()});if(r.error)return;NEWS=r.data||[];}catch(e){return;}
+    paintNewsBar();
+  }
+  function newsHTML(){
+    var s=seenId();
+    if(!NEWS.length)return '<p style="color:var(--soft);text-align:center;padding:40px 0">아직 올라온 소식이 없어요.</p>';
+    return NEWS.map(function(n){return '<div class="nitem'+(n.id>s?' new':'')+'"><div class="nh2"><h3>'+(n.pinned?'📌 ':'')+(n.id>s?'🆕 ':'')+esc(n.title||'공지')+'</h3><span class="nd">'+esc(fmtDay(n.created_at))+'</span></div><div class="nb">'+linkify(n.body||'')+'</div></div>';}).join('');
+  }
+  function welcomeHTML(){
+    var inst=window.NaiteReading.isStandalone();
+    return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
+      '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
+        '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">회원 전용 기록 앱이에요(나이테 사이트와 달라요). 기록·통계·공지는 여기서만 볼 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button>')+'</li>'+
+        '<li><b>책 1권 준비하고 인증하기</b><span class="wsub">도서관에서 빌려도, 구매해도 OK. 5권 다 없어도 1권만 있으면 시작할 수 있어요.<br>책 카드의 📋 제목 복사 → 도서관·서점 검색창에 붙여넣기</span></li>'+
+        '<li><b>당근모임 가입하기</b><span class="wsub">주요 공지는 당근모임에서도 알려드려요.</span><a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 가입</a></li>'+
+        '<li><b>채팅방에서 닉네임 바꾸고 자기소개 한마디</b><span class="wsub">닉네임/아이생년/영유or일유</span></li>'+
+      '</ol></div>'+
+      '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
+        '<li><b>매달 1일</b> — 새 주제 5권으로 시작</li>'+
+        '<li><b>한 달 동안</b> — 읽어준 날 사진이나 말로 인증 (이 앱에서 표지 한 번 눌러 기록해도 돼요)</li>'+
+        '<li><b>마지막 주</b> — 다음 달 책 공개<span class="wsub">이번 달 자료 맨 아래 \'다음 달 미리보기\'에서 확인하고, 블로그에서 이 5권을 고른 이유도 볼 수 있어요. 도서관 희망도서는 시간이 걸리니 미리 신청해두세요 (📋 5권 제목 한 번에 복사 버튼이 있어요)</span></li>'+
+        '<li><b>공지</b> — 이 앱 맨 위 <b>📢 소식</b>에 모아서 올려요</li>'+
+      '</ul></div>'+
+      '<div class="wsec"><h3>🎯 스터디 미션</h3><ol>'+
+        '<li><b>책 준비 인증</b> (사진 or 말)<span class="wsub">5권 전부 아니어도 돼요. 준비되는 대로!</span></li>'+
+        '<li><b>읽어준 날 인증</b> (사진 or 말)<span class="wsub">이번 달 주제 책이 아니어도 괜찮아요. 빠진 날이 있어도 괜찮아요, 다시 이어가면 돼요</span></li>'+
+        '<li><b>아이와 도서관 가기</b> (선택)<span class="wsub">한 달에 한 번, 아이가 직접 영어책을 골라보는 경험을 해주세요</span></li>'+
+      '</ol></div>'+
+      '<div class="wsec"><h3>📚 더 알고 싶다면 (선택)</h3><ul>'+
+        '<li><a href="'+GUIDE_POST_URL+'" target="_blank" rel="noopener">스터디 자세한 운영 방법 (블로그) ↗</a></li>'+
+        '<li><b>나이테 120</b> — 2년 동안 함께 읽을 120권 전체 목록<span class="wsub">읽은 책 표지를 누르면 몇 % 읽었는지 나와요. 꼭 볼 필요는 없어요. 매달 5권만 따라오시면 돼요!</span><button type="button" class="wbtn" data-pnclose data-rtab="c120">🎯 나이테 120 보기</button></li>'+
+        '<li><a href="../types.html" target="_blank" rel="noopener">왜 5가지 유형으로 골랐을까요? ↗</a></li>'+
+      '</ul></div>'+
+      '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
+        '<p style="margin:8px 0 0;font-size:.88rem;color:var(--soft)">인스타 팔로우, 블로그 이웃추가 부탁드려요 🙏<br>이달의 5권이 인스타·블로그에도 올라가서 지난 달 책 다시 찾을 때 편해요</p>'+
+        '<a class="wbtn" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">📷 인스타그램 팔로우</a> '+
+        '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';
+  }
+  function openPanel(kind){
+    var pn=document.getElementById('pn');
+    if(!pn){pn=document.createElement('div');pn.id='pn';pn.className='pn';pn.setAttribute('role','dialog');
+      pn.innerHTML='<div class="pn-top"><button type="button" data-pnclose>← 닫기</button><b id="pnT"></b></div><div class="pn-body" id="pnB"></div>';document.body.appendChild(pn);}
+    document.getElementById('pnT').textContent=kind==='news'?'📢 나이테 소식':'🌱 처음 오셨나요?';
+    document.getElementById('pnB').innerHTML=kind==='news'?newsHTML():welcomeHTML();
+    pn.hidden=false;pn.scrollTop=0;document.body.style.overflow='hidden';
+    try{history.replaceState(null,'',location.pathname+location.search+'#'+kind);}catch(e){}
+    if(kind==='news'&&NEWS.length){lsSet(NEWS_SEEN_KEY,String(Math.max.apply(null,NEWS.map(function(n){return n.id;}))));paintNewsBar();}
+    if(kind==='welcome')lsSet(WELCOME_KEY,'1');
+    logEvent(kind==='news'?'news_open':'welcome_open',{});
+  }
+  function closePanel(){var pn=document.getElementById('pn');if(!pn)return;pn.hidden=true;document.body.style.overflow='';
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+  var panelsWired=false;
+  function initPanels(){
+    if(!panelsWired){panelsWired=true;
+      document.addEventListener('click',function(e){var t=e.target.closest('[data-pn]');if(t){e.preventDefault();openPanel(t.getAttribute('data-pn'));return;}
+        if(e.target.closest('[data-pnclose]'))closePanel();},true);
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});}
+    var h=(location.hash||'').slice(1);
+    loadNews().then(function(){if(h==='news')openPanel('news');});
+    // 처음 들어온 폰(기록도 없고 안내도 안 본 경우)이면 안내를 한 번 자동으로
+    var fresh=!lsGet(WELCOME_KEY)&&!lsGet('naite_reads_v2');
+    if(h==='welcome'||(fresh&&h!=='news'))openPanel('welcome');
+  }
 
   // 👀 다음 달 미리보기: 커리큘럼 다음 주제의 5권(공개 데이터 c120_data.json) + 그 달 블로그 글(themes.blog_url) + 미리 준비용 쿠팡 링크
   async function fillNext(key,ml){
