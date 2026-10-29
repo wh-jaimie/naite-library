@@ -496,10 +496,14 @@
       '<p class="sc-plabel" id="scPlabel">📷 읽은 책 사진 넣기</p>'+
       '<div class="sc-photo"><button type="button" class="sc-pbtn" id="scCam">📷 <span>바로 찍기</span></button>'+
       '<label class="sc-pbtn">🖼 <span>앨범에서</span><input type="file" accept="image/*" id="scPhoto"></label>'+
-      '<button type="button" class="sc-pdel" id="scPdel" hidden>사진 빼기</button></div>');
+      '<button type="button" class="sc-pdel" id="scPdel" hidden>사진 빼기</button></div>'+
+      '<div class="sc-cal" id="scCal"><span>📅 넣은 사진은 읽기 통계 달력에도 남아요</span></div>');
     var inp=sh.querySelector('#scPhoto'),del=sh.querySelector('#scPdel'),plab=sh.querySelector('#scPlabel'),wrap=sh.querySelector('.sc-wrap');
     function redraw(){var em=!S.rows.some(function(r){return r.d===day;});fillShare(wrap,drawCard(day,photo),name,'share_card',{day:day,photo:!!photo,empty:em},title);del.hidden=!photo;plab.textContent=photo?'📷 다른 사진으로 바꾸기':'📷 읽은 책 사진 넣기';}
-    function use(im,from){photo=im;redraw();savePhoto(day,im);if(S.onEvent)S.onEvent('share_card_photo',{day:day,from:from});}
+    var calBox=sh.querySelector('#scCal');
+    function calDone(){calBox.classList.add('on');calBox.innerHTML='<span>✅ 달력에 저장했어요</span><button type="button" id="scGoCal">달력에서 보기 →</button>';
+      calBox.querySelector('#scGoCal').onclick=function(){closeSheet();goCal(day);};}
+    function use(im,from){photo=im;redraw();savePhoto(day,im);calDone();if(S.onEvent)S.onEvent('share_card_photo',{day:day,from:from});}
     inp.parentNode.addEventListener('click',markPick);
     inp.onchange=function(){
       clearPick();
@@ -511,8 +515,8 @@
       openCamera().then(function(c){if(c)use(c,'camera');},function(e){
         toast('카메라를 열지 못했어요. 카메라 권한을 허용하거나 🖼 앨범에서 골라 주세요.');if(S.onEvent)S.onEvent('camera_fail',{err:(e&&e.name)||''});});
     };
-    del.onclick=function(){photo=null;redraw();delPhoto(day);};
-    if(S.photoBlobs[day])loadPhoto(S.photoBlobs[day]).then(function(im){if(!photo){photo=im;redraw();}},function(){});
+    del.onclick=function(){photo=null;redraw();delPhoto(day);calBox.classList.remove('on');calBox.innerHTML='<span>📅 넣은 사진은 읽기 통계 달력에도 남아요</span>';};
+    if(S.photoBlobs[day]){calDone();loadPhoto(S.photoBlobs[day]).then(function(im){if(!photo){photo=im;redraw();}},function(){});}
   }
 
   /* ── 이번 달 읽기 달력: 날짜 칸마다 그날 읽은 표지(같은 책은 한 번, ×횟수) ── */
@@ -546,6 +550,13 @@
         return head+
           (it.length?'<div class="cv n'+Math.min(it.length,4)+'">'+show.map(function(x){return '<span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+(x.n>1?'<b>'+x.n+'</b>':'')+'</span>';}).join('')+(more?'<span class="c m">+'+more+'</span>':'')+'</div>':'')+'</div>';
       }).join('')+'</div>';}).join('')+'</div>';
+  }
+  function goCal(day){
+    showTab('stats');
+    setTimeout(function(){var c=document.querySelector('[data-rcal="'+day+'"]');if(!c)return;
+      try{c.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){c.scrollIntoView();}
+      c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');},80);
+    if(S.onEvent)S.onEvent('cal_from_card',{day:day});
   }
   function openDay(day){
     var it=dayItems(day),ph=S.photoUrls[day],p=day.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]);
@@ -685,12 +696,18 @@
       var lt=S.loaded[key]||{};
       body=lt.failed?'<p class="rv-empty">책을 불러오지 못했어요. 잠시 뒤 다시 눌러 주세요.</p>':'<p class="rv-empty">책장을 불러오는 중…</p>';
     }else{
-      var planks=[];for(var i=0;i<books.length;i+=3)planks.push(books.slice(i,i+3));
-      body='<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){var n=count(b.id),dc=count(b.id,S.recDay);
+      var odc=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.d===S.recDay)odc++;});
+      var items=books.concat([{other:1}]),planks=[];for(var i=0;i<items.length;i+=3)planks.push(items.slice(i,i+3));
+      body='<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){
+        if(b.other)return '<button type="button" class="rs-book rs-otile" data-rother="" aria-label="스터디 책이 아닌 다른 책 '+dn+' 읽음 기록, '+dn+' '+odc+'번">'+
+          '<span class="cv"><span class="ob"><i>📚</i><b>+1</b></span>'+(odc?'<span class="td">'+dn+' '+odc+'</span>':'')+'</span><span class="lb">다른 책</span></button>';
+        var n=count(b.id),dc=count(b.id,S.recDay);
         return '<button type="button" class="rs-book'+(n?'':' unread')+'" data-rbook="'+b.id+'" data-src="shelf" aria-label="'+esc(b.title)+' '+dn+' 읽음 기록, '+dn+' '+dc+'번">'+
           '<span class="cv">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="" style="'+stack(n)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+
           (n?'':'<span class="pl" aria-hidden="true">+</span>')+(n?'<span class="x">×'+n+'</span>':'')+(dc?'<span class="td">'+dn+' '+dc+'</span>':'')+'</span>'+
           '<span class="lb">'+(n?'마지막 '+dayLabel(lastDay(b.id),true):'아직이에요')+'</span></button>';}).join('')+'</div>';}).join('')+'</div>'+
+        (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책"><span>📚 다른 책 또 읽었으면</span>'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
+          return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+
         '<p class="rs-legend">'+(isHome?'많이 읽은 책일수록 뒤에 책장이 쌓여 두꺼워져요. 흐린 책은 아직 안 읽은 책이에요.':'지난 달 책도 다시 읽으면 표지를 눌러 기록해요. 이번 달 통계에 함께 들어가요.')+'</p>';
     }
     el.innerHTML='<div class="rv">'+chips+
@@ -698,10 +715,8 @@
       '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
         '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
       '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
-      '<div class="rs-other"><button type="button" class="rs-other-btn" data-rother="">📚 다른 책도 읽었어요 <b>+1</b></button>'+
-        (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책">'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
-          return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+'</div>'+
-      '<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>'+body+
+      '<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>'+
+      '<p class="rs-calhint">📅 카드에 넣은 사진은 <b>읽기 통계 달력</b>에 날짜별로 모여요</p>'+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
