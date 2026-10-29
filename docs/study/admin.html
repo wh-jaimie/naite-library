@@ -279,6 +279,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var full=recruiting.filter(function(r){return (r.members||0)>=(r.capacity||60)-10;});
       if(full.length)h+='<div class="alert">🔔 '+full.map(function(r){return r.gen+'기';}).join('·')+' 정원이 '+((full[0].capacity||60)-(full[0].members||0))+'자리 남았어요. 다음 기수 준비할 때예요.</div>';
       if(!recruiting.length)h+='<div class="alert">🔔 모집 중인 방이 없어요. 새로 오는 분이 들어갈 방을 정해 주세요.</div>';
+      // 참여 버튼 링크 = 링크가 있는 가장 마지막 기수 방(저장할 때 자동 반영)
+      var lr=latestRoom(OPS.rooms);
+      h+='<div class="hint" style="margin-top:10px;font-size:.82rem">🔗 <b>참여 버튼 링크</b>(메인·나이테 120·인기 책장·참여 페이지): '+
+        (STATE.studyRoomUrl===null?'⚙️ <b>migrate_study_room_url.sql</b> 실행 후 자동으로 연결돼요':
+         lr?('<b>'+lr.gen+'기 방</b>으로 자동 연결'+(STATE.studyRoomUrl===lr.url?' ✓':' — 저장하면 바뀌어요')):
+         '기수 방 링크가 아직 없어서 지금 링크를 그대로 써요. 마지막 기수 방에 링크를 넣고 저장하세요')+'</div>';
       h+='<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn cor" id="saveRooms">저장</button><button class="btn" id="addRoom">＋ '+((OPS.rooms.length?OPS.rooms[OPS.rooms.length-1].gen:0)+1)+'기 추가</button><span class="status" id="roomSt">합계 '+total+'명</span></div>';
     }
     h+='</div>';
@@ -349,15 +355,23 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var r=await client.from('study_rooms').insert({gen:g,status:'모집 중'});if(r.error){alert('추가하지 못했어요: '+r.error.message);return;}
       renderOps();});
   }
+  function isRoomUrl(u){try{var p=new URL(u);return p.protocol==='https:'&&p.hostname==='open.kakao.com';}catch(e){return false;}}
+  // 링크가 들어 있는 방 중 기수가 가장 큰 방
+  function latestRoom(rooms){var l=null;(rooms||[]).forEach(function(r){if(isRoomUrl(r.url)&&(!l||r.gen>l.gen))l=r;});return l;}
   async function saveRooms(){
-    var st=document.getElementById('roomSt');st.textContent='저장 중…';var total=0,fail='';
+    var st=document.getElementById('roomSt');st.textContent='저장 중…';var total=0,fail='',saved=[];
     var cards=document.querySelectorAll('.room');
-    for(var i=0;i<cards.length;i++){var c=cards[i],g=+c.dataset.gen;
-      var v={members:Math.max(0,parseInt(c.querySelector('[data-f=members]').value,10)||0),capacity:Math.max(1,parseInt(c.querySelector('[data-f=capacity]').value,10)||60),
-             status:c.querySelector('[data-f=status]').value,url:(c.querySelector('[data-f=url]').value||'').trim(),updated_at:new Date().toISOString()};
-      total+=v.members;
-      var r=await client.from('study_rooms').update(v).eq('gen',g);if(r.error)fail=r.error.message;}
+    for(var i=0;i<cards.length;i++){var c=cards[i],g=+c.dataset.gen,u=(c.querySelector('[data-f=url]').value||'').trim();
+      if(u&&!isRoomUrl(u)){st.textContent=g+'기 링크는 https://open.kakao.com 주소여야 해요.';return;}}
+    for(var j=0;j<cards.length;j++){var c2=cards[j],g2=+c2.dataset.gen;
+      var v={members:Math.max(0,parseInt(c2.querySelector('[data-f=members]').value,10)||0),capacity:Math.max(1,parseInt(c2.querySelector('[data-f=capacity]').value,10)||60),
+             status:c2.querySelector('[data-f=status]').value,url:(c2.querySelector('[data-f=url]').value||'').trim(),updated_at:new Date().toISOString()};
+      total+=v.members;saved.push({gen:g2,url:v.url});
+      var r=await client.from('study_rooms').update(v).eq('gen',g2);if(r.error)fail=r.error.message;}
     if(!fail&&STATE.chatMembers!==null){var r2=await client.from('settings').update({chat_members:total}).eq('id',1);if(r2.error)fail=r2.error.message;else STATE.chatMembers=total;}
+    // 참여 버튼 링크 = 마지막 기수 방(링크가 있을 때만 바꿈)
+    var lr=latestRoom(saved);
+    if(!fail&&lr&&STATE.studyRoomUrl!==null&&STATE.studyRoomUrl!==lr.url){var r3=await client.from('settings').update({study_room_url:lr.url}).eq('id',1);if(r3.error)fail=r3.error.message;else STATE.studyRoomUrl=lr.url;}
     if(fail){st.textContent='실패: '+fail;return;}
     OPS.draft={title:document.getElementById('nTitle').value,body:document.getElementById('nBody').value};
     await renderOps();document.getElementById('roomSt').textContent='✓ 저장했어요 · 합계 '+total+'명'+(STATE.chatMembers===null?' (메인 인원 표시는 migrate_chat_members.sql 실행 후)':' · 메인 숫자도 바뀌었어요');
@@ -480,18 +494,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div class="card"><label class="f" style="margin-top:0">이번 달 공개 주제 <span class="hint">(부모가 링크 열면 보이는 주제)</span></label>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap"><select class="t" id="curSel" style="flex:1;min-width:220px">'+opt(STATE.current)+'</select>'+
         '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
-      '<div class="card"><label class="f" style="margin-top:0">스터디 방 링크 <span class="hint">(메인·나이테 120·국내 인기 책장·참여 페이지)</span></label>'+
-        '<div class="hint" style="margin-bottom:10px">카카오톡 오픈채팅 주소를 입력하세요. 저장하면 공개 페이지에 바로 반영됩니다.</div>'+
-        '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input class="t" id="roomUrl" type="url" value="'+esc(STATE.studyRoomUrl===null?DEFAULT_STUDY_ROOM_URL:(STATE.studyRoomUrl||DEFAULT_STUDY_ROOM_URL))+'" placeholder="https://open.kakao.com/o/..." style="flex:1;min-width:240px" '+(STATE.studyRoomUrl===null?'disabled':'')+'>'+
-        '<button class="btn cor" id="setRoomUrl" '+(STATE.studyRoomUrl===null?'disabled':'')+'>저장</button><span class="status" id="roomUrlSt"></span></div>'+
-        (STATE.studyRoomUrl===null?'<div class="hint" style="margin-top:8px">⚙️ 먼저 Supabase에서 <b>supabase/migrate_study_room_url.sql</b>을 실행해 주세요.</div>':'')+
-      '</div>'+
-      '<div class="card"><label class="f" style="margin-top:0">오픈채팅 참여 인원 <span class="hint">(메인 화면 "지금 ○명의 엄마가 함께하고 있어요" · 10명 미만이면 숨김)</span></label>'+
-        (STATE.chatMembers===null
-          ? '<div class="hint">⚙️ Supabase에서 <b>supabase/migrate_chat_members.sql</b>을 먼저 실행해 주세요.</div>'
-          : '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input class="t" id="memN" type="number" min="0" step="1" value="'+(STATE.chatMembers||0)+'" style="width:120px">명'+
-            '<button class="btn cor" id="setMem">저장</button><span class="status" id="memSt"></span></div>')+
-      '</div>'+
+      '<div class="card"><div class="hint" style="margin:0">💬 스터디 방 링크와 참여 인원은 <a href="#ops" data-goops="1">🌳 운영 › 기수별 채팅방</a>에서 관리해요. (참여 버튼은 가장 마지막 기수 방으로 자동 연결)</div></div>'+
       '<div class="card"><label class="f" style="margin-top:0">편집할 주제</label><select class="t" id="edSel">'+opt(STATE.editKey)+'</select>'+
         '<div id="form"></div>'+
         '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="preview">👁 미리보기</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
@@ -504,32 +507,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       document.getElementById('curSt').textContent=r.error?('실패: '+r.error.message):('✓ 현재 공개 주제: '+k+' (자동 발행됨)');
       if(!r.error)STATE.current=k;
     });
-    var roomSave=document.getElementById('setRoomUrl');
-    if(roomSave)roomSave.addEventListener('click',saveStudyRoomUrl);
-    var sm=document.getElementById('setMem');
-    if(sm)sm.addEventListener('click',async function(){
-      var n=parseInt(document.getElementById('memN').value,10);
-      if(!(n>=0)){document.getElementById('memSt').textContent='숫자를 넣어주세요.';return;}
-      document.getElementById('memSt').textContent='저장 중…';
-      var r=await client.from('settings').update({chat_members:n}).eq('id',1);
-      document.getElementById('memSt').textContent=r.error?('실패: '+r.error.message):('✓ '+n+'명으로 저장했어요');
-      if(!r.error)STATE.chatMembers=n;
-    });
+    var go=document.querySelector('[data-goops]');
+    if(go)go.addEventListener('click',function(ev){ev.preventDefault();STATE.view='ops';try{history.replaceState(null,'','#ops');}catch(e){}renderApp();});
     document.getElementById('edSel').addEventListener('change',function(e){STATE.editKey=e.target.value;renderForm();});
     document.getElementById('save').addEventListener('click',saveContent);
     document.getElementById('preview').addEventListener('click',openPreview);
     document.getElementById('pdf').addEventListener('click',function(){buildPdf(STATE.editKey);});
     renderForm();
-  }
-
-  async function saveStudyRoomUrl(){
-    var input=document.getElementById('roomUrl'),st=document.getElementById('roomUrlSt'),value=(input.value||'').trim(),parsed;
-    try{parsed=new URL(value);}catch(e){st.textContent='유효한 주소를 입력해 주세요.';return;}
-    if(parsed.protocol!=='https:'||parsed.hostname!=='open.kakao.com'){st.textContent='https://open.kakao.com 주소를 입력해 주세요.';return;}
-    st.textContent='저장 중…';
-    var r=await client.from('settings').update({study_room_url:value}).eq('id',1);
-    st.textContent=r.error?('실패: '+r.error.message):'✓ 저장했어요. 공개 페이지에 반영됩니다.';
-    if(!r.error)STATE.studyRoomUrl=value;
   }
 
   // ---------- PDF(인쇄) 생성 ----------
