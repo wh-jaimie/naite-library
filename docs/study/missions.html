@@ -119,6 +119,8 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
     pw.addEventListener('keydown',function(ev){if(ev.key==='Enter')submit();});
   }
 
+  // 나이테 기록 앱에 입장한 폰이면(같은 사이트 저장소) 회원 비밀번호로 지난 달도 열 수 있음
+  function memberCode(){try{return localStorage.getItem('naite_member')||sessionStorage.getItem('naite_member')||'';}catch(e){return '';}}
   async function gate(key,pass,fromForm){
     try{
       var r=await client.rpc('get_study',{p_key:key,p_pass:pass||''});
@@ -127,6 +129,7 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
       if(d.ok){try{if(pass)sessionStorage.setItem(passKey(key),pass);}catch(e){}render(d.theme,d.content||{});return;}
       if(d.error==='badpass'){try{sessionStorage.removeItem(passKey(key));}catch(e){}showGate(key,fromForm?'비밀번호가 맞지 않아요.':'');return;}
       if(d.error==='unpublished'){notice('아직 공개되지 않은 페이지예요.');return;}
+      if(d.error==='member'){var mc=memberCode();if(mc&&pass!==mc){gate(key,mc,false);return;}notice('지난 달 미션은 회원 전용 <b>나이테 기록 앱</b>에서 볼 수 있어요.<br><a href="../record/?m='+encodeURIComponent(key)+'" style="display:inline-block;margin-top:12px;font-weight:800;color:#245648">나이테 기록 앱에서 보기 →</a>');return;}
       notice('페이지를 찾지 못했어요.');
     }catch(e){notice('데이터를 불러오지 못했어요.<br><small>'+esc(e.message||e)+'</small>');}
   }
