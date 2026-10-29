@@ -360,27 +360,14 @@
       var dw=(day===logicalToday()?'오늘':day===addDays(logicalToday(),-1)?'어제':(+p[1])+'월 '+(+p[2])+'일'),head=dl.length?dw+' 영어책 '+dl.length+'권 읽었어요':'';
       var together=Object.keys(days).length?'이번 달 '+Object.keys(days).length+'일째 함께 읽는 중':'이번 달도 함께 읽는 중';
       if(photo){
-        // ── 사진 카드: 위 엄마가 찍은 사진(가운데 맞춰 자르기) + 아래 기록 요약
-        var PH=dl.length?860:1180;
+        // ── 사진 카드: 엄마가 찍은 사진(가운데 맞춰 자르기)만. 사진 속 권수와 기록이 다를 수 있어 '몇 권' 문구·표지 줄은 넣지 않음
+        var PH=1180;
         c.fillStyle='#1D463A';c.fillRect(0,0,W,H);
         var pr=Math.max(W/photo.width,PH/photo.height),pw=photo.width*pr,ph=photo.height*pr;
         c.save();c.beginPath();c.rect(0,0,W,PH);c.clip();c.drawImage(photo,(W-pw)/2,(PH-ph)/2,pw,ph);c.restore();
         var fade=c.createLinearGradient(0,PH-220,0,PH);fade.addColorStop(0,'rgba(29,70,58,0)');fade.addColorStop(1,'rgba(29,70,58,1)');c.fillStyle=fade;c.fillRect(0,PH-220,W,220);
         c.font='700 30px "Noto Sans KR",sans-serif';var tw=c.measureText(dateTxt).width;
         c.fillStyle='rgba(20,30,25,.62)';rrect(c,40,40,tw+48,62,31);c.fill();c.fillStyle='#F6F4EC';c.fillText(dateTxt,64,82);
-        c.fillStyle='#F6F4EC';c.font='700 64px "Gowun Batang",Georgia,serif';if(head)c.fillText(head,60,PH+40);
-        // 기록한 책 작은 줄
-        var tw2=112,th2=150,gap2=18,n2=shown.length,x2=60,y2=PH+90;
-        shown.forEach(function(id,i){
-          var b=info[id],x=x2+i*(tw2+gap2),im=imgs[i];
-          c.save();rrect(c,x,y2,tw2,th2,10);c.clip();
-          if(im){var r=Math.max(tw2/im.width,th2/im.height);c.drawImage(im,x+(tw2-im.width*r)/2,y2+(th2-im.height*r)/2,im.width*r,im.height*r);}
-          else if(b.other){c.fillStyle='#F6E6D8';c.fillRect(x,y2,tw2,th2);c.font='44px sans-serif';c.textAlign='center';c.fillText('📚',x+tw2/2,y2+64);c.fillStyle='#6b4220';c.font='700 18px "Noto Sans KR",sans-serif';wrapText(c,b.title,x+tw2/2,y2+100,tw2-16,22,2);c.textAlign='left';}
-          else{c.fillStyle='#EBEDE3';c.fillRect(x,y2,tw2,th2);}
-          c.restore();
-          if(cnt[id]>1){var bx=x+tw2-6,by=y2+6;c.fillStyle='#D1965C';c.beginPath();c.arc(bx,by,24,0,Math.PI*2);c.fill();c.fillStyle='#1f1a14';c.font='800 22px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('×'+cnt[id],bx,by+8);c.textAlign='left';}
-        });
-        if(more>0){c.fillStyle='#F6F4EC';c.font='700 30px "Noto Sans KR",sans-serif';c.fillText('+'+more+'권',x2+n2*(tw2+gap2),y2+th2/2+10);}
         c.fillStyle='rgba(246,244,236,.16)';c.fillRect(60,H-130,W-120,2);
         c.fillStyle='#F6F4EC';c.font='700 32px "Noto Sans KR",sans-serif';
         c.fillText((S.home.emoji||'')+' '+(mi?mi.month+'월 ':'')+(S.home.ko||'')+' · '+together,60,H-74);
