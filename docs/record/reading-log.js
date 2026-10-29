@@ -505,8 +505,7 @@
     var title=(day===logicalToday()?'오늘':'어제')+'의 인증 카드',name='naite-'+day+'.png',photo=null;
     var empty=!S.rows.some(function(r){return r.d===day;});
     var sh=shareSheet(title,'오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day,null),name,'share_card',{day:day,empty:empty},
-      (empty?'<div class="sc-nudge" id="scNudge"><p>📝 아직 '+(day===logicalToday()?'오늘':'어제')+' 기록이 없어요. 기록도 같이 하면 달력·통계에 남아요.</p>'+
-        '<button type="button" id="scOther">📚 다른 책도 읽었어요 <b>+1</b></button><span>스터디 책은 기록하기 탭에서 표지를 눌러요</span></div>':'')+
+      (empty?'<div class="sc-nudge" id="scNudge"><p>📝 아직 '+(day===logicalToday()?'오늘':'어제')+' 기록이 없어요. 기록하기 탭에서 읽은 책을 눌러 두면 달력·통계에도 남아요.</p></div>':'')+
       '<p class="sc-plabel" id="scPlabel">📷 읽은 책 사진 넣기</p>'+
       '<div class="sc-photo"><button type="button" class="sc-pbtn" id="scCam">📷 <span>바로 찍기</span></button>'+
       '<label class="sc-pbtn">🖼 <span>앨범에서</span><input type="file" accept="image/*" id="scPhoto"></label>'+
@@ -527,8 +526,6 @@
     };
     del.onclick=function(){photo=null;redraw();delPhoto(day);};
     if(S.photoBlobs[day])loadPhoto(S.photoBlobs[day]).then(function(im){if(!photo){photo=im;redraw();}},function(){});
-    var ob=sh.querySelector('#scOther');
-    if(ob)ob.onclick=function(){var keep=S.recDay;S.recDay=day;recordOther('');S.recDay=keep;var nd=sh.querySelector('#scNudge');if(nd)nd.hidden=true;redraw();};
   }
 
   /* ── 이번 달 읽기 달력: 날짜 칸마다 그날 읽은 표지(같은 책은 한 번, ×횟수) ── */
