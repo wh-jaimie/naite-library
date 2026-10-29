@@ -65,6 +65,32 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
 .pvbar .seg button.on{background:#fff;color:var(--tealD)}
 .pvframe{width:100%;max-width:430px;flex:1;min-height:0;background:#E4E7DD;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);transition:max-width .18s}
 .pvframe iframe{width:100%;height:100%;border:0;display:block;background:#E4E7DD}
+
+/* 🌳 운영 대시보드 */
+.ops h2{font-size:1.15rem;margin:0 0 10px}
+.ops .sub{font-size:.8rem;color:var(--soft);margin:-4px 0 12px}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.room{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.room .rh{display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.room .gauge{height:8px;border-radius:6px;background:#EEF1E8;overflow:hidden;margin:8px 0 6px}
+.room .gauge i{display:block;height:100%;background:var(--teal)}
+.room.full .gauge i{background:var(--coral)}
+.room .row2{display:flex;gap:6px;align-items:center;font-size:.85rem}
+.room input.t{padding:6px 8px;font-size:.9rem}
+.room select.t{padding:6px 8px;font-size:.82rem}
+.alert{background:#FBF1DC;border:1px solid #E7CF9E;color:#7A5212;border-radius:10px;padding:10px 12px;font-size:.88rem;font-weight:700;margin-top:10px}
+.vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.ver{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px;display:flex;flex-direction:column;gap:6px}
+.ver .vh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.88rem}
+.ver textarea{min-height:170px;font-size:.85rem}
+.ver .vn{font-size:.72rem;color:var(--soft)}
+.chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chk label{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.8rem;font-weight:700;background:#fff;cursor:pointer}
+.chk label.on{background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)}
+.nlist .ni{border-top:1px dashed var(--line);padding:10px 0}
+.nlist .nt{font-weight:800;font-size:.9rem}
+.nlist .nd{font-size:.75rem;color:var(--soft)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
 #pdfout{display:none}
 @media print{
   .top,#root{display:none!important}
@@ -109,7 +135,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var _hv=(location.hash||'').slice(1);
   var DEFAULT_STUDY_ROOM_URL='https://open.kakao.com/o/p8qXEfUi';
-  var STATE={view:(['content','buyurls','guides','members'].indexOf(_hv)>=0?_hv:'content'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
+  var STATE={view:(['ops','content','buyurls','guides','members'].indexOf(_hv)>=0?_hv:'ops'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
   // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
   var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
@@ -170,8 +196,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
 
   // ---------- SHELL ----------
   function renderApp(){
-    var v=STATE.view||'content';
-    var TABS=[['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['guides','📚 가이드'],['members','🔑 회원 비밀번호']];
+    var v=STATE.view||'ops';
+    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['guides','📚 가이드'],['members','🔑 회원 비밀번호']];
     var h='<div class="top"><div class="wrap" style="display:block;padding:0 18px">'+
       '<div class="bar1"><span class="brand">🛠️ 나이테 관리</span><span class="sp"><a class="btn" href="kpi.html">📊 KPI</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
@@ -185,7 +211,173 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     document.getElementById('mbtn').addEventListener('click',function(ev){ev.stopPropagation();menu.classList.toggle('open');});
     document.addEventListener('click',function(){menu.classList.remove('open');});
     document.getElementById('logout').addEventListener('click',async function(){await client.auth.signOut();STATE.user=null;renderLogin(null);});
-    if(v==='buyurls')renderBuyUrls(); else if(v==='guides')renderGuides(); else if(v==='members')renderMembers(); else renderContent();
+    if(v==='ops')renderOps(); else if(v==='buyurls')renderBuyUrls(); else if(v==='guides')renderGuides(); else if(v==='members')renderMembers(); else renderContent();
+  }
+
+
+  // ---------- 🌳 운영 대시보드: 채팅방 현황 · 공지 작성기 · 한눈에 보기 ----------
+  var NOTION_URL='https://app.notion.com/p/4083e2e4142d8167b4cfe94e3d5125fa';
+  var SITE_URL='https://wh-jaimie.github.io/naite-library/';
+  var OPS={rooms:null,roomsErr:null,notices:[],memberCode:'',draft:null};
+  function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).catch(function(){return copyOld(t);});return copyOld(t);}
+  function copyOld(t){return new Promise(function(ok,no){try{var x=document.createElement('textarea');x.value=t;x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.focus();x.select();var r=document.execCommand('copy');x.remove();r?ok():no();}catch(e){no(e);}});}
+  // 링크를 지우고, 링크 앞에 있던 '👉'·':' 같은 꼬리도 정리. 링크만 있던 줄은 없앰(null)
+  function stripUrl(l){var had=/https?:\/\//.test(l);var t=l.replace(/https?:\/\/\S+/g,'').replace(/[\s👉:→-]+$/u,'');return had&&!t.trim()?null:t;}
+  // 당근용: 비밀번호·앱(record/) 줄과 모든 링크를 빼고, 사이트 링크 하나만 붙임(당근은 링크 많은 글을 막음)
+  function toDaangn(body){
+    var code=(OPS.memberCode||'').trim();
+    var lines=(body||'').split('\n').filter(function(l){
+      if(/비밀번호|비번|record\//.test(l))return false;
+      if(code&&l.indexOf(code)>=0)return false;
+      return true;
+    }).map(stripUrl).filter(function(l){return l!==null;});
+    var out=lines.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+    return out+'\n\n스터디 자료는 오픈채팅방 회원에게 공개돼요 🌱\n'+SITE_URL+'?from=daangn';
+  }
+  // 인스타 스토리용: 앞부분 짧게 + 프로필 링크 안내, 링크·비밀번호 없음
+  function toInsta(title,body){
+    var code=(OPS.memberCode||'').trim();
+    var lines=(body||'').split('\n').filter(function(l){return !/비밀번호|비번|record\//.test(l)&&!(code&&l.indexOf(code)>=0);})
+      .map(stripUrl).filter(function(l){return l&&l.trim();}).map(function(l){return l.trim();});
+    var head=title?[title]:[];
+    return head.concat(lines.slice(0,title?3:4)).join('\n')+'\n\n자세한 내용은 프로필 링크에서 🌳';
+  }
+  function postTargets(){
+    var t=(OPS.rooms||[]).filter(function(r){return r.status!=='마감';}).map(function(r){return ['r'+r.gen,r.gen+'기 카톡'];});
+    return t.concat([['daangn','당근모임'],['insta','인스타 스토리']]);
+  }
+  async function renderOps(){
+    var body=document.getElementById('body');
+    body.innerHTML='<div class="ops"><p style="padding:30px 0;color:var(--soft)">불러오는 중…</p></div>';
+    var rr=await client.from('study_rooms').select('*').order('gen');
+    OPS.rooms=rr.error?null:(rr.data||[]);OPS.roomsErr=rr.error;
+    var nn=rr.error?{data:[]}:await client.from('notices').select('*').order('created_at',{ascending:false}).limit(8);
+    OPS.notices=(nn&&nn.data)||[];
+    try{var mc=await client.from('member_config').select('member_code').eq('id',1).maybeSingle();OPS.memberCode=(mc.data&&mc.data.member_code)||'';}catch(e){}
+    paintOps();
+    fillGlance();
+  }
+  function paintOps(){
+    var body=document.getElementById('body');
+    var h='<div class="ops">';
+    // ① 한눈에 보기
+    h+='<div class="card"><h2>📊 한눈에 보기</h2><div class="kgrid" id="glance"><div class="kpi"><div class="n">…</div><div class="l">불러오는 중</div></div></div></div>';
+    // ② 채팅방 현황
+    h+='<div class="card"><h2>💬 기수별 채팅방</h2><p class="sub">인원은 직접 입력해요. 저장하면 메인의 "지금 ○명의 엄마가 함께" 숫자도 합계로 바뀌어요.</p>';
+    if(OPS.rooms===null){
+      h+='<div class="warn">⚙️ Supabase에서 <b>supabase/migrate_ops.sql</b>을 먼저 실행해 주세요.'+(OPS.roomsErr?'<br><small>'+esc(OPS.roomsErr.message||'')+'</small>':'')+'</div>';
+    }else{
+      var total=0;
+      h+='<div class="rooms">'+OPS.rooms.map(function(r){total+=r.members||0;var pct=Math.min(100,Math.round((r.members||0)/(r.capacity||60)*100));
+        return '<div class="room'+(pct>=90?' full':'')+'" data-gen="'+r.gen+'"><div class="rh"><span>'+r.gen+'기</span>'+(r.url?'<a href="'+esc(r.url)+'" target="_blank" rel="noopener" style="font-size:.78rem">방 열기 ↗</a>':'')+'</div>'+
+          '<div class="gauge"><i style="width:'+pct+'%"></i></div>'+
+          '<div class="row2"><input class="t" type="number" min="0" data-f="members" value="'+(r.members||0)+'" style="width:70px"> / '+
+          '<input class="t" type="number" min="1" data-f="capacity" value="'+(r.capacity||60)+'" style="width:64px">명</div>'+
+          '<div class="row2" style="margin-top:6px"><select class="t" data-f="status">'+['모집 중','운영 중','마감'].map(function(o){return '<option'+(o===r.status?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div>'+
+          '<input class="t" data-f="url" placeholder="채팅방 링크(선택)" value="'+esc(r.url||'')+'" style="margin-top:6px;font-size:.78rem"></div>';}).join('')+'</div>';
+      var recruiting=OPS.rooms.filter(function(r){return r.status==='모집 중';});
+      var full=recruiting.filter(function(r){return (r.members||0)>=(r.capacity||60)-10;});
+      if(full.length)h+='<div class="alert">🔔 '+full.map(function(r){return r.gen+'기';}).join('·')+' 정원이 '+((full[0].capacity||60)-(full[0].members||0))+'자리 남았어요. 다음 기수 준비할 때예요.</div>';
+      if(!recruiting.length)h+='<div class="alert">🔔 모집 중인 방이 없어요. 새로 오는 분이 들어갈 방을 정해 주세요.</div>';
+      h+='<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn cor" id="saveRooms">저장</button><button class="btn" id="addRoom">＋ '+((OPS.rooms.length?OPS.rooms[OPS.rooms.length-1].gen:0)+1)+'기 추가</button><span class="status" id="roomSt">합계 '+total+'명</span></div>';
+    }
+    h+='</div>';
+    // ③ 공지 작성기
+    h+='<div class="card"><h2>📣 공지 작성기</h2><p class="sub">카톡용으로 한 번 쓰면 당근·인스타 버전이 자동으로 만들어져요. 당근·인스타 버전에서는 비밀번호·앱 링크가 빠지고, 당근은 사이트 링크 하나만 남아요.</p>'+
+      '<label class="f" style="margin-top:0">제목(선택)</label><input class="t" id="nTitle" placeholder="예: 📚 11월 책이 공개됐어요 (🚗 탈것)">'+
+      '<label class="f">카톡용 공지</label><textarea class="t" id="nBody" style="min-height:150px" placeholder="회원용 원문 — 앱 링크·비밀번호를 넣어도 돼요"></textarea>'+
+      '<div class="vers">'+
+        '<div class="ver"><div class="vh">💬 카톡 (1~N기 공통)<button class="btn" data-cp="vK">📋 복사</button></div><textarea class="t" id="vK" readonly></textarea><div class="vn" id="vKn"></div></div>'+
+        '<div class="ver"><div class="vh">🥕 당근모임<button class="btn" data-cp="vD">📋 복사</button></div><textarea class="t" id="vD"></textarea><div class="vn">비밀번호·앱 링크 제외 · 링크는 사이트 1개</div></div>'+
+        '<div class="ver"><div class="vh">📷 인스타 스토리<button class="btn" data-cp="vI">📋 복사</button></div><textarea class="t" id="vI"></textarea><div class="vn">짧게 · 링크 없이 → 하이라이트 📢 공지에 저장</div></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+(OPS.rooms===null?' disabled':'')+'>공지 저장 (올림 체크 시작)</button><span class="status" id="nSt"></span></div>'+
+      '<div class="hint">당근·인스타 칸은 고쳐 써도 돼요. 위 원문을 고치면 다시 자동으로 만들어져요.</div></div>';
+    // ④ 최근 공지 + 올림 체크
+    if(OPS.rooms!==null){
+      h+='<div class="card nlist"><h2>✅ 최근 공지 · 어디에 올렸나</h2>'+(OPS.notices.length?OPS.notices.map(function(n){
+        var p=n.posted||{},tg=postTargets(),done=tg.filter(function(t){return p[t[0]];}).length;
+        return '<div class="ni" data-nid="'+n.id+'"><div class="nt">'+esc(n.title||(n.body||'').split('\n')[0].slice(0,40))+'</div>'+
+          '<div class="nd">'+new Date(n.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+done+'/'+tg.length+'곳</div>'+
+          '<div class="chk">'+tg.map(function(t){return '<label class="'+(p[t[0]]?'on':'')+'"><input type="checkbox" data-pt="'+t[0]+'"'+(p[t[0]]?' checked':'')+' style="margin:0">'+esc(t[1])+'</label>';}).join('')+
+          '<button class="btn" data-reuse="'+n.id+'" style="padding:4px 10px;font-size:.78rem">다시 쓰기</button></div></div>';
+      }).join(''):'<p class="hint">아직 저장한 공지가 없어요.</p>')+'</div>';
+    }
+    // ⑤ 바로가기
+    h+='<div class="card"><h2>🔗 바로가기</h2><div class="links">'+
+      '<a class="btn cor" href="'+NOTION_URL+'" target="_blank" rel="noopener">🗒️ 노션: 할 일 · 일정 · 회원 요구사항</a>'+
+      '<a class="btn" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그</a>'+
+      '<a class="btn" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">📷 인스타</a>'+
+      '<a class="btn" href="'+SITE_URL+'" target="_blank" rel="noopener">🌱 나이테 사이트</a>'+
+      '<a class="btn" href="kpi.html">📊 KPI 자세히</a></div></div>';
+    h+='</div>';
+    body.innerHTML=h;
+    wireOps();
+  }
+  function regen(){
+    var t=document.getElementById('nTitle').value.trim(),b=document.getElementById('nBody').value;
+    var k=(t?t+'\n\n':'')+b.trim();
+    document.getElementById('vK').value=k;document.getElementById('vKn').textContent=k.length+'자';
+    document.getElementById('vD').value=b.trim()?toDaangn(k):'';
+    document.getElementById('vI').value=b.trim()?toInsta(t,b):'';
+  }
+  function wireOps(){
+    var nb=document.getElementById('nBody'),nt=document.getElementById('nTitle');
+    if(OPS.draft){nt.value=OPS.draft.title||'';nb.value=OPS.draft.body||'';regen();}
+    nb.addEventListener('input',regen);nt.addEventListener('input',regen);
+    document.querySelectorAll('[data-cp]').forEach(function(b){b.addEventListener('click',function(){var el=document.getElementById(b.dataset.cp);if(!el.value)return;
+      copyText(el.value).then(function(){var o=b.textContent;b.textContent='복사됨 ✓';setTimeout(function(){b.textContent=o;},1400);},function(){el.focus();el.select();});});});
+    var sv=document.getElementById('saveNotice');
+    if(sv)sv.addEventListener('click',async function(){var t=nt.value.trim(),b=nb.value.trim(),st=document.getElementById('nSt');
+      if(!b){st.textContent='공지 내용을 넣어주세요.';return;}
+      st.textContent='저장 중…';var r=await client.from('notices').insert({title:t,body:b,posted:{}});
+      if(r.error){st.textContent='실패: '+r.error.message;return;}
+      OPS.draft={title:t,body:b};await renderOps();document.getElementById('nSt').textContent='✓ 저장했어요. 아래에서 올린 곳을 체크하세요.';});
+    document.querySelectorAll('.ni [data-pt]').forEach(function(c){c.addEventListener('change',async function(){
+      var ni=c.closest('.ni'),id=+ni.dataset.nid,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
+      n.posted=n.posted||{};n.posted[c.dataset.pt]=c.checked;c.parentNode.classList.toggle('on',c.checked);
+      var r=await client.from('notices').update({posted:n.posted}).eq('id',id);
+      if(r.error){alert('저장하지 못했어요: '+r.error.message);return;}
+      var tg=postTargets(),done=tg.filter(function(t){return n.posted[t[0]];}).length;ni.querySelector('.nd').textContent=ni.querySelector('.nd').textContent.replace(/\d+\/\d+곳/,done+'/'+tg.length+'곳');});});
+    document.querySelectorAll('[data-reuse]').forEach(function(b){b.addEventListener('click',function(){var n=OPS.notices.filter(function(x){return x.id===+b.dataset.reuse;})[0];if(!n)return;
+      nt.value=n.title||'';nb.value=n.body||'';regen();nb.scrollIntoView({block:'center'});});});
+    var sr=document.getElementById('saveRooms');
+    if(sr)sr.addEventListener('click',saveRooms);
+    var ar=document.getElementById('addRoom');
+    if(ar)ar.addEventListener('click',async function(){var g=(OPS.rooms.length?OPS.rooms[OPS.rooms.length-1].gen:0)+1;
+      if(!confirm(g+'기 채팅방을 추가할까요? (새 기수는 "모집 중"으로 시작해요)'))return;
+      var r=await client.from('study_rooms').insert({gen:g,status:'모집 중'});if(r.error){alert('추가하지 못했어요: '+r.error.message);return;}
+      renderOps();});
+  }
+  async function saveRooms(){
+    var st=document.getElementById('roomSt');st.textContent='저장 중…';var total=0,fail='';
+    var cards=document.querySelectorAll('.room');
+    for(var i=0;i<cards.length;i++){var c=cards[i],g=+c.dataset.gen;
+      var v={members:Math.max(0,parseInt(c.querySelector('[data-f=members]').value,10)||0),capacity:Math.max(1,parseInt(c.querySelector('[data-f=capacity]').value,10)||60),
+             status:c.querySelector('[data-f=status]').value,url:(c.querySelector('[data-f=url]').value||'').trim(),updated_at:new Date().toISOString()};
+      total+=v.members;
+      var r=await client.from('study_rooms').update(v).eq('gen',g);if(r.error)fail=r.error.message;}
+    if(!fail&&STATE.chatMembers!==null){var r2=await client.from('settings').update({chat_members:total}).eq('id',1);if(r2.error)fail=r2.error.message;else STATE.chatMembers=total;}
+    if(fail){st.textContent='실패: '+fail;return;}
+    OPS.draft={title:document.getElementById('nTitle').value,body:document.getElementById('nBody').value};
+    await renderOps();document.getElementById('roomSt').textContent='✓ 저장했어요 · 합계 '+total+'명'+(STATE.chatMembers===null?' (메인 인원 표시는 migrate_chat_members.sql 실행 후)':' · 메인 숫자도 바뀌었어요');
+  }
+  async function fillGlance(){
+    var el=document.getElementById('glance');if(!el)return;
+    function kpi(n,l){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
+    var h='';
+    try{var ls=await client.rpc('landing_stats');var d=ls.data||{};if(d.ok)h+=kpi(d.reads||0,'이번 달 읽기(기록 앱)')+kpi(d.readers||0,'이번 달 기록한 기기');}catch(e){}
+    var total=(OPS.rooms||[]).reduce(function(a,r){return a+(r.members||0);},0);
+    if(OPS.rooms)h+=kpi(total,'채팅방 인원 합계');
+    try{
+      var since=new Date(Date.now()-7*864e5).toISOString();
+      var ev=await client.from('events').select('meta').eq('type','join_click').gte('created_at',since).limit(2000);
+      var by={},n=0;((ev&&ev.data)||[]).forEach(function(e){var f=(e.meta&&e.meta.from)||'direct';by[f]=(by[f]||0)+1;n++;});
+      var NM={insta:'인스타',blog:'블로그',daangn:'당근',direct:'직접',naver:'네이버',kakao:'카카오'};
+      var top=Object.keys(by).sort(function(a,b){return by[b]-by[a];}).slice(0,3).map(function(k){return (NM[k]||k)+' '+by[k];}).join(' · ');
+      h+=kpi(n,'최근 7일 참여 클릭'+(top?'<br>'+esc(top):''));
+    }catch(e){}
+    el.innerHTML=h||'<p class="hint">불러올 수 있는 숫자가 없어요.</p>';
   }
 
   // ---------- 가이드 화면(엄마표영어 읽을거리) ----------
