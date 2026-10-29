@@ -253,7 +253,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     OPS.rooms=rr.error?null:(rr.data||[]);OPS.roomsErr=rr.error;
     var nn=rr.error?{data:[]}:await client.from('notices').select('*').order('created_at',{ascending:false}).limit(8);
     OPS.notices=(nn&&nn.data)||[];
-    // 앱 소식(in_app) 컬럼이 있는지 — migrate_app_notices.sql 실행 여부
+    // 앱 공지(in_app) 컬럼이 있는지 — migrate_app_notices.sql 실행 여부
     OPS.hasInApp=false;if(!rr.error){try{var ia=await client.from('notices').select('in_app').limit(1);OPS.hasInApp=!ia.error;}catch(e){}}
     try{var mc=await client.from('member_config').select('member_code').eq('id',1).maybeSingle();OPS.memberCode=(mc.data&&mc.data.member_code)||'';}catch(e){}
     paintOps();
@@ -300,9 +300,9 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<div class="ver"><div class="vh">📷 인스타 스토리<button class="btn" data-cp="vI">📋 복사</button></div><textarea class="t" id="vI"></textarea><div class="vn">짧게 · 링크 없이 → 하이라이트 📢 공지에 저장</div></div>'+
       '</div>'+
       '<div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">'+
-        (OPS.hasInApp?'<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:800;color:var(--tealD)"><input type="checkbox" id="nApp" checked> 📱 나이테 스터디 앱 소식에도 올리기</label>'+
+        (OPS.hasInApp?'<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:800;color:var(--tealD)"><input type="checkbox" id="nApp" checked> 📱 나이테 기록 앱 공지에도 올리기</label>'+
           '<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:700;color:var(--soft)"><input type="checkbox" id="nPin"> 📌 맨 위 고정</label>':
-          (OPS.rooms!==null?'<span class="hint" style="margin:0">📱 앱 소식은 <b>migrate_app_notices.sql</b> 실행 후 쓸 수 있어요</span>':''))+'</div>'+
+          (OPS.rooms!==null?'<span class="hint" style="margin:0">📱 앱 공지는 <b>migrate_app_notices.sql</b> 실행 후 쓸 수 있어요</span>':''))+'</div>'+
       '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+(OPS.rooms===null?' disabled':'')+'>공지 저장 (올림 체크 시작)</button><span class="status" id="nSt"></span></div>'+
       '<div class="hint">당근·인스타 칸은 고쳐 써도 돼요. 위 원문을 고치면 다시 자동으로 만들어져요.</div></div>';
     // ④ 최근 공지 + 올림 체크
@@ -347,9 +347,9 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       if(OPS.hasInApp){row.in_app=!!(app&&app.checked);row.pinned=!!(pin&&pin.checked);}
       st.textContent='저장 중…';var r=await client.from('notices').insert(row);
       if(r.error){st.textContent='실패: '+r.error.message;return;}
-      OPS.draft={title:t,body:b};await renderOps();document.getElementById('nSt').textContent='✓ 저장했어요.'+(row.in_app?' 앱 소식에 바로 올라갔어요.':'')+' 아래에서 올린 곳을 체크하세요.';});
+      OPS.draft={title:t,body:b};await renderOps();document.getElementById('nSt').textContent='✓ 저장했어요.'+(row.in_app?' 앱 공지에 바로 올라갔어요.':'')+' 아래에서 올린 곳을 체크하세요.';});
     document.querySelectorAll('[data-inapp]').forEach(function(b){b.addEventListener('click',async function(){var id=+b.dataset.inapp,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
-      var v=!n.in_app;if(!v&&!confirm('이 공지를 앱 소식에서 내릴까요?'))return;
+      var v=!n.in_app;if(!v&&!confirm('이 공지를 앱에서 내릴까요?'))return;
       var r=await client.from('notices').update({in_app:v}).eq('id',id);if(r.error){alert('바꾸지 못했어요: '+r.error.message);return;}
       n.in_app=v;b.textContent=v?((n.pinned?'📌 ':'')+'📱 앱에 보임'):'📱 앱에 안 보임';b.style.background=v?'#E1EEE7':'';b.style.borderColor=v?'#B9D4C5':'';b.style.color=v?'var(--tealD)':'';});});
     document.querySelectorAll('.ni [data-pt]').forEach(function(c){c.addEventListener('change',async function(){
