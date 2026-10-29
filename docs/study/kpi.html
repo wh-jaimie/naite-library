@@ -383,6 +383,18 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     h+='<div class="card"><h3>📱 며칠이나 앱을 열었나요 <span class="hint">폰 수</span></h3>'+(oIds.length?hbars(ob)+
       '<p class="hint">앱을 연 '+oIds.length+'대 중 <b>'+oMulti+'대('+Math.round(oMulti/oIds.length*100)+'%)가 이틀 이상</b> 열었어요. 폰당 평균 <b>'+oAvgD+'일, '+oAvgN+'번</b>. 같은 날 여러 번 연 것도 횟수에 들어가요.</p>'
       :'<p class="empty">이 기간에 스터디 앱을 연 기록이 없어요.</p>')+'</div>';
+    // 인증 카드·달력 이미지: 창 연 폰 / 저장·공유한 폰 / 사진 넣은 폰 / 기록 없이 만든 카드
+    function cardM(list){var rec=list.filter(function(e){return appOf(e)==='record';});
+      function of(t){return rec.filter(function(e){return e.type===t;});}
+      var op=of('share_card_open'),out=of('share_card_save').concat(of('share_card_share')),ph=of('share_card_photo'),mo=of('month_card_open'),mout=of('month_card_save').concat(of('month_card_share'));
+      return {phones:cnt(sessions(op)),opens:op.length,outPhones:cnt(sessions(out)),out:out.length,share:of('share_card_share').length,save:of('share_card_save').length,
+        photo:cnt(sessions(ph)),empty:op.filter(function(e){return e.meta&&e.meta.empty;}).length,mPhones:cnt(sessions(mo)),mOut:cnt(sessions(mout)),op:op};}
+    var ca=cardM(X.cur),cb=cardM(X.prv);
+    h+='<div class="card"><h3>📸 인증 카드 <span class="hint">'+esc(R.label)+'</span></h3><div class="kgrid">'+
+      kpi('카드 만든 폰',ca.phones,cb.phones,R,'대')+kpi('저장·공유한 폰',ca.outPhones,cb.outPhones,R,'대')+kpi('사진 넣은 폰',ca.photo,cb.photo,R,'대')+kpi('달력 이미지 만든 폰',ca.mPhones,cb.mPhones,R,'대')+'</div>'+
+      '<div id="cchart" style="margin-top:12px">'+barChart(R.days,perDayUniq(ca.op,R,function(e){return dstr(e.created_at);},function(e){return e.session_id;}),'#4F7FA0','대')+'</div>'+
+      '<p class="hint">날짜별 카드 만든 폰 수예요. 카드 창 '+ca.opens+'번 열림 · 저장 '+ca.save+'번 · 공유 '+ca.share+'번 · 기록 없이 만든 카드 '+ca.empty+'번 · 달력 이미지 저장·공유 '+ca.mOut+'대. '+
+      '‘저장·공유’는 앱 안 버튼을 누른 것만 세요(이미지를 길게 눌러 저장·화면 캡처는 안 잡혀요).</p></div>';
     h+='<div class="two"><div class="card"><h3>🔁 며칠이나 기록했나요 <span class="hint">폰 수</span></h3>'+hbars(buckets)+'<p class="hint">기간 안에서 기록한 날짜 수예요. 꾸준히 기록하는 폰이 늘면 좋아요.</p></div>'+
       '<div class="card"><h3>📘 주제별 읽기</h3>'+table(['주제','읽기','폰'],(function(){var o={},rr={};X.lc.forEach(function(l){var k=l.book_id==null?'_other':(l.theme_key||'?');o[k]=(o[k]||0)+1;(rr[k]=rr[k]||{})[l.reader]=1;});
         return Object.keys(o).sort(function(x,y){return o[y]-o[x];}).map(function(k){return [k==='_other'?'📚 다른 책(스터디 외)':esc(themeLabel(themeBy(k))||k),o[k],cnt(rr[k])];});})(),1)+
