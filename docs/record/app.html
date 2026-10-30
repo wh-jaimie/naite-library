@@ -229,7 +229,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
 .sc-cal{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:-4px 0 12px;font-size:.78rem;color:var(--soft);text-align:center}
 .sc-cal.on{background:#E6F0EA;border-radius:10px;padding:8px 10px;margin-top:0;color:var(--tealD);font-weight:800}
 .sc-cal button{border:0;background:var(--tealD);color:#fff;font:inherit;font-size:.78rem;font-weight:800;padding:6px 11px;border-radius:999px;cursor:pointer}
-.cal-d.flash{animation:calFlash 1.6s ease 2}
+.cal-d.flash,.nc.flash{animation:calFlash 1.6s ease 2}
 @keyframes calFlash{0%,100%{box-shadow:inset 0 0 0 2px var(--coral)}50%{box-shadow:inset 0 0 0 4px var(--coral),0 0 0 6px rgba(209,150,92,.35)}}
 .rs-otitles{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:14px}
 .rs-otitles>span{width:100%;text-align:center;font-size:.74rem;font-weight:800;color:var(--soft)}
@@ -362,7 +362,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
   .expr li{padding:11px 13px}.expr .en2{font-size:1rem}.expr .ko2{display:block;margin-top:3px;font-size:.86rem}
 }
 /* ── 나이테 디자인: 기록하기 탭 ── */
-.rk,.rl-sheet,.rl-cam{--paper:#EFF1EA;--surface-2:#F4F6EF;--ink:#23291F;--ink-soft:#545C4B;--muted:#8A917E;--line-2:#D4D9C9;--pine:#245648;--pine-2:#2F6E58;--pine-soft:#E4EEE7;--clay:#B87343;--clay-2:#A8622F;--serif:"Gowun Batang",Georgia,serif;--shadow:0 1px 2px rgba(35,41,31,.05),0 8px 22px rgba(35,41,31,.08)}
+.rk,.st,.rl-sheet,.rl-cam{--clay-soft:#F3E7DA;--clay-ink:#7A4520;--sage:#4F9A72;--paper:#EFF1EA;--surface-2:#F4F6EF;--ink:#23291F;--ink-soft:#545C4B;--muted:#8A917E;--line-2:#D4D9C9;--pine:#245648;--pine-2:#2F6E58;--pine-soft:#E4EEE7;--clay:#B87343;--clay-2:#A8622F;--serif:"Gowun Batang",Georgia,serif;--shadow:0 1px 2px rgba(35,41,31,.05),0 8px 22px rgba(35,41,31,.08)}
 .rk-months{margin-bottom:6px}
 .rs-months .rk-mpill{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:8px 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-soft)}
 .rk-mpill .mi{width:7px;height:7px;border-radius:50%;background:var(--clay)}
@@ -513,6 +513,72 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .rk-btn small{font-size:11px;font-weight:700;opacity:.85;margin-left:2px}
 .rl-note{margin:0;font-size:12.5px;color:#FFD6A8;text-align:center}
 .ovl [data-s2]:empty{display:none}
+/* ── 달력(기록·통계 공용) ── */
+.ncal-wd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center;font-size:11px;font-weight:700;color:var(--muted,#8A917E);padding:0 0 7px}
+.ncal-wd .sun{color:#B87343}
+.ncal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.nc{position:relative;min-height:56px;border-radius:8px;padding:4px 3px 3px;display:flex;flex-direction:column}
+.nc .dn{font-size:10.5px;font-weight:700;color:var(--ink-soft,#545C4B);font-variant-numeric:tabular-nums;line-height:1.2}
+.nc .dn.sun{color:#B87343}
+.nc.future .dn{color:#B5BBAA}
+.nc.has{background:var(--surface,#FCFCF8);box-shadow:0 1px 2px rgba(35,41,31,.08)}
+.nc.today{outline:2px solid #B87343;outline-offset:-2px;background:#F3E7DA}
+.nc[data-rcal]{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nc .th{display:flex;gap:2px;margin-top:3px;align-items:flex-end;justify-content:center;flex:1}
+.nc .mc{position:relative;width:calc(50% - 1px);aspect-ratio:3/4;border-radius:3px;overflow:hidden;background:#EBEDE3;box-shadow:0 1px 2px rgba(0,0,0,.22)}
+.nc .mc.one{width:62%}
+.nc .mc img{width:100%;height:100%;object-fit:cover;display:block}
+.nc .mc.o{background:#F3E7DA;display:grid;place-items:center}
+.nc .mc.o i{font-style:normal;font-size:.62rem}
+.nc .mc.ph{width:100%;aspect-ratio:1/1;border-radius:4px}
+.nc .mc.ph i{position:absolute;right:2px;bottom:2px;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.92);color:#B87343;display:grid;place-items:center}
+.nc .plus{font-size:9px;font-weight:700;color:var(--ink-soft,#545C4B);align-self:center}
+.nc .bdg{position:absolute;right:-2px;top:-5px;z-index:1;background:#B87343;color:#fff;font-size:9px;font-weight:700;border-radius:99px;padding:0 5px;line-height:15px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.rk .ncal{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 10px 10px;box-shadow:var(--shadow)}
+/* ── 읽기 통계(나이테 디자인) ── */
+.st-head{text-align:center;padding:4px 0 2px}
+.st-head .rk-mark{width:44px;height:44px;margin:0 auto 7px}
+.st-head h1{font-family:var(--serif);font-weight:700;font-size:26px;margin:0;letter-spacing:-.01em;color:var(--ink)}
+.st-head .chip{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700;color:var(--pine);background:var(--pine-soft);border-radius:99px;padding:4px 11px}
+.st-head .chip .d{width:6px;height:6px;border-radius:50%;background:var(--clay)}
+.st-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:18px 0 0}
+.st-kpi .k{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 11px;box-shadow:var(--shadow)}
+.st-kpi .lb{font-size:11px;font-weight:700;color:var(--muted)}
+.st-kpi .v{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1;margin-top:5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.st-kpi .v s{font-size:12px;font-weight:400;color:var(--muted);text-decoration:none;font-family:'Noto Sans KR',sans-serif}
+.st-line{font-size:12.5px;color:var(--ink-soft);text-align:center;margin:10px 0 0}
+.st-line b{color:var(--pine)}
+.st-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:17px 16px;box-shadow:var(--shadow);margin-top:14px}
+.st-card h2{font-family:var(--serif);font-weight:700;font-size:18px;margin:0 0 13px;color:var(--ink)}
+.st-note{display:flex;align-items:center;gap:7px;justify-content:center;font-size:12px;color:var(--muted);margin:13px 0 0}
+.st-note svg{color:var(--pine)}
+.st-share{width:100%;margin-top:13px;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--clay);color:#fff;border:none;border-radius:14px;padding:14px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;box-shadow:var(--shadow)}
+.st-share:active{background:var(--clay-2)}
+.st-soft{font-size:13px;color:var(--ink-soft);margin:0}
+.st-top{display:flex;gap:14px}
+.st-top .cv{width:76px;aspect-ratio:3/4;border-radius:9px;flex:0 0 auto;box-shadow:var(--shadow);object-fit:cover}
+.st-top .cv.nt{display:grid;place-items:center;background:#EBEDE3;font-size:12px;padding:6px;text-align:center}
+.st-top .tt{font-family:var(--serif);font-weight:700;font-size:18px;color:var(--ink)}
+.st-top .cnt{font-size:14px;font-weight:700;color:var(--clay);margin-top:3px}
+.st-top .say,.st-say{font-size:13px;color:var(--ink-soft);margin-top:8px;line-height:1.5}
+.st-say b{color:var(--clay)}
+.st-favs{display:flex;gap:8px;flex-wrap:wrap}
+.st-favs img,.st-favs .nt{width:64px;aspect-ratio:3/4;border-radius:8px;object-fit:cover;box-shadow:var(--shadow)}
+.st-types .row{display:grid;grid-template-columns:72px 1fr 26px;align-items:center;gap:10px;margin-bottom:10px}
+.st-types .tl{font-size:13px;font-weight:700;color:var(--ink)}
+.st-types .track{height:11px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;display:block}
+.st-types .track i{display:block;height:100%;border-radius:99px;background:var(--sage)}
+.st-types .row.max .track i{background:var(--clay)}
+.st-types .row.max .tl{color:var(--clay-ink)}
+.st-types .tv{font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.st-types .typebox{margin-top:13px;background:var(--clay-soft);border:1px solid #E6D3C0;border-radius:11px;padding:11px 13px;font-size:13px;color:var(--clay-ink)}
+.st-flowwrap{position:relative}
+.st-flowwrap .max{position:absolute;top:0;right:0;font-size:11px;color:var(--muted);font-weight:700}
+.st-flow{display:flex;align-items:flex-end;gap:3px;height:92px;padding-top:18px}
+.st-flow i{flex:1;background:var(--pine);border-radius:3px 3px 0 0;min-height:2px}
+.st-flow i.today{background:var(--clay)}
+.st-flow i.zero{background:var(--line-2);opacity:.5}
+.st-flowx{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>

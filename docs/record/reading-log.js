@@ -632,19 +632,23 @@
     if(w.length){while(w.length<7)w.push(null);cells.push(w);}
     return cells;
   }
+  function dayInfo(ds){var it=dayItems(ds);return {it:it,sum:it.reduce(function(a,x){return a+x.n;},0),ph:S.photoUrls[ds]};}
   function calendarHtml(mi,hint){
     var today=logicalToday();
-    return '<div class="cal"><div class="cal-wd">'+['일','월','화','수','목','금','토'].map(function(x,i){return '<span'+(i===0?' class="sun"':'')+'>'+x+'</span>';}).join('')+'</div>'+
-      monthGrid(mi).map(function(w){return '<div class="cal-row">'+w.map(function(ds,i){
-        if(!ds)return '<div class="cal-d empty"></div>';
-        var it=dayItems(ds),show=it.length>4?it.slice(0,3):it,more=it.length-show.length,ph=S.photoUrls[ds];
-        var sum=it.reduce(function(a,x){return a+x.n;},0);
-        var cls='cal-d'+(ds===today?' today':'')+(ds>today?' future':'')+(ph?' has-p':'');
-        var head='<div class="'+cls+'"'+(ds<=today?' data-rcal="'+ds+'" role="button" tabindex="0" aria-label="'+(+ds.slice(5,7))+'월 '+(+ds.slice(8))+'일 '+(it.length||ph?'기록 보기':'기록하기')+'"':'')+'><span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>'+(hint&&ds===today?'<span class="cal-finger" aria-hidden="true">👆</span>':'');
-        if(ph)return head+'<span class="ph"><img src="'+ph+'" alt="">'+(sum?'<b>'+sum+'</b>':'')+'</span></div>';
-        return head+
-          (it.length?'<div class="cv n'+Math.min(it.length,4)+'">'+show.map(function(x){return '<span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+(x.n>1?'<b>'+x.n+'</b>':'')+'</span>';}).join('')+(more?'<span class="c m">+'+more+'</span>':'')+'</div>':'')+'</div>';
-      }).join('')+'</div>';}).join('')+'</div>';
+    return '<div class="ncal"><div class="ncal-wd">'+['일','월','화','수','목','금','토'].map(function(x,i){return '<span'+(i===0?' class="sun"':'')+'>'+x+'</span>';}).join('')+'</div><div class="ncal-grid">'+
+      monthGrid(mi).map(function(w){return w.map(function(ds,i){
+        if(!ds)return '<div class="nc empty"></div>';
+        var D=dayInfo(ds),it=D.it,th='',shown=0;
+        if(D.ph){th='<span class="mc ph"><img src="'+D.ph+'" alt=""><i>'+svg(9,IC.cam,2.6)+'</i></span>';}
+        else if(it.length){var sh=it.slice(0,2);shown=sh.reduce(function(a,x){return a+1;},0);
+          th=sh.map(function(x){return '<span class="mc'+(sh.length===1?' one':'')+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+'</span>';}).join('')+
+            (it.length>2?'<span class="plus">+'+(it.length-2)+'</span>':'');}
+        var badge=D.sum>1&&D.sum>shown?'<span class="bdg">×'+D.sum+'</span>':'';
+        var cls='nc'+(ds===today?' today':'')+(ds>today?' future':'')+(D.ph?' has-p':'')+(it.length||D.ph?' has':'');
+        return '<div class="'+cls+'"'+(ds<=today?' data-rcal="'+ds+'" role="button" tabindex="0" aria-label="'+(+ds.slice(5,7))+'월 '+(+ds.slice(8))+'일 '+(it.length||D.ph?'기록 보기':'기록하기')+'"':'')+'>'+
+          '<span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>'+badge+(th?'<span class="th">'+th+'</span>':'')+
+          (hint&&ds===today?'<span class="cal-finger" aria-hidden="true">👆</span>':'')+'</div>';
+      }).join('');}).join('')+'</div></div>';
   }
   function goCal(day){
     showTab('shelf');
@@ -736,53 +740,60 @@
   }
   function drawMonthCard(mi){
     var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
-    var grid=monthGrid(mi),rows=monthRows(mi),days={},items={},covers={};
+    var grid=monthGrid(mi),rows=monthRows(mi),days={},info={},srcs={},today=logicalToday();
     rows.forEach(function(r){days[r.d]=1;});
-    grid.forEach(function(w){w.forEach(function(ds){if(ds){items[ds]=dayItems(ds);items[ds].forEach(function(x){if(x.cover)covers[x.cover]=1;});}});});
-    var srcs=Object.keys(covers);
-    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 64px "Gowun Batang"'),document.fonts.load('700 30px "Noto Sans KR"')]).catch(function(){}):null]
-      .concat(srcs.map(loadImg))).then(function(res){
-      var img={};srcs.forEach(function(s2,i){img[s2]=res[i+1];});
-      c.fillStyle='#E4E7DD';c.fillRect(0,0,W,H);
-      // 나이테 링 장식
-      c.strokeStyle='rgba(36,86,72,.08)';c.lineWidth=8;[200,150,100,50].forEach(function(r){c.beginPath();c.arc(W-70,110,r,0,Math.PI*2);c.stroke();});
-      c.textBaseline='alphabetic';c.fillStyle='#565E4E';c.font='700 30px "Noto Sans KR",sans-serif';
-      c.fillText(mi.year+'년 '+mi.month+'월 · '+(S.home.emoji||'')+' '+(S.home.ko||'')+' · 나이테 한달5권 스터디',60,100);
-      c.fillStyle='#245648';c.font='700 66px "Gowun Batang",Georgia,serif';c.fillText('우리 아이 영어책 기록',60,182);
-      // 달력 카드
-      var X=40,Y=226,CW=W-80,CH=920,hd=58;
-      c.save();c.shadowColor='rgba(43,42,38,.12)';c.shadowBlur=24;c.shadowOffsetY=6;rrect(c,X,Y,CW,CH,26);c.fillStyle='#FCFCF8';c.fill();c.restore();
-      var cw=CW/7,rh=(CH-hd)/grid.length;
-      c.font='700 26px "Noto Sans KR",sans-serif';c.textAlign='center';
-      ['일','월','화','수','목','금','토'].forEach(function(x,i){c.fillStyle=i===0?'#C0503C':'#565E4E';c.fillText(x,X+cw*i+cw/2,Y+40);});
-      c.fillStyle='#E2E5DA';c.fillRect(X+16,Y+hd,CW-32,2);
+    grid.forEach(function(w){w.forEach(function(ds){if(!ds)return;var D=dayInfo(ds);info[ds]=D;
+      if(D.ph)srcs[D.ph]=1;else D.it.slice(0,2).forEach(function(x){if(x.cover)srcs[x.cover]=1;});});});
+    var list=Object.keys(srcs),serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 72px "Gowun Batang"'),document.fonts.load('700 30px "Noto Sans KR"')]).catch(function(){}):null]
+      .concat(list.map(loadImg))).then(function(res){
+      var img={};list.forEach(function(k,i){img[k]=res[i+1];});
+      var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#F4F3EC');g.addColorStop(1,'#E8E7DC');c.fillStyle=g;c.fillRect(0,0,W,H);
+      // 오른쪽 위 나이테 결 장식
+      c.save();c.strokeStyle='rgba(36,86,72,.22)';c.lineWidth=1.6;
+      for(var k=1;k<=8;k++){var R=19*k;c.beginPath();for(var t=0;t<=64;t++){var a=t/64*Math.PI*2,rr=R*(1+.09*Math.sin(3*a+k*.7)+.05*Math.sin(5*a+k*1.3));var x=1010+rr*Math.cos(a)*1.12,y=96+rr*Math.sin(a);t?c.lineTo(x,y):c.moveTo(x,y);}c.closePath();c.stroke();}
+      c.restore();
+      // 링 마크 + 나이테
+      var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';
+      [[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
+      c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
+      c.fillStyle='#245648';c.font='700 30px '+sans;c.textBaseline='middle';c.fillText('나 이 테',138,my+2);
+      // 제목·요약
+      c.textBaseline='alphabetic';c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText(mi.month+'월 읽기 나이테',58,212);
+      var parts=[['한 달 동안 ','#545C4B'],[rows.length+'권','#B87343'],[', ','#545C4B'],[cntKeys(days)+'일','#B87343'],['을 함께 읽었어요','#545C4B']],x0=60;
+      c.font='400 42px '+serif;parts.forEach(function(q){c.fillStyle=q[1];c.fillText(q[0],x0,276);x0+=c.measureText(q[0]).width;});
+      // 요일
+      var GX=59,GW=962,gap=10,cw=(GW-gap*6)/7,top=356,bottom=1228,nr=grid.length,ch=(bottom-top-gap*(nr-1))/nr;
+      c.font='700 26px '+sans;c.textAlign='center';
+      ['일','월','화','수','목','금','토'].forEach(function(d,i){c.fillStyle=i===0?'#B87343':'#8A917E';c.fillText(d,GX+i*(cw+gap)+cw/2,top-22);});
       grid.forEach(function(w,ri){w.forEach(function(ds,ci){
-        var x=X+ci*cw,y=Y+hd+ri*rh;
-        if(ri>0){c.fillStyle='#EEF0E8';c.fillRect(X+16,y,CW-32,1);}
+        var x=GX+ci*(cw+gap),y=top+ri*(ch+gap),D=ds?info[ds]:null,has=D&&(D.ph||D.it.length);
+        if(has){c.save();c.shadowColor='rgba(35,41,31,.10)';c.shadowBlur=14;c.shadowOffsetY=4;rrect(c,x,y,cw,ch,16);c.fillStyle='#FAF9F4';c.fill();c.restore();}
+        else{rrect(c,x,y,cw,ch,16);c.fillStyle='rgba(255,255,255,.18)';c.fill();c.save();c.setLineDash([5,5]);c.strokeStyle='rgba(35,41,31,.10)';c.lineWidth=1.5;c.stroke();c.restore();}
+        if(ds&&ds===today){rrect(c,x+1.5,y+1.5,cw-3,ch-3,15);c.strokeStyle='#B87343';c.lineWidth=3.5;c.stroke();}
         if(!ds)return;
-        c.textAlign='left';c.fillStyle=ci===0?'#C0503C':'#23291F';c.font='700 24px "Noto Sans KR",sans-serif';c.fillText(String(+ds.slice(8)),x+12,y+32);
-        var it=items[ds]||[];if(!it.length)return;
-        var show=it.length>4?it.slice(0,3):it,more=it.length-show.length,n=show.length+(more?1:0);
-        var ax=x+8,ay=y+42,aw=cw-16,ah=rh-50,cols=n===1?1:2,rws=n<=2?1:2;
-        var ih=Math.min((ah-(rws-1)*6)/rws,(aw-(cols-1)*6)/cols/0.75),iw=ih*0.75;
-        if(n===2&&ih*0.75*2+6>aw){iw=(aw-6)/2;ih=iw/0.75;}
-        var gw=cols*iw+(cols-1)*6,ox=ax+(aw-gw)/2;
-        show.concat(more?[{more:more}]:[]).forEach(function(t,k){
-          var cx=ox+(k%cols)*(iw+6),cy=ay+Math.floor(k/cols)*(ih+6);
-          c.save();rrect(c,cx,cy,iw,ih,6);c.clip();
-          if(t.more){c.fillStyle='#EEF0E8';c.fillRect(cx,cy,iw,ih);c.fillStyle='#565E4E';c.font='800 '+Math.round(iw*0.32)+'px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText('+'+t.more,cx+iw/2,cy+ih/2+iw*0.12);}
-          else if(t.cover&&img[t.cover]){var im=img[t.cover],r=Math.max(iw/im.width,ih/im.height);c.drawImage(im,cx+(iw-im.width*r)/2,cy+(ih-im.height*r)/2,im.width*r,im.height*r);}
-          else{c.fillStyle='#F6E6D8';c.fillRect(cx,cy,iw,ih);c.font=Math.round(iw*0.5)+'px sans-serif';c.textAlign='center';c.fillText('📚',cx+iw/2,cy+ih/2+iw*0.18);}
-          c.restore();
-          if(t.n>1){var bx=cx+iw-4,by=cy+4,br=Math.max(12,Math.round(iw*0.2));c.fillStyle='#D1965C';c.beginPath();c.arc(bx,by,br,0,Math.PI*2);c.fill();c.fillStyle='#1f1a14';c.font='800 '+Math.round(br*1.15)+'px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillText(String(t.n),bx,by+br*0.42);}
-        });
-        c.textAlign='left';
+        c.textAlign='left';c.font='700 26px '+sans;c.fillStyle=ci===0?(has?'#B87343':'rgba(184,115,67,.6)'):(has?'#3A4034':'#A8AD9E');c.fillText(String(+ds.slice(8)),x+14,y+38);
+        if(!has)return;
+        var ay=y+52,ah=ch-62;
+        function cover(src,bx,by,bw,bh,other){c.save();c.shadowColor='rgba(0,0,0,.22)';c.shadowBlur=6;c.shadowOffsetY=2;rrect(c,bx,by,bw,bh,7);c.fillStyle='#EBEDE3';c.fill();c.restore();
+          c.save();rrect(c,bx,by,bw,bh,7);c.clip();var im=src&&img[src];
+          if(im){var r=Math.max(bw/im.width,bh/im.height);c.drawImage(im,bx+(bw-im.width*r)/2,by+(bh-im.height*r)/2,im.width*r,im.height*r);}
+          else if(other){c.fillStyle='#F3E7DA';c.fillRect(bx,by,bw,bh);c.font=Math.round(bw*.45)+'px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('📚',bx+bw/2,by+bh/2);c.textBaseline='alphabetic';}
+          c.restore();}
+        var shown=0;
+        if(D.ph){var pw=cw-24,ph2=Math.min(ah,pw*.98),px=x+12,py=ay+(ah-ph2)/2;cover(D.ph,px,py,pw,ph2);
+          var bx=px+pw-18,by=py+ph2-18;c.fillStyle='rgba(255,255,255,.92)';c.beginPath();c.arc(bx,by,13,0,Math.PI*2);c.fill();
+          c.strokeStyle='#B87343';c.lineWidth=2;rrect(c,bx-7,by-5,14,11,2.5);c.stroke();c.beginPath();c.arc(bx,by+.5,3,0,Math.PI*2);c.stroke();}
+        else{var sh=D.it.slice(0,2);shown=sh.length;
+          if(sh.length===1){var bh=Math.min(ah,(cw-40)/.75),bw=bh*.75;cover(sh[0].cover,x+(cw-bw)/2,ay+(ah-bh)/2,bw,bh,sh[0].other);}
+          else{var bw2=(cw-26)/2,bh2=Math.min(ah,bw2/.75);sh.forEach(function(t,k){cover(t.cover,x+10+k*(bw2+6),ay+(ah-bh2)/2,bw2,bh2,t.other);});}}
+        if(D.sum>1&&D.sum>shown){var txt='×'+D.sum;c.font='700 22px '+sans;var tw=c.measureText(txt).width+22,tx=x+cw-tw+6,ty=y-8;
+          rrect(c,tx,ty,tw,32,16);c.fillStyle='#B87343';c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText(txt,tx+tw/2,ty+23);}
       });});
-      // 아래 줄
-      c.textAlign='center';c.fillStyle='#23291F';c.font='700 34px "Noto Sans KR",sans-serif';
-      c.fillText(mi.month+'월, '+Object.keys(days).length+'일 동안 영어책 '+rows.length+'권을 읽었어요',W/2,Y+CH+70);
-      c.fillStyle='#245648';c.font='700 30px "Gowun Batang",Georgia,serif';c.fillText('@naite_library · 나이테 한달5권 스터디',W/2,Y+CH+124);
-      c.textAlign='left';
+      // 아래: 인스타 아이콘 + @naite_library
+      c.textAlign='left';c.font='700 36px '+sans;var hs='@naite_library',hw=c.measureText(hs).width,ix=(W-(hw+50))/2,iy=1282;
+      c.strokeStyle='#245648';c.lineWidth=3;rrect(c,ix,iy-17,34,34,9);c.stroke();c.beginPath();c.arc(ix+17,iy,8,0,Math.PI*2);c.stroke();c.fillStyle='#245648';c.beginPath();c.arc(ix+26.5,iy-8.5,2.2,0,Math.PI*2);c.fill();
+      c.textBaseline='middle';c.fillText(hs,ix+50,iy+1);
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/png');}catch(e){r2(null);}});
     });
   }
@@ -896,17 +907,19 @@
     var others=rows.filter(function(r){return r.k==='_other';}).length,study=total-others;
     var past=rows.filter(function(r){return r.k!=='_other'&&!homeIds[r.b];}).length;
     function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
-    var h='<div class="rv">'+viewHead((mi?mi.month+'월 ':'')+'읽기 통계','')+
-      '<div class="rs-kpis">'+
-        '<div class="rs-kpi"><span class="k">이번 달 책</span><span class="v">'+met(S.books)+'<small> / '+S.books.length+'권</small></span></div>'+
-        '<div class="rs-kpi"><span class="k">총 읽기</span><span class="v">'+total+'<small> 번</small></span></div>'+
-        '<div class="rs-kpi"><span class="k">읽은 날</span><span class="v">'+cntKeys(days)+'<small>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</small></span></div>'+
+    var h='<div class="rv st"><div class="st-head">'+RING+'<h1>'+(mi?mi.month+'월 ':'')+'읽기 통계</h1>'+
+      (S.home.ko?'<span class="chip"><span class="d"></span>'+esc(S.home.ko)+' 테마'+(mi?' · '+mi.month+'월':'')+'</span>':'')+'</div>'+
+      '<div class="st-kpi">'+
+        '<div class="k"><div class="lb">이번 달 책</div><div class="v">'+met(S.books)+'<s> / '+S.books.length+'권</s></div></div>'+
+        '<div class="k"><div class="lb">총 읽기</div><div class="v">'+total+'<s> 번</s></div></div>'+
+        '<div class="k"><div class="lb">읽은 날</div><div class="v">'+cntKeys(days)+'<s>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</s></div></div>'+
       '</div>'+
-      (others?'<p class="rs-past">📘 스터디 책 <b>'+study+'번</b> · 📚 다른 책 <b>'+others+'번</b></p>':'')+
-      (past?'<p class="rs-past">🔁 스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+      (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
+      (past?'<p class="st-line">스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
     var mPre=mi?mi.year+'-'+pad(mi.month)+'-':'',hasP=!!mi&&Object.keys(S.photoUrls).some(function(d){return d.indexOf(mPre)===0;});
-    if(mi&&(total||hasP))h+='<div class="rv-panel"><h3>'+mi.month+'월 읽기 달력</h3>'+calendarHtml(mi)+'<p class="cal-tip">날짜를 누르면 그날 기록'+(hasP?'과 사진':'')+'을 크게 볼 수 있어요.</p>'+
-      '<button type="button" class="rs-share" data-rmonth>📸 달력 이미지로 저장·공유</button></div>';
+    if(mi)h+='<div class="st-card"><h2>'+mi.month+'월 읽기 달력</h2>'+calendarHtml(mi)+
+      '<div class="st-note">'+svg(14,IC.cal,2.2)+'날짜를 누르면 그날 기록과 사진을 크게 볼 수 있어요</div>'+
+      (total||hasP?'<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button>':'')+'</div>';
     if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
     // 이번 달에 읽은 책들(지난 달 책 포함)
     var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
@@ -914,14 +927,15 @@
     // 가장 많이 반복한 책: 2번 이상 읽은 책 중 최다. 동점이면 모두 보여줌
     var fmax=0;readBooks.forEach(function(b){fmax=Math.max(fmax,cnt(b.id));});
     var favs=fmax>=2?readBooks.filter(function(b){return cnt(b.id)===fmax;}):[];
-    h+='<div class="rv-panel"><h3>가장 많이 반복한 책</h3>';
-    if(!favs.length)h+='<p class="rv-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
+    h+='<div class="st-card"><h2>가장 많이 반복한 책</h2>';
+    if(!favs.length)h+='<p class="st-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
     else if(favs.length===1){var fav=favs[0];
-      h+='<div class="fav">'+(fav.cover?'<img src="'+esc(fav.cover)+'" alt="">':'')+'<div><div class="ft">'+esc(fav.title)+'</div><div class="fx"><b>'+fmax+'번</b> 읽었어요'+(fav.type?' · '+esc(fav.type):'')+'</div><div class="fx">아이가 계속 고르는 책은 표현이 귀에 붙고 있다는 신호예요.</div></div></div>';}
-    else h+='<div class="favs">'+favs.map(function(b){return '<div>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+'</div>';}).join('')+'</div>'+
-      '<div class="fx">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
+      h+='<div class="st-top">'+(fav.cover?'<img class="cv" src="'+esc(fav.cover)+'" alt="">':'<span class="cv nt">'+esc(shortTitle(fav.title))+'</span>')+
+        '<div class="info"><div class="tt">'+esc(fav.title)+'</div><div class="cnt"><b>'+fmax+'번</b> 읽었어요'+(fav.type?' · '+esc(fav.type):'')+'</div><div class="say">아이가 계속 고르는 책은 표현이 귀에 붙고 있다는 신호예요.</div></div></div>';}
+    else h+='<div class="st-favs">'+favs.map(function(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}).join('')+'</div>'+
+      '<div class="st-say">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
     h+='</div>';
-    // 유형별 횟수(이번 달 책의 유형 순서 + 지난 달 책에만 있는 유형). 동점 1위는 모두 강조
+    // 유형별 횟수(최다=클레이, 나머지=세이지). 동점 1위는 모두 강조
     var types=[],tc={};
     S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
     rows.forEach(function(r){if(r.k==='_other')return;var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
@@ -929,20 +943,15 @@
     var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
     var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
       :(tops.length===types.length?'여러 유형을 골고루 읽었어요.':'우리 아이는 <b>'+tops.map(esc).join(', ')+'</b> 책을 가장 자주 골랐어요.');
-    h+='<div class="rv-panel"><h3>유형별 읽기 횟수</h3><div class="bars">'+types.map(function(t){return '<div class="br'+(tops.indexOf(t)>=0&&tops.length<types.length?' top':'')+'"><span class="bl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="bv">'+tc[t]+'</span></div>';}).join('')+'</div>'+
-      '<div class="insight">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
+    h+='<div class="st-card st-types"><h2>유형별 읽기 횟수</h2>'+types.map(function(t){return '<div class="row'+(tops.indexOf(t)>=0&&tops.length<types.length?' max':'')+'"><span class="tl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="tv">'+tc[t]+'</span></div>';}).join('')+
+      '<div class="typebox">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
     // 날짜별 흐름(스터디 달 기준)
     if(mi){
       var per=[],today=logicalToday();for(var d=1;d<=mi.days;d++){var ds=mi.year+'-'+pad(mi.month)+'-'+pad(d),n=0;rows.forEach(function(r){if(r.d===ds)n++;});per.push({d:d,ds:ds,n:n});}
-      var pm=Math.max(3,Math.max.apply(null,per.map(function(p){return p.n;}))),W=320,H=84,bw=W/mi.days;
-      var svg='<svg viewBox="0 0 '+W+' '+(H+14)+'" role="img" aria-label="'+mi.month+'월 날짜별 읽기 횟수"><line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#E2E5DA"/>'+
-        '<text x="'+W+'" y="9" text-anchor="end" font-size="8" fill="#565E4E">최대 '+pm+'번</text>';
-      per.forEach(function(p,i){var x=i*bw+1.5,w=Math.max(bw-3,1);
-        if(p.ds>today){svg+='<rect x="'+x+'" y="'+(H-2)+'" width="'+w+'" height="2" fill="#E2E5DA"/>';return;}
-        var bh=Math.max(p.n/pm*(H-14),1.5);
-        svg+='<rect x="'+x+'" y="'+(H-bh)+'" width="'+w+'" height="'+bh+'" rx="2" fill="'+(p.ds===today?'#B87343':(p.n?'#2F6E58':'#E2E5DA'))+'"><title>'+mi.month+'/'+p.d+' '+p.n+'번</title></rect>';});
-      [1,8,15,22,29].forEach(function(d){if(d<=mi.days)svg+='<text x="'+((d-.5)*bw)+'" y="'+(H+11)+'" text-anchor="middle" font-size="8" fill="#565E4E">'+d+'</text>';});
-      h+='<div class="rv-panel"><h3>날짜별 흐름</h3>'+svg+'</div>';
+      var pm=Math.max(3,Math.max.apply(null,per.map(function(p){return p.n;})));
+      h+='<div class="st-card"><h2>날짜별 흐름</h2><div class="st-flowwrap"><div class="max">최대 '+pm+'번</div><div class="st-flow" role="img" aria-label="'+mi.month+'월 날짜별 읽기 횟수">'+
+        per.map(function(p){var cls=p.ds>today||!p.n?'zero':(p.ds===today?'today':'');return '<i class="'+cls+'" style="height:'+(p.n?Math.round(14+p.n/pm*58):2)+'px" title="'+mi.month+'/'+p.d+' '+p.n+'번"></i>';}).join('')+
+        '</div></div><div class="st-flowx">'+[1,8,15,22,mi.days].map(function(x){return '<span>'+x+'</span>';}).join('')+'</div></div>';
     }
     el.innerHTML=h+'</div>';
   }
