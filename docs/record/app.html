@@ -649,7 +649,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd-book .act svg{color:var(--pine)}
 .sd-book .act[aria-pressed="true"]{background:var(--pine-soft);border-color:#B9CFC4}
 .sd-vid{margin-top:10px}
-.sd-vid .fr{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#1D2A22;cursor:pointer}
+.sd-vid .fr{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:linear-gradient(135deg,#2F6E58,#245648);cursor:pointer}
 .sd-vid img{width:100%;height:100%;object-fit:cover;display:block}
 .sd-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .sd .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff}
@@ -681,7 +681,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd .exp-more{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
 .sd .extras{display:flex;flex-direction:column;gap:12px}
 .sd-extra{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}
-.sd-extra .th{position:relative;width:118px;flex:0 0 118px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1D2A22;display:grid;place-items:center;color:#fff}
+.sd-extra .th{position:relative;width:118px;flex:0 0 118px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#2F6E58,#245648);display:grid;place-items:center;color:#fff}
 .sd-extra.lk .th{background:var(--pine-soft);color:var(--pine)}
 .sd-extra .th img{width:100%;height:100%;object-fit:cover;display:block}
 .sd-extra .play>span{width:30px;height:30px}
@@ -774,12 +774,12 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
         '<div class="acts">'+(yt?'<button type="button" class="act" data-sdvid aria-pressed="false">'+ic('play',15)+'영상</button>':'')+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
           '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
-        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method);
     var exhtml=extras.map(function(x){var id=ytid(x.url);
-      if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt=""><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
+      if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
       return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(x.title||x.url)+'</b><small>링크</small></span></a>';
     }).join('');
     var secs=[['s-books','이번 달 5권']];
