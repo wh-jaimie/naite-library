@@ -849,7 +849,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
-    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});});
+    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('click',function(ev){ev.stopPropagation();});d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});}); // 팁 줄은 눌러도 책정보로 안 감
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();
