@@ -709,9 +709,9 @@
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
-        '<div class="rk-dayacts">'+(S.photoUrls[day]?'':'<button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>')+
+        '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+(S.photoUrls[day]?'사진 다시 찍기':day===logicalToday()?'인증 사진 찍기':'날짜 스탬프 사진')+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
-        (S.photoUrls[day]||day===logicalToday()?'':'<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>');
+        (day===logicalToday()?'':'<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>');
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
