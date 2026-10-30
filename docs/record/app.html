@@ -1012,6 +1012,8 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
   async function fillNext(key,ml){
     var el=document.getElementById('nextPrev');if(!el)return;
     try{
+      // 관리자가 '다음 달 미리보기 보여주기'를 켰을 때만(미리보기 화면에서는 항상)
+      if(!PREVIEW){var sv=await client.from('settings').select('*').eq('id',1).maybeSingle();if(!(sv&&sv.data&&sv.data.show_next))return;}
       var tr=await client.from('themes').select('*').order('sort');var th=(tr&&tr.data)||[];
       var i=th.findIndex(function(t){return t.key===key;});if(i<0||i+1>=th.length)return;
       var nx=th[i+1];
