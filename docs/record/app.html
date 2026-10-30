@@ -774,12 +774,12 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
         '<div class="acts">'+(yt?'<button type="button" class="act" data-sdvid aria-pressed="false">'+ic('play',15)+'영상</button>':'')+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
           '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
-        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method);
     var exhtml=extras.map(function(x){var id=ytid(x.url);
-      if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
+      if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
       return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(x.title||x.url)+'</b><small>링크</small></span></a>';
     }).join('');
     var secs=[['s-books','이번 달 5권']];
