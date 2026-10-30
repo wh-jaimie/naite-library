@@ -436,19 +436,29 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .ovl-ig{margin-top:calc(var(--u)*6);font-weight:700;font-size:calc(var(--u)*11);letter-spacing:.04em;opacity:.85;display:inline-flex;align-items:center;gap:calc(var(--u)*5)}
 .ovl-ig svg{width:calc(var(--u)*12);height:calc(var(--u)*12)}
 .t-ribbon .ovl-ig,.t-frame .ovl-ig{text-shadow:0 1px 6px rgba(0,0,0,.5)}
-.t-ribbon .ovl-scrim{background:linear-gradient(0deg,rgba(14,20,11,.78) 2%,rgba(14,20,11,.28) 30%,transparent 56%)}
-.t-ribbon .ovl-body{left:0;right:0;bottom:calc(var(--u)*22);text-align:center;padding:0 calc(var(--u)*22)}
-.t-ribbon .ovl-ring,.t-frame .ovl-ring{display:block;margin:0 auto calc(var(--u)*9)}
-.t-ribbon .ovl-date,.t-ribbon .ovl-time{font-size:calc(var(--u)*29);text-shadow:0 2px 14px rgba(0,0,0,.5)}
-.t-ribbon .ovl-sub,.t-frame .ovl-sub{justify-content:center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.t-ribbon .ovl-scrim{background:linear-gradient(0deg,rgba(14,20,11,.72) 0%,rgba(14,20,11,.38) 24%,transparent 46%)}
+.t-ribbon .ovl-body{left:0;right:0;bottom:5%;text-align:center;display:flex;flex-direction:column;align-items:center;text-shadow:0 .14cqw .97cqw rgba(0,0,0,.45)}
+.t-frame .ovl-ring{display:block;margin:0 auto calc(var(--u)*9)}
+.t-ribbon .ovl-date{font-size:2.5cqw;line-height:1.35}
+.ovl-lock,.ovl-rule{display:none}
+.t-ribbon .ovl-lock{display:flex;align-items:center;gap:1.4cqw;filter:drop-shadow(0 .28cqw 1.25cqw rgba(0,0,0,.35))}
+.t-ribbon .ovl-lock svg{width:7.8cqw;height:7.8cqw}
+.t-ribbon .ovl-lock span{font-family:"Gowun Batang",Georgia,serif;font-weight:700;font-size:6.7cqw;letter-spacing:-.01em;line-height:1;color:#fff;text-shadow:none}
+.t-ribbon .ovl-rule{display:block;width:19.4cqw;height:max(1px,.1cqw);background:rgba(255,255,255,.55);margin:1.94cqw 0 1.53cqw}
+.t-ribbon .ovl-sub{margin-top:.69cqw;font-size:1.8cqw;letter-spacing:.04em;opacity:.92;gap:.69cqw}
+.t-ribbon .ovl-sub .sep{width:.56cqw;height:.56cqw;background:#E3A869}
+.t-ribbon .ovl-ig{margin-top:1.11cqw;font-size:1.8cqw;opacity:.88;gap:.69cqw;letter-spacing:0}
+.t-ribbon .ovl-ig svg{width:1.8cqw;height:1.8cqw}
+.t-ribbon .ovl-sub{justify-content:center}
+.t-frame .ovl-sub{justify-content:center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .t-frame .ovl-frame{border-color:rgba(255,248,236,.9)}
 .t-frame .ovl-scrim{background:linear-gradient(0deg,rgba(14,20,11,.6) 1%,transparent 32%)}
 .t-frame .ovl-body{left:calc(var(--u)*13);right:calc(var(--u)*13);bottom:calc(var(--u)*26);text-align:center}
 .t-frame .ovl-ring{margin-bottom:calc(var(--u)*7)}
-.t-frame .ovl-date,.t-frame .ovl-time{font-size:calc(var(--u)*25);text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.t-frame .ovl-date,.t-frame .ovl-time{font-size:calc(var(--u)*20);text-shadow:0 2px 12px rgba(0,0,0,.45)}
 .t-film .ovl-scrim{background:radial-gradient(130% 90% at 100% 100%,rgba(0,0,0,.5),transparent 58%)}
 .t-film .ovl-body{right:calc(var(--u)*16);bottom:calc(var(--u)*16);text-align:right}
-.t-film .ovl-date,.t-film .ovl-time{font-family:ui-monospace,"Roboto Mono",monospace;font-size:calc(var(--u)*21);color:#FFBE7A;text-shadow:0 0 12px rgba(255,150,60,.5)}
+.t-film .ovl-date,.t-film .ovl-time{font-family:ui-monospace,"Roboto Mono",monospace;font-size:calc(var(--u)*17);color:#FFBE7A;text-shadow:0 0 12px rgba(255,150,60,.5)}
 .t-film .ovl-sub{justify-content:flex-end;font-family:ui-monospace,monospace;color:#FFD6A8;font-size:calc(var(--u)*11);text-shadow:0 0 8px rgba(255,150,60,.4)}
 .t-film .ovl-sub .sep{background:#FFBE7A}
 .t-film .ovl-ig{font-family:ui-monospace,monospace;color:#FFD6A8;opacity:.92}
