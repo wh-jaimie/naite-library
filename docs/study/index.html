@@ -179,7 +179,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.buy_url?'<a href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" class="cvlink" data-buy="'+esc(b.title)+'">':'')+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+(b.buy_url?'</a>':'')+'</div>'+
         '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
-        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
+        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+(b.tip?'<div class="br tip">💡 '+esc(b.tip)+'</div>':'')+
         (stats?'<div class="stats">'+stats+'</div>':'')+
         (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
     }).join('');
@@ -210,7 +210,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
     h+='<div id="arch"></div>';
     h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
        '<div style="margin-top:12px"><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="color:var(--tealD);font-weight:700;text-decoration:none">📷 Instagram @naite_library</a></div>'+
-       '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
+       '<div class="cr">© 2026 나이테 영어책육아 메이트. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
        '<a href="admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div>';
     app.innerHTML=h;
     if(!PREVIEW)fillArchive(theme.key);
