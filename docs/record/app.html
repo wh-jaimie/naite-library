@@ -579,6 +579,136 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .st-flow i.today{background:var(--clay)}
 .st-flow i.zero{background:var(--line-2);opacity:.5}
 .st-flowx{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
+/* ── 이번 달 자료(나이테 디자인) ── */
+.sd{--paper:#EFF1EA;--surface:#FCFCF8;--surface-2:#F4F6EF;--ink:#23291F;--ink-soft:#545C4B;--muted:#8A917E;--line:#E3E6DB;--line-2:#D4D9C9;--pine:#245648;--pine-2:#2F6E58;--pine-soft:#E4EEE7;--sage:#4F9A72;--clay:#B87343;--clay-2:#A8622F;--clay-soft:#F3E7DA;--clay-ink:#7A4520;--serif:"Gowun Batang",Georgia,serif;--shadow:0 1px 2px rgba(35,41,31,.05),0 8px 22px rgba(35,41,31,.08);background:var(--paper);color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
+.sd-wrap{max-width:600px;margin:0 auto;padding:14px 16px 20px}
+.sd svg{flex:0 0 auto}
+.sd-bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sd-bar .brand{display:inline-flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:700;font-size:17px;color:var(--pine)}
+.sd-bar .brand svg{width:26px;height:26px}
+.sd .ghost{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);border-radius:99px;padding:5px 11px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.sd-notice{display:flex;align-items:center;gap:9px;margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 11px;font:inherit;font-size:13px;color:var(--ink);text-align:left;width:100%;cursor:pointer}
+.sd-notice .new{flex:0 0 auto;background:var(--clay-soft);color:var(--clay-ink);font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+.sd-notice .new.old{background:var(--surface-2);color:var(--muted)}
+.sd-notice .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.sd-notice svg{color:var(--muted)}
+.sd-hero{position:relative;overflow:hidden;margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 18px 18px;box-shadow:var(--shadow)}
+.sd-hero .deco{position:absolute;right:-70px;top:-70px;width:230px;height:230px;opacity:.55;pointer-events:none}
+.sd-hero .eyebrow{position:relative;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--clay-ink)}
+.sd-hero .theme{position:relative;display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.sd-hero h1{font-family:var(--serif);font-weight:700;font-size:34px;line-height:1.1;margin:0;letter-spacing:-.01em;color:var(--ink)}
+.sd-hero .en{font-family:var(--serif);font-size:16px;color:var(--muted)}
+.sd-hero .intro{position:relative;font-size:13.5px;color:var(--ink-soft);margin:10px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.sd-hero .intro.open{display:block}
+.sd-hero .more{position:relative;background:none;border:none;padding:2px 0 0;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
+.sd-hero .sublink{position:relative;display:inline-flex;align-items:center;gap:2px;margin-top:8px;font-size:13px;font-weight:700;color:var(--pine);text-decoration:none}
+.sd-hero .prog{position:relative;display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sd-hero .prog:empty{display:none}
+.sd-hero .dots{display:flex;gap:5px}
+.sd-hero .dots i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line-2)}
+.sd-hero .dots i.on{background:var(--sage);border-color:var(--sage)}
+.sd-hero .pt{font-size:13px;font-weight:700}
+.sd-hero .pt b{color:var(--sage)}
+.sd-chips{position:sticky;top:0;z-index:30;margin:16px -16px 0;padding:10px 16px;background:rgba(239,241,234,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid transparent}
+.sd-chips.stuck{border-bottom-color:var(--line)}
+.sd-chips::-webkit-scrollbar{display:none}
+.sd-chips .chip{flex:0 0 auto;background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);border-radius:99px;padding:6px 13px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.sd-chips .chip.on{background:var(--pine);border-color:var(--pine);color:#FCFCF8}
+.sd section{scroll-margin-top:56px;margin-top:22px}
+.sd .sh{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--pine)}
+.sd .sh h2{font-family:var(--serif);font-weight:700;font-size:19px;margin:0;color:var(--ink);border:0;padding:0}
+.sd .sh .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700}
+.sd .sh .cnt.clay{color:var(--clay-ink)}
+.sd .guide{background:var(--pine-soft);border-radius:12px;padding:11px 13px;font-size:13px;color:var(--ink)}
+.sd .guide b{color:var(--pine)}
+.sd .legend{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;font-size:11.5px;color:var(--ink-soft)}
+.sd .legend span{display:inline-flex;align-items:center;gap:4px}
+.sd .legend svg{color:var(--sage)}
+.sd .legend .m{color:var(--muted)}
+.sd details.help{margin-top:8px}
+.sd details.help summary{list-style:none;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
+.sd details.help summary::-webkit-details-marker{display:none}
+.sd details.help p{font-size:12.5px;color:var(--ink-soft);margin:6px 0 0}
+.sd details.help a{color:var(--pine);font-weight:700}
+.sd-book{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:11px;box-shadow:var(--shadow);cursor:pointer}
+.sd-book .bk-top{display:flex;gap:13px}
+.sd-cv{width:84px;flex:0 0 84px;display:block}
+.sd-cv img{display:block;width:100%;height:auto;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.sd .fbx{display:flex;width:100%;aspect-ratio:3/4;border-radius:5px;background:#EBEDE3;font-family:var(--serif);font-weight:700;font-size:12px;line-height:1.2;align-items:center;justify-content:center;text-align:center;padding:6px}
+.sd-book .bk-info{min-width:0;flex:1}
+.sd-book .tags{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.sd-book .type{background:var(--pine-soft);color:var(--pine);font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px}
+.sd .lv{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--sage)}
+.sd-book h3{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.25;margin:6px 0 0;color:var(--ink)}
+.sd-book .au{font-size:12px;color:var(--muted);margin-top:2px}
+.sd-book .desc{font-size:13px;color:var(--ink-soft);margin:6px 0 0;line-height:1.45}
+.sd-book .meta{display:flex;flex-wrap:wrap;gap:2px 8px;margin-top:6px;font-size:11.5px;color:var(--clay-ink);font-weight:700}
+.sd-book .meta span+span::before{content:"·";margin-right:8px;color:var(--line-2)}
+.sd-book .acts{display:flex;gap:6px;margin-top:12px}
+.sd-book .act{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 4px;font:inherit;font-size:12.5px;font-weight:700;text-decoration:none;cursor:pointer}
+.sd-book .act svg{color:var(--pine)}
+.sd-book .act[aria-pressed="true"]{background:var(--pine-soft);border-color:#B9CFC4}
+.sd-vid{margin-top:10px}
+.sd-vid .fr{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#1D2A22;cursor:pointer}
+.sd-vid img{width:100%;height:100%;object-fit:cover;display:block}
+.sd-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sd .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff}
+.sd .play>span{width:52px;height:52px;border-radius:50%;background:rgba(20,26,22,.62);display:grid;place-items:center}
+.sd-book .bk-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);background:none}
+.sd-book .bk-foot .st{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--muted);background:none;padding:0;border:0}
+.sd-book .bk-foot .st.done{color:var(--sage);font-weight:700}
+.sd-book .bk-foot .st.done b{color:var(--ink)}
+.sd-book .bk-foot .rbtn{width:auto;margin:0;display:inline-flex;align-items:center;gap:6px;background:var(--clay);color:#fff;border:none;border-radius:99px;padding:8px 15px;font:inherit;font-weight:700;font-size:13px;box-shadow:none}
+.sd-book .bk-foot .rbtn.again{background:var(--clay-soft);color:var(--clay-ink)}
+.sd .disc{font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+.sd .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)}
+.sd .tips{list-style:none;margin:0;padding:0;counter-reset:t}
+.sd .tips li{counter-increment:t;display:flex;gap:11px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink)}
+.sd .tips li:first-child{border-top:none;padding-top:2px}
+.sd .tips li::before{content:counter(t);flex:0 0 22px;height:22px;border-radius:50%;background:var(--pine-soft);color:var(--pine);font-family:var(--serif);font-weight:700;font-size:12.5px;display:grid;place-items:center;margin-top:1px}
+.sd .prose1{margin:0;font-size:13.5px;white-space:pre-wrap}
+.sd .plays{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sd .play-t{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow)}
+.sd .play-t h4{font-size:13.5px;font-weight:700;margin:0;color:var(--ink)}
+.sd .play-t p{font-size:12.5px;color:var(--ink-soft);margin:3px 0 0;line-height:1.45}
+.sd .exp{list-style:none;margin:0;padding:0}
+.sd .exp li{padding:9px 0;border-top:1px solid var(--line)}
+.sd .exp li:first-child{border-top:none;padding-top:0}
+.sd .exp .e{font-weight:700;font-size:14px;color:var(--ink)}
+.sd .exp .k{font-size:12.5px;color:var(--muted)}
+.sd .exp li.x{display:none}
+.sd .exp.all li.x{display:block}
+.sd .exp-more{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
+.sd .extras{display:flex;flex-direction:column;gap:12px}
+.sd-extra{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}
+.sd-extra .th{position:relative;width:118px;flex:0 0 118px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1D2A22;display:grid;place-items:center;color:#fff}
+.sd-extra.lk .th{background:var(--pine-soft);color:var(--pine)}
+.sd-extra .th img{width:100%;height:100%;object-fit:cover;display:block}
+.sd-extra .play>span{width:30px;height:30px}
+.sd-extra b{display:block;font-size:14px}
+.sd-extra small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.sd .nsub{font-size:13px;color:var(--ink-soft)}
+.sd .shelf{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:2px 16px 4px}
+.sd .shelf::-webkit-scrollbar{display:none}
+.sd .nb{flex:0 0 92px;display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.sd .nb .cv{display:block}
+.sd .nb .cv img{display:block;width:100%;height:auto;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.sd .nb .ty{font-size:10.5px;font-weight:700;color:var(--pine);margin-top:7px}
+.sd .nb .tt{font-size:12px;font-weight:700;line-height:1.3;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sd .nb .lv{margin-top:3px}
+.sd .copyall{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--clay-soft);color:var(--clay-ink);border:1px solid #E6D3C0;border-radius:12px;padding:11px;font:inherit;font-weight:700;font-size:13.5px;cursor:pointer}
+.sd .copyall+.hint{text-align:center;font-size:11.5px;color:var(--muted);margin-top:5px}
+.sd .linkrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);font-size:13.5px;font-weight:700}
+.sd .linkrow small{display:block;font-size:11.5px;font-weight:400;color:var(--muted);margin-top:1px}
+.sd .linkrow svg{color:var(--pine)}
+.sd .arow{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink);font-size:13.5px}
+.sd .arow:first-child{border-top:0;padding-top:0}
+.sd .arow:last-child{padding-bottom:0}
+.sd .arow span{flex:1;font-size:12px;color:var(--muted)}
+.sd .arow svg{color:var(--muted)}
+.sd-foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--muted);line-height:1.6}
+.sd-foot .ig{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--pine);text-decoration:none;margin-bottom:8px}
+.sd-foot .adm{display:inline-block;margin-top:8px;color:var(--pine);font-weight:700}
 </style>
 </head>
 <body>
@@ -627,58 +757,70 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       var la=level(a)||99, lb=level(b)||99; if(la!==lb)return la-lb;
       return (TORD[a.tier]||9)-(TORD[b.tier]||9);
     });
-    var bh=books.map(function(b){
-      var lv=level(b);
-      var stats='';
-      if(b.award) stats+='<span class="st a">'+esc(b.award)+'</span>';
-      if(b.kr_popular) stats+='<span class="st k">🇰🇷 국내 인기</span>';
-      if(b.pop_rank) stats+='<span class="st g">🌍 세계 인기</span>';
-      if(b.lib_loans) stats+='<span class="st l">📚 도서관 '+b.lib_loans+'회</span>';
-      if(b.format) stats+='<span class="st fmt">'+esc(b.format)+'</span>';
-      var acts='';
-      if(b.workbook) acts+='<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">📄 워크지</a>';
-      acts+='<button type="button" class="act cp" data-copy="'+esc(b.title)+'" data-cpfrom="study">📋 제목 복사</button>';
-      return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
-        '<div class="cv">'+(b.buy_url?'<a href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" class="cvlink" data-buy="'+esc(b.title)+'">':'')+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+(b.buy_url?'</a>':'')+'</div>'+
-        '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
-        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
-        (stats?'<div class="stats">'+stats+'</div>':'')+
-        (acts?'<div class="acts">'+acts+'</div>':'')+
-        '<div class="rrow" data-rrow="'+b.id+'"></div></div></div>';
-    }).join('');
     var hasBuy=books.some(function(b){return b.buy_url;});
-    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(b.title)+' 영상"><div class="pl">'+PLAYSVG+'</div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
-    var acts=parseList(c.activities),exprs=parseExpr(c.expressions);
-    var extras=parseExtras(c.extras);
-    var exhtml=extras.map(function(x){var id=ytid(x.url);
-      if(id)return '<div class="vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(x.title||'부가자료')+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt="'+esc(x.title||'부가 영상')+'"><div class="pl">'+PLAYSVG+'</div></div>'+(x.title?'<div class="vt">'+esc(x.title)+'</div>':'')+'</div>';
-      return '<a class="exlink" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'">🔗 <span>'+esc(x.title||x.url)+'</span></a>';
+    var bh=books.map(function(b){
+      var lv=level(b),yt=ytid(b.read_aloud),meta=[];
+      if(b.award)meta.push(esc(b.award));
+      if(b.kr_popular)meta.push('국내 인기');
+      if(b.pop_rank)meta.push('세계 인기');
+      if(b.lib_loans)meta.push('도서관 대출 '+esc(b.lib_loans)+'회');
+      if(b.format)meta.push(esc(b.format));
+      var cv=b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>';
+      return '<article class="sd-book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
+        '<div class="bk-top">'+(b.buy_url?'<a class="sd-cv cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+cv+'</a>':'<div class="sd-cv">'+cv+'</div>')+
+        '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
+          '<h3>'+esc(b.title)+'</h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
+          (meta.length?'<div class="meta">'+meta.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>':'')+'</div></div>'+
+        '<div class="acts">'+(yt?'<button type="button" class="act" data-sdvid aria-pressed="false">'+ic('play',15)+'영상</button>':'')+
+          (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
+          '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
+        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
-    var h='<div id="v-study"><div class="wrap">';
-    if(!PREVIEW)h+='<div class="newsbar"><button type="button" data-pn="news">📢 공지<span class="dot" id="newsDot" hidden></span></button><button type="button" data-pn="welcome">🌱 처음 오셨나요?</button></div><div id="newsLatest"></div>';
-    h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
-       '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
-       (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
-       '<div class="herobtns">'+
-       (theme.blog_url?'<a class="mlink alt" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">📝 이 5권을 고른 이유 →</a>':'')+
-       (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 앱 설치하기</button>')+'</div></div>';
-    h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
-       '<div class="lvguide"><b>🌱 글밥 적은 책부터 시작해 보세요.</b> 3~4살은 🌱 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. 다 못 읽어도 괜찮아요 — <b>핵심은 재미</b>예요.<span class="lvkey">글밥 기준(AR 추정): 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상</span></div>'+
-       '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">각 책의 <b>📄 워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>📋 제목 복사</b> 후 검색창에 붙여넣으세요.<br><a href="../types.html" style="color:var(--tealD);font-weight:700">🧩 조작북·반복·라임·유머·스토리 — 5가지 유형이 궁금하다면 →</a></p><div class="books">'+bh+'</div>'+
-       '<p class="wbnote" style="font-size:.78rem;color:var(--soft);margin:10px 0 0">※ <b>글밥 단계</b>는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
-       (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 <b>📖 책정보</b> 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</div>';
-    if(vids)h+='<div class="sec"><h2>📺 Read Aloud 영상</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="vids">'+vids+'</div></div>';
-    h+='<div class="sec"><h2>🗣️ 읽어주는 방법</h2>'+(c.read_method?'<div class="prose">'+esc(c.read_method)+'</div>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    h+='<div class="sec"><h2>🎨 책 활용 아이디어</h2>'+(acts.length?'<ul class="li">'+acts.map(function(a){return '<li>'+esc(a)+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    h+='<div class="sec"><h2>💬 관련 영어표현</h2>'+(exprs.length?'<ul class="expr">'+exprs.map(function(e){return '<li><span class="en2">'+esc(e.en)+'</span>'+(e.ko?' <span class="ko2">'+esc(e.ko)+'</span>':'')+'</li>';}).join('')+'</ul>':'<p class="empty">준비 중이에요.</p>')+'</div>';
-    if(exhtml)h+='<div class="sec"><h2>📎 부가자료</h2><p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="vids">'+exhtml+'</div></div>';
-    h+='<div id="nextPrev"></div><div id="arch"></div>';
-    h+='<div class="sec" style="text-align:center;margin-top:28px"><a href="../guide.html" target="_blank" rel="noopener" style="display:inline-block;font-family:\'Gowun Batang\',serif;font-weight:700;font-size:1rem;color:#fff;background:linear-gradient(135deg,#B87343,#D1965C);padding:14px 24px;border-radius:14px;text-decoration:none;box-shadow:0 8px 22px rgba(43,42,38,.14)">🌿 나이테 — 엄마표영어 읽을거리 둘러보기 →</a>'+
-       '<div style="font-size:.78rem;color:var(--soft);margin-top:8px">기본 개념·Q&amp;A·ORT·픽처북 vs 리더스북 등 (새 창)</div></div>';
-    h+='<div class="foot">나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요'+
-       '<div style="margin-top:12px"><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="color:var(--tealD);font-weight:700;text-decoration:none">📷 Instagram @naite_library</a></div>'+
-       '<div class="cr">© 2026 나이테 영어도서관. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.</div>'+
-       '<a href="../study/admin.html" style="display:inline-block;margin-top:10px;color:var(--tealD);font-weight:700">🛠️ 관리자</a></div></div></div>';
+    var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method);
+    var exhtml=extras.map(function(x){var id=ytid(x.url);
+      if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/hqdefault.jpg" alt=""><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
+      return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(x.title||x.url)+'</b><small>링크</small></span></a>';
+    }).join('');
+    var secs=[['s-books','이번 달 5권']];
+    if(how.length)secs.push(['s-how','읽어주기']);
+    if(acts.length)secs.push(['s-play','놀이']);
+    if(exprs.length)secs.push(['s-exp','영어표현']);
+    if(exhtml)secs.push(['s-extra','부가자료']);
+    secs.push(['s-next','다음 달']);
+    var h='<div id="v-study" class="sd"><div class="sd-wrap">';
+    h+='<div class="sd-bar"><span class="brand">'+SD_RING+'나이테</span>'+(PREVIEW?'':'<button type="button" class="ghost" data-pn="welcome">처음 오셨나요?</button>')+'</div>';
+    if(!PREVIEW)h+='<div id="newsLatest"></div>';
+    h+='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
+       '<div class="eyebrow">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
+       '<div class="theme"><h1>'+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
+       (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
+       (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
+       '<div class="prog" data-rprog></div></div>';
+    h+='<nav class="sd-chips" id="sdChips" aria-label="자료 바로가기">'+secs.map(function(s,i){return '<button type="button" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
+    h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
+       '<div class="guide"><b>글밥 적은 책부터</b> 시작해 보세요. 3~4살은 새싹 2권이면 충분하고, 5살 이상이면 5권 모두 좋아요. 다 못 읽어도 괜찮아요. 핵심은 재미예요.'+
+         '<div class="legend"><span>'+ic('seed',14)+'글밥 적음</span><span>'+ic('leaf',14)+'보통</span><span>'+ic('tree',14)+'많음</span><span class="m">AR 추정 기준</span></div></div>'+
+       '<details class="help"><summary>워크지 · 책정보 · 제목 복사 안내'+ic('chev',14)+'</summary>'+
+         '<p>워크지는 출판사·작가 공식 무료 활동지로 연결돼요. 책을 누르면 책정보(구매처)가 열리고, 도서관·다른 서점에선 제목 복사 후 검색창에 붙여넣으세요.</p>'+
+         '<p>글밥 단계는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요(조작북·AR 2 미만 / AR 2~3 / AR 3 이상). 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. <a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형 알아보기</a></p></details>'+
+       '<div class="sd-books">'+bh+'</div>'+
+       (hasBuy?'<p class="disc">책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
+    if(how.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
+       (how.length>1?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'<p class="prose1">'+esc(how[0])+'</p>')+'</div></section>';
+    if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 놀이</h2></div><div class="plays">'+acts.map(function(a){
+       var m=/^(.{2,24}?)\s*[:：]\s*(.+)$/.exec(a);return '<div class="play-t">'+(m?'<h4>'+esc(m[1])+'</h4><p>'+esc(m[2])+'</p>':'<p>'+esc(a)+'</p>')+'</div>';}).join('')+'</div></section>';
+    if(exprs.length)h+='<section id="s-exp"><div class="sh">'+ic('chat',20)+'<h2>관련 영어표현</h2><span class="cnt">'+exprs.length+'개</span></div><div class="card"><ul class="exp" id="sdExp">'+
+       exprs.map(function(e,i){return '<li'+(i>=5?' class="x"':'')+'><div class="e">'+esc(e.en)+'</div>'+(e.ko?'<div class="k">'+esc(e.ko)+'</div>':'')+'</li>';}).join('')+'</ul>'+
+       (exprs.length>5?'<button type="button" class="exp-more" id="sdExpMore">'+(exprs.length-5)+'개 더 보기</button>':'')+'</div></section>';
+    if(exhtml)h+='<section id="s-extra"><div class="sh">'+ic('clip',20)+'<h2>부가자료</h2></div><div class="card extras">'+exhtml+'</div></section>';
+    h+='<div id="nextPrev"></div>';
+    h+='<a class="linkrow" href="../guide.html" target="_blank" rel="noopener"><span>엄마표영어 읽을거리 둘러보기<small>기본 개념 · Q&amp;A · ORT · 픽처북 vs 리더스북</small></span>'+ic('right',18)+'</a>';
+    h+='<div id="arch"></div>';
+    h+='<div class="sd-foot"><a class="ig" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+ic('ig',17)+'@naite_library</a><br>'+
+       '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br>'+
+       '© 2026 나이테 영어책육아 메이트. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 스터디 회원 외 공유·사용 시 사전 허락이 필요합니다.'+
+       '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
     window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
@@ -688,12 +830,18 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     fillArchive(theme.key);
     fillNext(theme.key,c.month_label);
     if(!PREVIEW)initPanels();
-    // 카드 어디를 눌러도 구매 링크(표지 링크)를 엶. 워크지·읽었어요 등 카드 안의 링크·버튼은 각자 동작
+    // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
-    app.querySelectorAll('.book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
-    app.querySelectorAll('.vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
+    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow,.sd-vid,.acts'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
+    app.querySelectorAll('[data-sdvid]').forEach(function(b){b.addEventListener('click',function(){var v=b.closest('.sd-book').querySelector('.sd-vid');v.hidden=!v.hidden;b.setAttribute('aria-pressed',String(!v.hidden));});});
+    app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
+    app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
-    app.querySelectorAll('.book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
+    app.querySelectorAll('.sd-book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
+    var more=document.getElementById('sdMore'),intro=document.getElementById('sdIntro');
+    if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
+    var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
+    initChips();
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();
@@ -709,6 +857,49 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       function(){say('복사가 안 되는 화면이에요. 제목을 길게 눌러 복사해 주세요');});
     logEvent('title_copy',{title:many?'(5권 전체)':t,from:b.dataset.cpfrom||''});},true);
   var RING='<svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.2"/><circle cx="32" cy="32" r="18" stroke="#245648" stroke-width="3.2" opacity=".7"/><circle cx="32" cy="32" r="9" stroke="#245648" stroke-width="3.2" opacity=".5"/><circle cx="32" cy="32" r="3.2" fill="#D1965C"/></svg>';
+  // 나이테 라인 아이콘(이번 달 자료)
+  var SD_IC={
+    seed:'<path d="M12 20v-7"/><path d="M12 13c0-3.2-2.2-5.4-6.5-5.4 0 3.2 2.2 5.4 6.5 5.4z"/><path d="M12 13c0-3.2 2.2-5.4 6.5-5.4 0 3.2-2.2 5.4-6.5 5.4z"/>',
+    leaf:'<path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14z"/><path d="M5 19l8-8"/>',
+    tree:'<path d="M12 21v-5"/><path d="M12 3l6 8h-3l4 5H5l4-5H6z"/>',
+    play:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor"/>',
+    doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+    copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+    chev:'<path d="M6 9l6 6 6-6"/>',right:'<path d="M9 6l6 6-6 6"/>',
+    book:'<path d="M4 5.5A2 2 0 0 1 6 4h5v16H6a2 2 0 0 1-2-2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-5v16h5a2 2 0 0 0 2-2z"/>',
+    voice:'<path d="M4 12a8 8 0 0 1 8-8"/><path d="M8 12a4 4 0 0 1 4-4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 16v4M9 20h6"/>',
+    play2:'<circle cx="8" cy="8" r="3.5"/><path d="M14 4.5h6v6h-6z"/><path d="M8 14l4 6.5H4z"/><circle cx="17" cy="17.5" r="3"/>',
+    chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>',
+    clip:'<path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/>',
+    eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    ig:'<rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/>'
+  };
+  function ic(k,w){return '<svg width="'+(w||18)+'" height="'+(w||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+SD_IC[k]+'</svg>';}
+  var LV_IC={1:'seed',2:'leaf',3:'tree'},LV_TXT={1:'글밥 적음',2:'글밥 보통',3:'글밥 많음'};
+  var SD_RING='<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="13.5" stroke="currentColor" stroke-width="3" opacity=".75"/><circle cx="24" cy="24" r="7" stroke="currentColor" stroke-width="3" opacity=".5"/><circle cx="24" cy="5" r="3" fill="#B87343"/></svg>';
+  // 히어로 나이테 결
+  function decoPaths(){
+    var cx=230,cy=230,R=200,L=9,shape=[0,.12,-.08,.07,-.05,.1,-.1,.05,.08],s='';
+    function pt(t,i,seed){var a=-Math.PI/2+i/L*2*Math.PI,jit=6*Math.sin(seed*1.3+i*2.1),r=R*(.86+shape[i%L])*t+jit;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+    for(var k=1;k<16;k++){var t=k/16,p=[];for(var i=0;i<L;i++)p.push(pt(t,i,k));var d='M'+p[0][0].toFixed(1)+' '+p[0][1].toFixed(1);
+      for(var q=0;q<L;q++){var a=p[(q-1+L)%L],b=p[q],c=p[(q+1)%L],e=p[(q+2)%L];d+='C'+(b[0]+(c[0]-a[0])/6).toFixed(1)+' '+(b[1]+(c[1]-a[1])/6).toFixed(1)+' '+(c[0]-(e[0]-b[0])/6).toFixed(1)+' '+(c[1]-(e[1]-b[1])/6).toFixed(1)+' '+c[0].toFixed(1)+' '+c[1].toFixed(1);}
+      s+='<path d="'+d+'Z" fill="none" stroke="#245648" stroke-width="'+(1.2+t).toFixed(1)+'" opacity="'+(0.08+0.3*t).toFixed(2)+'"/>';}
+    return s;
+  }
+  // 섹션 칩: 누르면 이동, 스크롤 위치에 따라 활성
+  function initChips(){
+    var nav=document.getElementById('sdChips');if(!nav)return;
+    nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;var s=document.getElementById(b.dataset.sdt);if(!s)return;
+      window.scrollTo({top:s.getBoundingClientRect().top+window.scrollY-nav.offsetHeight-6,behavior:'smooth'});});
+    var raf=0;window.addEventListener('scroll',function(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;
+      var v=document.getElementById('v-study');if(!v||v.hidden)return;
+      var chips=[].slice.call(nav.querySelectorAll('[data-sdt]:not([hidden])')),y=nav.offsetHeight+20,cur=chips[0];
+      chips.forEach(function(c){var s=document.getElementById(c.dataset.sdt);if(s&&s.getBoundingClientRect().top<=y)cur=c;});
+      chips.forEach(function(c){c.classList.toggle('on',c===cur);});
+      nav.classList.toggle('stuck',nav.getBoundingClientRect().top<=0.5);
+      if(cur&&nav.scrollWidth>nav.clientWidth){var l=cur.offsetLeft-16;if(l<nav.scrollLeft||cur.offsetLeft+cur.offsetWidth>nav.scrollLeft+nav.clientWidth)nav.scrollTo({left:l,behavior:'smooth'});}
+    });},{passive:true});
+  }
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
 
   // 📢 공지(관리자 공지 작성기) · 🌱 처음 오셨나요? — 탭이 아니라 위에 덮이는 화면. 주소 #news / #welcome 로도 열림
@@ -720,11 +911,10 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
   function linkify(s){return esc(s).replace(/https?:\/\/[^\s<]+/g,function(u){return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';});}
   function seenId(){return +lsGet(NEWS_SEEN_KEY)||0;}
   function paintNewsBar(){
-    var dot=document.getElementById('newsDot'),box=document.getElementById('newsLatest');if(!dot||!box)return;
+    var box=document.getElementById('newsLatest');if(!box)return;
     var s=seenId(),fresh=NEWS.filter(function(n){return n.id>s;});
-    dot.hidden=!fresh.length;dot.textContent=fresh.length;
-    var top=fresh[0];
-    box.innerHTML=top?'<button type="button" class="newscard" data-pn="news"><small>📢 새 공지 · '+esc(fmtDay(top.created_at))+'</small><b>'+esc(top.title||(top.body||'').split('\n')[0].slice(0,60))+'</b></button>':'';
+    var top=fresh[0]||NEWS[0];
+    box.innerHTML=top?'<button type="button" class="sd-notice" data-pn="news"><span class="new'+(fresh.length?'':' old')+'">'+(fresh.length?'새 공지':'공지')+'</span><span class="tx">'+esc(top.title||(top.body||'').split('\n')[0].slice(0,60))+' · '+esc(fmtDay(top.created_at))+'</span>'+ic('right',16)+'</button>':'';
   }
   function fmtDay(t){var d=new Date(t);return (d.getMonth()+1)+'월 '+d.getDate()+'일';}
   async function loadNews(){
@@ -804,15 +994,14 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(ml||''),mon=m?((+m[2])%12+1)+'월':'다음 달';
       var books=t.books.slice().sort(function(a,b){return (level(a)||9)-(level(b)||9)||a.tier-b.tier;});
       var cards=books.map(function(b){var lv=level(b),L=links[b.title];
-        var inner='<div class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+'</div><div class="ty">'+esc(b.tier_label)+'</div><div class="tt">'+esc(b.title)+'</div>'+(lv?'<div class="lv">'+LV_LABEL[lv]+'</div>':'');
-        return '<div class="np-b">'+(L?'<a class="np-l" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-np="'+esc(b.title)+'">'+inner+'</a>':'<div class="np-l">'+inner+'</div>')+
-          '<button type="button" class="np-cp" data-copy="'+esc(b.title)+'" data-cpfrom="next">📋 제목 복사</button></div>';}).join('');
+        var inner='<span class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>')+'</span><span class="ty">'+esc(b.tier_label)+'</span><span class="tt">'+esc(b.title)+'</span>'+(lv?'<span class="lv">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'');
+        return L?'<a class="nb" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-np="'+esc(b.title)+'">'+inner+'</a>':'<div class="nb">'+inner+'</div>';}).join('');
       var all=books.map(function(b,k){return (k+1)+'. '+b.title+(b.author?' ('+b.author+')':'');}).join('\n');
-      el.innerHTML='<div class="sec"><div class="np"><div class="nh"><h2>👀 다음 달 미리보기</h2><span class="nm">'+esc(mon+' · '+t.emoji+' '+t.ko)+'</span></div>'+
-        '<p class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보(구매처)가 열리고, 📋로 제목을 복사할 수 있어요.</p><div class="np-row">'+cards+'</div>'+
-        '<div class="np-btns"><button type="button" class="cpall" data-copy="'+esc(all)+'" data-cpfrom="next_all">📋 5권 제목 한 번에 복사<small>도서관 희망도서 신청 · 장바구니 검색할 때 편해요</small></button>'+
-        (nx.blog_url?'<a class="blog" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1">📝 이 5권을 고른 이유 (블로그)</a>':'')+
-        '<button type="button" class="more" data-rtab="c120">🎯 나이테 120에서 전체 보기</button></div></div></div>';
+      el.innerHTML='<section id="s-next"><div class="sh">'+ic('eye',20)+'<h2>다음 달 미리보기</h2><span class="cnt clay">'+esc(mon+' · '+t.ko)+'</span></div>'+
+        '<div class="card"><div class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보가 열려요.</div><div class="shelf">'+cards+'</div>'+
+        '<button type="button" class="copyall" data-copy="'+esc(all)+'" data-cpfrom="next_all">'+ic('copy',16)+'5권 제목 한 번에 복사</button><div class="hint">도서관 희망도서 신청 · 장바구니 검색할 때 편해요</div></div>'+
+        (nx.blog_url?'<a class="linkrow" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1"><span>이 5권을 고른 이유<small>블로그</small></span>'+ic('right',18)+'</a>':'')+'</section>';
+      var nc=document.querySelector('[data-sdt="s-next"]');if(nc)nc.hidden=false;
       el.querySelectorAll('[data-np]').forEach(function(a){a.addEventListener('click',function(){logEvent('buy_click',{title:a.dataset.np,from:'next_preview'});});});
       var bl=el.querySelector('[data-npblog]');if(bl)bl.addEventListener('click',function(){logEvent('blog_click',{theme:nx.key,from:'next_preview'});});
     }catch(e){}
@@ -825,9 +1014,8 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       var others=list.filter(function(m){return m.key!==curk;});
       var el=document.getElementById('arch'); if(!el)return;
       if(!others.length){el.innerHTML='';return;}
-      el.innerHTML='<div class="sec"><h2>🗂️ 지난 달 스터디</h2>'+
-        '<p class="wbnote" style="font-size:.8rem;color:var(--soft);margin:-6px 0 12px">지난 달 자료와 그 달의 기록도 여기서 볼 수 있어요.</p>'+
-        '<div class="archl">'+others.map(function(m){return '<a class="archi" href="?m='+encodeURIComponent(m.key)+'">'+esc(m.emoji||'📖')+' <b>'+esc(m.ko)+'</b><span>'+esc(m.month_label||m.en||'')+'</span></a>';}).join('')+'</div></div>';
+      el.innerHTML='<section class="arch"><div class="sh">'+ic('book',20)+'<h2>지난 달 스터디</h2></div>'+
+        '<div class="card">'+others.map(function(m){return '<a class="arow" href="?m='+encodeURIComponent(m.key)+'"><b>'+esc(m.ko)+'</b><span>'+esc(m.month_label||m.en||'')+'</span>'+ic('right',16)+'</a>';}).join('')+'</div></section>';
     }catch(e){}
   }
 

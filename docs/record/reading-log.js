@@ -189,6 +189,7 @@
     acts.push(['취소',function(){remove(row.c,true);}]);
     toast('<b>'+esc(shortTitle(b.title))+'</b> '+dayLabel(row.d)+' '+count(bid,row.d)+'번째 기록 ✓',acts);
     flush();
+    if(src==='card')setTimeout(function(){try{if(localStorage.getItem('naite_instbar_shown'))return;localStorage.setItem('naite_instbar_shown','1');}catch(e){return;}installBar();},4500);
   }
   function addOther(title,day){
     var row={c:hex(12),b:0,o:title||'',d:day,t:Date.now(),k:'_other'};
@@ -317,8 +318,8 @@
     if(isStandalone()||document.getElementById('rlInstBar'))return;
     try{var u=+localStorage.getItem(BAR_KEY)||0;if(u>Date.now())return;}catch(e){}
     var bar=document.createElement('div');bar.id='rlInstBar';bar.className='rl-instbar';
-    bar.innerHTML='<span class="t">📲 앱으로 설치하면 바로 열려요</span><button type="button" class="go" data-rinstall="bar">앱 설치하기</button><button type="button" class="x" aria-label="7일 동안 닫기">×</button>';
-    bar.querySelector('.x').onclick=function(){try{localStorage.setItem(BAR_KEY,String(Date.now()+7*864e5));}catch(e){}bar.remove();if(S&&S.onEvent)S.onEvent('install_bar_close',{});};
+    bar.innerHTML='<span class="t">앱으로 설치하면 다음부터 바로 열려요</span><button type="button" class="go" data-rinstall="bar">앱 설치하기</button><button type="button" class="x" aria-label="닫기">×</button>';
+    bar.querySelector('.x').onclick=function(){try{localStorage.setItem(BAR_KEY,String(Date.now()+3650*864e5));}catch(e){}bar.remove();if(S&&S.onEvent)S.onEvent('install_bar_close',{});};
     document.body.appendChild(bar);
   }
   // 처음 입장했을 때 한 번만: 설치 창을 띄울 수 있거나(안드로이드) 안내가 필요한 환경(아이폰·앱 안 브라우저)일 때
@@ -822,9 +823,13 @@
       el.hidden=false;
       var bid=+el.getAttribute('data-rrow'),pre=mi?mi.year+'-'+pad(mi.month)+'-':'',n=0,ld=lastDay(bid);
       S.rows.forEach(function(r){if(r.b===bid&&(!pre||r.d.indexOf(pre)===0))n++;});
-      el.innerHTML='<span class="rmeta">'+(n?'이번 달 <b>'+n+'번</b> · 마지막 '+dayLabel(ld,true):'아직 안 읽었어요')+'</span>'+
-        '<button type="button" class="rbtn" data-rbook="'+bid+'" data-src="card">📖 읽었어요</button>';
+      el.innerHTML='<span class="st'+(n?' done':'')+'">'+(n?svg(14,IC.check,2.4)+'이번 달 <b>'+n+'번</b> · 마지막 '+dayLabel(ld,true):'아직 안 읽었어요')+'</span>'+
+        '<button type="button" class="rbtn'+(n?' again':'')+'" data-rbook="'+bid+'" data-src="card">'+(n?'한 번 더':'읽었어요')+'</button>';
     });
+    // 이번 달 자료 위 진행 점: 5권 중 N권 만났어요(채운 점은 왼쪽부터)
+    var pg=document.querySelector('[data-rprog]');
+    if(pg&&S.books.length){var m=met(S.books);
+      pg.innerHTML='<div class="dots">'+S.books.map(function(b,i){return '<i class="'+(i<m?'on':'')+'"></i>';}).join('')+'</div><span class="pt">'+S.books.length+'권 중 <b>'+m+'권</b> 만났어요</span>';}
   }
   /* ── 나이테 라인 아이콘 ── */
   function svg(w,inner,sw){return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||2.1)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';}
@@ -1024,7 +1029,6 @@
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
       flush();pull();pullOther();verifyMember();
       setTimeout(offerInstallOnce,1200);
-      installBar();
     }
   };
 })();
