@@ -708,14 +708,16 @@
       (ph?'<img class="cd-photo" src="'+ph+'" alt="이날 읽은 책 사진">':'')+
       (it.length?'<ul class="cd-list">'+it.map(function(x){return '<li><span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><span class="t">'+esc(x.title)+'</span>'+(x.n>1?'<b>×'+x.n+'</b>':'')+'</li>';}).join('')+'</ul>':'')+
       '<div class="rk-dayacts">'+
-        '<button type="button" class="rk-btn '+(ph||!it.length?'fill':'out')+'" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
-        (ph?'':'<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>')+
+        '<button type="button" class="rk-btn out" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
+        '<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>'+
       '</div>'+
+      '<button type="button" class="subtle" data-dalbum>앨범 사진에 날짜 스탬프 넣기</button>'+
       (ph?'<button type="button" class="subtle" data-cddel>사진 지우기</button>':'')+
       '<button type="button" class="subtle" data-sclose>닫기</button>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
-    var a=sh.querySelector('[data-dstamp]');if(a)a.onclick=function(){closeSheet();openStampCamera(day);};
+    sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
+    sh.querySelector('[data-dalbum]').onclick=function(){closeSheet();openStampAlbum(day);};
     var db=sh.querySelector('[data-cddel]');
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}delPhoto(day);closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');};
     if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph});
@@ -748,7 +750,7 @@
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
-        (day===logicalToday()?'':'<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>');
+        '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>';
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
