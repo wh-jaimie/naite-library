@@ -667,7 +667,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd .tips li:first-child{border-top:none;padding-top:2px}
 .sd .tips li::before{content:counter(t);flex:0 0 22px;height:22px;border-radius:50%;background:var(--pine-soft);color:var(--pine);font-family:var(--serif);font-weight:700;font-size:12.5px;display:grid;place-items:center;margin-top:1px}
 .sd .prose1{margin:0;font-size:13.5px;white-space:pre-wrap}
-.sd .plays{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sd .plays{display:grid;grid-template-columns:1fr;gap:8px}
 .sd .play-t{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow)}
 .sd .play-t h4{font-size:13.5px;font-weight:700;margin:0;color:var(--ink)}
 .sd .play-t p{font-size:12.5px;color:var(--ink-soft);margin:3px 0 0;line-height:1.45}
@@ -849,7 +849,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
-    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});});
+    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('click',function(ev){ev.stopPropagation();});d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});}); // 팁 줄은 눌러도 책정보로 안 감
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();
