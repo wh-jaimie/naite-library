@@ -572,7 +572,7 @@
     return getStream().then(function(stream){
       return new Promise(function(res){
         var ov=document.createElement('div');ov.className='rl-cam';
-        ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-camx aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="lbl">'+(opt.stamp?'인증 사진':'사진 찍기')+'</span><span style="width:34px"></span></div>'+
+        ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-camx aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="lbl">'+(opt.stamp?'날짜 스탬프 사진':'사진 찍기')+'</span><span style="width:34px"></span></div>'+
           '<div class="rl-cam-stage"><div class="rl-frame"><video playsinline autoplay muted></video>'+(opt.stamp?ovlHtml(tpl):'')+'</div></div>'+
           '<div class="rl-cam-bottom">'+(opt.stamp?'<div class="rl-styles" role="group" aria-label="글씨 디자인">'+TPLS.map(function(t){return '<button type="button" class="schip" data-tpl="'+t[0]+'" aria-pressed="'+(t[0]===tpl)+'">'+t[1]+'</button>';}).join('')+'</div>':'')+
           '<div class="cam-row"><button type="button" class="cam-cancel" data-camx>취소</button><button type="button" class="shot" data-camshot aria-label="사진 찍기"></button>'+
@@ -601,7 +601,7 @@
       });
     });
   }
-  // 기록하기 탭 '인증 사진 찍기': 바로 카메라 → 찍은 사진(오버레이 포함)이 곧 인증 사진, 달력에도 저장
+  // 날짜 스탬프 사진: 바로 카메라 → 찍은 사진(오버레이 포함)이 곧 인증 사진, 달력에도 저장
   function openStampCamera(day){
     day=day||logicalToday();
     if(!canCamera()){toast('이 폰에서는 앱 안 카메라를 열 수 없어요. 앨범 사진으로 넣어 주세요.');openStampAlbum(day);return;}
@@ -622,7 +622,7 @@
   function showStampResult(day,c){
     savePhoto(day,c);
     var meta={day:day,tpl:c.tpl||''},ov=document.createElement('div'),noRec=!S.rows.some(function(r){return r.d===day;});ov.className='rl-cam rl-after';
-    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 인증 사진</span><span style="width:34px"></span></div>'+
+    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 날짜 스탬프 사진</span><span style="width:34px"></span></div>'+
       '<div class="rl-photo"><p class="rv-empty">이미지를 만드는 중…</p></div>'+
       '<div class="rl-saved">'+svg(17,IC.check,2.6)+'달력에 저장했어요<button type="button" data-agocal>달력에서 보기</button></div>'+
       (noRec?'<div class="rl-ask"><span>이날 읽은 책도 기록할까요?</span><button type="button" data-arec>책 기록하기</button></div>':'')+
@@ -746,7 +746,7 @@
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
-        '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+(S.photoUrls[day]?'사진 다시 찍기':day===logicalToday()?'인증 사진 찍기':'날짜 스탬프 사진')+'</button>'+
+        '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         (day===logicalToday()?'':'<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>');
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
