@@ -207,7 +207,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 <div id="printable"></div>
 
 <footer><div class="wrap">
-  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어도서관</p>
+  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어책육아 메이트</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
 </div></footer>
 
@@ -340,7 +340,7 @@ async function makeShareCanvas(done,total,dark){
   g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
   g.fillStyle=P.count;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
   g.fillStyle=P.honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
-  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1282);
+  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어책육아 메이트 · 파닉스 전 첫 영어책 코스',W/2,1282);
   g.fillStyle=P.honey;g.font='700 32px "Noto Sans KR",sans-serif';g.fillText('📷 Instagram  @naite_library',W/2,1328);
   return cv;
 }
@@ -351,7 +351,7 @@ function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{con
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
-  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어도서관 · ${now}</p></div>`;
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어책육아 메이트 · ${now}</p></div>`;
   themes.forEach((t,i)=>{
     const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
     h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
