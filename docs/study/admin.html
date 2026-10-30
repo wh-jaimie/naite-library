@@ -191,6 +191,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     STATE.current=st.data?st.data.current_theme:(STATE.themes[0]&&STATE.themes[0].key);
     STATE.studyRoomUrl=(st.data&&'study_room_url' in st.data)?(st.data.study_room_url||''):null; // null = 컬럼 없음(migrate_study_room_url.sql 전)
     STATE.chatMembers=(st.data&&'chat_members' in st.data)?(st.data.chat_members||0):null; // null = 컬럼 없음(migrate_chat_members.sql 전)
+    STATE.showNext=(st.data&&'show_next' in st.data)?!!st.data.show_next:null; // null = 컬럼 없음(migrate_next_preview.sql 전)
     STATE.editKey=STATE.editKey||STATE.current||(STATE.themes[0]&&STATE.themes[0].key);
   }
 
@@ -507,12 +508,21 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     body.innerHTML=
       '<div class="card"><label class="f" style="margin-top:0">이번 달 공개 주제 <span class="hint">(부모가 링크 열면 보이는 주제)</span></label>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap"><select class="t" id="curSel" style="flex:1;min-width:220px">'+opt(STATE.current)+'</select>'+
-        '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span></div>'+
+        '<button class="btn cor" id="setCur">공개 설정</button></div><span class="status" id="curSt"></span>'+
+        '<label class="f" style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="showNext"'+(STATE.showNext?' checked':'')+(STATE.showNext===null?' disabled':'')+'> 👀 다음 달 미리보기 보여주기 <span class="hint">(켜면 나이테 스터디 앱 「이번 달 자료」 아래에 다음 달 5권이 나와요)</span></label>'+
+        (STATE.showNext===null?'<div class="hint">먼저 supabase/migrate_next_preview.sql 을 실행해 주세요.</div>':'')+'<span class="status" id="nextSt"></span></div>'+
       '<div class="card"><div class="hint" style="margin:0">💬 스터디 방 링크와 참여 인원은 <a href="#ops" data-goops="1">🌳 운영 › 기수별 채팅방</a>에서 관리해요. (참여 버튼은 가장 마지막 기수 방으로 자동 연결)</div></div>'+
       '<div class="card"><label class="f" style="margin-top:0">편집할 주제</label><select class="t" id="edSel">'+opt(STATE.editKey)+'</select>'+
         '<div id="form"></div>'+
         '<div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap"><button class="btn cor" id="save">저장</button><button class="btn" id="preview">👁 미리보기</button><button class="btn" id="pdf">📄 PDF 만들기(인쇄)</button><span class="status" id="saveSt"></span></div>'+
         '<div class="hint">PDF에서는 영상·워크지·책정보 링크가 <b>QR코드</b>로 들어가요. (편집 중인 주제 기준 · 인쇄 창에서 "PDF로 저장")</div></div>';
+    var sn=document.getElementById('showNext');
+    if(sn)sn.addEventListener('change',async function(){
+      var v=sn.checked,ns=document.getElementById('nextSt');ns.textContent='저장 중…';
+      var r=await client.from('settings').update({show_next:v}).eq('id',1);
+      if(r.error){sn.checked=!v;ns.textContent='실패: '+r.error.message;return;}
+      STATE.showNext=v;ns.textContent=v?'✓ 다음 달 미리보기를 보여줘요':'✓ 다음 달 미리보기를 숨겼어요';
+    });
     document.getElementById('setCur').addEventListener('click',async function(){
       var k=document.getElementById('curSel').value;
       document.getElementById('curSt').textContent='설정 중…';
