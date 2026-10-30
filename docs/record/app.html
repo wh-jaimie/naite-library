@@ -840,11 +840,14 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
-    window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
+    if(PREVIEW){ // 관리자 미리보기: 기록 기능 없이 화면만(읽었어요 줄은 모양만)
+      app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
+      var pg=app.querySelector('[data-rprog]');if(pg)pg.innerHTML='<div class="dots">'+books.map(function(){return '<i></i>';}).join('')+'</div><span class="pt">'+books.length+'권 중 <b>0권</b> 만났어요</span>';
+    }else window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
       onEvent:function(t,m){logEvent(t,m);},
       onExpired:function(){toEntry(true);},
       onLeave:function(){location.replace('../study/'+(curParam()?'?m='+encodeURIComponent(curParam()):''));}});
-    fillArchive(theme.key);
+    if(!PREVIEW)fillArchive(theme.key);
     fillNext(theme.key,c.month_label);
     if(!PREVIEW)initPanels();
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
@@ -1050,6 +1053,15 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
   }
 
   async function boot(){
+    if(PREVIEW){ // 관리자 페이지 미리보기: 저장 전 폼 내용을 받아 그대로 그림
+      window.addEventListener('message',function(ev){
+        if(location.origin!=='null'&&ev.origin!==location.origin)return;
+        var d=ev.data;if(!d||d.t!=='preview-data')return;
+        try{render(d.theme||{},d.books||[],d.content||{});}catch(e){notice('미리보기 오류: '+esc(e.message||e));}
+      });
+      try{parent.postMessage({t:'preview-ready'},'*');}catch(e){}
+      return;
+    }
     var code=window.NaiteReading?window.NaiteReading.getCode():'';
     if(!code){toEntry(false);return;}
     try{
