@@ -500,7 +500,7 @@
     else if(tpl==='frame'){g=c.createLinearGradient(0,H,0,0);g.addColorStop(.01,'rgba(14,20,11,.6)');g.addColorStop(.32,'rgba(14,20,11,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
       c.strokeStyle='rgba(255,248,236,.9)';c.lineWidth=1.6*u;rrect(c,13*u,13*u,W-26*u,H-26*u,9*u);c.stroke();}
     else{g=c.createRadialGradient(W,H,0,W,H,Math.max(W,H)*.75);g.addColorStop(0,'rgba(0,0,0,.5)');g.addColorStop(.58,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,W,H);}
-    var fs=film?21:tpl==='frame'?25:29,big=fs*u,lh=big*1.12,sub=(film?11:12.5)*u,igf=11*u,ring=26*u;
+    var fs=film?17:tpl==='frame'?20:23,big=fs*u,lh=big*1.12,sub=(film?11:12.5)*u,igf=11*u,ring=26*u;
     var bottom=(film?16:tpl==='frame'?26:22)*u,cx=W/2,right=W-16*u,align=film?'right':'center';
     var y=H-bottom; // 아래에서 위로 쌓기
     function shadow(col,b){c.shadowColor=col;c.shadowBlur=b*u;c.shadowOffsetY=0;}
