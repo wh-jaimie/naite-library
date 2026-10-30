@@ -489,10 +489,49 @@
   }
   var OVL_RING='<svg class="ovl-ring" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="17" stroke="#fff" stroke-width="2"/><circle cx="20" cy="20" r="11" stroke="#fff" stroke-width="2" opacity=".72"/><circle cx="20" cy="20" r="5.5" stroke="#fff" stroke-width="2" opacity=".5"/><circle cx="20" cy="4.5" r="2.4" fill="#E3A869"/></svg>';
   var OVL_IG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
+  var OVL_LOCK_RING='<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="17" stroke="#fff" stroke-width="2.2"/><circle cx="20" cy="20" r="11" stroke="#fff" stroke-width="2.2" opacity=".72"/><circle cx="20" cy="20" r="5.5" stroke="#fff" stroke-width="2.2" opacity=".5"/><circle cx="20" cy="3.6" r="2.6" fill="#E3A869"/></svg>';
   function ovlHtml(tpl){return '<div class="ovl t-'+tpl+'" aria-hidden="true"><div class="ovl-scrim"></div><div class="ovl-frame"></div><div class="ovl-body">'+OVL_RING+
+    '<div class="ovl-lock">'+OVL_LOCK_RING+'<span>나이테</span></div><i class="ovl-rule"></i>'+
     '<div class="ovl-date" data-s1></div><div class="ovl-time" data-s2></div><div class="ovl-sub"><span class="sep"></span><span data-s3></span></div><div class="ovl-ig">'+OVL_IG+'<span>@naite_library</span></div></div></div>';}
   // 캔버스에 같은 오버레이 그리기(디자인 기준 폭 352px → u 배율)
+  function stampFonts(){
+    if(!document.fonts||!document.fonts.load)return Promise.resolve();
+    return Promise.all([document.fonts.load('700 40px "Gowun Batang"','나이테 0123456789월일오전후금토 ()'),document.fonts.load('700 26px "Noto Sans KR"','한달5권 스터디 월일째 @naite_library')]).catch(function(){});
+  }
+  function drawRibbon(c,W,H,day){
+    var L=stampLines(day),k=W/1440,serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',cx=W/2;
+    c.save();
+    var g=c.createLinearGradient(0,H,0,0);g.addColorStop(0,'rgba(14,20,11,.72)');g.addColorStop(.24,'rgba(14,20,11,.38)');g.addColorStop(.46,'rgba(14,20,11,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
+    function sh(){c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=14*k;c.shadowOffsetX=0;c.shadowOffsetY=2*k;}
+    function ls(v){try{c.letterSpacing=v;}catch(e){}}
+    c.textAlign='left';c.textBaseline='middle';c.fillStyle='#fff';
+    var y=H-H*0.05,f;
+    // @naite_library + 아이콘
+    f=26*k;c.font='700 '+f+'px '+sans;var ig='@naite_library',iw=f*.9,tw=c.measureText(ig).width,tot=iw+10*k+tw,x0=cx-tot/2,ly=y-f*.7;
+    sh();c.globalAlpha=.88;c.strokeStyle='#fff';c.lineWidth=2.4*k;rrect(c,x0+iw*.1,ly-iw*.4,iw*.8,iw*.8,iw*.22);c.stroke();c.beginPath();c.arc(x0+iw/2,ly,iw*.18,0,Math.PI*2);c.stroke();
+    c.fillText(ig,x0+iw+10*k,ly);c.globalAlpha=1;
+    y=ly-f*.7-16*k;
+    // 부제: 꿀색 점 + 한달5권 스터디 · 10월 N일째
+    f=26*k;c.font='700 '+f+'px '+sans;ls((f*.04)+'px');var subT=L.c.replace(/^나이테 /,''),sw=c.measureText(subT).width,dot=8*k,st=dot+10*k+sw,sx=cx-st/2,sy=y-f*.7;
+    c.globalAlpha=.92;c.fillStyle='#E3A869';c.beginPath();c.arc(sx+dot/2,sy,dot/2,0,Math.PI*2);c.fill();c.fillStyle='#fff';c.fillText(subT,sx+dot+10*k,sy);c.globalAlpha=1;ls('0px');
+    y=sy-f*.7-10*k;
+    // 날짜(+시간) 한 줄
+    f=36*k;c.font='700 '+f+'px '+serif;c.textAlign='center';var dl=L.b?L.a+' '+L.b:L.a,dy=y-f*.7;c.fillText(dl,cx,dy);
+    y=dy-f*.7-22*k;
+    // 가는 선
+    c.shadowColor='transparent';c.fillStyle='rgba(255,255,255,.55)';c.fillRect(cx-140*k,y-1.5*k,280*k,1.5*k);
+    y=y-1.5*k-28*k;
+    // 락업: 링 마크 112 + 간격 20 + 나이테 96
+    var R=112*k,gap=20*k;f=96*k;c.font='700 '+f+'px '+serif;ls((-f*.01)+'px');var nw=c.measureText('나이테').width,lw=R+gap+nw,lx=cx-lw/2,lcy=y-R/2;
+    c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=18*k;c.shadowOffsetY=4*k;
+    var s2=R/40,rx=lx+R/2;c.strokeStyle='#fff';c.lineWidth=2.2*s2;
+    [[17,1],[11,.72],[5.5,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(rx,lcy,q[0]*s2,0,Math.PI*2);c.stroke();});
+    c.globalAlpha=1;c.fillStyle='#E3A869';c.beginPath();c.arc(rx,lcy-R/2+3.6*s2,2.6*s2,0,Math.PI*2);c.fill();
+    c.fillStyle='#fff';c.textAlign='left';c.fillText('나이테',lx+R+gap,lcy+f*.04);ls('0px');
+    c.restore();
+  }
   function drawOvl(c,W,H,tpl,day){
+    if(tpl==='ribbon'){drawRibbon(c,W,H,day);return;}
     var L=stampLines(day),u=W/352,film=tpl==='film',mono='ui-monospace,"Roboto Mono",monospace',serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
     c.save();
     var g;
@@ -543,11 +582,11 @@
         function attach(st){stream=st;v.srcObject=st;try{v.play();}catch(e){}v.classList.toggle('mirror',facing==='user');}
         function fit(){if(!v.videoWidth)return;var ar=v.videoWidth/v.videoHeight;frame.style.aspectRatio=v.videoWidth+' / '+v.videoHeight;frame.style.width='min(100cqw, calc(100cqh * '+ar.toFixed(4)+'))';}
         v.addEventListener('loadedmetadata',fit);v.addEventListener('resize',fit);
-        function paintStamp(){if(!opt.stamp)return;var L=stampLines(opt.day);ov.querySelector('[data-s1]').textContent=L.a;ov.querySelector('[data-s2]').textContent=L.b;ov.querySelector('[data-s3]').textContent=L.c;}
+        function paintStamp(){if(!opt.stamp)return;var L=stampLines(opt.day),rb=tpl==='ribbon';ov.querySelector('[data-s1]').textContent=rb&&L.b?L.a+' '+L.b:L.a;ov.querySelector('[data-s2]').textContent=rb?'':L.b;ov.querySelector('[data-s3]').textContent=rb?L.c.replace(/^나이테 /,''):L.c;}
         paintStamp();if(opt.stamp)tick=setInterval(paintStamp,10000);
         ov.querySelectorAll('[data-tpl]').forEach(function(b){b.onclick=function(){tpl=b.getAttribute('data-tpl');setTpl(tpl);
           ov.querySelectorAll('[data-tpl]').forEach(function(x){x.setAttribute('aria-pressed',x===b);});
-          var o=ov.querySelector('.ovl');o.className='ovl t-'+tpl;};});
+          var o=ov.querySelector('.ovl');o.className='ovl t-'+tpl;paintStamp();};});
         attach(stream);
         function stop(){stream.getTracks().forEach(function(t){t.stop();});}
         function end(r){clearInterval(tick);stop();ov.remove();res(r);}
@@ -557,8 +596,8 @@
           if(!v.videoWidth)return;
           var c=document.createElement('canvas'),W=c.width=v.videoWidth,H=c.height=v.videoHeight,x=c.getContext('2d');
           if(facing==='user'){x.save();x.translate(W,0);x.scale(-1,1);x.drawImage(v,0,0);x.restore();}else x.drawImage(v,0,0);
-          if(opt.stamp){drawOvl(x,W,H,tpl,opt.day);c.tpl=tpl;}
-          end(c);};
+          if(!opt.stamp){end(c);return;}
+          var t0=tpl;stampFonts().then(function(){drawOvl(x,W,H,t0,opt.day);c.tpl=t0;end(c);});};
       });
     });
   }
@@ -576,7 +615,7 @@
     inp.onchange=function(){clearPick();var f=inp.files&&inp.files[0];if(!f)return;
       loadPhoto(f).then(function(im){
         var c=document.createElement('canvas'),W=c.width=im.width||im.naturalWidth,H=c.height=im.height||im.naturalHeight,x=c.getContext('2d'),tpl=getTpl();
-        x.drawImage(im,0,0,W,H);drawOvl(x,W,H,tpl,day);c.tpl=tpl;showStampResult(day,c);if(S.onEvent)S.onEvent('stamp_album',{day:day});
+        x.drawImage(im,0,0,W,H);stampFonts().then(function(){drawOvl(x,W,H,tpl,day);c.tpl=tpl;showStampResult(day,c);});if(S.onEvent)S.onEvent('stamp_album',{day:day});
       },function(){toast('사진을 열지 못했어요. 다른 사진으로 해 주세요.');});};
     markPick();inp.click();
   }
@@ -672,13 +711,11 @@
         '<button type="button" class="rk-btn '+(ph||!it.length?'fill':'out')+'" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
         (ph?'':'<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>')+
       '</div>'+
-      (!ph&&it.length?'<button type="button" class="rk-btn out wide" data-dcard>'+svg(17,IC.card)+'읽은 책 카드 만들기</button>':'')+
       (ph?'<button type="button" class="subtle" data-cddel>사진 지우기</button>':'')+
       '<button type="button" class="subtle" data-sclose>닫기</button>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
     var a=sh.querySelector('[data-dstamp]');if(a)a.onclick=function(){closeSheet();openStampCamera(day);};
-    var cb=sh.querySelector('[data-dcard]');if(cb)cb.onclick=function(){openShareCard(day);};
     var db=sh.querySelector('[data-cddel]');
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}delPhoto(day);closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');};
     if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph});
