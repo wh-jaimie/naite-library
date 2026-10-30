@@ -630,7 +630,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     mask.innerHTML='<div class="pvbar"><span class="t">👁 미리보기</span>'+
       '<span class="seg"><button data-w="430" class="on">📱 모바일</button><button data-w="900">💻 넓게</button></span>'+
       '<button class="btn" id="pvclose">닫기 ✕</button></div>'+
-      '<div class="pvframe" id="pvframe"><iframe id="pvif" src="index.html#preview"></iframe></div>';
+      '<div class="pvframe" id="pvframe"><iframe id="pvif" src="../record/app.html#preview"></iframe></div>';
     document.body.appendChild(mask);
     var payload={t:'preview-data',theme:theme,books:books,content:content};
     var ifr=document.getElementById('pvif'),frame=document.getElementById('pvframe');
