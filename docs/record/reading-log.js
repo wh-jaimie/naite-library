@@ -745,7 +745,7 @@
     grid.forEach(function(w){w.forEach(function(ds){if(!ds)return;var D=dayInfo(ds);info[ds]=D;
       if(D.ph)srcs[D.ph]=1;else D.it.slice(0,2).forEach(function(x){if(x.cover)srcs[x.cover]=1;});});});
     var list=Object.keys(srcs),serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
-    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 72px "Gowun Batang"'),document.fonts.load('700 30px "Noto Sans KR"')]).catch(function(){}):null]
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 76px "Gowun Batang"','10월 읽기 나이테 한 달 동안 권 일을 함께 읽었어요'),document.fonts.load('700 30px "Noto Sans KR"','일월화수목금토@naite_library 0123456789')]).catch(function(){}):null]
       .concat(list.map(loadImg))).then(function(res){
       var img={};list.forEach(function(k,i){img[k]=res[i+1];});
       var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#F4F3EC');g.addColorStop(1,'#E8E7DC');c.fillStyle=g;c.fillRect(0,0,W,H);
@@ -757,11 +757,11 @@
       var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';
       [[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
       c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
-      c.fillStyle='#245648';c.font='700 30px '+sans;c.textBaseline='middle';c.fillText('나 이 테',138,my+2);
+      c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';try{c.letterSpacing='-0.34px';}catch(e){}c.fillText('나이테',136,my+2);try{c.letterSpacing='0px';}catch(e){}
       // 제목·요약
       c.textBaseline='alphabetic';c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText(mi.month+'월 읽기 나이테',58,212);
       var parts=[['한 달 동안 ','#545C4B'],[rows.length+'권','#B87343'],[', ','#545C4B'],[cntKeys(days)+'일','#B87343'],['을 함께 읽었어요','#545C4B']],x0=60;
-      c.font='400 42px '+serif;parts.forEach(function(q){c.fillStyle=q[1];c.fillText(q[0],x0,276);x0+=c.measureText(q[0]).width;});
+      c.font='700 42px '+serif;parts.forEach(function(q){c.fillStyle=q[1];c.fillText(q[0],x0,276);x0+=c.measureText(q[0]).width;});
       // 요일
       var GX=59,GW=962,gap=10,cw=(GW-gap*6)/7,top=356,bottom=1228,nr=grid.length,ch=(bottom-top-gap*(nr-1))/nr;
       c.font='700 26px '+sans;c.textAlign='center';
