@@ -939,12 +939,12 @@
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
-        return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
+        return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
           (recent.length>5?'<button type="button" class="rs-more" data-rmore>'+(S.recentOpen?'접기':'더 보기 ('+(recent.length-5)+'개)')+'</button>':'')
         :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
-      '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 앱 설치하기</button>'+
-      '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
+      '<div class="rk-footlinks">'+(isStandalone()?'':'<button type="button" class="rv-leave" data-rinstall="shelf">'+svg(14,'<rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.5 18.5h3"/>',2)+'앱 설치하기</button><span aria-hidden="true">·</span>')+
+        '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div></div>';
   }
   // 통계 탭 공유 카드 썸네일: 기록·사진이 바뀌었을 때만 다시 그림
   function monthThumb(mi){
@@ -993,9 +993,9 @@
     h+='<div class="st-card"><h2>가장 많이 반복한 책</h2>';
     if(!favs.length)h+='<p class="st-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
     else if(favs.length===1){var fav=favs[0];
-      h+='<div class="st-top">'+(fav.cover?'<img class="cv" src="'+esc(fav.cover)+'" alt="">':'<span class="cv nt">'+esc(shortTitle(fav.title))+'</span>')+
+      h+='<div class="st-top"><span class="cv"><span class="fb">'+esc(shortTitle(fav.title))+'</span>'+(fav.cover?'<img src="'+esc(fav.cover)+'" alt="" onerror="this.remove()">':'')+'</span>'+
         '<div class="info"><div class="tt">'+esc(fav.title)+'</div><div class="cnt"><b>'+fmax+'번</b> 읽었어요'+(fav.type?' · '+esc(fav.type):'')+'</div><div class="say">아이가 계속 고르는 책은 표현이 귀에 붙고 있다는 신호예요.</div></div></div>';}
-    else h+='<div class="st-favs">'+favs.map(function(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>';}).join('')+'</div>'+
+    else h+='<div class="st-favs">'+favs.map(function(b){return '<span class="cv"><span class="fb">'+esc(shortTitle(b.title))+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" onerror="this.remove()">':'')+'</span>';}).join('')+'</div>'+
       '<div class="st-say">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
     h+='</div>';
     // 유형별 횟수(최다=클레이, 나머지=세이지). 동점 1위는 모두 강조
