@@ -200,7 +200,7 @@
     if(S.lastTap[key]&&now-S.lastTap[key]<DOUBLE_TAP_MS)return;
     S.lastTap[key]=now;
     var today=logicalToday(),row=addOther(title,S.recDay);
-    save();paint();flush();
+    save();paint();flush();stampOn(document.querySelector('.rs-otile'));
     try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}
     var acts=[];
     if(!title)acts.push(['제목 넣기',function(){askTitle(row);}]);
@@ -410,7 +410,7 @@
     blobP.then(function(blob){
       if(!blob){wrap.innerHTML='<p class="rv-empty">이미지를 만들지 못했어요. 이 화면을 캡처해서 올려 주세요.</p>';return;}
       var url=URL.createObjectURL(blob),file=null;
-      try{file=new File([blob],name,{type:'image/png'});}catch(e){}
+      try{file=new File([blob],name,{type:blob.type||'image/png'});}catch(e){}
       var canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
       wrap.innerHTML='<img class="sc-img" src="'+url+'" alt="'+esc(title)+'">'+
         (canShare?'<button type="button" class="pri" data-scshare>공유하기 (인스타·카카오톡 등)</button>':'')+
@@ -470,20 +470,65 @@
   }
   // 앱 안에서 바로 찍기: 폰 카메라 앱으로 넘어가면 그 사이 안드로이드가 설치 앱을 닫아 사진이 안 들어오는 경우가 있어서
   function canCamera(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.isSecureContext!==false);}
-  function openCamera(){
-    return navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1440}},audio:false}).then(function(stream){
+  // stamp: 찍는 화면에 날짜·시간·스터디 글씨를 띄우고, 찍은 사진에도 그대로 넣음(타임스탬프 앱처럼)
+  function stampLines(){
+    var d=new Date(),h=d.getHours(),mi=monthInfo(),pre=mi?mi.year+'-'+pad(mi.month)+'-':'',days={};
+    S.rows.forEach(function(r){if(r.d.indexOf(pre)===0)days[r.d]=1;});days[logicalToday()]=1;
+    return {a:(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')',b:(h<12?'오전 ':'오후 ')+((h%12)||12)+':'+pad(d.getMinutes()),
+      c:'나이테 한달5권 스터디 · '+(d.getMonth()+1)+'월 '+cntKeys(days)+'일째'};
+  }
+  function drawStamp(c,W,H){
+    var L=stampLines(),x=W*.05,f1=W*.075,f2=W*.034,y=H-W*.05;
+    c.save();c.fillStyle='#fff';c.shadowColor='rgba(0,0,0,.55)';c.shadowBlur=W*.012;c.shadowOffsetY=W*.003;c.textBaseline='alphabetic';
+    c.font='700 '+f2+'px "Noto Sans KR",sans-serif';c.fillText(L.c,x,y);
+    c.font='800 '+f1+'px "Noto Sans KR",sans-serif';c.fillText(L.b,x,y-f2*1.5);c.fillText(L.a,x,y-f2*1.5-f1*1.12);
+    c.restore();
+  }
+  function openCamera(opt){
+    opt=opt||{};var facing='environment';
+    function getStream(){return navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1440}},audio:false});}
+    return getStream().then(function(stream){
       return new Promise(function(res){
         var ov=document.createElement('div');ov.className='rl-cam';
-        ov.innerHTML='<video playsinline autoplay muted></video><div class="rl-cam-bar"><button type="button" data-camx>취소</button><button type="button" class="shot" data-camshot aria-label="사진 찍기"></button><span></span></div>';
+        ov.innerHTML='<div class="rl-cam-stage"><div class="rl-frame"><video playsinline autoplay muted></video>'+(opt.stamp?'<div class="rl-stamp" aria-hidden="true"><b data-s1></b><b data-s2></b><span data-s3></span></div>':'')+'</div></div>'+
+          '<div class="rl-cam-bar"><button type="button" data-camx>취소</button><button type="button" class="shot" data-camshot aria-label="사진 찍기"></button>'+
+          '<button type="button" class="flip" data-camflip aria-label="앞뒤 카메라 바꾸기">🔄</button></div>';
         document.body.appendChild(ov);
-        var v=ov.querySelector('video');v.srcObject=stream;try{v.play();}catch(e){}
-        function end(r){stream.getTracks().forEach(function(t){t.stop();});ov.remove();res(r);}
+        var v=ov.querySelector('video'),frame=ov.querySelector('.rl-frame'),tick=null;
+        function attach(st){stream=st;v.srcObject=st;try{v.play();}catch(e){}v.classList.toggle('mirror',facing==='user');}
+        function fit(){if(!v.videoWidth)return;var ar=v.videoWidth/v.videoHeight;frame.style.aspectRatio=v.videoWidth+' / '+v.videoHeight;frame.style.width='min(100cqw, calc(100cqh * '+ar.toFixed(4)+'))';}
+        v.addEventListener('loadedmetadata',fit);v.addEventListener('resize',fit);
+        function paintStamp(){if(!opt.stamp)return;var L=stampLines();ov.querySelector('[data-s1]').textContent=L.a;ov.querySelector('[data-s2]').textContent=L.b;ov.querySelector('[data-s3]').textContent=L.c;}
+        paintStamp();if(opt.stamp)tick=setInterval(paintStamp,10000);
+        attach(stream);
+        function stop(){stream.getTracks().forEach(function(t){t.stop();});}
+        function end(r){clearInterval(tick);stop();ov.remove();res(r);}
         ov.querySelector('[data-camx]').onclick=function(){end(null);};
+        ov.querySelector('[data-camflip]').onclick=function(){facing=facing==='user'?'environment':'user';stop();getStream().then(attach,function(){toast('카메라를 바꾸지 못했어요.');});};
         ov.querySelector('[data-camshot]').onclick=function(){
           if(!v.videoWidth)return;
-          var c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);end(c);};
+          var c=document.createElement('canvas'),W=c.width=v.videoWidth,H=c.height=v.videoHeight,x=c.getContext('2d');
+          if(facing==='user'){x.save();x.translate(W,0);x.scale(-1,1);x.drawImage(v,0,0);x.restore();}else x.drawImage(v,0,0);
+          if(opt.stamp)drawStamp(x,W,H);
+          end(c);};
       });
     });
+  }
+  // 기록하기 탭 '📷 인증 사진 찍기': 바로 카메라 → 찍은 사진(글씨 포함)이 곧 인증 사진, 달력에도 저장
+  function openStampCamera(){
+    var day=logicalToday();
+    if(!canCamera()){toast('이 폰에서는 앱 안 카메라를 열 수 없어요. 인증 카드에서 🖼 앨범으로 넣어 주세요.');return;}
+    openCamera({stamp:true}).then(function(c){
+      if(!c)return;
+      savePhoto(day,c);
+      var name='naite-'+day+'.jpg',blobP=new Promise(function(r){try{c.toBlob(function(bl){r(bl);},'image/jpeg',.9);}catch(e){r(null);}});
+      var sh=shareSheet('오늘 인증 사진','오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',blobP,name,'stamp_photo',{day:day},
+        '<div class="sc-cal on"><span>✅ 달력에 저장했어요</span><button type="button" id="scGoCal">달력에서 보기 →</button></div>'+
+        '<button type="button" class="sc-again" id="scAgain">📷 다시 찍기</button>');
+      sh.querySelector('#scGoCal').onclick=function(){closeSheet();goCal(day);};
+      sh.querySelector('#scAgain').onclick=function(){closeSheet();openStampCamera();};
+    },function(e){toast('카메라를 열지 못했어요. 카메라 권한을 허용해 주세요.');if(S.onEvent)S.onEvent('camera_fail',{err:(e&&e.name)||'',from:'stamp'});});
+    if(S.onEvent)S.onEvent('stamp_camera_open',{});
   }
   // 사진 고르러 나간 사이 앱이 다시 시작됐는지 알아보기 위한 표시
   function markPick(){try{localStorage.setItem('naite_pick',String(Date.now()));}catch(e){}}
@@ -635,6 +680,13 @@
   function bump(bid,src){
     var el=document.querySelector('[data-rbook="'+bid+'"][data-src="'+src+'"]');if(!el)return;
     el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
+    if(src==='shelf')stampOn(el);
+  }
+  // 누른 표지에 '오늘' 도장이 쾅
+  function stampOn(el){
+    var cv=el&&el.querySelector('.cv');if(!cv)return;
+    var st=document.createElement('span');st.className='stampmark';st.setAttribute('aria-hidden','true');st.textContent=S.recDay===logicalToday()?'오늘':'어제';
+    cv.appendChild(st);setTimeout(function(){if(st.parentNode)st.remove();},1300);
   }
   function paintCards(){
     var mi=monthInfo();
@@ -696,15 +748,15 @@
       var lt=S.loaded[key]||{};
       body=lt.failed?'<p class="rv-empty">책을 불러오지 못했어요. 잠시 뒤 다시 눌러 주세요.</p>':'<p class="rv-empty">책장을 불러오는 중…</p>';
     }else{
-      var odc=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.d===S.recDay)odc++;});
+      var odc=0,firstHint=!S.rows.length;S.rows.forEach(function(r){if(r.k==='_other'&&r.d===S.recDay)odc++;});
       var items=books.concat([{other:1}]),planks=[];for(var i=0;i<items.length;i+=3)planks.push(items.slice(i,i+3));
       body='<div class="rs-shelf">'+planks.map(function(p){return '<div class="rs-plank">'+p.map(function(b){
         if(b.other)return '<button type="button" class="rs-book rs-otile" data-rother="" aria-label="스터디 책이 아닌 다른 책 '+dn+' 읽음 기록, '+dn+' '+odc+'번">'+
-          '<span class="cv"><span class="ob"><i>📚</i><b>+1</b></span>'+(odc?'<span class="td">'+dn+' '+odc+'</span>':'')+'</span><span class="lb">다른 책</span></button>';
+          '<span class="cv"><span class="ob"><i>📚</i></span><span class="go" aria-hidden="true">+1</span>'+(odc?'<span class="td">'+dn+' '+odc+'</span>':'')+'</span><span class="lb">다른 책</span></button>';
         var n=count(b.id),dc=count(b.id,S.recDay);
         return '<button type="button" class="rs-book'+(n?'':' unread')+'" data-rbook="'+b.id+'" data-src="shelf" aria-label="'+esc(b.title)+' '+dn+' 읽음 기록, '+dn+' '+dc+'번">'+
           '<span class="cv">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="" style="'+stack(n)+'">':'<span class="nt">'+esc(shortTitle(b.title))+'</span>')+
-          (n?'':'<span class="pl" aria-hidden="true">+</span>')+(n?'<span class="x">×'+n+'</span>':'')+(dc?'<span class="td">'+dn+' '+dc+'</span>':'')+'</span>'+
+          '<span class="go" aria-hidden="true">+1</span>'+(firstHint&&b===books[0]?'<span class="hand" aria-hidden="true">👆</span>':'')+(n?'<span class="x">×'+n+'</span>':'')+(dc?'<span class="td">'+dn+' '+dc+'</span>':'')+'</span>'+
           '<span class="lb">'+(n?'마지막 '+dayLabel(lastDay(b.id),true):'아직이에요')+'</span></button>';}).join('')+'</div>';}).join('')+'</div>'+
         (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책"><span>📚 다른 책 또 읽었으면</span>'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
           return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+
@@ -715,8 +767,9 @@
       '<div class="rs-rec"><span class="big">'+dn+' <b>'+sum+'번</b> 읽었어요</span>'+
         '<span class="rs-chip" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></span></div>'+
       '<p class="rs-hint">표지를 누를 때마다 '+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음으로 기록돼요</p>'+
-      '<button type="button" class="rs-share" data-rshare="'+S.recDay+'">📸 '+dn+' 인증 카드 만들기</button>'+
-      '<p class="rs-calhint">📅 카드에 넣은 사진은 <b>읽기 통계 달력</b>에 날짜별로 모여요</p>'+body+
+      '<div class="rs-certs">'+(isT?'<button type="button" class="rs-share" data-rstamp>📷 인증 사진 찍기</button>':'')+
+        '<button type="button" class="rs-share'+(isT?' sec':'')+'" data-rshare="'+S.recDay+'">🖼 '+dn+' 인증 카드</button></div>'+
+      '<p class="rs-calhint">📅 인증 사진은 <b>읽기 통계 달력</b>에 날짜별로 모여요</p>'+body+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
@@ -818,6 +871,7 @@
       if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
+      if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
