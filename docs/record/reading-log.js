@@ -29,6 +29,9 @@
   function addDays(s,n){var p=s.split('-');return ymd(new Date(+p[0],+p[1]-1,+p[2]+n));}
   function md(s){var p=s.split('-');return (+p[1])+'/'+(+p[2]);}
   function dayLabel(s,short){var t=logicalToday();if(s===t)return '오늘';if(s===addDays(t,-1))return '어제';var p=s.split('-');return short?md(s):(+p[1])+'월 '+(+p[2])+'일';}
+  function dateOf(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+  function dayFull(s){var d=dateOf(s);return (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')';}
+  function dayWord(s){var t=logicalToday();return s===t?'오늘':s===addDays(t,-1)?'어제':dayFull(s);}
   function shortTitle(t){t=String(t||'');return t.length>22?t.slice(0,20)+'…':t;}
 
   /* ── 회원 비밀번호(이 기기) ── */
@@ -445,15 +448,15 @@
     pdb().then(function(db){return new Promise(function(res){var o={},tx=db.transaction('p','readonly');
       tx.objectStore('p').openCursor().onsuccess=function(e){var c=e.target.result;if(c){o[c.key]=c.value;c.continue();}};
       tx.oncomplete=function(){res(o);};tx.onerror=function(){res(o);};});})
-    .then(function(o){if(!S)return;Object.keys(o).forEach(function(d){setPhotoUrl(d,o[d]);});paintStats();},function(){});
+    .then(function(o){if(!S)return;Object.keys(o).forEach(function(d){setPhotoUrl(d,o[d]);});paint();},function(){});
   }
   // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB)
   function savePhoto(day,im){
     var r=Math.min(1,1080/Math.max(im.width,im.height)),cv=document.createElement('canvas');
     cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
-    cv.toBlob(function(bl){if(!bl||!S)return;setPhotoUrl(day,bl);paintStats();ptx('readwrite',function(st){st.put(bl,day);}).catch(function(){});},'image/jpeg',.82);
+    cv.toBlob(function(bl){if(!bl||!S)return;setPhotoUrl(day,bl);paint();ptx('readwrite',function(st){st.put(bl,day);}).catch(function(){});},'image/jpeg',.82);
   }
-  function delPhoto(day){if(!S)return;setPhotoUrl(day,null);paintStats();ptx('readwrite',function(st){st.delete(day);}).catch(function(){});}
+  function delPhoto(day){if(!S)return;setPhotoUrl(day,null);paint();ptx('readwrite',function(st){st.delete(day);}).catch(function(){});}
 
   // 사진 파일 → 그릴 수 있는 이미지(사진 방향 정보 반영)
   function loadPhoto(f){
@@ -474,19 +477,20 @@
   var TPLS=[['ribbon','리본'],['frame','프레임'],['film','필름']];
   function getTpl(){try{var t=localStorage.getItem('naite_stamp_tpl');return /^(ribbon|frame|film)$/.test(t)?t:'ribbon';}catch(e){return 'ribbon';}}
   function setTpl(t){try{localStorage.setItem('naite_stamp_tpl',t);}catch(e){}}
-  function stampLines(){
-    var d=new Date(),h=d.getHours(),mi=monthInfo(),pre=mi?mi.year+'-'+pad(mi.month)+'-':'',days={};
-    S.rows.forEach(function(r){if(r.d.indexOf(pre)===0)days[r.d]=1;});days[logicalToday()]=1;
-    return {a:(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+WD[d.getDay()]+')',b:(h<12?'오전 ':'오후 ')+((h%12)||12)+':'+pad(d.getMinutes()),
-      c:'나이테 한달5권 스터디 · '+(d.getMonth()+1)+'월 '+cntKeys(days)+'일째',ig:'@naite_library'};
+  function stampLines(day){
+    var t=logicalToday(),isT=!day||day===t;day=day||t;
+    var d=new Date(),dd=dateOf(day),h=d.getHours(),pre=day.slice(0,8),days={};
+    S.rows.forEach(function(r){if(r.d.indexOf(pre)===0&&r.d<=day)days[r.d]=1;});days[day]=1;
+    return {a:(dd.getMonth()+1)+'월 '+dd.getDate()+'일 ('+WD[dd.getDay()]+')',b:isT?(h<12?'오전 ':'오후 ')+((h%12)||12)+':'+pad(d.getMinutes()):'',
+      c:'나이테 한달5권 스터디 · '+(dd.getMonth()+1)+'월 '+cntKeys(days)+'일째',ig:'@naite_library'};
   }
   var OVL_RING='<svg class="ovl-ring" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="17" stroke="#fff" stroke-width="2"/><circle cx="20" cy="20" r="11" stroke="#fff" stroke-width="2" opacity=".72"/><circle cx="20" cy="20" r="5.5" stroke="#fff" stroke-width="2" opacity=".5"/><circle cx="20" cy="4.5" r="2.4" fill="#E3A869"/></svg>';
   var OVL_IG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
   function ovlHtml(tpl){return '<div class="ovl t-'+tpl+'" aria-hidden="true"><div class="ovl-scrim"></div><div class="ovl-frame"></div><div class="ovl-body">'+OVL_RING+
     '<div class="ovl-date" data-s1></div><div class="ovl-time" data-s2></div><div class="ovl-sub"><span class="sep"></span><span data-s3></span></div><div class="ovl-ig">'+OVL_IG+'<span>@naite_library</span></div></div></div>';}
   // 캔버스에 같은 오버레이 그리기(디자인 기준 폭 352px → u 배율)
-  function drawOvl(c,W,H,tpl){
-    var L=stampLines(),u=W/352,film=tpl==='film',mono='ui-monospace,"Roboto Mono",monospace',serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
+  function drawOvl(c,W,H,tpl,day){
+    var L=stampLines(day),u=W/352,film=tpl==='film',mono='ui-monospace,"Roboto Mono",monospace',serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
     c.save();
     var g;
     if(tpl==='ribbon'){g=c.createLinearGradient(0,H,0,0);g.addColorStop(.02,'rgba(14,20,11,.78)');g.addColorStop(.30,'rgba(14,20,11,.28)');g.addColorStop(.56,'rgba(14,20,11,0)');c.fillStyle=g;c.fillRect(0,0,W,H);}
@@ -513,7 +517,7 @@
     // 시간, 날짜
     var bf=film?'700 '+big+'px '+mono:'700 '+big+'px '+serif,bc=film?'#FFBE7A':'#fff';
     shadow(film?'rgba(255,150,60,.5)':'rgba(0,0,0,.5)',film?12:14);
-    text(L.b,bf,bc,y-lh/2);y-=lh;text(L.a,bf,bc,y-lh/2);y-=lh;
+    if(L.b){text(L.b,bf,bc,y-lh/2);y-=lh;}text(L.a,bf,bc,y-lh/2);y-=lh;
     // 링 마크(리본·프레임)
     if(!film){c.shadowBlur=0;var rr=ring/2,rx=cx,ry=y-(tpl==='frame'?7:9)*u-rr;c.strokeStyle='#fff';c.lineWidth=2*u*26/40;
       [[17,1],[11,.72],[5.5,.5]].forEach(function(k){c.globalAlpha=k[1];c.beginPath();c.arc(rx,ry,rr*k[0]/20,0,Math.PI*2);c.stroke();});
@@ -536,7 +540,7 @@
         function attach(st){stream=st;v.srcObject=st;try{v.play();}catch(e){}v.classList.toggle('mirror',facing==='user');}
         function fit(){if(!v.videoWidth)return;var ar=v.videoWidth/v.videoHeight;frame.style.aspectRatio=v.videoWidth+' / '+v.videoHeight;frame.style.width='min(100cqw, calc(100cqh * '+ar.toFixed(4)+'))';}
         v.addEventListener('loadedmetadata',fit);v.addEventListener('resize',fit);
-        function paintStamp(){if(!opt.stamp)return;var L=stampLines();ov.querySelector('[data-s1]').textContent=L.a;ov.querySelector('[data-s2]').textContent=L.b;ov.querySelector('[data-s3]').textContent=L.c;}
+        function paintStamp(){if(!opt.stamp)return;var L=stampLines(opt.day);ov.querySelector('[data-s1]').textContent=L.a;ov.querySelector('[data-s2]').textContent=L.b;ov.querySelector('[data-s3]').textContent=L.c;}
         paintStamp();if(opt.stamp)tick=setInterval(paintStamp,10000);
         ov.querySelectorAll('[data-tpl]').forEach(function(b){b.onclick=function(){tpl=b.getAttribute('data-tpl');setTpl(tpl);
           ov.querySelectorAll('[data-tpl]').forEach(function(x){x.setAttribute('aria-pressed',x===b);});
@@ -550,78 +554,64 @@
           if(!v.videoWidth)return;
           var c=document.createElement('canvas'),W=c.width=v.videoWidth,H=c.height=v.videoHeight,x=c.getContext('2d');
           if(facing==='user'){x.save();x.translate(W,0);x.scale(-1,1);x.drawImage(v,0,0);x.restore();}else x.drawImage(v,0,0);
-          if(opt.stamp){drawOvl(x,W,H,tpl);c.tpl=tpl;}
+          if(opt.stamp){drawOvl(x,W,H,tpl,opt.day);c.tpl=tpl;}
           end(c);};
       });
     });
   }
   // 기록하기 탭 '인증 사진 찍기': 바로 카메라 → 찍은 사진(오버레이 포함)이 곧 인증 사진, 달력에도 저장
-  function openStampCamera(){
-    var day=logicalToday();
-    if(!canCamera()){toast('이 폰에서는 앱 안 카메라를 열 수 없어요. 인증 카드에서 앨범으로 넣어 주세요.');return;}
-    if(S.onEvent)S.onEvent('stamp_camera_open',{});
-    openCamera({stamp:true}).then(function(c){if(c)showStampResult(day,c);},
+  function openStampCamera(day){
+    day=day||logicalToday();
+    if(!canCamera()){toast('이 폰에서는 앱 안 카메라를 열 수 없어요. 앨범 사진으로 넣어 주세요.');openStampAlbum(day);return;}
+    if(S.onEvent)S.onEvent('stamp_camera_open',{day:day});
+    openCamera({stamp:true,day:day}).then(function(c){if(c)showStampResult(day,c);},
       function(e){toast('카메라를 열지 못했어요. 카메라 권한을 허용해 주세요.');if(S.onEvent)S.onEvent('camera_fail',{err:(e&&e.name)||'',from:'stamp'});});
+  }
+  // 앨범 사진에 그날 날짜 스탬프를 넣기(지난 날 기록용)
+  function openStampAlbum(day){
+    var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+    inp.onchange=function(){clearPick();var f=inp.files&&inp.files[0];if(!f)return;
+      loadPhoto(f).then(function(im){
+        var c=document.createElement('canvas'),W=c.width=im.width||im.naturalWidth,H=c.height=im.height||im.naturalHeight,x=c.getContext('2d'),tpl=getTpl();
+        x.drawImage(im,0,0,W,H);drawOvl(x,W,H,tpl,day);c.tpl=tpl;showStampResult(day,c);if(S.onEvent)S.onEvent('stamp_album',{day:day});
+      },function(){toast('사진을 열지 못했어요. 다른 사진으로 해 주세요.');});};
+    markPick();inp.click();
   }
   function showStampResult(day,c){
     savePhoto(day,c);
-    var meta={day:day,tpl:c.tpl||''},ov=document.createElement('div');ov.className='rl-cam rl-after';
-    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">오늘의 인증 사진</span><span style="width:34px"></span></div>'+
+    var meta={day:day,tpl:c.tpl||''},ov=document.createElement('div'),noRec=!S.rows.some(function(r){return r.d===day;});ov.className='rl-cam rl-after';
+    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 인증 사진</span><span style="width:34px"></span></div>'+
       '<div class="rl-photo"><p class="rv-empty">이미지를 만드는 중…</p></div>'+
       '<div class="rl-saved">'+svg(17,IC.check,2.6)+'달력에 저장했어요<button type="button" data-agocal>달력에서 보기</button></div>'+
-      '<div class="rl-after-actions"><div class="row"></div><button type="button" class="retake" data-aretake>다시 찍기</button></div>';
+      (noRec?'<div class="rl-ask"><span>이날 읽은 책도 기록할까요?</span><button type="button" data-arec>책 기록하기</button></div>':'')+
+      '<div class="rl-after-actions"><div class="row"></div><p class="rl-note" hidden></p><button type="button" class="retake" data-aretake>다시 찍기</button></div>';
     document.body.appendChild(ov);document.documentElement.classList.add('rl-lock');
     function close(){ov.remove();document.documentElement.classList.remove('rl-lock');}
     ov.querySelector('[data-ax]').onclick=close;
     ov.querySelector('[data-agocal]').onclick=function(){close();goCal(day);};
-    ov.querySelector('[data-aretake]').onclick=function(){close();openStampCamera();};
+    var ar=ov.querySelector('[data-arec]');if(ar)ar.onclick=function(){close();openRecordSheet(day);};
+    ov.querySelector('[data-aretake]').onclick=function(){close();openStampCamera(day);};
     if(S.onEvent)S.onEvent('stamp_photo_open',meta);
     c.toBlob(function(blob){
       if(!blob){ov.querySelector('.rl-photo').innerHTML='<p class="rv-empty">이미지를 만들지 못했어요.</p>';return;}
       var url=URL.createObjectURL(blob),name='naite-'+day+'.jpg',file=null;
       try{file=new File([blob],name,{type:'image/jpeg'});}catch(e){}
       var canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
-      ov.querySelector('.rl-photo').innerHTML='<img src="'+url+'" alt="오늘의 인증 사진">';
-      var row=ov.querySelector('.rl-after-actions .row');
-      row.innerHTML=(canShare?'<button type="button" class="rk-btn fill" data-ashare>'+svg(17,IC.share)+'공유하기</button>':'')+
-        '<a class="rk-btn '+(canShare?'out':'fill')+'" href="'+url+'" download="'+name+'" data-asave>'+svg(17,IC.save)+'이미지 저장</a>';
+      ov.querySelector('.rl-photo').innerHTML='<img src="'+url+'" alt="'+esc(dayWord(day))+' 인증 사진">';
+      var row=ov.querySelector('.rl-after-actions .row'),note=ov.querySelector('.rl-note');
+      row.innerHTML='<button type="button" class="rk-btn fill" data-ashare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
+        '<a class="rk-btn out" href="'+url+'" download="'+name+'" data-asave>'+svg(17,IC.save)+'이미지 저장</a>';
       row.querySelector('[data-asave]').addEventListener('click',function(){if(S.onEvent)S.onEvent('stamp_photo_save',meta);});
-      var sb=row.querySelector('[data-ashare]');
-      if(sb)sb.onclick=function(){navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('stamp_photo_share',meta);},function(){});};
+      row.querySelector('[data-ashare]').onclick=function(){
+        if(!canShare){note.hidden=false;note.textContent='이 브라우저에서는 바로 공유가 안 돼요. 이미지 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
+        navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('stamp_photo_share',meta);},function(){});};
     },'image/jpeg',.9);
   }
   // 사진 고르러 나간 사이 앱이 다시 시작됐는지 알아보기 위한 표시
   function markPick(){try{localStorage.setItem('naite_pick',String(Date.now()));}catch(e){}}
   function clearPick(){try{localStorage.removeItem('naite_pick');}catch(e){}}
   function openShareCard(day){
-    var title=(day===logicalToday()?'오늘':'어제')+'의 인증 카드',name='naite-'+day+'.png',photo=null;
-    var empty=!S.rows.some(function(r){return r.d===day;});
-    var sh=shareSheet(title,'오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day,null),name,'share_card',{day:day,empty:empty},
-      (empty?'<div class="sc-nudge" id="scNudge"><p>📝 아직 '+(day===logicalToday()?'오늘':'어제')+' 기록이 없어요. 기록하기 탭에서 읽은 책을 눌러 두면 달력·통계에도 남아요.</p></div>':'')+
-      '<p class="sc-plabel" id="scPlabel">📷 읽은 책 사진 넣기</p>'+
-      '<div class="sc-photo"><button type="button" class="sc-pbtn" id="scCam">📷 <span>바로 찍기</span></button>'+
-      '<label class="sc-pbtn">🖼 <span>앨범에서</span><input type="file" accept="image/*" id="scPhoto"></label>'+
-      '<button type="button" class="sc-pdel" id="scPdel" hidden>사진 빼기</button></div>'+
-      '<div class="sc-cal" id="scCal"><span>📅 넣은 사진은 읽기 통계 달력에도 남아요</span></div>');
-    var inp=sh.querySelector('#scPhoto'),del=sh.querySelector('#scPdel'),plab=sh.querySelector('#scPlabel'),wrap=sh.querySelector('.sc-wrap');
-    function redraw(){var em=!S.rows.some(function(r){return r.d===day;});fillShare(wrap,drawCard(day,photo),name,'share_card',{day:day,photo:!!photo,empty:em},title);del.hidden=!photo;plab.textContent=photo?'📷 다른 사진으로 바꾸기':'📷 읽은 책 사진 넣기';}
-    var calBox=sh.querySelector('#scCal');
-    function calDone(){calBox.classList.add('on');calBox.innerHTML='<span>✅ 달력에 저장했어요</span><button type="button" id="scGoCal">달력에서 보기 →</button>';
-      calBox.querySelector('#scGoCal').onclick=function(){closeSheet();goCal(day);};}
-    function use(im,from){photo=im;redraw();savePhoto(day,im);calDone();if(S.onEvent)S.onEvent('share_card_photo',{day:day,from:from});}
-    inp.parentNode.addEventListener('click',markPick);
-    inp.onchange=function(){
-      clearPick();
-      var f=inp.files&&inp.files[0];if(!f)return;inp.value='';
-      loadPhoto(f).then(function(im){use(im,'album');},function(){toast('사진을 열지 못했어요. 다른 사진으로 해 주세요.');if(S.onEvent)S.onEvent('photo_fail',{type:f.type||'',kb:Math.round(f.size/1024)});});
-    };
-    sh.querySelector('#scCam').onclick=function(){
-      if(!canCamera()){markPick();inp.setAttribute('capture','environment');inp.click();inp.removeAttribute('capture');return;}
-      openCamera().then(function(c){if(c)use(c,'camera');},function(e){
-        toast('카메라를 열지 못했어요. 카메라 권한을 허용하거나 🖼 앨범에서 골라 주세요.');if(S.onEvent)S.onEvent('camera_fail',{err:(e&&e.name)||''});});
-    };
-    del.onclick=function(){photo=null;redraw();delPhoto(day);calBox.classList.remove('on');calBox.innerHTML='<span>📅 넣은 사진은 읽기 통계 달력에도 남아요</span>';};
-    if(S.photoBlobs[day]){calDone();loadPhoto(S.photoBlobs[day]).then(function(im){if(!photo){photo=im;redraw();}},function(){});}
+    shareSheet(dayWord(day)+' 읽은 책 카드','오픈채팅에 올리면 미션 \'매일 읽어주고 인증하기\' 완료!',drawCard(day,null),'naite-'+day+'.png','share_card',{day:day});
   }
 
   /* ── 이번 달 읽기 달력: 날짜 칸마다 그날 읽은 표지(같은 책은 한 번, ×횟수) ── */
@@ -642,7 +632,7 @@
     if(w.length){while(w.length<7)w.push(null);cells.push(w);}
     return cells;
   }
-  function calendarHtml(mi){
+  function calendarHtml(mi,hint){
     var today=logicalToday();
     return '<div class="cal"><div class="cal-wd">'+['일','월','화','수','목','금','토'].map(function(x,i){return '<span'+(i===0?' class="sun"':'')+'>'+x+'</span>';}).join('')+'</div>'+
       monthGrid(mi).map(function(w){return '<div class="cal-row">'+w.map(function(ds,i){
@@ -650,33 +640,99 @@
         var it=dayItems(ds),show=it.length>4?it.slice(0,3):it,more=it.length-show.length,ph=S.photoUrls[ds];
         var sum=it.reduce(function(a,x){return a+x.n;},0);
         var cls='cal-d'+(ds===today?' today':'')+(ds>today?' future':'')+(ph?' has-p':'');
-        var head='<div class="'+cls+'"'+(it.length||ph?' data-rcal="'+ds+'" role="button" tabindex="0" aria-label="'+(+ds.slice(5,7))+'월 '+(+ds.slice(8))+'일 기록 보기"':'')+'><span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>';
+        var head='<div class="'+cls+'"'+(ds<=today?' data-rcal="'+ds+'" role="button" tabindex="0" aria-label="'+(+ds.slice(5,7))+'월 '+(+ds.slice(8))+'일 '+(it.length||ph?'기록 보기':'기록하기')+'"':'')+'><span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>'+(hint&&ds===today?'<span class="cal-finger" aria-hidden="true">👆</span>':'');
         if(ph)return head+'<span class="ph"><img src="'+ph+'" alt="">'+(sum?'<b>'+sum+'</b>':'')+'</span></div>';
         return head+
           (it.length?'<div class="cv n'+Math.min(it.length,4)+'">'+show.map(function(x){return '<span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+(x.n>1?'<b>'+x.n+'</b>':'')+'</span>';}).join('')+(more?'<span class="c m">+'+more+'</span>':'')+'</div>':'')+'</div>';
       }).join('')+'</div>';}).join('')+'</div>';
   }
   function goCal(day){
-    showTab('stats');
+    showTab('shelf');
     setTimeout(function(){var c=document.querySelector('[data-rcal="'+day+'"]');if(!c)return;
       try{c.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){c.scrollIntoView();}
       c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');},80);
     if(S.onEvent)S.onEvent('cal_from_card',{day:day});
   }
+  // 기록된 날짜: 그날 읽은 책·사진 보기. 기록도 사진도 없으면 바로 기록창
   function openDay(day){
-    var it=dayItems(day),ph=S.photoUrls[day],p=day.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]);
-    var sum=it.reduce(function(a,x){return a+x.n;},0),recent=day===logicalToday()||day===addDays(logicalToday(),-1);
-    var sh=openSheet('<h3>'+(+p[1])+'월 '+(+p[2])+'일 ('+WD[dt.getDay()]+')</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'기록은 없고 사진만 있어요')+'</p>'+
+    var it=dayItems(day),ph=S.photoUrls[day];
+    if(!it.length&&!ph){openRecordSheet(day);return;}
+    var sum=it.reduce(function(a,x){return a+x.n;},0);
+    var sh=openSheet('<h3>'+esc(dayFull(day))+'</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'사진만 있고 읽은 책 기록은 없어요')+'</p>'+
       (ph?'<img class="cd-photo" src="'+ph+'" alt="이날 읽은 책 사진">':'')+
       (it.length?'<ul class="cd-list">'+it.map(function(x){return '<li><span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><span class="t">'+esc(x.title)+'</span>'+(x.n>1?'<b>×'+x.n+'</b>':'')+'</li>';}).join('')+'</ul>':'')+
-      (recent?'<button type="button" class="pri" data-cdcard>📸 '+(day===logicalToday()?'오늘':'어제')+' 인증 카드 '+(ph?'다시 ':'')+'만들기</button>':'')+
+      '<div class="rk-dayacts">'+
+        '<button type="button" class="rk-btn '+(ph||!it.length?'fill':'out')+'" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
+        (ph?'':'<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>')+
+      '</div>'+
+      (!ph&&it.length?'<button type="button" class="rk-btn out wide" data-dcard>'+svg(17,IC.card)+'읽은 책 카드 만들기</button>':'')+
       (ph?'<button type="button" class="subtle" data-cddel>사진 지우기</button>':'')+
       '<button type="button" class="subtle" data-sclose>닫기</button>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
-    var cb=sh.querySelector('[data-cdcard]');if(cb)cb.onclick=function(){openShareCard(day);};
+    sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
+    var a=sh.querySelector('[data-dstamp]');if(a)a.onclick=function(){closeSheet();openStampCamera(day);};
+    var cb=sh.querySelector('[data-dcard]');if(cb)cb.onclick=function(){openShareCard(day);};
     var db=sh.querySelector('[data-cddel]');
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}delPhoto(day);closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');};
     if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph});
+  }
+  // 날짜 기록창: 그 날짜를 고른 뒤 읽은 책을 표지로 누르기 + 다른 책 + 날짜 스탬프 사진
+  function openRecordSheet(day){
+    var key=S.home.key,last=null,showOther=false;
+    var sh=openSheet('<div class="rk-rs"><h3>'+esc(dayWord(day))+(dayWord(day)===dayFull(day)?'':' <small>'+esc(dayFull(day))+'</small>')+' 기록</h3>'+
+      '<p class="sub">읽은 책 표지를 누르면 기록돼요. 여러 번 읽었으면 여러 번 눌러요.</p><div data-rsbody></div></div>');
+    var box=sh.querySelector('[data-rsbody]');
+    S.recSheet={day:day,render:render};
+    function n(bid){var k=0;S.rows.forEach(function(r){if(r.b===bid&&r.d===day&&r.k!=='_other')k++;});return k;}
+    function render(stampBid){
+      if(!document.body.contains(box)){S.recSheet=null;return;}
+      var themes=shelfThemes(),books=shelfBooks(key),od=0,sum=0;
+      S.rows.forEach(function(r){if(r.d===day){sum++;if(r.k==='_other')od++;}});
+      var keepTitle=(box.querySelector('#rsTitle')||{}).value||'';
+      box.innerHTML=(themes.length>1?'<div class="rs-months rk-months" role="group" aria-label="어느 달 책">'+themes.map(function(t){
+          return '<button type="button" class="rk-mpill" data-rsk="'+esc(t.key)+'" aria-pressed="'+(t.key===key)+'"><span class="mi"></span>'+esc(themeName(t).replace(' ',' · '))+'</button>';}).join('')+'</div>':'')+
+        (books?'<div class="rk-grid3">'+books.map(function(b){var k=n(b.id);
+          return '<button type="button" class="rk-book'+(k?' read':' unread')+'" data-sb="'+b.id+'" aria-label="'+esc(b.title)+' 읽음 기록, 이날 '+k+'번">'+
+            '<span class="rk-cover">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="ttl">'+esc(shortTitle(b.title))+'</span>')+(k?'<span class="rk-chip">'+k+'번</span>':'')+'<span class="rk-tap">+1</span></span>'+
+            '<span class="rk-meta"><span class="bt">'+esc(shortTitle(b.title.split(',')[0]))+'</span></span></button>';}).join('')+
+          '<button type="button" class="rk-book rk-other'+(od?' read':'')+'" data-so aria-label="다른 책 읽음 기록, 이날 '+od+'번">'+
+            '<span class="rk-cover">'+svg(26,IC.map,1.9)+'<span class="ot">다른 책</span>'+(od?'<span class="rk-chip">'+od+'번</span>':'')+'</span>'+
+            '<span class="rk-meta"><span class="bt">스터디 외 책</span></span></button></div>'
+          :'<p class="rv-empty">책을 불러오는 중…</p>')+
+        '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
+          (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
+        '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
+        '<div class="rk-dayacts">'+(S.photoUrls[day]?'':'<button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>')+
+          '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
+        (S.photoUrls[day]||day===logicalToday()?'':'<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>');
+      if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
+    }
+    function added(row,label,id){if(!row)return;last={c:row.c,t:label};render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
+    box.onclick=function(e){
+      var t;
+      if((t=e.target.closest('[data-sb]'))){var bid=+t.getAttribute('data-sb');added(addRead(bid,day),shortTitle((S.byId[bid]||{}).title||''),bid);return;}
+      if((t=e.target.closest('[data-so]'))){showOther=true;render();var ip=box.querySelector('#rsTitle');try{ip.focus();}catch(x){}return;}
+      if((t=e.target.closest('[data-sotitle]'))){var v=String(box.querySelector('#rsTitle').value||'').trim().slice(0,80);box.querySelector('#rsTitle').value='';added(addOtherRead(v,day),'📚 '+(v?shortTitle(v):'다른 책'),'o');return;}
+      if((t=e.target.closest('[data-sot]'))){var o=t.getAttribute('data-sot');added(addOtherRead(o,day),'📚 '+shortTitle(o),'o');return;}
+      if((t=e.target.closest('[data-rsk]'))){key=t.getAttribute('data-rsk');render();return;}
+      if((t=e.target.closest('[data-sundo]'))){if(last){dropRow(last.c);save();paint();flush();last=null;render();}return;}
+      if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
+      if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
+      if((t=e.target.closest('[data-sdone]'))){closeSheet();return;}
+    };
+    render();
+    if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
+  }
+  // 기록창에서 쓰는 조용한 기록(토스트 없이). 같은 책 1.5초 안 연타는 1회
+  function addRead(bid,day){
+    if(!S.member)return null;
+    var now=Date.now(),k='s'+bid+day;if(S.lastTap[k]&&now-S.lastTap[k]<DOUBLE_TAP_MS)return null;S.lastTap[k]=now;
+    var row=addRow(bid,day);save();paint();flush();return row;
+  }
+  function addOtherRead(title,day){
+    if(!S.member)return null;
+    var now=Date.now(),k='so'+title+day;if(S.lastTap[k]&&now-S.lastTap[k]<DOUBLE_TAP_MS)return null;S.lastTap[k]=now;
+    var row=addOther(title,day);save();paint();flush();if(S.onEvent)S.onEvent('other_read',{titled:!!title});return row;
   }
   function drawMonthCard(mi){
     var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
@@ -743,9 +799,9 @@
     if(src==='shelf')stampOn(el);
   }
   // 누른 표지에 '오늘' 도장이 쾅
-  function stampOn(el){
+  function stampOn(el,day){
     var cv=el&&el.querySelector('.rk-cover');if(!cv)return;
-    var w=S.recDay===logicalToday()?'오늘':'어제',st=document.createElement('span');st.className='rk-stamp';st.setAttribute('aria-hidden','true');
+    var d=day||S.recDay,w=d===logicalToday()?'오늘':d===addDays(logicalToday(),-1)?'어제':(+d.slice(8))+'일',st=document.createElement('span');st.className='rk-stamp';st.setAttribute('aria-hidden','true');
     st.innerHTML='<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="35" fill="rgba(255,255,255,.82)" stroke="#B87343" stroke-width="3"/><circle cx="40" cy="40" r="27" stroke="#B87343" stroke-width="2" opacity=".6"/><text x="40" y="48" text-anchor="middle" font-family="Gowun Batang,serif" font-weight="700" font-size="22" fill="#B87343">'+w+'</text></svg>';
     cv.appendChild(st);setTimeout(function(){if(st.parentNode)st.remove();},1500);
   }
@@ -770,6 +826,7 @@
     x:'<path d="M6 6l12 12M18 6L6 18"/>',
     flip:'<path d="M3 7h3l1.5-2h9L18 7h3v12H3z"/><path d="M9 13a3 3 0 0 0 5 2M15 11a3 3 0 0 0-5-2"/><path d="M8.5 15.5L9 13l2.5.5M15.5 10.5L15 13l-2.5-.5"/>',
     check:'<path d="M5 12l5 5L20 6"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
     share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 15V3M8 7l4-4 4 4"/>',
     save:'<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/><path d="M12 3v12M8 11l4 4 4-4"/>',
     study:'<path d="M4 5.5A2 2 0 0 1 6 4h5v16H6a2 2 0 0 1-2-2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-5v16h5a2 2 0 0 0 2-2z"/>',
@@ -816,43 +873,13 @@
   }
   function paintShelf(){
     var el=$('v-shelf');if(!el||!S.member||S.tab!=='shelf')return;
-    var themes=shelfThemes(),key=S.shelfKey||S.home.key,th=themes.filter(function(t){return t.key===key;})[0]||themes[0];
-    key=th.key;S.shelfKey=key;
-    var books=shelfBooks(key),isHome=key===S.home.key;
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
-    var today=logicalToday(),yest=addDays(today,-1),isT=S.recDay===today,dn=isT?'오늘':'어제',sum=0;
-    S.rows.forEach(function(r){if(r.d===S.recDay)sum++;});
-    var chips=themes.length>1?'<div class="rs-months rk-months" role="group" aria-label="책장 달 고르기">'+themes.map(function(t){
-      return '<button type="button" class="rk-mpill" data-rshelf="'+esc(t.key)+'" aria-pressed="'+(t.key===key)+'"><span class="mi"></span>'+esc(themeName(t).replace(' ',' · '))+'</button>';}).join('')+'</div>':'';
-    var body;
-    if(!books){
-      var lt=S.loaded[key]||{};
-      body=lt.failed?'<p class="rv-empty">책을 불러오지 못했어요. 잠시 뒤 다시 눌러 주세요.</p>':'<p class="rv-empty">책장을 불러오는 중…</p>';
-    }else{
-      var odc=0,firstHint=!S.rows.length;S.rows.forEach(function(r){if(r.k==='_other'&&r.d===S.recDay)odc++;});
-      body='<div class="rk-gridlabel">'+(isHome?'이번 달 그림책 '+books.length+'권':esc(themeName(th))+' 그림책 '+books.length+'권')+'</div><div class="rk-grid">'+books.map(function(b,i){
-        var n=count(b.id),dc=count(b.id,S.recDay);
-        return '<button type="button" class="rk-book'+(n?' read':' unread')+'" data-rbook="'+b.id+'" data-src="shelf" aria-label="'+esc(b.title)+' '+dn+' 읽음 기록, '+dn+' '+dc+'번">'+
-          '<span class="rk-cover">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="ttl">'+esc(shortTitle(b.title))+'</span>')+
-            (dc?'<span class="rk-chip">'+dn+' '+dc+'</span>':'')+
-            '<span class="rk-tap">'+(n?'한 번 더 +1':'탁 누르면 +1')+'</span></span>'+
-          '<span class="rk-meta"><span class="bt">'+esc(shortTitle(b.title.split(',')[0]))+'</span><span class="bs">'+(n?'마지막: '+dayLabel(lastDay(b.id),true)+' · 총 '+n+'번':'아직 안 읽음')+'</span></span>'+
-          (firstHint&&i===0?'<span class="rk-finger" aria-hidden="true">👆</span>':'')+'</button>';}).join('')+
-        '<button type="button" class="rk-book rk-other" data-rother="" aria-label="스터디 책이 아닌 다른 책 '+dn+' 읽음 기록, '+dn+' '+odc+'번">'+
-          '<span class="rk-cover">'+svg(30,IC.map,1.9)+'<span class="ot">다른 책</span><span class="os">스터디 외 책도 기록</span>'+(odc?'<span class="rk-chip">'+dn+' '+odc+'</span>':'')+'</span>'+
-          '<span class="rk-meta"><span class="bt">직접 추가</span><span class="bs">+ 눌러서 기록</span></span></button></div>'+
-        (otherTitles().length?'<div class="rs-otitles" aria-label="전에 넣은 다른 책"><span>다른 책 또 읽었으면</span>'+otherTitles().map(function(t){var n=0;S.rows.forEach(function(r){if(r.k==='_other'&&r.o===t)n++;});
-          return '<button type="button" data-rother="'+esc(t)+'">'+esc(shortTitle(t))+(n>1?' <small>×'+n+'</small>':'')+'</button>';}).join('')+'</div>':'')+
-        (isHome?'':'<p class="rs-legend">지난 달 책도 다시 읽으면 표지를 눌러 기록해요. 이번 달 통계에 함께 들어가요.</p>');
-    }
-    el.innerHTML='<div class="rv rk">'+chips+
-      '<div class="rk-hero">'+RING+'<h1>'+esc(themeName(th))+' 책장</h1>'+(books?'<p class="sub">'+books.length+'권 중 <b>'+met(books)+'권</b> 만났어요 · 모두 <b>'+themeTotal(books)+'번</b> 읽었어요</p>':'')+'</div>'+
-      '<div class="rk-today"><div class="t">'+dn+' <b>'+sum+'번</b> 읽었어요</div>'+
-        '<div class="rk-daytog" role="group" aria-label="기록 날짜"><button type="button" data-rday="'+today+'" aria-pressed="'+isT+'">오늘</button><button type="button" data-rday="'+yest+'" aria-pressed="'+(!isT)+'">어제</button></div></div>'+
-      '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>표지를 누르면 <b>'+(isT?'오늘':'어제('+md(yest)+')')+' 1번 읽음</b>으로 기록돼요</span></div>'+
-      '<div class="rk-actions">'+(isT?'<button type="button" class="rk-btn fill" data-rstamp>'+svg(18,IC.cam)+'인증 사진 찍기</button>':'')+
-        '<button type="button" class="rk-btn out" data-rshare="'+S.recDay+'">'+svg(18,IC.card)+dn+' 인증 카드</button></div>'+
-      '<div class="rk-shint">'+svg(14,IC.cal,2.2)+'인증 사진은 읽기 통계 달력에 날짜별로 모여요</div>'+body+
+    var mi=monthInfo(),mrows=mi?monthRows(mi):[],mdays={};mrows.forEach(function(r){mdays[r.d]=1;});
+    if(S.recSheet)S.recSheet.render();
+    el.innerHTML='<div class="rv rk">'+
+      '<div class="rk-calhead"><h2>'+(mi?mi.month+'월 ':'')+'달력</h2><button type="button" class="rk-btn fill sm" data-rtoday>'+svg(16,IC.plus,2.6)+'오늘 기록</button></div>'+
+      (mi?'<p class="rk-calsum">이번 달 <b>'+cntKeys(mdays)+'일</b> · <b>'+mrows.length+'권</b> 읽었어요</p>'+calendarHtml(mi,!S.rows.length):'')+
+      '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
@@ -860,7 +887,6 @@
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
       '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 앱 설치하기</button>'+
       '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
-    var on=el.querySelector('.rs-months [aria-pressed="true"]');if(on&&on.scrollIntoView&&S.shelfScroll){try{on.scrollIntoView({block:'nearest',inline:'center'});}catch(e){}S.shelfScroll=false;}
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
@@ -955,6 +981,7 @@
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
+      if((t=e.target.closest('[data-rtoday]'))){openRecordSheet(logicalToday());return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}

@@ -362,7 +362,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
   .expr li{padding:11px 13px}.expr .en2{font-size:1rem}.expr .ko2{display:block;margin-top:3px;font-size:.86rem}
 }
 /* ── 나이테 디자인: 기록하기 탭 ── */
-.rk{--paper:#EFF1EA;--surface-2:#F4F6EF;--ink:#23291F;--ink-soft:#545C4B;--muted:#8A917E;--line-2:#D4D9C9;--pine:#245648;--pine-2:#2F6E58;--pine-soft:#E4EEE7;--clay:#B87343;--clay-2:#A8622F;--serif:"Gowun Batang",Georgia,serif;--shadow:0 1px 2px rgba(35,41,31,.05),0 8px 22px rgba(35,41,31,.08)}
+.rk,.rl-sheet,.rl-cam{--paper:#EFF1EA;--surface-2:#F4F6EF;--ink:#23291F;--ink-soft:#545C4B;--muted:#8A917E;--line-2:#D4D9C9;--pine:#245648;--pine-2:#2F6E58;--pine-soft:#E4EEE7;--clay:#B87343;--clay-2:#A8622F;--serif:"Gowun Batang",Georgia,serif;--shadow:0 1px 2px rgba(35,41,31,.05),0 8px 22px rgba(35,41,31,.08)}
 .rk-months{margin-bottom:6px}
 .rs-months .rk-mpill{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:8px 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-soft)}
 .rk-mpill .mi{width:7px;height:7px;border-radius:50%;background:var(--clay)}
@@ -472,6 +472,47 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .rl-after .rk-btn.out{background:#FCFCF8;color:#245648;border-color:#D4D9C9}
 .rl-after .rk-btn.fill{background:#B87343;color:#fff}
 .retake{background:none;border:none;color:#cfd3c6;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin:4px auto 0;display:block;padding:8px}
+/* ── 기록 탭: 달력 중심 ── */
+.rk-calhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 2px}
+.rk-calhead h2{font-family:var(--serif);font-weight:700;font-size:24px;margin:0;color:var(--ink)}
+.rk-btn.sm{flex:0 0 auto;font-size:14px;padding:10px 14px;border-radius:12px;gap:6px}
+.rk-calsum{font-size:13px;color:var(--ink-soft);margin:0 0 12px}
+.rk-calsum b{color:var(--pine)}
+.rk .cal-d[data-rcal]:not(.future){cursor:pointer}
+.rk .rk-hint{margin:12px 0 4px}
+.cal-d{position:relative}
+.cal-finger{position:absolute;right:2px;bottom:2px;font-size:20px;pointer-events:none;animation:rkTap 1.4s ease-in-out infinite}
+.rk-rs h3 small{font-size:.8rem;color:var(--soft);font-weight:700}
+.rk-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;margin-top:10px}
+.rk-grid3 .rk-cover{border-radius:10px}
+.rk-grid3 .rk-tap{padding:12px 0 6px;font-size:12px}
+.rk-grid3 .rk-chip{top:6px;left:6px;font-size:10.5px;padding:2px 8px}
+.rk-grid3 .rk-meta{margin-top:5px}
+.rk-grid3 .rk-meta .bt{font-size:11.5px}
+.rk-grid3 .rk-other .ot{font-size:12px}
+.rl-sheet .rk-cover{border:1px solid #D4D9C9;box-shadow:0 1px 2px rgba(35,41,31,.05),0 6px 16px rgba(35,41,31,.08)}
+.rl-sheet .rk-book.unread .rk-cover{border-style:dashed}
+.rl-sheet .rk-book.unread .rk-cover img{filter:grayscale(1);opacity:.5}
+.rl-sheet .rk-book.read .rk-tap{background:linear-gradient(0deg,rgba(36,86,72,.82),transparent)}
+.rl-sheet .rk-chip{background:#245648}
+.rl-sheet .rk-other .rk-cover{background:#FCFCF8;color:#245648}
+.rk-oform{margin-top:12px}
+.rk-oform .row{display:flex;gap:8px}
+.rk-oform input{flex:1;min-width:0;border:1px solid var(--line);background:#fff;font:inherit;font-size:.95rem;padding:10px 12px;border-radius:11px}
+.rk-oform .row button{border:0;background:#245648;color:#fff;font:inherit;font-weight:700;padding:0 16px;border-radius:11px;cursor:pointer}
+.rk-status{min-height:1.4em;margin:12px 0 4px;text-align:center;font-size:.86rem;color:var(--soft)}
+.rk-status b{color:#245648}
+.rk-status button{border:0;background:none;color:#B87343;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.rk-dayacts{display:flex;gap:8px;margin-top:12px}
+.rk-dayacts .rk-btn{font-size:14px;padding:12px 10px}
+.rl-sheet .rk-btn.fill{background:#B87343;color:#fff}
+.rl-sheet .rk-btn.out{background:#FCFCF8;color:#245648;border-color:#D4D9C9}
+.rk-btn.wide{display:flex;width:100%;margin-top:8px;font-size:14px;padding:12px}
+.rl-ask{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 16px 0;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.08);font-size:13.5px;font-weight:700}
+.rl-ask button{border:0;background:#fff;color:#245648;font:inherit;font-size:13px;font-weight:800;padding:7px 12px;border-radius:99px;cursor:pointer}
+.rk-btn small{font-size:11px;font-weight:700;opacity:.85;margin-left:2px}
+.rl-note{margin:0;font-size:12.5px;color:#FFD6A8;text-align:center}
+.ovl [data-s2]:empty{display:none}
 </style>
 </head>
 <body>
@@ -552,8 +593,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     h+='<div class="hero"><div class="ml">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
        '<div class="em">'+esc(theme.emoji)+'</div><h1>'+esc(theme.ko)+'</h1><div class="en">'+esc(theme.en)+'</div>'+
        (c.subject?'<p class="subj">'+esc(c.subject)+'</p>':'')+
-       '<div class="herobtns"><a class="mlink" href="../study/missions.html?m='+encodeURIComponent(theme.key)+'">🎯 이번 달 미션 보기 →</a>'+
-       '<a class="mlink alt" href="../challenge.html">📚 나이테 120 전체 보기 →</a>'+
+       '<div class="herobtns">'+
        (theme.blog_url?'<a class="mlink alt" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">📝 이 5권을 고른 이유 →</a>':'')+
        (window.NaiteReading.isStandalone()?'':'<button type="button" class="installbtn" data-rinstall="hero">📲 앱 설치하기</button>')+'</div></div>';
     h+='<div class="sec"><h2>📚 이번 달 5권</h2>'+
