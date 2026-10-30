@@ -709,6 +709,12 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd-foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--muted);line-height:1.6}
 .sd-foot .ig{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--pine);text-decoration:none;margin-bottom:8px}
 .sd-foot .adm{display:inline-block;margin-top:8px;color:var(--pine);font-weight:700}
+.sd-book details.tip{margin-top:10px;border-top:1px dashed var(--line-2);padding-top:9px}
+.sd-book details.tip summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--pine)}
+.sd-book details.tip summary::-webkit-details-marker{display:none}
+.sd-book details.tip summary svg{margin-left:auto;transition:transform .2s}
+.sd-book details.tip[open] summary svg{transform:rotate(180deg)}
+.sd-book details.tip p{font-size:13px;color:var(--ink-soft);margin:7px 0 0;line-height:1.55;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -775,9 +781,10 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
           '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
         (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        (b.tip?'<details class="tip" data-tip="'+esc(b.title)+'"><summary>이 책 읽어주기 팁'+ic('chev',15)+'</summary><p>'+esc(b.tip)+'</p></details>':'')+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
-    var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method);
+    var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
     var exhtml=extras.map(function(x){var id=ytid(x.url);
       if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
       return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(x.title||x.url)+'</b><small>링크</small></span></a>';
@@ -832,7 +839,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(!PREVIEW)initPanels();
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
-    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow,.sd-vid,.acts'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
+    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(ev.target.closest('a,button,.rrow,.sd-vid,.acts,details'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
     app.querySelectorAll('[data-sdvid]').forEach(function(b){b.addEventListener('click',function(){var v=b.closest('.sd-book').querySelector('.sd-vid');v.hidden=!v.hidden;b.setAttribute('aria-pressed',String(!v.hidden));});});
     app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(){var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
@@ -842,6 +849,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});});
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();

@@ -599,7 +599,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<input class="t" style="margin-bottom:4px;font-size:.82rem" data-bid="'+b.id+'" data-fld="reason" value="'+esc(b.reason)+'">'+
         '<input class="t" style="margin-bottom:4px;font-size:.8rem" data-bid="'+b.id+'" data-fld="read_aloud" placeholder="📺 영상 링크 (유튜브 read aloud URL, 없으면 비워두기)" value="'+esc(b.read_aloud||'')+'">'+
         '<input class="t" style="margin-bottom:4px;font-size:.8rem" data-bid="'+b.id+'" data-fld="workbook" placeholder="📄 워크지 링크 (공식 무료 활동지 URL, 없으면 비워두기)" value="'+esc(b.workbook||'')+'">'+
-        '<input class="t" style="font-size:.8rem" data-bid="'+b.id+'" data-fld="buy_url" placeholder="📖 책정보 링크 (쿠팡 파트너스 URL)" value="'+esc(b.buy_url||'')+'"></div></div>';
+        '<input class="t" style="margin-bottom:4px;font-size:.8rem" data-bid="'+b.id+'" data-fld="buy_url" placeholder="📖 책정보 링크 (쿠팡 파트너스 URL)" value="'+esc(b.buy_url||'')+'">'+
+        '<textarea class="t" rows="2" style="font-size:.8rem;resize:vertical" data-bid="'+b.id+'" data-fld="tip" placeholder="💡 이 책 읽어주기 팁 (1~2문장, 없으면 비워두기) 예: 플랩을 아이가 직접 열게 해주세요. &quot;What&#39;s this?&quot; 하고 기다렸다가 함께 열기.">'+esc(b.tip||'')+'</textarea></div></div>';
     }).join('');
     f.innerHTML=
       '<label class="f">월 라벨 <span class="hint">(예: 2026년 10월 · 1개월차)</span></label><input class="t" id="fml" value="'+esc(c.month_label)+'">'+
@@ -622,9 +623,9 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var key=STATE.editKey;
     var theme=STATE.themes.filter(function(t){return t.key===key;})[0]||{key:key};
     var content={month_label:val('fml'),subject:val('fsub'),read_method:val('frm'),activities:val('fact'),expressions:val('fexp'),missions:val('fmis'),extras:val('fext')};
-    var inputs=document.querySelectorAll('#form input[data-bid]'), byId={};
+    var inputs=document.querySelectorAll('#form [data-bid][data-fld]'), byId={};
     inputs.forEach(function(inp){var id=inp.dataset.bid;(byId[id]=byId[id]||{})[inp.dataset.fld]=inp.value;});
-    var books=(STATE.booksByTheme[key]||[]).map(function(b){var u=byId[b.id]||{},c={};for(var k in b)c[k]=b[k];['title','author','reason','read_aloud','workbook','buy_url'].forEach(function(f){if(u[f]!=null)c[f]=u[f];});return c;});
+    var books=(STATE.booksByTheme[key]||[]).map(function(b){var u=byId[b.id]||{},c={};for(var k in b)c[k]=b[k];['title','author','reason','read_aloud','workbook','buy_url','tip'].forEach(function(f){if(u[f]!=null)c[f]=u[f];});return c;});
     var mask=document.createElement('div');mask.className='pvmask';
     mask.innerHTML='<div class="pvbar"><span class="t">👁 미리보기</span>'+
       '<span class="seg"><button data-w="430" class="on">📱 모바일</button><button data-w="900">💻 넓게</button></span>'+
@@ -653,16 +654,20 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var r1=await client.from('content').upsert(content);
     if(r1.error){st.textContent='실패: '+r1.error.message;return;}
     // 책 업데이트
-    var inputs=document.querySelectorAll('#form input[data-bid]'), byId={};
+    var inputs=document.querySelectorAll('#form [data-bid][data-fld]'), byId={};
     inputs.forEach(function(inp){var id=inp.dataset.bid;(byId[id]=byId[id]||{id:+id})[inp.dataset.fld]=inp.value;});
     var errs=0;
-    for(var id in byId){var u=byId[id];var r=await client.from('books').update({title:u.title,author:u.author,reason:u.reason,read_aloud:u.read_aloud,workbook:u.workbook,buy_url:u.buy_url}).eq('id',u.id);if(r.error)errs++;}
+    var tipMsg='';
+    for(var id in byId){var u=byId[id];var r=await client.from('books').update({title:u.title,author:u.author,reason:u.reason,read_aloud:u.read_aloud,workbook:u.workbook,buy_url:u.buy_url}).eq('id',u.id);if(r.error)errs++;
+      // 읽어주기 팁(books.tip) — 칸이 아직 없으면(migrate_book_tips.sql 미실행) 안내만
+      var cur=((STATE.booksByTheme[key]||[]).filter(function(b){return b.id===u.id;})[0]||{}).tip||'';
+      if((u.tip||'')!==cur){var rt=await client.from('books').update({tip:u.tip}).eq('id',u.id);if(rt.error)tipMsg=' (읽어주기 팁은 저장 못 함: supabase/migrate_book_tips.sql을 먼저 실행해 주세요)';}}
     STATE.contentByTheme[key]=content;
     // 블로그 글 주소(themes.blog_url) — 칸이 아직 없으면(migrate_theme_blog.sql 미실행) 안내만
     var th=(STATE.themes||[]).filter(function(t){return t.key===key;})[0],bl=val('fblog').trim(),blogMsg='';
     if(th&&(th.blog_url||'')!==bl){var rb=await client.from('themes').update({blog_url:bl}).eq('key',key);if(rb.error)blogMsg=' (블로그 주소는 저장 못 함: supabase/migrate_theme_blog.sql을 먼저 실행해 주세요)';else th.blog_url=bl;}
-    (STATE.booksByTheme[key]||[]).forEach(function(b){var u=byId[b.id];if(u){b.title=u.title;b.author=u.author;b.reason=u.reason;b.read_aloud=u.read_aloud;b.workbook=u.workbook;b.buy_url=u.buy_url;}});
-    st.textContent=(errs?('내용 저장됨, 책 '+errs+'건 실패'):'✓ 저장 완료')+blogMsg;
+    (STATE.booksByTheme[key]||[]).forEach(function(b){var u=byId[b.id];if(u){b.title=u.title;b.author=u.author;b.reason=u.reason;b.read_aloud=u.read_aloud;b.workbook=u.workbook;b.buy_url=u.buy_url;if(!tipMsg)b.tip=u.tip;}});
+    st.textContent=(errs?('내용 저장됨, 책 '+errs+'건 실패'):'✓ 저장 완료')+blogMsg+tipMsg;
   }
   function val(id){var e=document.getElementById(id);return e?e.value:'';}
 

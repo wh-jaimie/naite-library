@@ -179,7 +179,7 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
       return '<div class="book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="cv">'+(b.buy_url?'<a href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" class="cvlink" data-buy="'+esc(b.title)+'">':'')+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'')+(b.buy_url?'</a>':'')+'</div>'+
         '<div class="bb"><div class="tyrow"><span class="ty">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_LABEL[lv]+'</span>':'')+'</div><div class="bt">'+esc(b.title)+'</div>'+
-        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+
+        '<div class="ba">'+esc(b.author)+'</div>'+(b.reason?'<div class="br">'+esc(b.reason)+'</div>':'')+(b.tip?'<div class="br tip">💡 '+esc(b.tip)+'</div>':'')+
         (stats?'<div class="stats">'+stats+'</div>':'')+
         (acts?'<div class="acts">'+acts+'</div>':'')+'</div></div>';
     }).join('');
