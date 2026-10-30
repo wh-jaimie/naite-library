@@ -938,12 +938,26 @@
       (mi?'<p class="rk-calsum">이번 달 <b>'+cntKeys(mdays)+'일</b> · <b>'+mrows.length+'권</b> 읽었어요</p>'+calendarHtml(mi,!S.rows.length):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
-      (recent.length?'<ul class="rs-list">'+recent.map(function(r){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
-        return '<li><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'
+      (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
+        return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d)+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
+          (recent.length>5?'<button type="button" class="rs-more" data-rmore>'+(S.recentOpen?'접기':'더 보기 ('+(recent.length-5)+'개)')+'</button>':'')
         :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
       '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
       '<button type="button" class="rv-install" data-rinstall'+(isStandalone()?' hidden':'')+'>📲 앱 설치하기</button>'+
       '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div>';
+  }
+  // 통계 탭 공유 카드 썸네일: 기록·사진이 바뀌었을 때만 다시 그림
+  function monthThumb(mi){
+    var last=S.rows.reduce(function(a,r){return Math.max(a,r.t||0);},0);
+    var sig=mi.year+'-'+mi.month+'|'+S.rows.length+'|'+last+'|'+Object.keys(S.photoUrls).sort().join(',');
+    if(S.thumb&&(S.thumb.sig===sig))return;
+    S.thumb={sig:sig,url:S.thumb&&S.thumb.url};
+    drawMonthCard(mi).then(function(bl){
+      if(!bl||!S||!S.thumb||S.thumb.sig!==sig)return;
+      if(S.thumb.url)URL.revokeObjectURL(S.thumb.url);
+      S.thumb.url=URL.createObjectURL(bl);
+      var b=document.querySelector('.st-sharecard .thumb');if(b)b.innerHTML='<img src="'+S.thumb.url+'" alt="">';
+    },function(){});
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
@@ -963,9 +977,12 @@
       (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
       (past?'<p class="st-line">스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
     var mPre=mi?mi.year+'-'+pad(mi.month)+'-':'',hasP=!!mi&&Object.keys(S.photoUrls).some(function(d){return d.indexOf(mPre)===0;});
-    if(mi)h+='<div class="st-card"><h2>'+mi.month+'월 읽기 달력</h2>'+calendarHtml(mi)+
-      '<div class="st-note">'+svg(14,IC.cal,2.2)+'날짜를 누르면 그날 기록과 사진을 크게 볼 수 있어요</div>'+
-      (total||hasP?'<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button>':'')+'</div>';
+    if(mi&&(total||hasP)){
+      h+='<div class="st-card st-sharecard"><h2>이번 달 나이테 공유</h2><div class="row"><button type="button" class="thumb" data-rmonth aria-label="달력 이미지 크게 보기">'+(S.thumb&&S.thumb.url?'<img src="'+S.thumb.url+'" alt="">':'')+'</button>'+
+        '<p>표지와 인증 사진이 담긴 한 달 달력이에요</p></div>'+
+        '<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button></div>';
+      monthThumb(mi);
+    }
     if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
     // 이번 달에 읽은 책들(지난 달 책 포함)
     var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
@@ -1038,6 +1055,7 @@
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
       if((t=e.target.closest('[data-rtoday]'))){openRecordSheet(logicalToday());return;}
+      if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
