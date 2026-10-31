@@ -1028,7 +1028,7 @@
   function studyLinks(f){
     var d;try{d=f.contentDocument;}catch(e){return;}if(!d||!d.body)return;
     if(!d.getElementById('rlStudyCss')){var st=d.createElement('style');st.id='rlStudyCss';
-      st.textContent='.rl-study{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 2px 14px;padding:10px 12px;border-radius:12px;background:#E4EEE7;color:#245648;font-weight:800;font-size:.9rem;text-decoration:none;border:1px solid #CFE0D6}.rl-study:active{transform:scale(.98)}';
+      st.textContent='.rl-study{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:#E4EEE7;color:#245648;font-weight:800;font-size:.74rem;line-height:1.3;text-decoration:none;border:1px solid #CFE0D6;white-space:nowrap}';
       d.head.appendChild(st);}
     function apply(){
       var pub={};(S&&S.pubs||[]).forEach(function(t){pub[t.key]=1;});
@@ -1036,11 +1036,11 @@
         var k=el.getAttribute('data-key'),has=el.querySelector('.rl-study');
         if(!pub[k]){if(has)has.remove();return;}
         if(has)return;
-        var a=d.createElement('a');a.className='rl-study';a.href='#';a.textContent='📖 스터디 자료 보기';
+        var a=d.createElement('a');a.className='rl-study';a.href='#';a.textContent='📖 스터디 자료';
         a.addEventListener('click',function(ev){ev.preventDefault();if(S&&S.onEvent)S.onEvent('c120_study_open',{theme:k});
           try{localStorage.setItem(TAB_KEY,'study');}catch(e){}
           location.href='app.html'+(k===S.home.key?'':'?m='+encodeURIComponent(k));});
-        var th=el.querySelector('.th');if(th)th.insertAdjacentElement('afterend',a);else el.insertBefore(a,el.firstChild);
+        var th=el.querySelector('.th');if(th)th.insertBefore(a,th.querySelector('.done'));else el.insertBefore(a,el.firstChild);
       });
     }
     apply();
