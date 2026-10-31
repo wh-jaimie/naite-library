@@ -25,6 +25,7 @@ a{color:inherit;text-decoration:none}
 
 /* 머리 */
 .top{display:flex;align-items:center;gap:10px;padding:18px 0 0}
+.top .home{display:flex;align-items:center;gap:10px;min-width:0}
 .top svg{width:34px;height:34px;flex:none}
 .top b{font-family:'Gowun Batang',Georgia,serif;font-size:1.25rem;color:var(--tealD)}
 .top span{color:var(--soft);font-size:.9rem;font-weight:500}
@@ -172,6 +173,7 @@ header.top .nt-share.in-top{margin-left:8px}
 <main class="wrap">
   <!-- 1. 머리 -->
   <header class="top">
+    <a class="home" href="./" aria-label="나이테 홈">
     <svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고">
       <circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/>
       <circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/>
@@ -179,6 +181,7 @@ header.top .nt-share.in-top{margin-left:8px}
       <circle cx="32" cy="32" r="3.6" fill="#D1965C"/>
     </svg>
     <b>나이테</b><span>영어책육아 메이트</span>
+    </a>
     <nav class="tnav" aria-label="바로가기"><a href="challenge.html">나이테 120</a><a href="domestic.html">국내 책장</a></nav>
   </header>
 
