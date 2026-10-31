@@ -219,7 +219,7 @@ __BUY_DISCLOSURE__
 <div id="printable"></div>
 
 <footer><div class="wrap">
-  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어도서관</p>
+  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어책육아 메이트</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
 </div></footer>
 
@@ -348,18 +348,18 @@ async function makeShareCanvas(done,total,dark){
   g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
   g.fillStyle=P.count;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
   g.fillStyle=P.honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
-  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어도서관 · 파닉스 전 첫 영어책 코스',W/2,1282);
+  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어책육아 메이트 · 파닉스 전 첫 영어책 코스',W/2,1282);
   g.fillStyle=P.honey;g.font='700 32px "Noto Sans KR",sans-serif';g.fillText('📷 Instagram  @naite_library',W/2,1328);
   return cv;
 }
 function isDark(){return false;}
 function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
-function saveShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
-function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
+function saveShare(){const cv=window.__cv;if(!cv)return;shareEv('image_save');cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
+function shareShare(){const cv=window.__cv;if(!cv)return;shareEv('image');cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
-  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어도서관 · ${now}</p></div>`;
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어책육아 메이트 · ${now}</p></div>`;
   themes.forEach((t,i)=>{
     const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
     h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
@@ -370,8 +370,13 @@ function buildPrintable(){
 }
 function printList(){buildPrintable();window.print();}
 document.getElementById('prPrint').addEventListener('click',printList);
+// 공유 집계(share_click): how = link(페이지 링크) / image(진행 이미지 공유) / image_save(이미지 저장)
+function shareEv(how){try{if(localStorage.getItem('naite_notrack')==='1'||/[?&]embed=/.test(location.search))return;var A="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi",sid=localStorage.getItem('joy_sid')||'anon';
+  fetch("https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events",{method:"POST",headers:{"apikey":A,"Authorization":"Bearer "+A,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({type:"share_click",session_id:sid,path:location.pathname,meta:{page:"나이테 120",how:how}}),keepalive:true}).catch(function(){});
+}catch(e){}}
 // 🔗 페이지(링크) 공유 — 모바일은 네이티브 공유시트, 아니면 링크 복사
 function sharePage(){
+  shareEv('link');
   var url=location.origin+location.pathname;
   var btn=document.getElementById('prLink');
   if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}

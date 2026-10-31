@@ -314,6 +314,7 @@ document.getElementById('foot').innerHTML='가격은 교보문고·동방북스�
 paint();
 // 📤 페이지 공유 — 모바일은 공유시트, 아니면 링크 복사
 document.getElementById('shareBtn').addEventListener('click',function(){var btn=this,url=location.origin+location.pathname;
+  ev('share_click',{page:'국내 인기 책장',how:'link'});
   if(navigator.share){navigator.share({title:'국내 인기 책장 — 나이테',text:'국내에서 많이 팔린 영어 그림책 100권 · 나이·가격·종류로 골라 보기',url:url}).catch(function(){});return;}
   function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유';},1600);}
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,done);else done();});

@@ -139,6 +139,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     if(/\/study\/missions/.test(p))return '🎯 스터디 미션';
     if(/\/study\//.test(p))return '📘 스터디 자료';
     if(/challenge\.html/.test(p))return '🌳 나이테 120';
+    if(/domestic\.html/.test(p))return '🛒 국내 인기 책장';
     if(/guide\.html/.test(p))return '📚 엄마표영어 가이드';
     if(/types\.html/.test(p))return '🧩 5가지 유형';
     if(/join\.html/.test(p))return '🙋 스터디 참여';
@@ -345,6 +346,22 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var where=countBy(X.cur.filter(function(e){return e.type==='join_click';}),function(e){var pg=(e.meta&&e.meta.page)||'';return pg==='나이테 120'?'🌳 나이테 120 페이지':(pg==='스터디 참여'?'🙋 참여 안내 화면':(pg||'기타'));});
     h+='<div class="two"><div class="card"><h3>🙋 참여 클릭 출처 <span class="hint">어디서 온 사람이 눌렀나</span></h3>'+table(['출처','클릭'],sortedRows(srcs),1)+'</div>'+
       '<div class="card"><h3>🖱 참여 클릭 화면 <span class="hint">어느 화면에서 눌렀나</span></h3>'+table(['화면','클릭'],sortedRows(where),1)+'<p class="hint">메인의 ‘스터디 참여하기’는 참여 안내 화면으로 넘어가요.</p></div></div>';
+    // 🌳 나이테 120 · 🛒 국내 인기 책장: 방문·공유(그 페이지의 📤 공유 + 메인 카드의 공유하기)·쿠팡·제목 복사·참여
+    function bookPage(name,file,pg){
+      var pv=a.pv.filter(function(e){return pageOf(e)===name;});
+      var sh=X.cur.filter(function(e){return e.type==='share_click'&&((e.meta&&e.meta.page)===pg||(e.meta&&e.meta.target)===file);});
+      var onPage=sh.filter(function(e){return (e.meta&&e.meta.page)===pg;}),fromMain=sh.length-onPage.length;
+      var how=countBy(onPage,function(e){return (e.meta&&e.meta.how)||'link';});
+      var on=X.cur.filter(function(e){return pageOf(e)===name;});
+      function n(t){return on.filter(function(e){return e.type===t;}).length;}
+      return {name:name,visitors:cnt(sessions(pv)),views:pv.length,share:sh.length,shareS:cnt(sessions(sh)),onPage:onPage.length,fromMain:fromMain,how:how,buy:n('buy_click'),copy:n('title_copy'),join:n('join_click')};}
+    var BP=[bookPage('🌳 나이테 120','challenge.html','나이테 120'),bookPage('🛒 국내 인기 책장','domestic.html','국내 인기 책장')];
+    var HOW={link:'링크',image:'진행 이미지',image_save:'이미지 저장'};
+    h+='<div class="card"><h3>📚 나이테 120 · 국내 인기 책장 <span class="hint">많이 보고, 많이 퍼지는지</span></h3>'+
+      table(['페이지','방문자','페이지 방문','공유','공유한 사람','쿠팡 클릭','제목 복사','참여 클릭'],BP.map(function(o){
+        var det=Object.keys(o.how).map(function(k){return (HOW[k]||k)+' '+o.how[k];});if(o.fromMain)det.push('메인 카드 '+o.fromMain);
+        return [esc(o.name),o.visitors,o.views,'<b>'+o.share+'</b>'+(det.length?'<small>'+esc(det.join(' · '))+'</small>':''),o.shareS,o.buy,o.copy,o.join];}),1)+
+      '<p class="hint">공유 = 그 페이지의 📤 공유 버튼 + 메인 ‘책 고르기가 고민이라면’ 카드의 공유하기를 누른 횟수예요(2026-10-31부터 기록). 공유 창을 연 뒤 실제로 보냈는지는 알 수 없어요. 나이테 120의 쿠팡·제목 복사는 아직 따로 세지 않아요.</p></div>';
     h+='<div class="card"><h3>📚 많이 누른 가이드 글</h3>'+table(['글','클릭'],sortedRows(countBy(X.cur.filter(function(e){return e.type==='guide_click';}),function(e){return (e.meta&&e.meta.title)||'?';})),1)+'</div>';
     h+='<div class="card"><h3>📄 화면별 방문</h3>'+table(['화면','방문','방문자'],Object.keys(pages).sort(function(x,y){return pages[y]-pages[x];}).map(function(p){return [esc(p),pages[p],cnt(pageV[p])];}),1)+'</div>';
     h+='<div class="card"><div class="shd"><h3>📈 날짜별 방문자 · 참여 클릭</h3><select class="t sm r" id="nm"><option value="v">방문자</option><option value="j">참여 클릭</option></select></div><div id="nchart"></div></div>';
