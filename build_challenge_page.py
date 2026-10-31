@@ -41,16 +41,6 @@ TEMPLATE = r"""<!doctype html>
   --shadow:0 1px 2px rgba(43,42,38,.06),0 6px 18px rgba(43,42,38,.07);--shadow-lg:0 10px 34px rgba(43,42,38,.14);
   --t1:#245648;--t2:#2F6E58;--t3:#4F9A72;--t4:#B87343;--t5:#7A4520;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --ground:#1B1A17;--surface:#242220;--surface-2:#2E2B27;--ink:#F1ECE1;--ink-soft:#A8A090;--line:#3A362F;
-  --teal:#3FB0AE;--teal-deep:#5CC6C4;--coral:#F27E5B;--amber:#F0B857;--plum:#C08FD0;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.4);--shadow-lg:0 12px 38px rgba(0,0,0,.55);
-  --t1:#74C29A;--t2:#5FB088;--t3:#4F9A72;--t4:#D69E68;--t5:#E0AD7B;}}
-:root[data-theme="dark"]{
-  --ground:#1B1A17;--surface:#242220;--surface-2:#2E2B27;--ink:#F1ECE1;--ink-soft:#A8A090;--line:#3A362F;
-  --teal:#3FB0AE;--teal-deep:#5CC6C4;--coral:#F27E5B;--amber:#F0B857;--plum:#C08FD0;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.4);--shadow-lg:0 12px 38px rgba(0,0,0,.55);
-  --t1:#74C29A;--t2:#5FB088;--t3:#4F9A72;--t4:#D69E68;--t5:#E0AD7B;}
 *{box-sizing:border-box}
 body{background:var(--ground);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
@@ -177,7 +167,6 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <div class="brand"><span class="mark">120</span><span>나이테 120</span></div>
   <a class="back" href="./">← 나이테</a><script>if(/[?&]embed=/.test(location.search))document.write('<style>.back{display:none}</style>')</script>
   <button class="sharebtn" id="prLink" title="이 페이지 공유하기">📤 공유</button>
-  <button class="themebtn" id="theme" title="테마 전환">◐</button>
 </div></header>
 
 <main class="wrap">
@@ -336,11 +325,7 @@ document.getElementById('prReset').addEventListener('click',()=>{
   if(seen.size&&confirm('챌린지 기록을 모두 지울까요?')){seen.clear();save();updateProgress();renderBody();}
 });
 const root=document.documentElement;
-try{const t=localStorage.getItem('joy-theme');if(t)root.setAttribute('data-theme',t);}catch(e){}
-document.getElementById('theme').addEventListener('click',()=>{
-  const cur=root.getAttribute('data-theme');const dark=cur?cur==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
-  const n=dark?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('joy-theme',n);}catch(e){}
-});
+try{localStorage.removeItem('joy-theme');}catch(e){}
 // ── 진행 공유 이미지 ──
 async function makeShareCanvas(done,total,dark){
   const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;
@@ -367,7 +352,7 @@ async function makeShareCanvas(done,total,dark){
   g.fillStyle=P.honey;g.font='700 32px "Noto Sans KR",sans-serif';g.fillText('📷 Instagram  @naite_library',W/2,1328);
   return cv;
 }
-function isDark(){const c=document.documentElement.getAttribute('data-theme');return c?c==='dark':matchMedia('(prefers-color-scheme:dark)').matches;}
+function isDark(){return false;}
 function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
 function saveShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
 function shareShare(){const cv=window.__cv;if(!cv)return;cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
