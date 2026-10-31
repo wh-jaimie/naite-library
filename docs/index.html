@@ -52,6 +52,8 @@ a{color:inherit;text-decoration:none}
 .flow li small{display:block;color:var(--soft);font-size:.78rem;line-height:1.4;margin-top:2px}
 .flow li.app{background:#FBEFE3;outline:1.5px solid var(--amber)}
 .flow li.app i{background:var(--coral)}
+.flow li .fapp{display:inline-block;white-space:nowrap;margin-top:7px;background:var(--coral);color:#fff;font-weight:800;font-size:.8rem;padding:6px 11px;border-radius:999px}
+.flow li .fapp:hover{filter:brightness(1.05)}
 .flow .fnote{margin:10px 0 0;text-align:center;font-size:.82rem;color:var(--soft)}
 .flow .fnote b{color:var(--coral)}
 @media (max-width:620px){.flow ol{grid-template-columns:1fr}}
@@ -171,7 +173,7 @@ a{color:inherit;text-decoration:none}
       <ol>
         <li><i>1</i><span><b>채팅방 입장</b><small>위 버튼 · 카카오톡 오픈채팅</small></span></li>
         <li><i>2</i><span><b>공지 확인</b><small>스터디 앱 링크와 비밀번호가 있어요</small></span></li>
-        <li class="app"><i>3</i><span><b>📲 나이테 스터디 앱 설치</b><small>스터디 자료·기록·공지는 앱에서 봐요</small></span></li>
+        <li class="app"><i>3</i><span><b>📲 나이테 스터디 앱 설치</b><small>스터디 자료·기록·공지는 앱에서 봐요</small><a class="fapp" href="record/" data-appopen>📲 앱 설치하러 가기 ›</a></span></li>
       </ol>
       <p class="fnote">채팅방만 들어오면 끝이 아니에요. <b>스터디 앱까지 설치</b>해야 스터디 자료를 볼 수 있어요.</p>
     </div>
@@ -304,6 +306,13 @@ a{color:inherit;text-decoration:none}
   document.querySelectorAll('[data-join]').forEach(function(a){a.addEventListener('click',function(){
     try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
       fetch(SU+"/rest/v1/events",{method:"POST",headers:Object.assign({"Prefer":"return=minimal"},H),body:JSON.stringify({type:"join_click",session_id:sid,path:location.pathname,meta:{page:"랜딩",from:(window.NAITE_SRC||"direct")}}),keepalive:true}).catch(function(){});
+    }catch(e){}
+  });});
+
+  // 스터디 앱 설치하러 가기 클릭 집계(install_click, from=main)
+  document.querySelectorAll('[data-appopen]').forEach(function(a){a.addEventListener('click',function(){
+    try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+      fetch(SU+"/rest/v1/events",{method:"POST",headers:Object.assign({"Prefer":"return=minimal"},H),body:JSON.stringify({type:"install_click",session_id:sid,path:location.pathname,meta:{page:"랜딩",from:"main"}}),keepalive:true}).catch(function(){});
     }catch(e){}
   });});
 
