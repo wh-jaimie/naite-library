@@ -73,6 +73,36 @@
   function met(books){return books.filter(function(b){return count(b.id);}).length;}
   function themeTotal(books){var ids={};books.forEach(function(b){ids[b.id]=1;});return S.rows.filter(function(r){return ids[r.b];}).length;}
   // 날짜 기준: 이번 스터디 달(yyyy-mm)에 읽은 기록
+  // 기록하기·읽기 통계에서 보는 달: 이번 스터디 달에서 S.viewOff 만큼 앞(지난 달)으로
+  function mkMonth(y,mo){
+    var t=logicalToday().split('-'),ty=+t[0],tm=+t[1],td=+t[2],dim=new Date(y,mo,0).getDate(),el=0;
+    if(ty===y&&tm===mo)el=td;else if(ty*12+tm>y*12+mo)el=dim;
+    return {year:y,month:mo,days:dim,elapsed:el};
+  }
+  function viewMonth(){
+    var b=monthInfo();if(!b)return null;
+    var d=new Date(b.year,b.month-1+(S.viewOff||0),1);return mkMonth(d.getFullYear(),d.getMonth()+1);
+  }
+  // 가장 이른 달: 기록이 있는 달 또는 공개된 스터디 달 중 가장 이른 달까지
+  function minOff(){
+    var b=monthInfo();if(!b)return 0;var base=b.year*12+b.month,lo=base;
+    S.rows.forEach(function(r){var p=r.d.split('-');lo=Math.min(lo,+p[0]*12+(+p[1]));});
+    (S.pubs||[]).forEach(function(t){var m=monthOf(t.month_label);if(m)lo=Math.min(lo,m.y*12+m.m);});
+    return lo-base;
+  }
+  function monthNav(label){
+    var off=S.viewOff||0;
+    return '<span class="mnav"><button type="button" data-mprev aria-label="이전 달"'+(off>minOff()?'':' disabled')+'>‹</button><span class="ml">'+label+'</span>'+
+      '<button type="button" data-mnext aria-label="다음 달"'+(off<0?'':' disabled')+'>›</button></span>';
+  }
+  // 그 달의 스터디 주제와 책(지난 달 책은 처음 볼 때 불러옴)
+  function monthTheme(mi){
+    if(!mi)return null;var hit=null;
+    (S.pubs||[]).forEach(function(t){var m=monthOf(t.month_label);if(m&&m.y===mi.year&&m.m===mi.month)hit=t;});
+    if(!hit&&!(S.viewOff||0))hit={key:S.home.key,ko:S.home.ko};
+    return hit;
+  }
+  function viewBooks(mi){var t=monthTheme(mi);if(!t)return [];return shelfBooks(t.key)||[];}
   function monthRows(mi){if(!mi)return S.rows.slice();var pre=mi.year+'-'+pad(mi.month)+'-';return S.rows.filter(function(r){return r.d.indexOf(pre)===0;});}
   function monthInfo(){ // month_label "2026년 10월 · 1개월차" → 스터디 달과 오늘까지 경과 일수
     var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(S.monthLabel||'');if(!m)return null;
@@ -840,7 +870,7 @@
     });
   }
   function openMonthCard(){
-    var mi=monthInfo();if(!mi)return;
+    var mi=viewMonth();if(!mi)return;
     shareSheet(mi.month+'월 읽기 달력','인스타·카카오톡에 올려 이번 달을 자랑해 보세요.',drawMonthCard(mi),'naite-'+mi.year+'-'+pad(mi.month)+'.png','month_card',{month:mi.year+'-'+pad(mi.month)});
   }
 
@@ -923,19 +953,19 @@
         if(!S)return;
         if(d&&d.error==='member'){expire();return;}
         S.loaded[key]={books:d&&d.ok?rememberBooks(key,d.books):[],failed:!(d&&d.ok)};
-        paintShelf();pull(key);
-      },function(){if(S){S.loaded[key]={failed:true};paintShelf();}});
+        paint();pull(key);
+      },function(){if(S){S.loaded[key]={failed:true};paint();}});
     }
     return null;
   }
   function paintShelf(){
     var el=$('v-shelf');if(!el||!S.member||S.tab!=='shelf')return;
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
-    var mi=monthInfo(),mrows=mi?monthRows(mi):[],mdays={};mrows.forEach(function(r){mdays[r.d]=1;});
+    var mi=viewMonth(),mrows=mi?monthRows(mi):[],mdays={},off=S.viewOff||0;mrows.forEach(function(r){mdays[r.d]=1;});
     if(S.recSheet)S.recSheet.render();
     el.innerHTML='<div class="rv rk">'+
-      '<div class="rk-calhead"><h2>'+(mi?mi.month+'월 ':'')+'달력</h2><button type="button" class="rk-btn fill sm" data-rtoday>'+svg(16,IC.plus,2.6)+'오늘 기록</button></div>'+
-      (mi?'<p class="rk-calsum">이번 달 <b>'+cntKeys(mdays)+'일</b> · <b>'+mrows.length+'권</b> 읽었어요</p>'+calendarHtml(mi,!S.rows.length):'')+
+      '<div class="rk-calhead"><h2>'+(mi?monthNav((mi.year!==monthInfo().year?mi.year+'년 ':'')+mi.month+'월 달력'):'달력')+'</h2><button type="button" class="rk-btn fill sm" data-rtoday>'+svg(16,IC.plus,2.6)+'오늘 기록</button></div>'+
+      (mi?'<p class="rk-calsum">'+(off?mi.month+'월에':'이번 달')+' <b>'+cntKeys(mdays)+'일</b> · <b>'+mrows.length+'권</b> 읽었어요</p>'+calendarHtml(mi,!S.rows.length&&!off):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
@@ -961,29 +991,30 @@
   }
   function paintStats(){
     var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
-    var mi=monthInfo(),rows=monthRows(mi),total=rows.length,days={},homeIds={};
+    var mi=viewMonth(),rows=monthRows(mi),total=rows.length,days={},homeIds={},off=S.viewOff||0,mt=monthTheme(mi),vb=viewBooks(mi);
     rows.forEach(function(r){days[r.d]=1;});
-    S.books.forEach(function(b){homeIds[b.id]=1;});
+    vb.forEach(function(b){homeIds[b.id]=1;});
+    var metM=vb.filter(function(b){return rows.some(function(r){return r.b===b.id;});}).length;
     var others=rows.filter(function(r){return r.k==='_other';}).length,study=total-others;
     var past=rows.filter(function(r){return r.k!=='_other'&&!homeIds[r.b];}).length;
     function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
-    var h='<div class="rv st"><div class="st-head">'+RING+'<h1>'+(mi?mi.month+'월 ':'')+'읽기 통계</h1>'+
-      (S.home.ko?'<span class="chip"><span class="d"></span>'+esc(S.home.ko)+' 테마'+(mi?' · '+mi.month+'월':'')+'</span>':'')+'</div>'+
+    var h='<div class="rv st"><div class="st-head">'+RING+'<h1>'+(mi?monthNav(mi.month+'월 읽기 통계'):'읽기 통계')+'</h1>'+
+      (mt&&mt.ko?'<span class="chip"><span class="d"></span>'+esc(mt.ko)+' 테마'+(mi?' · '+mi.month+'월':'')+'</span>':'')+'</div>'+
       '<div class="st-kpi">'+
-        '<div class="k"><div class="lb">이번 달 책</div><div class="v">'+met(S.books)+'<s> / '+S.books.length+'권</s></div></div>'+
+        '<div class="k"><div class="lb">'+(off?mi.month+'월 책':'이번 달 책')+'</div><div class="v">'+metM+'<s> / '+(vb.length||5)+'권</s></div></div>'+
         '<div class="k"><div class="lb">총 읽기</div><div class="v">'+total+'<s> 번</s></div></div>'+
         '<div class="k"><div class="lb">읽은 날</div><div class="v">'+cntKeys(days)+'<s>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</s></div></div>'+
       '</div>'+
       (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
-      (past?'<p class="st-line">스터디 책 중 <b>지난 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+      (past&&vb.length?'<p class="st-line">스터디 책 중 <b>다른 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
     var mPre=mi?mi.year+'-'+pad(mi.month)+'-':'',hasP=!!mi&&Object.keys(S.photoUrls).some(function(d){return d.indexOf(mPre)===0;});
     if(mi&&(total||hasP)){
-      h+='<div class="st-card st-sharecard"><h2>이번 달 나이테 공유</h2><div class="row"><button type="button" class="thumb" data-rmonth aria-label="달력 이미지 크게 보기">'+(S.thumb&&S.thumb.url?'<img src="'+S.thumb.url+'" alt="">':'')+'</button>'+
+      h+='<div class="st-card st-sharecard"><h2>'+(off?mi.month+'월':'이번 달')+' 나이테 공유</h2><div class="row"><button type="button" class="thumb" data-rmonth aria-label="달력 이미지 크게 보기">'+(S.thumb&&S.thumb.url?'<img src="'+S.thumb.url+'" alt="">':'')+'</button>'+
         '<p>표지와 인증 사진이 담긴 한 달 달력이에요</p></div>'+
         '<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button></div>';
       monthThumb(mi);
     }
-    if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">이번 달 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
+    if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">'+(off?mi.month+'월':'이번 달')+' 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
     // 이번 달에 읽은 책들(지난 달 책 포함)
     var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
     var readBooks=Object.keys(readIds).map(function(id){return S.byId[+id]||{id:+id,title:'(지난 달 책)',type:''};});
@@ -1000,7 +1031,7 @@
     h+='</div>';
     // 유형별 횟수(최다=클레이, 나머지=세이지). 동점 1위는 모두 강조
     var types=[],tc={};
-    S.books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
+    vb.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
     rows.forEach(function(r){if(r.k==='_other')return;var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
     types=types.map(function(t,i){return [t,i];}).sort(function(a,b){return tc[b[0]]-tc[a[0]]||a[1]-b[1];}).map(function(x){return x[0];}); // 많이 읽은 순(같으면 원래 순서)
     var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||0;
@@ -1080,6 +1111,8 @@
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
       if((t=e.target.closest('[data-rtoday]'))){openRecordSheet(logicalToday());return;}
+      if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=(S.viewOff||0)-1;paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
+      if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(0,(S.viewOff||0)+1);paint();}return;}
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
@@ -1102,7 +1135,7 @@
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
       // 공개된 달 목록(기록하기 탭 달 칩)
-      rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];paintShelf();},function(){});
+      rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];(S.pubs||[]).forEach(function(t){if(t.key!==S.home.key)shelfBooks(t.key);});paint();},function(){});
       wire();
       loadPhotos();
       try{var pk=+localStorage.getItem('naite_pick');clearPick();
