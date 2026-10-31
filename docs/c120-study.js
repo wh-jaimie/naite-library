@@ -14,13 +14,13 @@
       var now=k===cur,a=document.createElement('a');
       a.className='c120-study'+(now?'':' member');
       a.href=now?'study/?m='+encodeURIComponent(k)+'&from=c120':'record/?m='+encodeURIComponent(k);
-      a.innerHTML='📖 스터디 자료 보기'+(now?'<small>이번 달</small>':'<small>🔒 회원 전용</small>');
-      var th=el.querySelector('.th');if(th)th.insertAdjacentElement('afterend',a);else el.insertBefore(a,el.firstChild);
+      a.textContent=now?'📖 스터디 자료':'🔒 회원 자료';a.title=now?'이번 달 스터디 자료 보기':'지난 달 스터디 자료(회원 전용) 보기';
+      var th=el.querySelector('.th');if(th)th.insertBefore(a,th.querySelector('.done'));else el.insertBefore(a,el.firstChild);
     });
   }
   var st=document.createElement('style');
-  st.textContent='.c120-study{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 2px 14px;padding:10px 12px;border-radius:12px;background:#E4EEE7;color:#245648;font-weight:800;font-size:.9rem;text-decoration:none;border:1px solid #CFE0D6}'+
-    '.c120-study small{font-size:.72rem;font-weight:700;color:#4F7A68}.c120-study.member{background:#F3E7DA;color:#7A4520;border-color:#E6D3C0}.c120-study.member small{color:#A8622F}';
+  st.textContent='.c120-study{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:#E4EEE7;color:#245648;font-weight:800;font-size:.74rem;line-height:1.3;text-decoration:none;border:1px solid #CFE0D6;white-space:nowrap}'+
+    '.c120-study.member{background:#F3E7DA;color:#7A4520;border-color:#E6D3C0}';
   document.head.appendChild(st);
   Promise.all([
     fetch(URL+'/rest/v1/rpc/list_published',{method:'POST',headers:H,body:'{}'}).then(function(r){return r.ok?r.json():[];}),
