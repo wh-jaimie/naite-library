@@ -45,6 +45,11 @@ label.l{display:block;font-size:.8rem;font-weight:800;color:var(--soft);margin-b
 .inapp b{display:block;font-size:.92rem;margin-bottom:2px}
 .inapp a{display:block;text-align:center;margin-top:10px;background:#5c4a00;color:#fff;text-decoration:none;font-weight:800;border-radius:10px;padding:10px}
 .links button.ins{order:-1;margin:0 0 6px;border:1.5px solid var(--tealD);background:#fff;font:inherit;color:var(--tealD);font-weight:800;font-size:.98rem;cursor:pointer;padding:11px 22px;border-radius:999px;box-shadow:0 4px 14px rgba(36,86,72,.14)}
+.first{background:var(--surface);border:1.5px solid var(--tealD);border-radius:16px;padding:14px 16px;margin:0 0 16px;text-align:left;font-size:.88rem;box-shadow:var(--sh)}
+.first .ft{display:block;color:var(--tealD);font-size:.95rem;margin-bottom:6px}
+.first ol{margin:0;padding-left:20px;line-height:1.75}
+.first li b{color:var(--tealD)}
+.first .fbtn{display:block;width:100%;margin:6px 0 4px;border:0;background:var(--tealD);color:#fff;font:inherit;font-weight:800;font-size:.95rem;padding:10px;border-radius:10px;cursor:pointer}
 /* 아래에서 올라오는 창·토스트(reading-log.js) */
 html.rl-lock,html.rl-lock body{overflow:hidden}
 .rl-scrim{position:fixed;inset:0;z-index:80;background:rgba(20,26,18,.5);display:flex;align-items:flex-end;justify-content:center}
@@ -67,7 +72,15 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
     <div class="inapp" id="inapp" hidden></div>
     <span class="eyebrow">나이테 엄마표영어 스터디</span>
     <h1>회원 입장</h1>
-    <p class="lead">회원 비밀번호를 넣으면 매일 읽은 책을<br>기록하는 화면으로 이동해요.</p>
+    <p class="lead">이번 달 스터디 자료와 읽기 기록·공지를<br>여기서 볼 수 있어요.</p>
+    <div class="first" id="first" hidden>
+      <b class="ft">📲 처음이세요? 이렇게 시작해요</b>
+      <ol>
+        <li><b>앱 설치</b> — 홈 화면에 추가해요<button type="button" class="fbtn" data-rinstall="first">📲 앱 설치하기</button></li>
+        <li>홈 화면의 <b>나이테 스터디</b> 앱을 열고 비밀번호 입력</li>
+        <li>이번 달 <b>스터디 자료</b>를 확인해요</li>
+      </ol>
+    </div>
     <form class="card" id="form" autocomplete="off" novalidate>
       <div class="info" id="info" hidden></div>
       <label class="l" for="pin">회원 비밀번호</label>
@@ -76,6 +89,7 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
       <label class="keep"><input type="checkbox" id="keep" checked> 이 폰에서 계속 열어두기</label>
       <button type="submit" class="go" id="go">입장하기</button>
       <ul class="feat">
+        <li>이번 달·지난 달 스터디 자료</li>
         <li>표지를 한 번 누르면 읽은 책 기록</li>
         <li>같은 책 반복 읽기까지 쌓이는 우리 아이 책장</li>
         <li>아이가 좋아하는 책 유형 통계</li>
@@ -111,6 +125,10 @@ if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{s
   var insBtn=document.getElementById('insBtn');
   if(NR.isStandalone())insBtn.hidden=true;
   insBtn.addEventListener('click',function(){NR.install();});
+  // 링크로 처음 들어온 사람(홈 화면 앱이 아님): 앱 설치 → 앱에서 비밀번호 → 자료 확인 순서 안내
+  // (아이폰은 사파리에서 넣은 비밀번호가 설치한 앱으로 넘어가지 않아서 설치를 먼저)
+  if(!NR.isStandalone()){var first=document.getElementById('first');first.hidden=false;insBtn.hidden=true;
+    first.querySelector('.fbtn').addEventListener('click',function(){NR.install();});}
 
   // 이미 입장한 폰이면 바로 기록 화면으로(비밀번호가 바뀌었으면 기록 화면이 다시 여기로 보냄)
   if(!q.has('expired')&&NR.getCode()){location.replace(target);return;}

@@ -42,6 +42,20 @@ a{color:inherit;text-decoration:none}
 .members b{color:var(--coral);font-size:1.1rem}
 .chips span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.85rem;font-weight:700;color:var(--tealD)}
 
+/* 참여는 이렇게(채팅방 → 공지 → 회원 앱) */
+.flow{max-width:620px;margin:22px auto 0;padding:16px 18px;text-align:left}
+.flow .ft{display:block;text-align:center;font-family:'Gowun Batang',Georgia,serif;font-size:1.05rem;color:var(--tealD);margin-bottom:10px}
+.flow ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.flow li{display:flex;gap:9px;align-items:flex-start;background:#F3F5EE;border-radius:12px;padding:10px}
+.flow li i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;background:var(--tealD);color:#fff;font-weight:800;font-size:.8rem;display:grid;place-items:center;margin-top:1px}
+.flow li b{display:block;font-size:.92rem;line-height:1.35}
+.flow li small{display:block;color:var(--soft);font-size:.78rem;line-height:1.4;margin-top:2px}
+.flow li.app{background:#FBEFE3;outline:1.5px solid var(--amber)}
+.flow li.app i{background:var(--coral)}
+.flow .fnote{margin:10px 0 0;text-align:center;font-size:.82rem;color:var(--soft)}
+.flow .fnote b{color:var(--coral)}
+@media (max-width:620px){.flow ol{grid-template-columns:1fr}}
+
 /* 공통 구간 */
 .sec{padding:30px 0}
 .sec>h2{font-size:clamp(1.35rem,4.4vw,1.75rem);text-align:center}
@@ -152,6 +166,15 @@ a{color:inherit;text-decoration:none}
     <span class="cta-note">카카오톡 오픈채팅으로 연결돼요</span>
     <div class="chips"><span>무료</span><span>도서관 책도 OK</span><span>1권만 있어도 시작</span></div>
     <p class="members" id="heroMem" hidden></p>
+    <div class="panel flow">
+      <b class="ft">스터디 참여는 이렇게</b>
+      <ol>
+        <li><i>1</i><span><b>채팅방 입장</b><small>위 버튼 · 카카오톡 오픈채팅</small></span></li>
+        <li><i>2</i><span><b>공지 확인</b><small>스터디 앱 링크와 비밀번호가 있어요</small></span></li>
+        <li class="app"><i>3</i><span><b>📲 나이테 스터디 앱 설치</b><small>스터디 자료·기록·공지는 앱에서 봐요</small></span></li>
+      </ol>
+      <p class="fnote">채팅방만 들어오면 끝이 아니에요. <b>스터디 앱까지 설치</b>해야 스터디 자료를 볼 수 있어요.</p>
+    </div>
   </section>
 
   <!-- 3. 이렇게 함께해요 -->
@@ -161,7 +184,7 @@ a{color:inherit;text-decoration:none}
       <div class="panel step">
         <div class="n"><i>1</i><em>📚</em></div>
         <h3>매달 5권을 골라드려요</h3>
-        <p>이번 달 함께 읽을 그림책과 읽어주기 자료를 확인해요. 뭘 읽을지 고민하지 않아도 돼요.</p>
+        <p>이번 달 함께 읽을 그림책과 읽어주기 자료를 스터디 앱에서 확인해요. 뭘 읽을지 고민하지 않아도 돼요.</p>
       </div>
       <div class="panel step">
         <div class="n"><i>2</i><em>🗣️</em></div>
@@ -171,7 +194,7 @@ a{color:inherit;text-decoration:none}
       <div class="panel step">
         <div class="n"><i>3</i><em>📸</em></div>
         <h3>읽은 날, 사진 한 장</h3>
-        <p>채팅방에 사진 한 장, 또는 기록 앱에서 표지 한 번 누르면 끝. 서로 응원하며 꾸준해져요.</p>
+        <p>채팅방에 사진 한 장, 또는 스터디 앱에서 표지 한 번 누르면 끝. 서로 응원하며 꾸준해져요.</p>
         <div class="mock" aria-hidden="true">
           <div class="mt">나이테 스터디 앱 · 표지를 누르면 기록돼요</div>
           <div class="row" id="mockRow"><div class="bk"><b>3번</b></div><div class="bk"><b>1번</b></div><div class="bk dim"></div></div>
@@ -229,6 +252,7 @@ a{color:inherit;text-decoration:none}
       <details><summary>정말 무료예요?</summary><p>네, 스터디 참여와 매달 자료 모두 무료예요. 책은 도서관에서 빌려도 되고, 갖고 싶은 책만 구매하셔도 돼요.</p></details>
       <details><summary>영어를 못해도 할 수 있어요?</summary><p>그럼요. 나이테를 운영하는 엄마도 영어를 잘하는 엄마가 아니에요. 읽어주는 법과 Read Aloud 영상이 있어서, 엄마가 먼저 들어보고 읽어줄 수 있어요.</p></details>
       <details><summary>몇 살 아이에게 맞아요?</summary><p>파닉스를 떼기 전 아이들이에요. 0세부터 초등 저학년까지, 엄마가 읽어주는 그림책으로 함께해요.</p></details>
+      <details><summary>스터디 자료는 어디서 봐요?</summary><p>회원 전용 <b>나이테 스터디 앱</b>에서 봐요. 채팅방에 들어오면 공지에 앱 링크와 비밀번호가 있어요. 홈 화면에 추가해 두면 이번 달 자료·읽기 기록·공지를 한 곳에서 볼 수 있어요.</p></details>
       <details><summary>책을 다 사야 하나요?</summary><p>아니요. 도서관에서 빌려도 되고, 5권을 다 못 구해도 괜찮아요. 1권만 있어도 시작할 수 있어요.</p></details>
       <details><summary>중간에 들어가도 돼요?</summary><p>매달 새로운 주제로 시작하니까 언제 들어오셔도 괜찮아요. 이번 달 책 중 1권부터 같이 읽어요.</p></details>
       <details><summary>인증은 매일 해야 해요?</summary><p>아니요. 읽어준 날 사진 한 장이면 충분하고, 빠진 날이 있어도 괜찮아요. 우리 집 상황에 맞게 할 수 있는 만큼 함께해요.</p></details>
@@ -318,7 +342,7 @@ a{color:inherit;text-decoration:none}
     }
     if(d&&d.reads>=MIN_READS){
       $('reads').textContent='이번 달 '+Number(d.reads).toLocaleString('ko-KR')+'번';
-      $('readsCap').textContent='우리 방 엄마들이 아이에게 영어 그림책을 읽어준 횟수예요 (기록 앱 기준)';
+      $('readsCap').textContent='우리 방 엄마들이 아이에게 영어 그림책을 읽어준 횟수예요 (스터디 앱 기준)';
       $('roomNum').hidden=false;show=true;
     }
     if(REVIEWS.length){
