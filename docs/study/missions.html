@@ -137,6 +137,8 @@ header .wrap{display:flex;align-items:center;gap:10px;padding:11px 20px}
   async function boot(){
     try{
       try{var g=await client.auth.getSession();var u=g.data.session&&g.data.session.user;IS_ADMIN=!!(u&&window.ADMIN_EMAIL&&u.email&&u.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase());}catch(e){}
+      // 스터디 자료는 회원 전용 스터디 앱에서만(2026-10-31): 관리자 외에는 이동 — 회원 비밀번호가 있는 폰 → 스터디 앱, 아니면 참여 안내
+      if(!IS_ADMIN){var _m=curParam();location.replace(memberCode()?'../record/app.html'+(_m?'?m='+encodeURIComponent(_m):''):'../join.html?from=study');return;}
       var key=curParam();
       if(!key){var st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle();key=st.data&&st.data.current_theme;}
       if(!key){notice('아직 공개된 주제가 없어요.');return;}

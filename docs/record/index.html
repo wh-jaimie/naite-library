@@ -97,7 +97,6 @@ html.rl-lock,html.rl-lock body{overflow:hidden}
     </form>
     <div class="links">
       <span class="sub">비밀번호는 오픈채팅 공지에 있어요.</span>
-      <a href="../study/" id="pubLink">스터디 자료만 둘러보기 ›</a>
       <a href="../join.html?from=member">아직 회원이 아니라면 · 스터디 참여 안내 ›</a>
       <button type="button" class="ins" id="insBtn" data-rinstall="entry">📲 앱 설치하기</button>
     </div>
@@ -114,7 +113,6 @@ if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js',{s
   var NR=window.NaiteReading,client=supabase.createClient(window.SUPA_URL,window.SUPA_ANON);
   var q=new URLSearchParams(location.search),m=q.get('m')||'';
   var target='app.html'+(m?'?m='+encodeURIComponent(m):'');
-  if(m)document.getElementById('pubLink').href='../study/?m='+encodeURIComponent(m);
   var pin=document.getElementById('pin'),err=document.getElementById('err'),go=document.getElementById('go'),info=document.getElementById('info');
 
   // 카카오톡 등 앱 안 브라우저: 설치가 안 되고 기록도 따로 저장됨 → 크롬/사파리로 열기 안내
