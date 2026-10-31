@@ -802,10 +802,10 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
         '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
           '<h3>'+esc(b.title)+'</h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
           (meta.length?'<div class="meta">'+meta.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>':'')+'</div></div>'+
-        '<div class="acts">'+(yt?'<button type="button" class="act" data-sdvid aria-pressed="false">'+ic('play',15)+'영상</button>':'')+
+        '<div class="acts">'+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
           '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
-        (yt?'<div class="sd-vid" hidden><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        (yt?'<div class="sd-vid"><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
         (b.tip?'<details class="tip" data-tip="'+esc(b.title)+'"><summary>이 책 읽어주기 팁'+ic('chev',15)+'</summary><p>'+esc(b.tip)+'</p></details>':'')+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
@@ -868,7 +868,6 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
     app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,details'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
-    app.querySelectorAll('[data-sdvid]').forEach(function(b){b.addEventListener('click',function(){var v=b.closest('.sd-book').querySelector('.sd-vid');v.hidden=!v.hidden;b.setAttribute('aria-pressed',String(!v.hidden));});});
     app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
