@@ -1023,6 +1023,31 @@
   function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
+  // 나이테 120(앱 안 iframe): 자료가 공개된 주제에만 '📖 스터디 자료 보기' → 앱 안에서 그 달 자료(?m=키, 회원 비밀번호로 열림)
+  // 공개 사이트 challenge.html 에는 아무것도 안 붙음(회원 앱이 iframe 안에 끼워 넣는 것)
+  function studyLinks(f){
+    var d;try{d=f.contentDocument;}catch(e){return;}if(!d||!d.body)return;
+    if(!d.getElementById('rlStudyCss')){var st=d.createElement('style');st.id='rlStudyCss';
+      st.textContent='.rl-study{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 2px 14px;padding:10px 12px;border-radius:12px;background:#E4EEE7;color:#245648;font-weight:800;font-size:.9rem;text-decoration:none;border:1px solid #CFE0D6}.rl-study:active{transform:scale(.98)}';
+      d.head.appendChild(st);}
+    function apply(){
+      var pub={};(S&&S.pubs||[]).forEach(function(t){pub[t.key]=1;});
+      d.querySelectorAll('.theme[data-key]').forEach(function(el){
+        var k=el.getAttribute('data-key'),has=el.querySelector('.rl-study');
+        if(!pub[k]){if(has)has.remove();return;}
+        if(has)return;
+        var a=d.createElement('a');a.className='rl-study';a.href='#';a.textContent='📖 스터디 자료 보기';
+        a.addEventListener('click',function(ev){ev.preventDefault();if(S&&S.onEvent)S.onEvent('c120_study_open',{theme:k});
+          try{localStorage.setItem(TAB_KEY,'study');}catch(e){}
+          location.href='app.html'+(k===S.home.key?'':'?m='+encodeURIComponent(k));});
+        var th=el.querySelector('.th');if(th)th.insertAdjacentElement('afterend',a);else el.insertBefore(a,el.firstChild);
+      });
+    }
+    apply();
+    var body=d.getElementById('course-body')||d.body;
+    try{new f.contentWindow.MutationObserver(function(){apply();}).observe(body,{childList:true,subtree:true});}catch(e){}
+    if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
+  }
   var studyY=0,T_NAME={c120:'나이테 120',shop:'국내 인기 책장'};
   function showTab(id){
     if(TAB_IDS.indexOf(id)<0)id='study';
@@ -1031,7 +1056,7 @@
     TAB_IDS.forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
     if(EMBED[id]){var v=$('v-'+id),tb=$('rtabs');
       if(v){v.style.bottom=(tb?tb.offsetHeight:64)+'px';
-        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.loading='eager';v.appendChild(f);}}}
+        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}}}
     try{history.replaceState(null,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){}
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();
