@@ -423,6 +423,7 @@ renderBody();updateProgress();
 </script>
 <script src="track.js" data-page="나이테 120"></script>
 <script src="study-room.js" defer></script>
+<script src="c120-study.js" defer></script>
 """
 _disc = ('    <p class="note" style="margin-top:6px">※ 책 제목을 누르면 열리는 <b>🛒 쿠팡 링크</b>는 '
          '쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>') if _buycnt else ''
