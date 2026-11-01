@@ -747,6 +747,10 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .mnav button{border:1px solid var(--line-2,#D4D9C9);background:var(--surface,#FCFCF8);color:var(--pine,#245648);width:30px;height:30px;border-radius:50%;font:inherit;font-size:18px;font-weight:700;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
 .mnav button:disabled{opacity:.3;cursor:default}
 .st-head .mnav{gap:10px}
+.sd-label{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:var(--pine);margin:0 0 7px}
+.sd-book .sd-tip{margin-top:10px;background:var(--pine-soft);border-radius:12px;padding:10px 12px;cursor:default}
+.sd-book .sd-tip .sd-label{margin-bottom:4px}
+.sd-book .sd-tip p{margin:0;font-size:13px;color:var(--ink);line-height:1.55;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -812,8 +816,8 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
         '<div class="acts">'+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
           '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
-        (yt?'<div class="sd-vid"><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
-        (b.tip?'<details class="tip" data-tip="'+esc(b.title)+'"><summary>이 책 읽어주기 팁'+ic('chev',15)+'</summary><p>'+esc(b.tip)+'</p></details>':'')+
+        (yt?'<div class="sd-vid"><div class="sd-label">'+ic('play',14)+'Read Aloud 영상</div><div class="fr" data-yt="'+yt+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div>':'')+
+        (b.tip?'<div class="sd-tip"><div class="sd-label">'+ic('voice',14)+'이 책 읽어주기 팁</div><p>'+esc(b.tip)+'</p></div>':'')+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
@@ -874,7 +878,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(!PREVIEW)initPanels();
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
-    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,details'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
+    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,.sd-tip'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
     app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
@@ -890,7 +894,6 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
       box.innerHTML='<div class="sd-back"><span>지난 달 <b>'+esc(theme.ko)+'</b> 자료를 보고 있어요</span><a href="app.html" data-sdback>이번 달로 돌아가기 '+ic('right',14)+'</a></div>';
       box.querySelector('[data-sdback]').addEventListener('click',function(){try{localStorage.setItem('naite_last_tab','study');}catch(e){}});
     },function(){});
-    app.querySelectorAll('details.tip').forEach(function(d){d.addEventListener('click',function(ev){ev.stopPropagation();});d.addEventListener('toggle',function(){if(d.open)logEvent('tip_open',{title:d.dataset.tip});});}); // 팁 줄은 눌러도 책정보로 안 감
     logEvent('page_view',{theme:theme.ko});
     // 체류시간
     var start=Date.now();
