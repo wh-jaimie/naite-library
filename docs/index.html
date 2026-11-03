@@ -133,13 +133,11 @@ a{color:inherit;text-decoration:none}
 .app{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center}
 .phone{width:260px;margin:0 auto;background:#23291F;border-radius:34px;padding:10px;box-shadow:0 20px 40px rgba(35,41,31,.25)}
 .screen{background:var(--paper);border-radius:26px;padding:16px 14px;min-height:400px}
+.screen.shot{padding:0;min-height:0;overflow:hidden}.screen.shot img{display:block;width:100%;height:auto}
+.shotcap{display:block;text-align:center;color:#C9CDBF;font-size:.72rem;margin:8px 0 2px}
 .screen .h{font-weight:800;color:var(--pine);font-size:.92rem}
 .screen .cnt{font-family:'Gowun Batang',serif;font-size:2.1rem;color:var(--coral);margin:4px 0 2px}
 .screen small{color:var(--soft);font-size:.75rem}
-.shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;padding-bottom:8px;border-bottom:6px solid #C9A77F}
-.shelf div{aspect-ratio:3/4;border-radius:4px;background:#E2D8C3 center/cover no-repeat;position:relative}
-.shelf div b{position:absolute;right:2px;bottom:2px;background:var(--pine);color:#fff;font-size:.6rem;border-radius:999px;padding:0 5px}
-.toast{margin-top:12px;background:var(--pine);color:#fff;border-radius:10px;padding:8px;font-size:.75rem;font-weight:700;text-align:center}
 .pts{display:grid;gap:12px;margin-top:14px}
 .pt{display:flex;gap:12px}
 .pt em{font-style:normal;font-size:1.4rem}
@@ -242,7 +240,7 @@ a{color:inherit;text-decoration:none}
     </div>
     <div class="five" id="five"></div>
     <div class="mfoot">
-      <a class="panel note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 읽어주기 자료</b><small id="noteS">읽어주는 법 · Read Aloud 영상 · 책 속 영어표현까지</small></span><span class="go">보기 →</span></a>
+      <a class="panel note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 스터디 자료</b><small id="noteS">재밌게 읽는 팁 · 음원영상 · 워크지 · 회화표현까지</small></span><span class="go">보기 →</span></a>
       <div class="panel gb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="gbBtn">관심 있어요</button></div>
     </div>
     <div class="panel nextm" id="nextm" hidden></div>
@@ -304,12 +302,7 @@ a{color:inherit;text-decoration:none}
         </div>
         <div class="ctas"><a class="b1" data-app="log" data-cta="app_log" href="record/">📲 기록 앱 사용하기</a><a class="b2" href="install.html">설치 방법</a></div>
       </div>
-      <div class="phone" aria-hidden="true"><div class="screen">
-        <div class="h">🌳 우리 아이 영어책장</div>
-        <div class="cnt">12번</div><small>이번 달 함께 읽은 횟수 (예시 화면)</small>
-        <div class="shelf" id="shelf"></div>
-        <div class="toast" id="toast">📖 오늘 1번 읽음으로 기록됐어요</div>
-      </div></div>
+      <div class="phone"><div class="screen shot"><img src="app-calendar.jpg" width="520" height="986" loading="lazy" alt="나이테 스터디 앱 기록하기 화면: 날짜마다 읽은 책 표지가 쌓이는 달력"></div><small class="shotcap">실제 앱 화면 (예시 기록)</small></div>
     </div>
   </section>
 
@@ -340,11 +333,11 @@ a{color:inherit;text-decoration:none}
   <section class="sec">
     <h2>자주 묻는 질문</h2>
     <div class="panel faq">
-      <details><summary>정말 무료예요?</summary><p>네. 매달 5권 큐레이션, 읽어주기 자료, 기록 앱 모두 무료예요. 책은 도서관에서 빌려도 되고, 갖고 싶은 책만 구매하셔도 돼요.</p></details>
+      <details><summary>정말 무료예요?</summary><p>네. 매달 5권 큐레이션, 스터디 자료, 기록 앱 모두 무료예요. 책은 도서관에서 빌려도 되고, 갖고 싶은 책만 구매하셔도 돼요.</p></details>
       <details><summary>영어를 못해도 읽어줄 수 있어요?</summary><p>그럼요. 나이테를 운영하는 엄마도 영어를 잘하는 엄마가 아니에요. 읽어주는 법과 Read Aloud 영상이 있어서, 엄마가 먼저 들어보고 읽어줄 수 있어요.</p></details>
       <details><summary>몇 살 아이에게 맞아요?</summary><p>파닉스를 떼기 전 아이들이에요. 0세부터 초등 저학년까지, 엄마가 읽어주는 그림책으로 함께해요.</p></details>
       <details><summary>책을 다 사야 하나요?</summary><p>아니요. 도서관에서 빌려도 되고, 5권을 다 못 구해도 괜찮아요. 1권만 있어도 시작할 수 있어요.</p></details>
-      <details><summary>꼭 채팅방에 들어가야 해요?</summary><p>아니요. 이번 달 책과 읽어주기 자료, 기록 앱은 누구나 쓸 수 있어요. 다른 엄마들과 함께 인증하고 질문하고 싶을 때 무료 스터디방에 들어오시면 돼요.</p></details>
+      <details><summary>꼭 채팅방에 들어가야 해요?</summary><p>아니요. 이번 달 책과 스터디 자료, 기록 앱은 누구나 쓸 수 있어요. 다른 엄마들과 함께 인증하고 질문하고 싶을 때 무료 스터디방에 들어오시면 돼요.</p></details>
       <details><summary>중간에 시작해도 돼요?</summary><p>매달 새로운 주제로 시작하니까 언제 시작해도 괜찮아요. 이번 달 책 중 1권부터 읽어 보세요.</p></details>
     </div>
   </section>
@@ -425,11 +418,6 @@ a{color:inherit;text-decoration:none}
     // 5권 카드: 표지·유형·고른 이유 → 쿠팡
     $('five').innerHTML=B.map(function(b){var L=LINKS[b.title]||b.buy_url,r=reasonOf(b.title);
       return '<a class="panel bk cvl" href="'+esc(buyHref(b))+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(b.title)+'" data-k="'+(L?'cp':'find')+'"><span class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'</span>'+(b.tier_label?'<span class="ty">'+esc(b.tier_label)+'</span>':'')+'<h3>'+esc(b.title)+'</h3>'+(r?'<p>'+esc(r)+'</p>':'<p></p>')+'<span class="buy">책 보러 가기 →</span></a>';}).join('');
-    // 기록 앱 예시 책장
-    var cnt=[2,3,1,4,1],sh=B.map(function(b,i){return '<div style="background-image:url(\''+esc((b.cover||'').replace(/'/g,''))+'\')"><b>'+cnt[i%5]+'</b></div>';});
-    while(sh.length<8)sh.push('<div style="opacity:.35"></div>');
-    $('shelf').innerHTML=sh.join('');
-    if(B[1])$('toast').textContent='📖 '+B[1].title+' 3번째 읽음!';
     // 다음 달 미리보기: 매달 15일부터
     var nx=d.next;
     if(nx&&nx.books&&nx.books.length&&new Date().getDate()>=15){
