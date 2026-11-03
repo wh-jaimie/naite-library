@@ -366,6 +366,8 @@
       if(!ok&&waited<3000){waited+=500;setTimeout(check,500);return;}
       if(!ok)return; // 설치를 지원하지 않는 브라우저(데스크톱 등)는 조용히 넘어감
       if(sheetEl&&!sheetEl.hidden)return;
+      // '처음 오셨나요?' 안내(#pn)가 열려 있으면 띄우지 않음 — 안내의 시작하기 1번이 이미 앱 설치(다음에 열 때 다시 제안)
+      var pn=document.getElementById('pn');if(pn&&!pn.hidden)return;
       try{localStorage.setItem(INSTALL_KEY,String(Date.now()));}catch(e){}
       var app=inAppName();
       var sh=openSheet('<h3>앱으로 설치해 두세요</h3>'+
