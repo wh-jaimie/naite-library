@@ -119,7 +119,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     root.innerHTML='<div class="wrap"><div class="warn" style="margin-top:40px">⚙️ 먼저 <code>config.js</code> 설정이 필요해요.</div></div>';return;
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
-  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (회원)</span>'],['books','📚 이번 달 책']];
+  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['books','📚 이번 달 책']];
   var PERIODS=[['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
   try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
@@ -274,23 +274,53 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
   function rangeNote(R){return '<p class="hint" style="margin:10px 2px 0">기간: <b>'+esc(R.label)+'</b> ('+md(R.days[0])+' ~ '+md(R.days[R.days.length-1])+') · 비교: '+R.plabel+'. 관리자 로그인 기기와 ?notrack=1 기기는 집계에서 빠져요.</p>';}
 
+  // 공동구매 관심(events.groupbuy_interest, meta.theme_key) — 주제별 관심 기기 수, 전체 기간
+  async function groupbuyCard(){
+    var el=document.getElementById('gbcard');if(!el)return;
+    try{
+      var ev=await pageAll(function(){return client.from('events').select('type,session_id,meta,created_at').eq('type','groupbuy_interest').order('created_at',{ascending:false});});
+      ev=ev.filter(function(e){return e.type==='groupbuy_interest';});
+      var o={};ev.forEach(function(e){var k=(e.meta&&e.meta.theme_key)||'(주제 없음)',x=o[k]=o[k]||{s:{},n:0,last:''};x.n++;x.s[e.session_id||('n'+x.n)]=1;if(e.created_at>x.last)x.last=e.created_at;});
+      var keys=Object.keys(o).sort(function(x,y){return cnt(o[y].s)-cnt(o[x].s);});
+      var cur=(S.pubs&&S.pubs[0]&&S.pubs[0].key)||'';
+      el.innerHTML='<h3>🛍 공동구매 관심 <span class="hint">메인 ‘관심 있어요’ · 기기당 1번 · 전체 기간</span></h3>'+
+        (keys.length?table(['주제','관심 기기','마지막'],keys.map(function(k){var t=themeBy(k);return [esc(t?themeLabel(t):k),cnt(o[k].s),md(dstr(o[k].last))];}),1)+
+          '<p class="hint">같은 폰이 같은 주제에 여러 번 눌러도 1로 세요. 숫자가 모이면 서점에 공동구매 제안할 때 근거로 써요.</p>'
+        :'<p class="status">아직 누른 사람이 없어요. 메인의 이번 달 5권 아래 ‘관심 있어요’ 버튼에서 모여요.</p>');
+    }catch(e){el.innerHTML='<h3>🛍 공동구매 관심</h3><div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';}
+  }
   // 한눈에
   function renderHome(body,X){
     var R=X.R;
+    // 전략(2026-11-02) 5단계: 유입 → 관심 → 활성화 → 유지 → 매출 신호. 스터디방(채팅방)은 보조 지표
     function m(list){
       var pub=list.filter(isPublic),pv=pub.filter(function(e){return e.type==='page_view';});
-      return {visitors:cnt(sessions(pv)),join:list.filter(function(e){return e.type==='join_click';}).length,buy:list.filter(function(e){return e.type==='buy_click';}).length};
+      function n(t){return list.filter(function(e){return e.type===t;}).length;}
+      return {visitors:cnt(sessions(pv)),app:cnt(sessions(list.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}))),
+        join:n('join_click'),buy:n('buy_click'),gb:n('groupbuy_interest'),cta:n('cta_click')};
     }
-    var a=m(X.cur),b=m(X.prv);
-    var rc=X.lc?cnt(countBy(X.lc,function(l){return l.reader;})):'–',rp=X.lp?cnt(countBy(X.lp,function(l){return l.reader;})):null;
+    // 기록한 폰 · 3일 이상 기록한 폰
+    function rd(logs){if(!logs)return {r:'–',k:'–'};var d={};logs.forEach(function(l){(d[l.reader]=d[l.reader]||{})[l.read_on]=1;});
+      var ids=Object.keys(d);return {r:ids.length,k:ids.filter(function(i){return cnt(d[i])>=3;}).length};}
+    var a=m(X.cur),b=m(X.prv),ra=rd(X.lc),rb=X.lp?rd(X.lp):{r:null,k:null};
+    function pct(x,y){return typeof x==='number'&&typeof y==='number'&&y?' '+Math.round(x/y*100)+'%':'';}
+    function stage(no,label,sub,n,prev){return kpi('<b style="color:var(--coral)">'+no+'</b> '+label+'<br><span style="font-weight:500">'+sub+'</span>',n,prev,R);}
     var h='<div class="card" style="background:none;border:0;box-shadow:none;padding:0"><div class="kgrid">'+
-      kpi('🌱 나이테 방문자',a.visitors,b.visitors,R)+
-      kpi('🙋 스터디 참여 클릭',a.join,b.join,R)+
-      kpi('📖 기록한 폰',rc,rp,R)+
+      stage('① 유입','🌱 나이테 방문자','나이테 사이트를 본 사람',a.visitors,b.visitors)+
+      stage('② 관심','📲 스터디 앱 연 사람','바로 앱으로 온 사람 포함',a.app,b.app)+
+      stage('③ 활성화','📖 기록한 폰','1번이라도 기록',ra.r,rb.r)+
+      stage('④ 유지','🔁 3일 이상 기록','기록한 폰 중'+pct(ra.k,ra.r),ra.k,rb.k)+
+      stage('⑤ 매출 신호','🛒 쿠팡 클릭 · 공구 관심','쿠팡 '+a.buy+' · 공구 '+a.gb,a.buy+a.gb,b.buy+b.gb)+
+    '</div>'+
+    '<div class="kgrid" style="margin-top:10px;opacity:.85">'+
+      kpi('👆 메인 버튼 클릭',a.cta,b.cta,R)+
       kpi('✅ 읽기 기록',X.lc?X.lc.length:'–',X.lp?X.lp.length:null,R)+
-      kpi('🛒 쿠팡 클릭',a.buy,b.buy,R)+
-    '</div>'+rangeNote(R)+'</div>';
+      kpi('💬 스터디방 참여 클릭 (보조)',a.join,b.join,R)+
+    '</div>'+rangeNote(R)+'</div>'+
+    '<div class="card" id="gbcard"><h3>🛍 공동구매 관심 <span class="hint">메인 ‘관심 있어요’ · 기기당 1번 · 전체 기간</span></h3><p class="status">불러오는 중…</p></div>';
     var M={visitors:['나이테 방문자','#2F6E58',function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
+      cta:['메인 버튼 클릭','#8A6D2F',function(){return perDay(X.cur.filter(function(e){return e.type==='cta_click';}),R,function(e){return dstr(e.created_at);});}],
+      gb:['공동구매 관심','#7A4520',function(){return perDay(X.cur.filter(function(e){return e.type==='groupbuy_interest';}),R,function(e){return dstr(e.created_at);});}],
       join:['스터디 참여 클릭','#B87343',function(){return perDay(X.cur.filter(function(e){return e.type==='join_click';}),R,function(e){return dstr(e.created_at);});}],
       opens:['스터디 앱 연 폰','#6A4A8A',function(){return perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
       readers:['기록한 폰','#4F9A72',function(){return X.lc?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):R.days.map(function(){return 0;});}],
@@ -302,6 +332,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     h+='<div class="card"><details class="raw"><summary>원본 이벤트 (최근 40개)</summary><div style="margin-top:10px">'+table(['시각','유형','화면','비고'],recent,9)+'</div></details></div>';
     body.innerHTML=h;
     var sel=document.getElementById('hm');function draw(){var x=M[sel.value];document.getElementById('hchart').innerHTML=barChart(R.days,x[2](),x[1]);}
+    groupbuyCard();
     sel.onchange=draw;draw();
   }
 
