@@ -74,7 +74,7 @@
   function met(books){return books.filter(function(b){return count(b.id);}).length;}
   function themeTotal(books){var ids={};books.forEach(function(b){ids[b.id]=1;});return S.rows.filter(function(r){return ids[r.b];}).length;}
   // 날짜 기준: 이번 스터디 달(yyyy-mm)에 읽은 기록
-  // 기록하기·읽기 통계에서 보는 달: 이번 스터디 달에서 S.viewOff 만큼 앞(지난 달)으로
+  // 기록하기·읽기 통계에서 보는 달: 이번 달(오늘 기준)에서 S.viewOff 만큼 앞(지난 달)으로
   function mkMonth(y,mo){
     var t=logicalToday().split('-'),ty=+t[0],tm=+t[1],td=+t[2],dim=new Date(y,mo,0).getDate(),el=0;
     if(ty===y&&tm===mo)el=td;else if(ty*12+tm>y*12+mo)el=dim;
@@ -105,8 +105,10 @@
   }
   function viewBooks(mi){var t=monthTheme(mi);if(!t)return [];return shelfBooks(t.key)||[];}
   function monthRows(mi){if(!mi)return S.rows.slice();var pre=mi.year+'-'+pad(mi.month)+'-';return S.rows.filter(function(r){return r.d.indexOf(pre)===0;});}
-  function monthInfo(){ // month_label "2026년 10월 · 1개월차" → 스터디 달과 오늘까지 경과 일수
-    var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(S.monthLabel||'');if(!m)return null;
+  // 달력·달 이동·인증 카드 기준 = 오늘이 속한 달(지난 달 자료를 열어도 달력은 현재 기준) — 2026-11-04
+  function monthInfo(){var t=logicalToday().split('-');return mkMonth(+t[0],+t[1]);}
+  function studyMonth(){ // 열어 둔 자료의 달(month_label "2026년 10월 · 1개월차") — 자료 카드의 '이번 달 n번'용
+    var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(S.monthLabel||'');if(!m)return monthInfo();
     var y=+m[1],mo=+m[2],t=logicalToday().split('-'),ty=+t[0],tm=+t[1],td=+t[2];
     var dim=new Date(y,mo,0).getDate(),el=0;
     if(ty===y&&tm===mo)el=td;else if(ty*12+tm>y*12+mo)el=dim;
@@ -926,7 +928,7 @@
     cv.appendChild(st);setTimeout(function(){if(st.parentNode)st.remove();},1500);
   }
   function paintCards(){
-    var mi=monthInfo();
+    var mi=studyMonth();
     document.querySelectorAll('[data-rrow]').forEach(function(el){
       el.hidden=false;
       var bid=+el.getAttribute('data-rrow'),pre=mi?mi.year+'-'+pad(mi.month)+'-':'',n=0,ld=lastDay(bid);
