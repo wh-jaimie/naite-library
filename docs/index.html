@@ -177,15 +177,24 @@ a{color:inherit;text-decoration:none}
 .faq p{margin:8px 0 0;color:var(--soft);font-size:.92rem}
 
 /* 커뮤니티(선택) */
-.comm{margin:52px 0 0;padding:28px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:#FFF8E8;border-color:#EBDDB9}
+.comm{margin:52px 0 0;padding:28px 24px;background:#FFF8E8;border-color:#EBDDB9}
 .comm h2{font-size:1.45rem;margin-top:4px}
 .comm p{margin:6px 0 0;color:var(--soft)}
-.commbtns{display:flex;flex-direction:column;gap:8px;align-items:stretch}
-.commbtns small{color:var(--soft);font-size:.78rem;text-align:center}
-.kakao,.daangn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;padding:14px 20px;border-radius:14px;white-space:nowrap}
-.kakao{background:#FEE500;color:#191600}
-.daangn{background:#fff;color:#C2560E;border:1.5px solid #F4B183}
-@media (max-width:640px){.comm{grid-template-columns:1fr}}
+.chans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.chan{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px 16px 14px;transition:transform .15s}
+.chan:hover{transform:translateY(-2px)}
+.chan .ci{font-size:1.6rem;line-height:1}
+.chan b{font-size:1.05rem;margin-top:6px}
+.chan small{color:var(--soft);font-size:.85rem;flex:1}
+.chan small em{font-style:normal;font-weight:800;color:#B0306A}
+.chan .cgo{margin-top:10px;font-weight:800;font-size:.88rem}
+.ch-kakao{border-color:#F2DA4A}.ch-kakao .cgo{color:#7A6400}
+.ch-ig{border-color:#E7A9C6}.ch-ig .cgo{color:#B0306A}
+.ch-dg{border-color:#F4B183}.ch-dg .cgo{color:#C2560E}
+@media (max-width:760px){.chans{grid-template-columns:1fr}.chan{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:start}.chan .ci{grid-row:span 3;margin-top:4px}.chan b{margin-top:0}}
+.igline{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 16px;border-radius:14px;background:#FCEFF5;border:1px solid #F0C8DA;font-size:.9rem}
+.igline b{color:#B0306A}
+.igline .go{margin-left:auto;font-weight:800;color:#B0306A;white-space:nowrap}
 
 /* 더 알아보기 */
 .more{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
@@ -248,6 +257,7 @@ a{color:inherit;text-decoration:none}
       <a class="panel note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 스터디 자료</b><small id="noteS">재밌게 읽는 팁 · 음원영상 · 워크지 · 회화표현까지</small></span><span class="go">보기 →</span></a>
       <div class="panel gb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="gbBtn">관심 있어요</button></div>
     </div>
+    <a class="igline" data-insta="month" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><span>📷</span><span>이번 달 책 읽은 날, 스토리에 <b>@naite_library</b>를 태그해 주세요. 나이테가 응원하러 갈게요</span><span class="go">인스타 →</span></a>
     <div class="panel nextm" id="nextm" hidden></div>
     <p class="disc">※ 책을 누르면 열리는 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   </section>
@@ -349,11 +359,16 @@ a{color:inherit;text-decoration:none}
 
   <!-- 8. 커뮤니티는 선택 -->
   <section class="panel comm" id="comm">
-    <div><span class="eyebrow">함께하면 더 오래가요</span><h2>무료 스터디방에서 같이 읽어요</h2><p id="commSub">읽은 날 사진 한 장, 궁금한 건 바로 질문. 빠진 날이 있어도 다시 이어져요.</p></div>
-    <div class="commbtns">
-      <a class="kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 무료 스터디방 참여하기</a>
-      <a class="daangn" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">🥕 당근모임 구경하기</a>
-      <small>당근모임에서는 근처에 사는 엄마들을 만날 수 있어요</small>
+    <span class="eyebrow">함께하면 더 오래가요</span>
+    <h2>엄마들과 이야기 나누는 세 곳</h2>
+    <p id="commSub">편한 곳 하나만 골라도 괜찮아요. 읽은 날 나누고, 궁금한 건 물어보세요.</p>
+    <div class="chans">
+      <a class="chan ch-kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">
+        <span class="ci">💬</span><b>카톡 스터디방</b><small>매일 인증하고, 궁금한 건 바로 물어봐요</small><span class="cgo">스터디방 참여하기 →</span></a>
+      <a class="chan ch-ig" data-insta="comm" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">
+        <span class="ci">📷</span><b>인스타그램</b><small>읽은 날 스토리에 <em>@naite_library</em>를 태그해 주세요. 댓글로 책 이야기도 나눠요</small><span class="cgo">@naite_library 보러 가기 →</span></a>
+      <a class="chan ch-dg" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">
+        <span class="ci">🥕</span><b>당근모임</b><small>근처에 사는 엄마들을 만나요</small><span class="cgo">당근모임 구경하기 →</span></a>
     </div>
   </section>
 
@@ -362,8 +377,8 @@ a{color:inherit;text-decoration:none}
     <div class="more"><a href="types.html">🧩 5가지 유형</a><a href="guide.html">📚 엄마표영어 가이드</a><a href="install.html">📲 앱 설치 방법</a><button type="button" data-install hidden>📲 홈 화면에 추가</button></div>
   </section>
 </main>
-<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><a href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">📷 Instagram @naite_library</a> · <a href="study/admin.html">🛠️ 관리자</a></div></div>
-<div class="dock"><a class="d1" data-app="month" data-cta="dock_month" href="record/">📚 이번 달 5권</a><a class="d2" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 스터디방</a></div>
+<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><a data-insta="foot" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">📷 Instagram @naite_library</a> · <a href="study/admin.html">🛠️ 관리자</a></div></div>
+<div class="dock"><a class="d1" data-app="month" data-cta="dock_month" href="record/">📚 이번 달 5권</a><a class="d2" data-cta="dock_comm" href="#comm">🤝 함께하기</a></div>
 
 <script src="track.js" data-page="랜딩"></script>
 <script src="study-room.js" defer></script>
@@ -384,6 +399,7 @@ a{color:inherit;text-decoration:none}
   document.querySelectorAll('[data-cta]').forEach(function(a){a.addEventListener('click',function(){ev('cta_click',{cta:a.getAttribute('data-cta'),tab:a.getAttribute('data-app')||''});});});
   document.querySelectorAll('[data-join]').forEach(function(a){a.addEventListener('click',function(){ev('join_click');});});
   document.querySelectorAll('[data-daangn]').forEach(function(a){a.addEventListener('click',function(){ev('daangn_click');});});
+  document.querySelectorAll('[data-insta]').forEach(function(a){a.addEventListener('click',function(){ev('insta_click',{at:a.getAttribute('data-insta')});});});
 
   // 회원 후기 — 채팅방에서 공개 동의를 받은 실제 회원의 말만. 예) {text:'…', who:'5살 아이 엄마'}
   var REVIEWS=[];
@@ -399,7 +415,7 @@ a{color:inherit;text-decoration:none}
     else cells.push('<div><b>0원</b><span>모두 무료</span></div>');
     $('stats').innerHTML=cells.join('');$('stats').style.setProperty('--n',cells.length);
     if(S.members>=MIN_MEMBERS){$('pMem').innerHTML='🌳 <b>'+S.members.toLocaleString('ko-KR')+'</b>명의 엄마가 함께';$('pMem').hidden=false;
-      $('commSub').textContent='지금 '+S.members.toLocaleString('ko-KR')+'명의 엄마가 함께 읽고 있어요. 읽은 날 사진 한 장, 궁금한 건 바로 질문.';}
+      $('commSub').textContent='지금 '+S.members.toLocaleString('ko-KR')+'명의 엄마가 함께하고 있어요. 편한 곳 하나만 골라도 괜찮아요.';}
   }
   renderStats();
 
