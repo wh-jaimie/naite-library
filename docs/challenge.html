@@ -106,6 +106,8 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 @media (max-width:520px){.ladder{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.step .rs{display:-webkit-box}.step .au{display:block}}
 footer{border-top:1px solid var(--line);margin-top:34px;padding-block:26px 42px}
 footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
+.prthumb{display:block;margin:16px auto 0;padding:0;border:0;background:none;cursor:pointer;width:min(100%,260px)}
+.prthumb img{display:block;width:100%;aspect-ratio:1080/1350;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);background:#F1F3EA}
 .share{margin-top:14px;width:100%;border:none;background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;font:inherit;font-weight:800;font-size:.95rem;padding:12px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow)}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
 .ov.on{display:flex}
@@ -161,7 +163,8 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
         <button class="reset" id="prReset">기록 초기화</button>
       </div>
       <div class="bar"><i id="prBar"></i></div>
-      <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
+      <button class="prthumb" id="prThumb" aria-label="진행 이미지 크게 보기·공유"><img id="prImg" alt="나이테 120 진행 이미지"></button>
+      <button class="share" id="prShare">🖼️ 진행 이미지 저장 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
@@ -255,7 +258,10 @@ function renderBody(){
   }
   document.getElementById('course-body').innerHTML=html;
 }
+let thumbT=null;
+function paintThumb(){clearTimeout(thumbT);thumbT=setTimeout(()=>{makeShareCanvas(seen.size,total,isDark()).then(cv=>{const im=document.getElementById('prImg');if(im)im.src=cv.toDataURL('image/jpeg',.85);});},250);}
 function updateProgress(){
+  paintThumb();
   const done=seen.size, pct=Math.round(done/total*100);
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
@@ -361,6 +367,7 @@ try{var _ap=new URLSearchParams(location.search);if(_ap.get('admin')==='1'){var 
   }catch(e){}
 });})();
 document.getElementById('prShare').addEventListener('click',openShare);
+document.getElementById('prThumb').addEventListener('click',openShare);
 document.getElementById('ovSave').addEventListener('click',saveShare);
 document.getElementById('ovShare').addEventListener('click',shareShare);
 document.getElementById('ovClose').addEventListener('click',()=>document.getElementById('ov').classList.remove('on'));
