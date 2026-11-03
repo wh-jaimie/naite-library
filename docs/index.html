@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#245648">
-<meta name="description" content="영어 그림책, 뭐부터 읽어줄지 고민이라면. 파닉스 전 아이에게 엄마가 읽어주기 좋은 영어 그림책 5권을 매달 골라드려요. 고른 이유·읽어주는 법·독서 기록까지 무료.">
-<title>나이테 · 매달 영어 그림책 5권</title>
+<meta name="description" content="엄마표영어, 혼자 꾸준히 하기 어렵다면. 파닉스 전 아이에게 엄마가 읽어주기 좋은 영어 그림책 5권을 매달 골라드려요. 고른 이유·읽어주는 법·독서 기록까지 무료.">
+<title>나이테 · 영어책육아 메이트</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
 <style>
 *{box-sizing:border-box}html,body{margin:0}
@@ -28,6 +28,11 @@ a{color:inherit;text-decoration:none}
 .top .home{display:flex;align-items:center;gap:8px}
 .top svg{width:32px;height:32px;flex:none}
 .top b{font-family:'Gowun Batang',serif;font-size:1.2rem;color:var(--pine)}
+.top .tagl{color:var(--soft);font-size:.86rem;font-weight:500}
+.top .tagl::before{content:"·";margin:0 6px 0 0;color:#B8AF9B}
+.nav a{white-space:nowrap}
+.top .bt{display:flex;align-items:baseline;gap:6px}
+@media (max-width:480px){.top .bt{flex-direction:column;gap:0;line-height:1.15}.top .tagl{font-size:.7rem}.top .tagl::before{display:none}}
 .nav{margin-left:auto;display:flex;gap:4px}
 .nav a{font-weight:700;font-size:.86rem;color:var(--soft);padding:7px 10px;border-radius:999px}
 .nav a:hover{background:var(--paper2);color:var(--pine)}
@@ -199,7 +204,7 @@ a{color:inherit;text-decoration:none}
 <body>
 <main class="wrap">
   <header class="top">
-    <a class="home" href="./" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b></a>
+    <a class="home" href="./" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><span class="bt"><b>나이테</b><span class="tagl">영어책육아 메이트</span></span></a>
     <nav class="nav" aria-label="바로가기">
       <a data-app="month" href="record/">이번 달 5권</a><a data-app="shop" href="domestic.html">인기 책장 100</a><a data-app="c120" href="challenge.html">나이테 120</a><a data-app="log" href="record/">기록</a><a class="app" data-app="month" href="record/">📲 앱 열기</a>
     </nav>
@@ -209,8 +214,8 @@ a{color:inherit;text-decoration:none}
   <section class="hero">
     <div>
       <span class="kick">🌱 파닉스 전 · 엄마가 읽어주는 영어 그림책</span>
-      <h1>영어 그림책,<br><em>뭐부터 읽어줄지</em><br>이제 고민하지 마세요</h1>
-      <p class="lead">매달 좋은 영어 그림책 5권을 골라드려요. 고른 이유와 읽어주는 방법부터 독서 기록까지, 나이테가 함께해요.</p>
+      <h1>엄마표영어,<br><em>혼자 꾸준히</em> 하기<br>어렵다면</h1>
+      <p class="lead">매달 좋은 영어 그림책 5권. 읽어주는 방법부터 독서 기록까지, 나이테가 함께해요.</p>
       <div class="ctas">
         <a class="b1" data-app="month" data-cta="hero_month" href="record/">📚 이번 달 책 5권 만나기</a>
         <a class="b2" data-app="shop" data-cta="hero_shop" href="domestic.html">우리 아이 책 찾기</a>
