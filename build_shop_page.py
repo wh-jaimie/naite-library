@@ -195,12 +195,6 @@ a{color:var(--tealD)}
 .buy.find{border:1px solid var(--line);color:var(--soft);background:#fff}
 .copy{display:block;width:100%;margin-top:5px;border:0;background:none;color:var(--tealD);font:inherit;font-weight:800;font-size:.78rem;padding:4px;cursor:pointer}
 .copy.ok{color:var(--coral)}
-.joinbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:22px 18px;text-align:center;margin:0 0 28px}
-.joinbox h2{font-family:'Gowun Batang',serif;font-size:1.2rem;margin:0;line-height:1.35;word-break:keep-all}
-.joinbox p{color:var(--soft);font-size:.88rem;margin:8px 0 0;word-break:keep-all}
-.joinbox a{display:inline-block;margin-top:14px;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);padding:13px 22px;border-radius:12px}
-.joinbox small{display:block;color:var(--soft);font-size:.76rem;margin-top:7px}
-.grid .joinbox{grid-column:1/-1;margin:4px 0;background:#F3EEE4;border-color:#E7DCCB}
 .empty{padding:40px 0;text-align:center;color:var(--soft)}
 .foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
@@ -227,7 +221,6 @@ a{color:var(--tealD)}
 </aside>
 <div class="dim" id="dim" hidden></div>
 <main><div class="count" id="count"></div><div class="grid" id="grid"></div>
-<div class="joinbox"><h2>📚 책은 샀는데, 어떻게 읽어줄지 막막하다면</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p><a class="joinlink" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>
 <p class="foot" id="foot"></p></main></div></div>
 <script>
 var DATA=__DATA__;
@@ -303,11 +296,7 @@ function paint(){
   document.getElementById('count').innerHTML=list.length+'권'+(filtered?' <button id="reset">필터 지우기</button>':'');
   var r=document.getElementById('reset');if(r)r.onclick=function(){S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:S.sort};document.getElementById('q').value='';paint();};
   var cards=list.map(card);
-  // 스터디 참여 카드: 6권 뒤(목록이 짧으면 맨 끝) — 맨 아래까지 안 내려가도 보이게
-  if(cards.length)cards.splice(Math.min(6,cards.length),0,JOIN_CARD);
   document.getElementById('grid').innerHTML=list.length?cards.join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
-var JOIN_CARD='<div class="joinbox"><h2>📚 고르는 것보다 어려운 건, 꾸준히 읽어주기</h2><p>매달 5권과 읽어주기 가이드, 같이 읽는 엄마들과 함께해요.</p>'+
-  '<a class="joinlink" data-at="list" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">🌿 무료 스터디 채팅방 참여하기</a><small>카카오톡 오픈채팅으로 연결돼요 · 무료 · 1권만 있어도 시작</small></div>';
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
 document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
@@ -338,11 +327,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('button.cop
   copyText(t).then(function(){b.textContent='복사됨 ✓ 서점에서 붙여넣기 하세요';b.classList.add('ok');setTimeout(function(){b.textContent='📋 제목 복사';b.classList.remove('ok');},1800);},
     function(){b.textContent=t;});
   ev('title_copy',{title:t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'});});
-// 스터디 참여 클릭(join_click) — 메인·나이테 120과 같은 방식
-document.addEventListener('click',function(e){var a=e.target.closest('a.joinlink');if(!a)return;ev('join_click',{page:'국내 인기 책장',from:window.NAITE_SRC||'direct',at:a.dataset.at||'bottom'});});
 </script>
 <script src="track.js" data-page="국내 인기 책장"></script>
-<script src="study-room.js" defer></script>
 </body></html>"""
 
 open(os.path.join(DOCS, "domestic.html"), "w", encoding="utf-8").write(PAGE.replace("__DATA__", json.dumps({"checked": PRICE_DAY, "items": items}, ensure_ascii=False)))
