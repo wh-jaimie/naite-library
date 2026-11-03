@@ -177,7 +177,11 @@ a{color:inherit;text-decoration:none}
 .comm{margin:52px 0 0;padding:28px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:#FFF8E8;border-color:#EBDDB9}
 .comm h2{font-size:1.45rem;margin-top:4px}
 .comm p{margin:6px 0 0;color:var(--soft)}
-.kakao{display:inline-flex;align-items:center;gap:8px;background:#FEE500;color:#191600;font-weight:800;padding:14px 20px;border-radius:14px;white-space:nowrap}
+.commbtns{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.commbtns small{color:var(--soft);font-size:.78rem;text-align:center}
+.kakao,.daangn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;padding:14px 20px;border-radius:14px;white-space:nowrap}
+.kakao{background:#FEE500;color:#191600}
+.daangn{background:#fff;color:#C2560E;border:1.5px solid #F4B183}
 @media (max-width:640px){.comm{grid-template-columns:1fr}}
 
 /* 더 알아보기 */
@@ -348,7 +352,11 @@ a{color:inherit;text-decoration:none}
   <!-- 8. 커뮤니티는 선택 -->
   <section class="panel comm" id="comm">
     <div><span class="eyebrow">함께하면 더 오래가요</span><h2>무료 스터디방에서 같이 읽어요</h2><p id="commSub">읽은 날 사진 한 장, 궁금한 건 바로 질문. 빠진 날이 있어도 다시 이어져요.</p></div>
-    <a class="kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 무료 스터디방 참여하기</a>
+    <div class="commbtns">
+      <a class="kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 무료 스터디방 참여하기</a>
+      <a class="daangn" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">🥕 당근모임 구경하기</a>
+      <small>당근모임에서는 근처에 사는 엄마들을 만날 수 있어요</small>
+    </div>
   </section>
 
   <section class="sec" style="padding-top:36px">
@@ -377,6 +385,7 @@ a{color:inherit;text-decoration:none}
   if(APP_TABS)document.querySelectorAll('[data-app]').forEach(function(a){a.href='record/app.html?tab='+a.getAttribute('data-app');});
   document.querySelectorAll('[data-cta]').forEach(function(a){a.addEventListener('click',function(){ev('cta_click',{cta:a.getAttribute('data-cta'),tab:a.getAttribute('data-app')||''});});});
   document.querySelectorAll('[data-join]').forEach(function(a){a.addEventListener('click',function(){ev('join_click');});});
+  document.querySelectorAll('[data-daangn]').forEach(function(a){a.addEventListener('click',function(){ev('daangn_click');});});
 
   // 회원 후기 — 채팅방에서 공개 동의를 받은 실제 회원의 말만. 예) {text:'…', who:'5살 아이 엄마'}
   var REVIEWS=[];
