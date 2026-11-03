@@ -602,17 +602,21 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd-notice .new.old{background:var(--surface-2);color:var(--muted)}
 .sd-notice .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
 .sd-notice svg{color:var(--muted)}
-.sd-hero{position:relative;overflow:hidden;margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 18px 18px;box-shadow:var(--shadow)}
-.sd-hero .deco{position:absolute;right:-70px;top:-70px;width:230px;height:230px;opacity:.55;pointer-events:none}
+.sd-hero{position:relative;overflow:hidden;margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px 12px;box-shadow:var(--shadow)}
+.sd-hero .deco{position:absolute;right:-60px;top:-70px;width:180px;height:180px;opacity:.45;pointer-events:none}
 .sd-hero .eyebrow{position:relative;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--clay-ink)}
-.sd-hero .theme{position:relative;display:flex;align-items:baseline;gap:10px;margin-top:6px}
-.sd-hero h1{font-family:var(--serif);font-weight:700;font-size:34px;line-height:1.1;margin:0;letter-spacing:-.01em;color:var(--ink)}
-.sd-hero .en{font-family:var(--serif);font-size:16px;color:var(--muted)}
-.sd-hero .intro{position:relative;font-size:13.5px;color:var(--ink-soft);margin:10px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.sd-hero .theme{position:relative;display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.sd-hero h1{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.15;margin:0;letter-spacing:-.01em;color:var(--ink)}
+.sd-hero .en{font-family:var(--serif);font-size:14px;color:var(--muted)}
+.sd-hero .intro{position:relative;font-size:13.5px;color:var(--ink-soft);margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
 .sd-hero .intro.open{display:block}
 .sd-hero .more{position:relative;background:none;border:none;padding:2px 0 0;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
-.sd-hero .sublink{position:relative;display:inline-flex;align-items:center;gap:2px;margin-top:8px;font-size:13px;font-weight:700;color:var(--pine);text-decoration:none}
-.sd-hero .prog{position:relative;display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sd-hero .sublink{position:relative;display:inline-flex;align-items:center;gap:2px;margin-top:4px;font-size:13px;font-weight:700;color:var(--pine);text-decoration:none}
+.sd-hero .prog{position:relative;display:flex;align-items:center;gap:10px;margin-top:10px}
+.sd-covers{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}
+.sd-covers button{padding:0;border:0;background:none;cursor:pointer;display:block}
+.sd-covers img,.sd-covers .fbx{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.16);background:#EBEDE3}
+.sd-covers .fbx{font-size:9px;padding:3px}
 .sd-hero .prog:empty{display:none}
 .sd-hero .dots{display:flex;gap:5px}
 .sd-hero .dots i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line-2)}
@@ -629,7 +633,13 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd .sh h2{font-family:var(--serif);font-weight:700;font-size:19px;margin:0;color:var(--ink);border:0;padding:0}
 .sd .sh .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700}
 .sd .sh .cnt.clay{color:var(--clay-ink)}
-.sd .guide{background:var(--pine-soft);border-radius:12px;padding:11px 13px;font-size:13px;color:var(--ink)}
+.sd .guide{background:var(--pine-soft);border-radius:12px;padding:9px 13px;font-size:13px;color:var(--ink)}
+.sd .guide summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sd .guide summary::-webkit-details-marker{display:none}
+.sd .guide summary svg{color:var(--muted);flex:none;transition:transform .15s}
+.sd .guide[open] summary svg{transform:rotate(180deg)}
+.sd .guide p{font-size:12.5px;color:var(--ink-soft);margin:8px 0 0}
+.sd .guide a{color:var(--pine);font-weight:700}
 .sd .guide b{color:var(--pine)}
 .sd .legend{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;font-size:11.5px;color:var(--ink-soft)}
 .sd .legend span{display:inline-flex;align-items:center;gap:4px}
@@ -839,14 +849,15 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        '<div class="theme"><h1>'+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
        (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
+       '<div class="sd-covers">'+books.map(function(b){return '<button type="button" data-goto="'+b.id+'" aria-label="'+esc(b.title)+'로 이동">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'<span class="fbx">'+esc(b.title)+'</span>')+'</button>';}).join('')+'</div>'+
        '<div class="prog" data-rprog></div></div>';
     h+='<nav class="sd-chips" id="sdChips" aria-label="자료 바로가기">'+secs.map(function(s,i){return '<button type="button" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
-       '<div class="guide"><b>글밥 적은 책부터</b> 시작해 보세요. 3~4살은 새싹 2권이면 충분하고, 5살 이상이면 5권 모두 좋아요. 다 못 읽어도 괜찮아요. 핵심은 재미예요.'+
-         '<div class="legend"><span>'+ic('seed',14)+'글밥 적음</span><span>'+ic('leaf',14)+'보통</span><span>'+ic('tree',14)+'많음</span><span class="m">AR 추정 기준</span></div></div>'+
-       '<details class="help"><summary>워크지 · 책정보 · 제목 복사 안내'+ic('chev',14)+'</summary>'+
+       '<details class="guide"><summary><span><b>글밥 적은 책부터</b> · 다 못 읽어도 괜찮아요</span>'+ic('chev',14)+'</summary>'+
+         '<p>3~4살은 새싹 2권이면 충분하고, 5살 이상이면 5권 모두 좋아요. 핵심은 재미예요.</p>'+
+         '<div class="legend"><span>'+ic('seed',14)+'글밥 적음</span><span>'+ic('leaf',14)+'보통</span><span>'+ic('tree',14)+'많음</span></div>'+
          '<p>워크지는 출판사·작가 공식 무료 활동지로 연결돼요. 책을 누르면 책정보(구매처)가 열리고, 도서관·다른 서점에선 제목 복사 후 검색창에 붙여넣으세요.</p>'+
-         '<p>글밥 단계는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요(조작북·AR 2 미만 / AR 2~3 / AR 3 이상). 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. <a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형 알아보기</a></p></details>'+
+         '<p>글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. <a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형 알아보기</a></p></details>'+
        '<div class="sd-books">'+bh+'</div>'+
        (hasBuy?'<p class="disc">책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
     if(how.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
@@ -885,6 +896,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelector('.sd-book[data-bid="'+bt.dataset.goto+'"]');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
     // 지난 달(?m=키) 자료를 보고 있으면 맨 위에 '이번 달로 돌아가기'
     if(!PREVIEW&&curParam())client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(r){
       var cur=r&&r.data&&r.data.current_theme,box=document.getElementById('sdBack');
