@@ -172,12 +172,12 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
       뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
       각 주제는 <strong>조작북·반복·라임·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
-      읽어준 책 표지를 누르면 체크되고, 우리 아이가 만난 책이 쌓여요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
+      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 120권을 다 읽어주면 완주예요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
 
     <div class="panel">
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
-        <span class="sub" id="prSub">읽어준 책을 체크하면 만난 책이 쌓여요</span>
+        <span class="sub" id="prSub">읽어준 책을 체크하면 진행률이 쌓여요</span>
         <button class="reset" id="prReset">기록 초기화</button>
       </div>
       <div class="bar"><i id="prBar"></i></div>
@@ -279,8 +279,8 @@ function updateProgress(){
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
   document.getElementById('prSub').textContent = done===0
-    ? '읽어준 책을 체크하면 만난 책이 쌓여요'
-    : `${total}권 중 ${done}권 만났어요`;
+    ? '읽어준 책을 체크하면 진행률이 쌓여요'
+    : `${total}권 중 ${done}권 읽어줬어요 · ${pct}%` + (done>=total?' 🎉 120권 완주!':'');
 }
 function toggle(id){
   if(seen.has(id))seen.delete(id);else seen.add(id);
@@ -341,7 +341,7 @@ async function makeShareCanvas(done,total,dark){
 function isDark(){return false;}
 function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
 function saveShare(){const cv=window.__cv;if(!cv)return;shareEv('image_save');cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
-function shareShare(){const cv=window.__cv;if(!cv)return;shareEv('image');cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 · ${seen.size}권째 만나는 중`});return;}catch(e){}}saveShare();},'image/png');}
+function shareShare(){const cv=window.__cv;if(!cv)return;shareEv('image');cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 · ${seen.size}/${total}권 읽어주는 중`});return;}catch(e){}}saveShare();},'image/png');}
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
