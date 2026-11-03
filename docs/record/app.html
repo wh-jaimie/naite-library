@@ -613,7 +613,11 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd-hero .intro.open{display:block}
 .sd-hero .more{position:relative;background:none;border:none;padding:2px 0 0;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
 .sd-hero .sublink{position:relative;display:inline-flex;align-items:center;gap:2px;margin-top:4px;font-size:13px;font-weight:700;color:var(--pine);text-decoration:none}
-.sd-hero .prog{position:relative;display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.sd-hero .prog{position:relative;display:flex;align-items:center;gap:10px;margin-top:10px}
+.sd-covers{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}
+.sd-covers button{padding:0;border:0;background:none;cursor:pointer;display:block}
+.sd-covers img,.sd-covers .fbx{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.16);background:#EBEDE3}
+.sd-covers .fbx{font-size:9px;padding:3px}
 .sd-hero .prog:empty{display:none}
 .sd-hero .dots{display:flex;gap:5px}
 .sd-hero .dots i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line-2)}
@@ -846,6 +850,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
        '<div class="theme"><h1>'+(theme.emoji?'<span class="emo" aria-hidden="true">'+esc(theme.emoji)+'</span>':'')+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
        (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
+       '<div class="sd-covers">'+books.map(function(b){return '<button type="button" data-goto="'+b.id+'" aria-label="'+esc(b.title)+'로 이동">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'<span class="fbx">'+esc(b.title)+'</span>')+'</button>';}).join('')+'</div>'+
        '<div class="prog" data-rprog></div></div>';
     h+='<nav class="sd-chips" id="sdChips" aria-label="자료 바로가기">'+secs.map(function(s,i){return '<button type="button" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
@@ -892,6 +897,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelector('.sd-book[data-bid="'+bt.dataset.goto+'"]');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
     // 지난 달(?m=키) 자료를 보고 있으면 맨 위에 '이번 달로 돌아가기'
     if(!PREVIEW&&curParam())client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(r){
       var cur=r&&r.data&&r.data.current_theme,box=document.getElementById('sdBack');
