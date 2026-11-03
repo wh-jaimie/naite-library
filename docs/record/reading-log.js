@@ -1,5 +1,6 @@
-/* 나이테 스터디 — 회원 읽기 기록 (record/app.html 전용, record/index.html 입장 화면은 비밀번호 저장·설치 안내만 사용)
- * 회원 입장(record/)에서 비밀번호를 넣은 기기만 app.html 에 들어옴. 비밀번호가 바뀌면 onExpired → 입장 화면으로.
+/* 나이테 스터디 — 읽기 기록 (record/app.html 전용)
+ * 2026-11-03부터 비밀번호 없이 누구나 씀(migrate_open_app.sql). 기록 주인 = 기기별 ID(naite_reader).
+ * 폰을 바꾸거나 앱을 지워도 이어 보려면 '기록 백업'(닉네임 + 숫자 4자리, backup_reader/restore_reader).
  * 하단 메뉴: 이번 달 자료 · 기록하기 탭 · 읽기 통계.
  * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 기록하기 탭 표지(오늘/어제 선택).
  * 기록하기 탭 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
@@ -7,13 +8,13 @@
  * 다른 책(스터디 책 아님): 기록하기 탭 '📚 다른 책도 읽었어요 +1' → 행 {b:0, o:제목, k:'_other'}, 서버 log_other/my_other_reads.
  *   통계 '총 읽기'·'오늘 N번'·인증 카드에는 포함, 반복한 책·유형별·책별 반응에는 넣지 않음.
  * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
- *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지). 기록 주인은 기기별 ID라 회원 비밀번호가 바뀌어도 이어짐.
- * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent, onExpired}) — app.html render() 뒤에 호출.
+ *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지).
+ * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent}) — app.html render() 뒤에 호출.
  */
 (function(){
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
   var DOUBLE_TAP_MS=1500;  // 같은 책 1.5초 안 연속 탭은 1회
-  var READER_KEY='naite_reader', MEMBER_KEY='naite_member';
+  var READER_KEY='naite_reader', MEMBER_KEY='naite_member', BACKUP_KEY='naite_backup_name';
   var TAB_IDS=['study','shelf','stats','c120','shop'],TAB_KEY='naite_last_tab';
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   var EMBED={c120:'../challenge.html?embed=record',shop:'../domestic.html?embed=record'};
@@ -34,7 +35,7 @@
   function dayWord(s){var t=logicalToday();return s===t?'오늘':s===addDays(t,-1)?'어제':dayFull(s);}
   function shortTitle(t){t=String(t||'');return t.length>22?t.slice(0,20)+'…':t;}
 
-  /* ── 회원 비밀번호(이 기기) ── */
+  /* ── 예전 회원 비밀번호(이 기기) — 서버는 더 이상 확인하지 않지만 함수 인자로 그대로 보냄 ── */
   function getCode(){try{return localStorage.getItem(MEMBER_KEY)||sessionStorage.getItem(MEMBER_KEY)||'';}catch(e){return '';}}
   function setCode(code,keep){try{localStorage.removeItem(MEMBER_KEY);sessionStorage.removeItem(MEMBER_KEY);if(code)(keep?localStorage:sessionStorage).setItem(MEMBER_KEY,code);}catch(e){}}
 
@@ -123,7 +124,7 @@
     p.then(function(res){
       st.inflight=null;
       if(st!==S)return;
-      if(op.op==='add'&&res&&res.error==='member'){expire();return;} // 기록은 outbox에 남겨 두고 새 비밀번호로 입장하면 이어서 전송
+      if(op.op==='add'&&res&&res.error==='member')return; // 서버가 아직 예전 함수(비밀번호 확인)면 outbox에 남겨 두고 다음에 재전송
       S.outbox=S.outbox.filter(function(o){return o!==op;});
       if(op.op==='add'&&res&&res.ok===false){ // 날짜 범위·상한 등으로 거절 → 화면에서도 제거
         S.rows=S.rows.filter(function(r){return r.c!==op.c;});
@@ -174,18 +175,6 @@
       save();paint();
     },function(){}); // DB에 아직 함수가 없거나 오프라인이면 기기 기록 그대로
   }
-  function verifyMember(){ // 저장된 비밀번호가 아직 유효한지 조용히 확인(오프라인이면 그대로 둠)
-    if(!S.code)return;
-    var st=S;
-    rpc('check_member',{p_code:st.code}).then(function(ok){
-      if(st!==S)return;
-      if(ok===false)expire();
-    },function(){});
-  }
-
-  /* ── 회원 만료·해제 ── */
-  function expire(){setCode('');S.member=false;if(S.onExpired)S.onExpired();}
-  function leave(){setCode('');S.member=false;if(S.onLeave)S.onLeave();}
 
   /* ── 기록 · 취소 ── */
   function addRow(bid,day){
@@ -310,11 +299,55 @@
     return sheetEl.firstChild;
   }
   function closeSheet(){if(!sheetEl)return;sheetEl.hidden=true;document.documentElement.classList.remove('rl-lock');try{if(sheetReturn)sheetReturn.focus();}catch(e){}}
-  function openLeave(){
-    var sh=openSheet('<h3>이 폰에서 회원 해제할까요?</h3><p class="sub">해제하면 다음에 들어올 때 회원 비밀번호를 다시 넣어야 해요. 읽기 기록은 지워지지 않고 그대로 남아요.</p>'+
-      '<button type="button" class="pri" data-sclose>계속 회원으로 보기</button><button type="button" class="subtle" id="rlLeave">회원 해제</button>');
-    sh.querySelector('[data-sclose]').onclick=closeSheet;
-    sh.querySelector('#rlLeave').onclick=function(){closeSheet();leave();};
+  /* ── 기록 백업(닉네임 + 숫자 4자리) ── 폰을 바꾸거나 앱을 지워도 이어 보기 */
+  function backupName(){try{return localStorage.getItem(BACKUP_KEY)||'';}catch(e){return '';}}
+  function setBackupName(n){try{if(n)localStorage.setItem(BACKUP_KEY,n);else localStorage.removeItem(BACKUP_KEY);}catch(e){}}
+  function checkBackup(){ // 다른 기기에서 닉네임을 바꾼 경우 등을 맞춤(오프라인·함수 없음이면 그대로)
+    rpc('my_backup',{p_reader:S.reader}).then(function(d){if(!S||!d)return;var n=d.ok?d.name:'';if(n!==backupName()){setBackupName(n);paint();}},function(){});
+  }
+  var BK_ERR={name:'닉네임은 2~12자로 적어 주세요.',pin:'숫자 4자리를 넣어 주세요.',taken:'이미 다른 분이 쓰는 닉네임이에요. 다른 닉네임으로 해 주세요.',
+    nomatch:'닉네임이나 숫자가 맞지 않아요.',locked:'여러 번 틀려서 잠시 막혔어요. 1시간 뒤 다시 해 주세요.'};
+  function openBackup(mode){
+    var cur=backupName();mode=mode||(cur?'done':'make');
+    var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 조이맘)" value="'+esc(mode==='make'?cur:'')+'">'+
+      '<input id="bkPin" class="pin" style="margin-top:8px" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="숫자 4자리"><p class="err" id="bkErr"></p><button type="submit" class="pri">'+btn+'</button></form>';};
+    var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록이 그대로 돌아와요.</p>'+
+        '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'
+      :mode==='make'?'<h3>기록 백업하기</h3><p class="sub">기록은 이 폰에 저장돼요. 닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 이어서 볼 수 있어요. 숫자는 꼭 기억해 주세요.</p>'+form('백업하기')+
+        '<button type="button" class="subtle" data-bk="restore">예전에 백업했어요 → 이어보기</button>'
+      :'<h3>백업한 기록 이어보기</h3><p class="sub">예전에 정한 닉네임과 숫자 4자리를 넣어 주세요. 이 폰에 있던 기록도 함께 합쳐져요.</p>'+form('이어보기')+
+        '<button type="button" class="subtle" data-bk="make">처음이에요 → 백업하기</button>';
+    var sh=openSheet(html);
+    var c=sh.querySelector('[data-sclose]');if(c)c.onclick=closeSheet;
+    sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
+    var f=sh.querySelector('#bkForm');if(!f)return;
+    var nm=sh.querySelector('#bkName'),pn=sh.querySelector('#bkPin'),er=sh.querySelector('#bkErr'),go=f.querySelector('.pri');
+    nm.oninput=pn.oninput=function(){er.textContent='';};
+    f.onsubmit=function(e){
+      e.preventDefault();
+      var name=nm.value.trim(),pin=pn.value.trim();
+      if(name.length<2){er.textContent=BK_ERR.name;nm.focus();return;}
+      if(!/^[0-9]{4}$/.test(pin)){er.textContent=BK_ERR.pin;pn.focus();return;}
+      go.disabled=true;var label=go.textContent;go.textContent='잠시만요…';
+      var done=function(){go.disabled=false;go.textContent=label;};
+      if(mode==='make'){
+        rpc('backup_reader',{p_reader:S.reader,p_name:name,p_pin:pin}).then(function(d){
+          done();if(!d||!d.ok){er.textContent=BK_ERR[d&&d.error]||'백업하지 못했어요. 잠시 뒤 다시 해 주세요.';return;}
+          setBackupName(d.name||name);paint();openBackup('done');toast('기록을 백업했어요 ✓');
+          if(S.onEvent)S.onEvent('backup_made',{});
+        },function(){done();er.textContent='연결이 불안정해요. 잠시 뒤 다시 해 주세요.';});
+      }else{
+        rpc('restore_reader',{p_name:name,p_pin:pin,p_current:S.reader}).then(function(d){
+          if(!d||!d.ok){done();er.textContent=BK_ERR[d&&d.error]||'이어보지 못했어요. 잠시 뒤 다시 해 주세요.';return;}
+          if(S.onEvent)S.onEvent('backup_restored',{});
+          // 기기 ID를 백업 쪽으로 바꾸고 다시 열면 모든 달 기록을 서버에서 다시 받아옴(안 보낸 기록은 outbox에 남아 새 ID로 전송)
+          try{localStorage.setItem(READER_KEY,d.reader);}catch(e){}
+          setBackupName(d.name||name);
+          S.rows=S.rows.filter(function(r){return S.outbox.some(function(o){return o.c===r.c;});});save();
+          location.reload();
+        },function(){done();er.textContent='연결이 불안정해요. 잠시 뒤 다시 해 주세요.';});
+      }
+    };
   }
 
   /* ── 홈 화면 설치 ──
@@ -955,7 +988,6 @@
       S.loaded[key]={loading:true};
       rpc('get_study_member',{p_key:key,p_code:S.code}).then(function(d){
         if(!S)return;
-        if(d&&d.error==='member'){expire();return;}
         S.loaded[key]={books:d&&d.ok?rememberBooks(key,d.books):[],failed:!(d&&d.ok)};
         paint();pull(key);
       },function(){if(S){S.loaded[key]={failed:true};paint();}});
@@ -976,9 +1008,10 @@
         return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
           (recent.length>5?'<button type="button" class="rs-more" data-rmore>'+(S.recentOpen?'접기':'더 보기 ('+(recent.length-5)+'개)')+'</button>':'')
         :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
-      '<p class="rv-note">기록은 이 폰(브라우저)에 연결돼 있어요. 회원 비밀번호가 바뀌어도 이어지지만, 다른 기기에서는 보이지 않고 브라우저 데이터를 지우면 이어서 볼 수 없어요.</p>'+
+      (backupName()?'<p class="rv-note">기록이 <b>'+esc(backupName())+'</b> 이름으로 백업돼 있어요. 폰을 바꿔도 이어보기로 다시 볼 수 있어요.</p>'
+        :'<p class="rv-note">기록은 이 폰(브라우저)에 저장돼요. 폰을 바꾸거나 앱을 지워도 이어 보려면 <b>기록 백업</b>을 해 두세요.</p>')+
       '<div class="rk-footlinks">'+(isStandalone()?'':'<button type="button" class="rv-leave" data-rinstall="shelf">'+svg(14,'<rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.5 18.5h3"/>',2)+'앱 설치하기</button><span aria-hidden="true">·</span>')+
-        '<button type="button" class="rv-leave" data-rleave>이 폰에서 회원 해제</button></div></div>';
+        '<button type="button" class="rv-leave" data-rbackup>'+(backupName()?'기록 백업됨 · '+esc(backupName()):'기록 백업 · 이어보기')+'</button></div></div>';
   }
   // 통계 탭 공유 카드 썸네일: 기록·사진이 바뀌었을 때만 다시 그림
   function monthThumb(mi){
@@ -1110,7 +1143,7 @@
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
       if((t=e.target.closest('[data-rshelf]'))){S.shelfKey=t.getAttribute('data-rshelf');S.shelfScroll=true;paintShelf();if(S.onEvent)S.onEvent('shelf_month',{theme:S.shelfKey});return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
-      if((t=e.target.closest('[data-rleave]'))){openLeave();return;}
+      if((t=e.target.closest('[data-rbackup]'))){openBackup();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
@@ -1124,16 +1157,16 @@
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     document.addEventListener('keydown',function(e){var t;if(S&&(e.key==='Enter'||e.key===' ')&&(t=e.target.closest&&e.target.closest('[data-rcal]'))){e.preventDefault();openDay(t.getAttribute('data-rcal'));}});
     window.addEventListener('online',function(){if(S)flush();});
-    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);verifyMember();}});
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);}});
   }
 
   window.NaiteReading={
-    getCode:getCode,setCode:setCode, // 입장 화면(index.html)에서 사용
+    getCode:getCode,setCode:setCode,openBackup:function(m){if(S)openBackup(m);},
     install:install,installBar:installBar,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,toast:toast,
     mount:function(o){
       var code=getCode(),theme=o.theme||{};
-      S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onExpired:o.onExpired||null,onLeave:o.onLeave||null,
-         reader:readerId(),code:code,member:!!code,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
+      S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,
+         reader:readerId(),code:code,member:true,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
          home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{}};
       S.books=rememberBooks(theme.key,o.books);
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
@@ -1145,11 +1178,13 @@
       try{var pk=+localStorage.getItem('naite_pick');clearPick();
         if(pk&&Date.now()-pk<180000){setTimeout(function(){toast('사진을 고르는 사이 앱이 다시 시작됐어요. 인증 카드에서 📷 바로 찍기로 해 주세요.');},900);if(S.onEvent)S.onEvent('photo_reload',{});}}catch(e){}
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
-      var h=(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
-      if(TAB_IDS.indexOf(h)<0)h=last;
-      if(EMBED[h])h='study';
+      // ?tab=month|log|stats|c120|shop(메인 버튼) 또는 #study|shelf|stats|c120|shop
+      var qt=(new URLSearchParams(location.search)).get('tab')||'',QT={month:'study',log:'shelf'};
+      var h=QT[qt]||qt||(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
+      // 주소로 바로 온 탭(메인의 나이테 120·인기 책장 버튼 등)은 그대로, 마지막 탭이 앱 안 페이지면 자료 탭으로
+      if(TAB_IDS.indexOf(h)<0){h=last;if(EMBED[h])h='study';}
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
-      flush();pull();pullOther();verifyMember();
+      flush();pull();pullOther();checkBackup();
       setTimeout(offerInstallOnce,1200);
     }
   };

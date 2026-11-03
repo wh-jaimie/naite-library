@@ -12,10 +12,10 @@ BASE = "http://localhost:8765" if "local" in sys.argv[1:] else "https://wh-jaimi
 PAGES = [
     ("/", "나이테"), ("/challenge.html", "나이테 120"), ("/domestic.html", "국내 인기 책장"),
     ("/guide.html", "가이드"), ("/types.html", "유형"), ("/join.html", "스터디 참여"), ("/install.html", "설치 방법"),
-    # 공개 자료·미션은 비회원이면 참여 안내(join.html?from=study)로 이동(2026-10-31) → 안내 문구가 보이면 정상
-    ("/study/", "나이테 스터디 앱"), ("/study/missions.html", "나이테 스터디 앱"),
+    # 공개 자료·미션은 스터디 앱(record/app.html)으로 이동(2026-11-03 비밀번호 없이 공개)
+    ("/study/", "나이테"), ("/study/missions.html", "나이테"),
     ("/study/admin.html", "로그인"), ("/study/kpi.html", "로그인"),
-    ("/record/", "회원"), ("/record/app.html", "회원"),
+    ("/record/", "나이테"), ("/record/app.html", "나이테"),
 ]
 IGNORE = ("ServiceWorker",)  # localhost 전용 경고
 
