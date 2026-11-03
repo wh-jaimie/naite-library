@@ -404,7 +404,7 @@
       try{localStorage.setItem(INSTALL_KEY,String(Date.now()));}catch(e){}
       var app=inAppName();
       var sh=openSheet('<h3>앱으로 설치해 두세요</h3>'+
-        (app?inAppHtml(app):'<p class="sub">매일 아이와 책을 읽고 바로 기록할 수 있게, 앱처럼 한 번에 열려요. 비밀번호도 다시 묻지 않아요.</p>'+
+        (app?inAppHtml(app):'<p class="sub">매일 아이와 책을 읽고 바로 기록할 수 있게, 앱처럼 한 번에 열려요.</p>'+
           '<button type="button" class="pri" id="rlInstall">📲 앱 설치하기</button>')+
         '<button type="button" class="subtle" data-sclose>나중에 할게요</button>');
       var b=sh.querySelector('#rlInstall');if(b)b.onclick=function(){closeSheet();install();};
@@ -1091,7 +1091,7 @@
   function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
 
   /* ── 탭 ── */
-  // 나이테 120(앱 안 iframe): 자료가 공개된 주제에만 '📖 스터디 자료 보기' → 앱 안에서 그 달 자료(?m=키, 회원 비밀번호로 열림)
+  // 나이테 120(앱 안 iframe): 자료가 공개된 주제에만 '📖 스터디 자료 보기' → 앱 안에서 그 달 자료(?m=키)
   // 공개 사이트 challenge.html 에는 아무것도 안 붙음(회원 앱이 iframe 안에 끼워 넣는 것)
   function studyLinks(f){
     var d;try{d=f.contentDocument;}catch(e){return;}if(!d||!d.body)return;
