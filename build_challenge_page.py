@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""challenge.json -> 나이테 120 (파닉스 전 첫 영어책 코스) 페이지 (challenge.html)"""
+"""challenge.json -> 나이테 120 (파닉스 전 첫 영어 그림책 로드맵) 페이지 (challenge.html)"""
 import json, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "output", "challenge.json")
@@ -32,7 +32,7 @@ TEMPLATE = r"""<!doctype html>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#245648">
-<title>나이테 120 — 파닉스 전, 첫 영어책 코스</title>
+<title>나이테 120 — 파닉스 전, 첫 영어 그림책 로드맵</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
 :root{
@@ -171,30 +171,30 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 
 <main class="wrap">
   <section class="hero">
-    <div class="eyebrow">파닉스 전, 첫 영어책 코스</div>
+    <div class="eyebrow">파닉스 전, 첫 영어 그림책 로드맵</div>
     <h1>나이테 120</h1>
-    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong> 24개 주제 × 5권, 순서는 자유예요.</p>
+    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong> 24개 주제 × 5권. 레벨 순서가 아니라 재미 순서라, 마음에 드는 주제부터 시작하면 돼요.</p>
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
       뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
       각 주제는 <strong>조작북·반복·라임·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
-      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
+      읽어준 책 표지를 누르면 체크되고, 우리 아이가 만난 책이 쌓여요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
 
     <div class="panel">
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
-        <span class="sub" id="prSub">읽어준 책을 체크하면 진행률이 쌓여요</span>
+        <span class="sub" id="prSub">읽어준 책을 체크하면 만난 책이 쌓여요</span>
         <button class="reset" id="prReset">기록 초기화</button>
       </div>
       <div class="bar"><i id="prBar"></i></div>
       <div class="course" id="course">
-        <button data-c="2y" class="active"><div class="ct">🌱 2년 코스</div><div class="cd">월 1주제 · 5권 × 24개월</div></button>
-        <button data-c="1y"><div class="ct">🚀 1년 코스</div><div class="cd">월 2주제 · 10권 × 12개월</div></button>
+        <button data-c="2y" class="active"><div class="ct">🌱 한 달에 한 주제</div><div class="cd">5권씩 · 천천히 약 2년</div></button>
+        <button data-c="1y"><div class="ct">🚀 한 달에 두 주제</div><div class="cd">10권씩 · 약 1년</div></button>
       </div>
       <a class="join" id="joinBtn" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">🌿 스터디 참여하기<span class="sub">매달 5권, 엄마표영어 오픈채팅에서 함께해요</span></a>
       <button class="share" id="prShare">🖼️ 진행 이미지 만들기 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
-    <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 지속하기 위한 큐레이션 코스</strong>예요.
+    <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
       한 권을 여러 번 읽어도, 순서를 바꿔도 괜찮아요.<br>
       표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요.</p>
@@ -219,7 +219,7 @@ __BUY_DISCLOSURE__
 <div id="printable"></div>
 
 <footer><div class="wrap">
-  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어책 코스 — 나이테 영어책육아 메이트</p>
+  <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어 그림책 로드맵 — 나이테 영어책육아 메이트</p>
   <p>큐레이션: 전세계 인기(Goodreads) + 주제·난이도 설계 · 표지: Open Library</p>
 </div></footer>
 
@@ -289,8 +289,8 @@ function updateProgress(){
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
   document.getElementById('prSub').textContent = done===0
-    ? '읽어준 책을 체크하면 진행률이 쌓여요'
-    : `${total}권 중 ${done}권 완료 · ${pct}%` + (done>=total?' 🎉 120권 완주!':'');
+    ? '읽어준 책을 체크하면 만난 책이 쌓여요'
+    : `${total}권 중 ${done}권 만났어요`;
 }
 function toggle(id){
   if(seen.has(id))seen.delete(id);else seen.add(id);
@@ -322,7 +322,7 @@ document.getElementById('course').addEventListener('click',e=>{
   document.querySelectorAll('#course button').forEach(x=>x.classList.toggle('active',x===b));renderBody();
 });
 document.getElementById('prReset').addEventListener('click',()=>{
-  if(seen.size&&confirm('챌린지 기록을 모두 지울까요?')){seen.clear();save();updateProgress();renderBody();}
+  if(seen.size&&confirm('체크한 기록을 모두 지울까요?')){seen.clear();save();updateProgress();renderBody();}
 });
 const root=document.documentElement;
 try{localStorage.removeItem('joy-theme');}catch(e){}
@@ -348,18 +348,18 @@ async function makeShareCanvas(done,total,dark){
   g.font='94px "Segoe UI Emoji","Noto Color Emoji","Apple Color Emoji",sans-serif';g.fillText('🌱',cx,cy+36);
   g.fillStyle=P.count;g.font='700 96px "Gowun Batang",serif';g.fillText(done+' / '+total+'권',W/2,1108);
   g.fillStyle=P.honey;g.font='700 44px "Noto Sans KR",sans-serif';g.fillText(Math.round(pct*100)+'% · 나이테 120',W/2,1172);
-  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어책육아 메이트 · 파닉스 전 첫 영어책 코스',W/2,1282);
+  g.fillStyle=P.foot;g.font='500 30px "Noto Sans KR",sans-serif';g.fillText('나이테 영어책육아 메이트 · 파닉스 전 첫 영어 그림책 로드맵',W/2,1282);
   g.fillStyle=P.honey;g.font='700 32px "Noto Sans KR",sans-serif';g.fillText('📷 Instagram  @naite_library',W/2,1328);
   return cv;
 }
 function isDark(){return false;}
 function openShare(){makeShareCanvas(seen.size,total,isDark()).then(cv=>{window.__cv=cv;document.getElementById('ovimg').src=cv.toDataURL('image/png');document.getElementById('ov').classList.add('on');});}
 function saveShare(){const cv=window.__cv;if(!cv)return;shareEv('image_save');cv.toBlob(b=>{const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='naite-120.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);},'image/png');}
-function shareShare(){const cv=window.__cv;if(!cv)return;shareEv('image');cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 챌린지 ${seen.size}/${total}권 읽는 중`});return;}catch(e){}}saveShare();},'image/png');}
+function shareShare(){const cv=window.__cv;if(!cv)return;shareEv('image');cv.toBlob(async b=>{const f=new File([b],'naite-120.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'나이테 120',text:`나이테 120 · ${seen.size}권째 만나는 중`});return;}catch(e){}}saveShare();},'image/png');}
 // ── 120권 목록 인쇄/PDF ──
 function buildPrintable(){
   const now=new Date().toLocaleDateString('ko-KR');
-  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어책 코스</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어책육아 메이트 · ${now}</p></div>`;
+  let h=`<div class="pr-head"><h1>나이테 120 — 파닉스 전, 첫 영어 그림책 로드맵</h1><p>전체 ${total}권 · 24주제 × 5권 · 읽음 ${seen.size}/${total} · 나이테 영어책육아 메이트 · ${now}</p></div>`;
   themes.forEach((t,i)=>{
     const bks=[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]);
     h+=`<div class="pr-theme"><div class="pr-h2">${i+1}. ${t.emoji} ${esc(t.ko)} <span>${esc(t.en)}</span></div><table class="pr-t"><tbody>`;
