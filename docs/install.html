@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
+<meta name="theme-color" content="#245648">
+<title>스터디 앱 설치 방법 — 나이테</title>
+<meta name="description" content="나이테 스터디 앱은 앱스토어·플레이스토어가 아니라 인터넷 주소로 설치해요. 아이폰·안드로이드 설치 방법을 1분 만에 따라 해 보세요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="나이테 스터디 앱 설치 방법">
+<meta property="og:description" content="앱스토어에서 찾지 마세요! 인터넷 주소로 1분 만에 설치해요.">
+<meta property="og:image" content="https://wh-jaimie.github.io/naite-library/naite-ig-logo.png">
+<meta property="og:url" content="https://wh-jaimie.github.io/naite-library/install.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E4E7DD;color:#23291F;font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased}
+:root{--surface:#FCFCF8;--line:#E2E5DA;--soft:#565E4E;--tealD:#245648;--coral:#B87343;--amber:#D1965C;--sh:0 1px 2px rgba(43,42,38,.06),0 8px 22px rgba(43,42,38,.08)}
+a{color:inherit}
+[hidden]{display:none!important}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.25}
+.top{display:flex;align-items:center;gap:10px;padding:18px 0 0}
+.top a.home{display:flex;align-items:center;gap:10px;text-decoration:none}
+.top svg{width:32px;height:32px;flex:none}
+.top b{font-family:'Gowun Batang',Georgia,serif;font-size:1.2rem;color:var(--tealD)}
+.top .back{margin-left:auto;font-weight:800;font-size:.85rem;color:var(--tealD);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 12px;text-decoration:none;white-space:nowrap}
+.hero{text-align:center;padding:26px 0 8px}
+.hero h1{font-size:clamp(1.6rem,6vw,2.1rem)}
+.hero p{color:var(--soft);margin:10px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:18px;margin-top:14px}
+.card h2{font-size:1.2rem;color:var(--tealD);margin-bottom:8px}
+.warn{background:#FFF3CD;border-color:#E0C97A}
+.warn h2{color:#5c4a00}
+.warn p{margin:0;font-size:.95rem}
+.warn b{color:#5c4a00}
+.tabs{display:flex;gap:8px;margin-top:18px}
+.tab{flex:1;border:1.5px solid var(--tealD);background:#fff;color:var(--tealD);font:inherit;font-weight:800;font-size:1rem;padding:11px;border-radius:12px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--tealD);color:#fff}
+ol.st{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.st>li{counter-increment:s;position:relative;padding:12px 0 12px 42px;border-bottom:1px dashed var(--line)}
+ol.st>li:last-child{border-bottom:0}
+ol.st>li::before{content:counter(s);position:absolute;left:0;top:12px;width:28px;height:28px;border-radius:50%;background:var(--tealD);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.9rem}
+ol.st b{color:var(--tealD)}
+.st small,.sub{display:block;color:var(--soft);font-size:.85rem;margin-top:3px}
+.ic{display:inline-block;min-width:1.6em;text-align:center;background:#EEF1E8;border:1px solid var(--line);border-radius:7px;padding:0 6px;font-weight:800;color:#23291F}
+.shot{display:block;width:100%;height:auto;border-radius:10px;margin-top:8px;border:1px solid var(--line)}
+.alt.protect{background:#FBEFE3;border:1px solid #E8C9A6}
+.alt{margin-top:10px;background:#F3F5EE;border-radius:12px;padding:10px 12px;font-size:.88rem}
+.alt b{color:var(--tealD)}
+.done{text-align:center}
+.done .appic{width:64px;height:64px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.15);display:block;margin:4px auto 8px}
+.go{display:block;text-align:center;margin-top:14px;background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;text-decoration:none;font-weight:800;font-size:1.05rem;padding:14px;border-radius:14px;box-shadow:var(--sh)}
+.faq details{border-bottom:1px solid var(--line);padding:12px 0}
+.faq details:last-child{border-bottom:0}
+.faq summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--tealD);font-size:1.2rem;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:8px 0 0;color:var(--soft);font-size:.92rem}
+.foot{text-align:center;color:var(--soft);font-size:.82rem;padding:26px 0 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="home" href="./" aria-label="나이테 홈">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg>
+      <b>나이테</b>
+    </a>
+    <a class="back" href="./">← 나이테</a>
+  </header>
+
+  <section class="hero">
+    <h1>📲 나이테 스터디 앱<br>설치 방법</h1>
+    <p>1분이면 끝나요. 스터디 자료·기록·공지를 여기서 봐요.</p>
+  </section>
+
+  <div class="card warn">
+    <h2>⚠️ 앱스토어·플레이스토어에는 없어요</h2>
+    <p>나이테 스터디 앱은 스토어에서 받는 앱이 아니라, <b>인터넷 주소를 홈 화면에 추가</b>해서 쓰는 앱이에요. 스토어에서 검색하지 말고 아래 순서대로 해 주세요. 무료이고 용량도 거의 차지하지 않아요.</p>
+  </div>
+
+  <div class="card">
+    <h2>① 먼저, 카카오톡 밖으로 열기</h2>
+    <p style="margin:0">채팅방 공지의 링크를 누르면 <b>카카오톡 안</b>에서 열려요. 카카오톡 안에서는 설치가 안 되니 휴대폰 기본 인터넷 앱으로 다시 열어 주세요.</p>
+    <div class="alt">카카오톡 화면의 <span class="ic">⋯</span> · <span class="ic">⋮</span> 메뉴나 공유 버튼 → <b>다른 브라우저로 열기</b> (아이폰은 <b>Safari로 열기</b>)<br><small class="sub">링크를 길게 눌러 복사한 뒤 사파리·크롬 주소창에 붙여 넣어도 돼요.</small></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab" role="tab" id="tIos" aria-selected="true">🍎 아이폰</button>
+    <button type="button" class="tab" role="tab" id="tAnd" aria-selected="false">🤖 안드로이드(갤럭시)</button>
+  </div>
+
+  <div class="card" id="pIos">
+    <h2>② 아이폰: 사파리에서 홈 화면에 추가</h2>
+    <ol class="st">
+      <li><b>사파리</b>로 스터디 앱 링크를 열어요<small>입장 화면(회원 입장)이 보이면 맞아요</small></li>
+      <li>화면 아래 <b>공유 버튼</b> <span class="ic">⬆︎</span> 을 눌러요<small>네모에서 화살표가 위로 나온 모양이에요. 안 보이면 주소창 옆 <span class="ic">⋯</span> 을 누르면 ‘공유’가 있어요</small></li>
+      <li>목록을 아래로 내려 <b>홈 화면에 추가</b>를 눌러요</li>
+      <li>오른쪽 위 <b>추가</b>를 누르면 끝!<small>‘웹 앱으로 열기’가 보이면 켜 둔 채로 추가해요</small></li>
+    </ol>
+  </div>
+
+  <div class="card" id="pAnd" hidden>
+    <h2>② 안드로이드: 주소창의 설치 버튼</h2>
+    <ol class="st">
+      <li><b>삼성 인터넷</b>이나 <b>크롬</b>으로 스터디 앱 링크를 열어요<small>입장 화면(회원 입장)이 보이면 맞아요</small></li>
+      <li>주소창 오른쪽의 <b>설치 버튼</b> <span class="ic">⤓</span> 을 눌러요<small>네모(또는 동그라미) 안에 아래 화살표가 있는 모양이에요</small>
+        <img class="shot" src="install-bar.jpg" alt="삼성 인터넷 주소창 오른쪽의 설치 버튼" width="720" height="153"></li>
+      <li><b>설치</b>(또는 <b>추가</b>)를 누르면 끝!</li>
+    </ol>
+    <div class="alt protect"><b>🛡️ ‘안전하지 않은 앱 차단됨’ 창이 뜨면</b><br>
+      <b>세부정보 더보기</b> → <b>무시하고 설치하기</b>를 눌러 주세요.
+      <img class="shot" src="install-protect.jpg" alt="세부정보 더보기를 누른 뒤 무시하고 설치하기를 누르는 화면" width="750" height="532" loading="lazy">
+      <small class="sub">나이테 스터디는 스토어에 올린 앱이 아니라서, Google Play 프로텍트가 ‘개발자를 알 수 없다’고 경고해요. 나이테 주소(wh-jaimie.github.io)에서 설치할 때만 이렇게 해 주세요. 걱정되면 아래 메뉴의 <b>홈 화면에 추가</b>로 해도 돼요(경고 없이 아이콘이 생겨요).</small></div>
+    <div class="alt"><b>설치 버튼이 안 보이면</b> 메뉴에서 해요<br>
+      · 삼성 인터넷: 오른쪽 아래 <span class="ic">⋮</span> → <b>현재 페이지 추가</b> → <b>홈 화면</b><br>
+      · 크롬: 오른쪽 위 <span class="ic">⋮</span> → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></div>
+  </div>
+
+  <div class="card done">
+    <h2>③ 홈 화면의 아이콘으로 열기</h2>
+    <img class="appic" src="apple-touch-icon.png" alt="">
+    <p style="margin:0">홈 화면에 생긴 <b>나이테 스터디</b> 아이콘을 눌러 열고, 채팅방 공지의 <b>회원 비밀번호</b>를 넣으면 시작이에요.</p>
+    <small class="sub">아이폰은 사파리에서 넣은 비밀번호가 앱으로 넘어가지 않아요. 아이콘으로 연 뒤 한 번 더 넣어 주세요.</small>
+    <a class="go" href="record/" id="goApp">📲 스터디 앱 열기</a>
+  </div>
+
+  <div class="card faq">
+    <h2>자주 묻는 질문</h2>
+    <details><summary>플레이스토어에서 ‘나이테’를 검색해도 안 나와요</summary><p>스토어에 올린 앱이 아니라서 검색에 나오지 않아요. 위 순서대로 인터넷 주소를 홈 화면에 추가하면 앱처럼 쓸 수 있어요.</p></details>
+    <details><summary>‘홈 화면에 추가’ 메뉴가 안 보여요</summary><p>대부분 카카오톡 안에서 열려 있을 때예요. ①번처럼 사파리(아이폰)나 크롬(안드로이드)으로 다시 열어 주세요.</p></details>
+    <details><summary>스터디 앱 링크와 비밀번호는 어디 있어요?</summary><p>스터디 채팅방 공지에 있어요. 아직 채팅방에 없다면 <a href="join.html" style="color:var(--tealD);font-weight:800">스터디 참여 안내</a>부터 봐 주세요.</p></details>
+    <details><summary>‘안전하지 않은 앱 차단됨’이 떠요. 괜찮아요?</summary><p>스토어에 올린 앱이 아니라서 Google Play 프로텍트가 개발자를 알 수 없다고 띄우는 경고예요. 나이테 주소(wh-jaimie.github.io)에서 설치한 경우라면 <b>세부정보 더보기 → 무시하고 설치하기</b>를 누르면 돼요. 걱정되면 브라우저 메뉴의 <b>홈 화면에 추가</b>로 아이콘만 만들어도 똑같이 쓸 수 있어요.</p></details>
+    <details><summary>설치 안 하고 그냥 써도 돼요?</summary><p>링크로 열어도 볼 수는 있어요. 다만 매번 링크를 찾아야 하고, 아이폰은 기록이 따로 저장될 수 있어서 설치해 두는 걸 추천해요.</p></details>
+  </div>
+
+  <p class="foot">나이테 영어책육아 메이트 · 한 권씩, 아이의 영어에 나이테를 만들어요.</p>
+</div>
+<script src="track.js" data-page="앱 설치 방법"></script>
+<script>
+(function(){
+  // 기기에 맞는 탭을 먼저 보여줌(안드로이드면 안드로이드 탭)
+  var ti=document.getElementById('tIos'),ta=document.getElementById('tAnd'),pi=document.getElementById('pIos'),pa=document.getElementById('pAnd');
+  function show(and){ti.setAttribute('aria-selected',String(!and));ta.setAttribute('aria-selected',String(and));pi.hidden=and;pa.hidden=!and;}
+  ti.onclick=function(){show(false);};ta.onclick=function(){show(true);};
+  if(/android/i.test(navigator.userAgent))show(true);
+  // 스터디 앱 열기 클릭 집계(install_click, from=install)
+  document.getElementById('goApp').addEventListener('click',function(){
+    try{if(localStorage.getItem('naite_notrack')==='1')return;var A="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi",sid=localStorage.getItem('joy_sid')||'anon';
+      fetch("https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events",{method:"POST",headers:{"apikey":A,"Authorization":"Bearer "+A,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({type:"install_click",session_id:sid,path:location.pathname,meta:{page:"앱 설치 방법",from:"install"}}),keepalive:true}).catch(function(){});
+    }catch(e){}
+  });
+})();
+</script>
+<script src="share.js" defer></script>
+</body>
+</html>

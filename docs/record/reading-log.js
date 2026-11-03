@@ -333,7 +333,9 @@
       (ext?'<a class="pri" href="'+esc(ext)+'">'+(isiOS()?'사파리로':'크롬으로')+' 열기</a>':'')+
       '<ol class="steps"><li>화면 오른쪽 위나 아래의 <b>⋮ / ⋯</b> 버튼을 눌러요</li><li><b>다른 브라우저로 열기</b>를 골라요</li><li>열린 화면에서 다시 홈 화면에 추가해요</li></ol>';
   }
-  function guideHtml(){
+  var HOWTO='<a class="pri" href="../install.html" style="background:#fff;color:#245648;border:1.5px solid #245648">📖 설치 방법 자세히 보기</a>';
+  function guideHtml(){return guideBase()+HOWTO;}
+  function guideBase(){
     var app=inAppName();if(app)return inAppHtml(app);
     if(isiOS())return '<p class="sub">아이폰은 사파리에서 <b>홈 화면에 추가</b>하면 앱으로 설치돼요.</p><ol class="steps"><li>화면 아래 <b>공유 버튼(⬆︎)</b>을 눌러요</li><li>목록을 내려 <b>홈 화면에 추가</b>를 골라요</li><li>오른쪽 위 <b>추가</b>를 누르면 끝!</li></ol>';
     return '<ol class="steps"><li>브라우저 오른쪽 위 <b>⋮ 메뉴</b>를 눌러요</li><li><b>앱 설치</b>(또는 <b>홈 화면에 추가</b>)를 골라요</li><li><b>설치</b>를 누르면 끝!</li></ol>';
