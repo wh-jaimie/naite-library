@@ -1124,7 +1124,7 @@
     TAB_IDS.forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
     if(EMBED[id]){var v=$('v-'+id),tb=$('rtabs');
       if(v){v.style.bottom=(tb?tb.offsetHeight:64)+'px';
-        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}}}
+        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.allow='web-share; clipboard-write';f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}}}
     try{history.replaceState(null,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){}
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();

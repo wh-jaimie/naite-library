@@ -200,7 +200,7 @@ a{color:var(--tealD)}
 @media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
 </style></head><body>
 <div class="wrap">
-  <div class="top"><span class="brand"><span class="mark">100</span><span class="t">국내 인기 책장</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top{display:none}</style>')</script>
+  <div class="top"><span class="brand"><span class="mark">100</span><span class="t">국내 인기 책장</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top .back{display:none}.top .sharebtn{margin-left:auto}</style>')</script>
   <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>국내 인기 책장</h1>
     <p>국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·종류로 골라 보세요.</p>
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</div></details></div>
