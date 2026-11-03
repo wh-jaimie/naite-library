@@ -608,6 +608,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .sd-hero .theme{position:relative;display:flex;align-items:baseline;gap:8px;margin-top:2px}
 .sd-hero h1{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.15;margin:0;letter-spacing:-.01em;color:var(--ink)}
 .sd-hero .en{font-family:var(--serif);font-size:14px;color:var(--muted)}
+.sd-hero h1 .emo{font-size:24px;margin-right:6px;vertical-align:-1px}
 .sd-hero .intro{position:relative;font-size:13.5px;color:var(--ink-soft);margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
 .sd-hero .intro.open{display:block}
 .sd-hero .more{position:relative;background:none;border:none;padding:2px 0 0;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine);cursor:pointer}
@@ -842,7 +843,7 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
     if(!PREVIEW)h+='<div id="sdBack"></div><div id="newsLatest"></div>';
     h+='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
        '<div class="eyebrow">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
-       '<div class="theme"><h1>'+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
+       '<div class="theme"><h1>'+(theme.emoji?'<span class="emo" aria-hidden="true">'+esc(theme.emoji)+'</span>':'')+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
        (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
        '<div class="prog" data-rprog></div></div>';
