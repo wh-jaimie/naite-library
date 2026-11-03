@@ -340,7 +340,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   function renderNaite(body,X){
     var R=X.R;
     function m(list){var pub=list.filter(isPublic),pv=pub.filter(function(e){return e.type==='page_view';}),vs=sessions(pv),js=sessions(list.filter(function(e){return e.type==='join_click';}));
-      return {pv:pv,visitors:cnt(vs),views:pv.length,join:list.filter(function(e){return e.type==='join_click';}).length,joinS:cnt(js),
+      function inV(t,f){var o={};list.forEach(function(e){if(e.type===t&&(!f||f(e))&&e.session_id&&vs[e.session_id])o[e.session_id]=1;});return cnt(o);}
+      return {pv:pv,visitors:cnt(vs),views:pv.length,appS:inV('page_view',function(e){return appOf(e)==='record';}),buyS:inV('buy_click'),join:list.filter(function(e){return e.type==='join_click';}).length,joinS:cnt(js),
         guide:list.filter(function(e){return e.type==='guide_click';}).length,install:list.filter(function(e){return e.type==='install_click';}).length};}
     var a=m(X.cur),b=m(X.prv);
     var rate=a.visitors?Math.round(a.joinS/a.visitors*1000)/10:0,prate=b.visitors?Math.round(b.joinS/b.visitors*1000)/10:0;
@@ -349,8 +350,16 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     // 어디까지 가나요 (방문자 기준, 사람 수)
     function seen(name){return cnt(sessions(a.pv.filter(function(e){return pageOf(e)===name;})));}
     h+='<div class="card"><h3>🚶 어디까지 가나요 <span class="hint">방문자 중 각 화면을 본 사람</span></h3>'+
-      hbars([['방문',a.visitors],['🌳 나이테 120',seen('🌳 나이테 120')],['📘 스터디 자료',seen('📘 스터디 자료')],['📚 가이드',seen('📚 엄마표영어 가이드')],['🙋 참여 화면',seen('🙋 스터디 참여')],['참여 버튼 누름',a.joinS,1]],a.visitors||1)+
-      '<p class="hint">참여율 = 참여 버튼을 누른 사람 ÷ 방문자. 한 사람은 기기(브라우저) 하나 기준이에요.</p></div>';
+      hbars([['방문',a.visitors],['🏠 메인',seen('🏠 메인')],['🛒 국내 인기 책장',seen('🛒 국내 인기 책장')],['🌳 나이테 120',seen('🌳 나이테 120')],['📚 가이드',seen('📚 엄마표영어 가이드')],
+        ['📖 스터디 앱 열기',a.appS],['🛒 쿠팡 누름',a.buyS],['💬 스터디방 참여 누름',a.joinS,1]],a.visitors||1)+
+      '<p class="hint">방문자(사이트를 본 기기) 중 각 화면을 보거나 버튼을 누른 사람 수예요. 스터디 앱·쿠팡은 앱 안에서 누른 것도 포함해요.</p></div>';
+    // 어떤 버튼을 누르나요 — ui_click(track.js, 2026-11-03부터)
+    var uc=X.cur.filter(function(e){return e.type==='ui_click';});
+    var ucp={};uc.forEach(function(e){var pg=pageOf(e);(ucp[pg]=ucp[pg]||[]).push(e);});
+    var upages=Object.keys(ucp).sort(function(x,y){return ucp[y].length-ucp[x].length;});
+    h+='<div class="card"><div class="shd"><h3>👆 어떤 버튼을 누르나요 <span class="hint">화면별 · 11/3부터 수집</span></h3>'+
+      (upages.length?'<select class="t sm r" id="ucp">'+upages.map(function(k){return '<option>'+esc(k)+'</option>';}).join('')+'</select>':'')+'</div><div id="ucbody">'+
+      (upages.length?'':'<p class="status">아직 모인 클릭이 없어요. 배포 뒤 사람들이 누르면 쌓여요.</p>')+'</div></div>';
     // 방문자 출처: 사람(세션)마다 기간 안 첫 방문의 출처(meta.src, 2026-10-16부터 기록)
     var first={};a.pv.slice().reverse().forEach(function(e){if(e.session_id&&!(e.session_id in first))first[e.session_id]=(e.meta&&e.meta.src)||null;});
     var joined=sessions(X.cur.filter(function(e){return e.type==='join_click';}));
@@ -397,6 +406,13 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     h+='<div class="card"><h3>📄 화면별 방문</h3>'+table(['화면','방문','방문자'],Object.keys(pages).sort(function(x,y){return pages[y]-pages[x];}).map(function(p){return [esc(p),pages[p],cnt(pageV[p])];}),1)+'</div>';
     h+='<div class="card"><div class="shd"><h3>📈 날짜별 방문자 · 참여 클릭</h3><select class="t sm r" id="nm"><option value="v">방문자</option><option value="j">참여 클릭</option></select></div><div id="nchart"></div></div>';
     body.innerHTML=h;
+    var us=document.getElementById('ucp');
+    function drawUc(){if(!us)return;var list=ucp[us.value]||[],o={};
+      list.forEach(function(e){var l=(e.meta&&e.meta.label)||'?',x=o[l]=o[l]||{n:0,s:{}};x.n++;if(e.session_id)x.s[e.session_id]=1;});
+      var ks=Object.keys(o).sort(function(x,y){return o[y].n-o[x].n;});
+      document.getElementById('ucbody').innerHTML=table(['버튼','클릭','누른 사람'],ks.slice(0,40).map(function(l){return [esc(l),o[l].n,cnt(o[l].s)];}),1)+
+        (ks.length>40?'<p class="hint">상위 40개만 보여요.</p>':'');}
+    if(us){us.onchange=drawUc;drawUc();}
     var sel=document.getElementById('nm');function draw(){var v=sel.value==='j'?perDay(X.cur.filter(function(e){return e.type==='join_click';}),R,function(e){return dstr(e.created_at);}):perDayUniq(a.pv,R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});
       document.getElementById('nchart').innerHTML=barChart(R.days,v,sel.value==='j'?'#B87343':'#2F6E58');}
     sel.onchange=draw;draw();
