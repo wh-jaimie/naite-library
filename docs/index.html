@@ -194,6 +194,9 @@ a{color:inherit;text-decoration:none}
 @media (max-width:760px){.chans{grid-template-columns:1fr}.chan{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:start}.chan .ci{grid-row:span 3;margin-top:4px}.chan b{margin-top:0}}
 .igline{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 16px;border-radius:14px;background:#FCEFF5;border:1px solid #F0C8DA;font-size:.9rem}
 .igline b{color:#B0306A}
+.igline{word-break:keep-all}
+.igline .igi{font-size:1.35rem}
+.chan .ci .igi{width:1.25em}
 .igline .go{margin-left:auto;font-weight:800;color:#B0306A;white-space:nowrap}
 
 /* 더 알아보기 */
@@ -257,7 +260,7 @@ a{color:inherit;text-decoration:none}
       <a class="panel note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 스터디 자료</b><small id="noteS">재밌게 읽는 팁 · 음원영상 · 워크지 · 회화표현까지</small></span><span class="go">보기 →</span></a>
       <div class="panel gb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="gbBtn">관심 있어요</button></div>
     </div>
-    <a class="igline" data-insta="month" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><span>📷</span><span><b>@naite_library</b> 팔로우하고 같이 소통해요~ 스터디 공지와 자료를 나눠요</span><span class="go">인스타 →</span></a>
+    <a class="igline" data-insta="month" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><span><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg></span><span>팔로우하고 같이 소통해요~ 스터디 공지와 자료를 나눠요</span><span class="go">인스타 →</span></a>
     <div class="panel nextm" id="nextm" hidden></div>
     <p class="disc">※ 책을 누르면 열리는 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   </section>
@@ -366,7 +369,7 @@ a{color:inherit;text-decoration:none}
       <a class="chan ch-kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">
         <span class="ci">💬</span><b>카톡 스터디방</b><small>매일 인증하고, 궁금한 건 바로 물어봐요</small><span class="cgo">스터디방 참여하기 →</span></a>
       <a class="chan ch-ig" data-insta="comm" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">
-        <span class="ci">📷</span><b>인스타그램</b><small><em>@naite_library</em> 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~</small><span class="cgo">@naite_library 보러 가기 →</span></a>
+        <span class="ci"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg></span><b>인스타그램</b><small>스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~</small><span class="cgo">@naite_library 보러 가기 →</span></a>
       <a class="chan ch-dg" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">
         <span class="ci">🥕</span><b>당근모임</b><small>근처에 사는 엄마들을 만나요</small><span class="cgo">당근모임 구경하기 →</span></a>
     </div>
@@ -377,7 +380,7 @@ a{color:inherit;text-decoration:none}
     <div class="more"><a href="types.html">🧩 5가지 유형</a><a href="guide.html">📚 엄마표영어 가이드</a><a href="install.html">📲 앱 설치 방법</a><button type="button" data-install hidden>📲 홈 화면에 추가</button></div>
   </section>
 </main>
-<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><a data-insta="foot" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">📷 Instagram @naite_library</a> · <a href="study/admin.html">🛠️ 관리자</a></div></div>
+<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><a data-insta="foot" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg> Instagram @naite_library</a> · <a href="study/admin.html">🛠️ 관리자</a></div></div>
 <div class="dock"><a class="d1" data-app="month" data-cta="dock_month" href="record/">📚 이번 달 5권</a><a class="d2" data-cta="dock_comm" href="#comm">🤝 함께하기</a></div>
 
 <script src="track.js" data-page="랜딩"></script>

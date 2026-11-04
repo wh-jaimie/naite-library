@@ -981,7 +981,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
   // 📢 공지(관리자 공지 작성기) · 🌱 처음 오셨나요? — 탭이 아니라 위에 덮이는 화면. 주소 #news / #welcome 로도 열림
   var NEWS=[],NEWS_SEEN_KEY='naite_news_seen',WELCOME_KEY='naite_welcome_seen';
   var DAANGN_URL='https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5';
-  document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ig]');if(a)logEvent('insta_click',{at:a.getAttribute('data-ig')});});
+  var IG_SVG='<svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg>';
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ig]');if(a)logEvent('insta_click',{at:a.getAttribute('data-ig')});});
   var GUIDE_POST_URL='https://blog.naver.com/naite_library/224453531592';
   function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -1009,7 +1010,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
         '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 자료·기록·통계·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
         '<li><b>기록 백업해 두기 (선택)</b><span class="wsub">닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 기록이 이어져요.</span><button type="button" class="wbtn" data-rbackup>🔒 기록 백업하기</button></li>'+
-        '<li><b>함께하면 더 좋아요 (선택)</b><span class="wsub">카톡 스터디방에서 인증하고 응원을 나눠요. 인스타 @naite_library에서는 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~ 당근모임에서는 근처에 사는 엄마들을 만날 수 있어요 😊</span><a class="wbtn" href="../join.html?from=app">💬 스터디방 둘러보기</a> <a class="wbtn" data-ig="welcome" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">📷 인스타 @naite_library</a> <a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 구경하기</a></li>'+
+        '<li><b>함께하면 더 좋아요 (선택)</b><span class="wsub">카톡 스터디방에서 인증하고 응원을 나눠요. 인스타에서는 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~ 당근모임에서는 근처에 사는 엄마들을 만날 수 있어요 😊</span><a class="wbtn" href="../join.html?from=app">💬 스터디방 둘러보기</a> <a class="wbtn" data-ig="welcome" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 @naite_library</a> <a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 구경하기</a></li>'+
       '</ol></div>'+
       '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
         '<li><b>매달 1일</b> — 새 주제 5권으로 시작</li>'+
@@ -1035,7 +1036,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       '</ul></div>'+
       '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
         '<p style="margin:8px 0 0;font-size:.88rem;color:var(--soft)">인스타 팔로우, 블로그 이웃추가 부탁드려요 🙏<br>이달의 5권이 인스타·블로그에도 올라가서 지난 달 책 다시 찾을 때 편해요</p>'+
-        '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">📷 인스타그램 팔로우</a> '+
+        '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타그램 팔로우</a> '+
         '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';
   }
   function openPanel(kind){
