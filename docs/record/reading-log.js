@@ -940,7 +940,23 @@
     var pg=document.querySelector('[data-rprog]');
     if(pg&&S.books.length){var m=met(S.books);
       pg.innerHTML='<div class="dots">'+S.books.map(function(b,i){return '<i class="'+(i<m?'on':'')+'"></i>';}).join('')+'</div><span class="pt">'+S.books.length+'권 중 <b>'+m+'권</b> 만났어요</span>';}
+    paintToday();
   }
+  // 스터디 탭 오른쪽 아래 떠 있는 '오늘 기록' 버튼 → 누르면 인증샷·책 기록·공유 메뉴 — 2026-11-04
+  function paintToday(){
+    var el=$('tdFab');
+    if(!el){el=document.createElement('div');el.id='tdFab';el.className='td-fab';document.body.appendChild(el);}
+    el.hidden=S.tab!=='study';if(el.hidden){el.classList.remove('open');return;}
+    var d=logicalToday(),inf=dayInfo(d),done=inf.sum||inf.ph,open=el.classList.contains('open');
+    el.innerHTML='<div class="td-menu" role="menu">'+
+        (done?'<button type="button" role="menuitem" data-tshare>'+svg(18,IC.share)+'오늘 기록 공유</button>':'')+
+        '<button type="button" role="menuitem" data-tbook>'+svg(18,IC.study)+(inf.sum?'책 더 기록':'읽은 책 기록')+'</button>'+
+        '<button type="button" role="menuitem" class="pri" data-tcam>'+svg(18,IC.cam)+(inf.ph?'인증샷 다시 찍기':'오늘 인증샷')+'</button>'+
+      '</div>'+
+      '<button type="button" class="td-main'+(done?' done':'')+'" data-tfab aria-expanded="'+open+'">'+
+        (open?svg(18,IC.x,2.4)+'닫기':done?svg(18,IC.check,2.6)+'오늘 '+(inf.sum?inf.sum+'권':'사진'):svg(18,IC.shelf)+'오늘 기록')+'</button>';
+  }
+  function fabToggle(on){var el=$('tdFab');if(!el)return;el.classList.toggle('open',on);paintToday();}
   /* ── 나이테 라인 아이콘 ── */
   function svg(w,inner,sw){return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||2.1)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';}
   var IC={
@@ -1140,6 +1156,7 @@
     if(wired)return;wired=true;
     document.addEventListener('click',function(e){
       if(!S)return;var t;
+      if($('tdFab')&&$('tdFab').classList.contains('open')&&!e.target.closest('#tdFab'))fabToggle(false);
       if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'),t.getAttribute('data-src')||'card');return;}
       if((t=e.target.closest('[data-rtab]'))){showTab(t.getAttribute('data-rtab'));return;}
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
@@ -1150,6 +1167,10 @@
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
       if((t=e.target.closest('[data-rtoday]'))){openRecordSheet(logicalToday());return;}
+      if((t=e.target.closest('[data-tfab]'))){var fo=!$('tdFab').classList.contains('open');fabToggle(fo);if(fo&&S.onEvent)S.onEvent('today_fab',{});return;}
+      if((t=e.target.closest('[data-tcam]'))){fabToggle(false);openStampCamera(logicalToday());if(S.onEvent)S.onEvent('today_cam',{});return;}
+      if((t=e.target.closest('[data-tbook]'))){fabToggle(false);openRecordSheet(logicalToday());if(S.onEvent)S.onEvent('today_book',{});return;}
+      if((t=e.target.closest('[data-tshare]'))){fabToggle(false);openShareCard(logicalToday());if(S.onEvent)S.onEvent('today_share',{});return;}
       if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=(S.viewOff||0)-1;paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
       if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(0,(S.viewOff||0)+1);paint();}return;}
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
