@@ -118,6 +118,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .step .cp:hover{border-color:var(--teal);color:var(--teal-deep)}
 .step .cp.done{border-color:var(--teal);color:var(--teal-deep);background:color-mix(in srgb,var(--teal) 12%,var(--surface))}
 .step .fmt{font-size:.62rem;font-weight:800;color:#6a4a8a;background:#efe7f5;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
+.step .ser{font-size:.62rem;font-weight:800;color:#8a5a1a;background:#fbefd9;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
 .step .lvb{font-size:.62rem;font-weight:800;border-radius:6px;padding:2px 7px;align-self:flex-start;margin-top:2px}
 .step .lvb.l1{background:#e3f1df;color:#2f6e58}
 .step .lvb.l2{background:#d8ecee;color:#1f6f72}
@@ -193,7 +194,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
       한 권을 여러 번 읽어도, 순서를 바꿔도 괜찮아요.<br>
-      표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요.</p>
+      표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요. <strong>🎵 노부영·픽토리</strong> 는 노래 CD·세이펜이 함께 나오는 시리즈(전집으로도 많이 사요)에 든 책이에요.</p>
 
     <div class="legend" id="legend"></div>
     <div id="statline" class="note"></div>
@@ -256,7 +257,7 @@ function stepHTML(b){
       <div class="chk">✓</div>
     </div>
     ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
-    ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}
+    ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.series||[]).map(x=>`<span class="ser" title="노래 CD·세이펜이 있는 ${x} 시리즈">🎵 ${x}</span>`).join('')}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
     ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
     ${b.lib_loans?`<div class="lib">📚 도서관 ${b.lib_loans}회</div>`:''}
