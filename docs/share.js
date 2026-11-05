@@ -14,7 +14,7 @@
   if(host){
     var back=host.querySelector('.back');
     b.classList.add('in-top');
-    if(back){back.style.marginLeft='auto';b.style.marginLeft='8px';host.insertBefore(b,back.nextSibling);}
+    if(back){back.style.marginLeft='auto';b.style.marginLeft='8px';back.parentNode.insertBefore(b,back.nextSibling);}
     else{host.style.display=host.style.display||'';host.appendChild(b);var cs=getComputedStyle(host);if(cs.display!=='flex'){host.style.display='flex';host.style.alignItems='center';host.style.gap=host.style.gap||'8px';}}
   }else{b.classList.add('float');document.body.appendChild(b);}
   function url(){var u=new URL(location.href);['notrack','embed','from'].forEach(function(k){u.searchParams.delete(k);});u.hash='';return u.toString();}
