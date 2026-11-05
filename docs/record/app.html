@@ -776,6 +776,15 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-book .sd-tip{margin-top:10px;background:var(--pine-soft);border-radius:12px;padding:10px 12px;cursor:default}
 .sd-book .sd-tip .sd-label{margin-bottom:4px}
 .sd-book .sd-tip p{margin:0;font-size:13px;color:var(--ink);line-height:1.55;white-space:pre-wrap}
+.sd-gb{margin-top:14px;padding:16px 16px 14px;background:#FBEFE3;border:1px solid #EBCFAF;border-radius:16px}
+.sd-gb b{display:block;font-size:14.5px;color:var(--ink)}
+.sd-gb small{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.sd-gb button{margin-top:10px;width:100%;border:0;background:var(--clay);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:11px;border-radius:12px;cursor:pointer}
+.sd-gb button.on{background:var(--pine);cursor:default}
+.sd-gbline{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:8px 8px 8px 12px;background:#FBEFE3;border:1px solid #EBCFAF;border-radius:12px;font-size:12.5px;color:var(--clay-ink)}
+.sd-gbline b{font-weight:800}
+.sd-gbline button{flex:0 0 auto;border:0;background:var(--clay);color:#fff;font:inherit;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;cursor:pointer}
+.sd-gbline button.on{background:var(--pine);cursor:default}
 </style>
 </head>
 <body>
@@ -874,7 +883,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
        (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
        '<div class="sd-covers">'+books.map(function(b,i){return '<button type="button" data-goto="'+i+'" aria-label="'+esc(b.title)+'로 이동">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'<span class="fbx">'+esc(b.title)+'</span>')+'</button>';}).join('')+'</div>'+
-       '<div class="prog" data-rprog></div></div>';
+       '<div class="prog" data-rprog></div>'+
+       '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div></div>';
     h+='<nav class="sd-chips" id="sdChips" aria-label="자료 바로가기">'+secs.map(function(s,i){return '<button type="button" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
        '<details class="guide"><summary><span><b>글밥 적은 책부터</b> · 다 못 읽어도 괜찮아요</span>'+ic('chev',14)+'</summary>'+
@@ -920,6 +930,11 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)
+    (function(){var b=document.getElementById('sdGbBtn');if(!b)return;var k='naite_gb_'+theme.key;
+      function done(){b.classList.add('on');b.textContent='✓ 관심 표시함';var s=b.previousElementSibling;if(s)s.innerHTML='진행되면 알려드릴게요 🙌';}
+      try{if(localStorage.getItem(k)==='1')done();}catch(e){}
+      b.addEventListener('click',function(){if(b.classList.contains('on')||PREVIEW)return;logEvent('groupbuy_interest',{theme_key:theme.key,page:'스터디 앱'});try{localStorage.setItem(k,'1');}catch(e){}done();});})();
     app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelectorAll('.sd-book')[+bt.dataset.goto];if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
     // 지난 달(?m=키) 자료를 보고 있으면 맨 위에 '이번 달로 돌아가기'
     if(!PREVIEW&&curParam())client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(r){
