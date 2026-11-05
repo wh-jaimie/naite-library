@@ -215,7 +215,7 @@ __BUY_DISCLOSURE__
 
 <div id="printable"></div>
 
-<div class="wrap joinmini"><a id="joinBtn" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 함께 읽고 싶다면 · 스터디방 참여하기 ›</a><span>매달 5권, 엄마표영어 오픈채팅에서 인증하고 응원을 나눠요 (선택)</span></div>
+<div class="wrap joinmini"><a id="joinBtn" data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">💬 함께 읽고 싶다면 · 스터디방 참여하기 ›</a><span>매달 5권, 엄마표영어 오픈채팅에서 인증하고 고민을 나눠요 (선택)</span></div>
 
 <footer><div class="wrap">
   <p><strong>나이테 120</strong> · 파닉스 전, 첫 영어 그림책 로드맵 — 나이테 영어책육아 메이트</p>
