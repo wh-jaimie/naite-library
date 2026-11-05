@@ -781,6 +781,10 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-gb small{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
 .sd-gb button{margin-top:10px;width:100%;border:0;background:var(--clay);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:11px;border-radius:12px;cursor:pointer}
 .sd-gb button.on{background:var(--pine);cursor:default}
+.sd-gbline{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:8px 8px 8px 12px;background:#FBEFE3;border:1px solid #EBCFAF;border-radius:12px;font-size:12.5px;color:var(--clay-ink)}
+.sd-gbline b{font-weight:800}
+.sd-gbline button{flex:0 0 auto;border:0;background:var(--clay);color:#fff;font:inherit;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;cursor:pointer}
+.sd-gbline button.on{background:var(--pine);cursor:default}
 </style>
 </head>
 <body>
@@ -879,7 +883,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
        (c.subject?'<p class="intro" id="sdIntro">'+esc(c.subject)+'</p><button type="button" class="more" id="sdMore">더 보기</button>':'')+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
        '<div class="sd-covers">'+books.map(function(b,i){return '<button type="button" data-goto="'+i+'" aria-label="'+esc(b.title)+'로 이동">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'<span class="fbx">'+esc(b.title)+'</span>')+'</button>';}).join('')+'</div>'+
-       '<div class="prog" data-rprog></div></div>';
+       '<div class="prog" data-rprog></div>'+
+       '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div></div>';
     h+='<nav class="sd-chips" id="sdChips" aria-label="자료 바로가기">'+secs.map(function(s,i){return '<button type="button" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
        '<details class="guide"><summary><span><b>글밥 적은 책부터</b> · 다 못 읽어도 괜찮아요</span>'+ic('chev',14)+'</summary>'+
@@ -888,7 +893,6 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
          '<p>워크지는 출판사·작가 공식 무료 활동지로 연결돼요. 책을 누르면 책정보(구매처)가 열리고, 도서관·다른 서점에선 제목 복사 후 검색창에 붙여넣으세요.</p>'+
          '<p>글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. <a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형 알아보기</a></p></details>'+
        '<div class="sd-books">'+bh+'</div>'+
-       '<div class="sd-gb" id="sdGb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
        (hasBuy?'<p class="disc">책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
     if(how.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
        (how.length>1?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'<p class="prose1">'+esc(how[0])+'</p>')+'</div></section>';
@@ -928,7 +932,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     initChips();
     // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)
     (function(){var b=document.getElementById('sdGbBtn');if(!b)return;var k='naite_gb_'+theme.key;
-      function done(){b.classList.add('on');b.textContent='✓ 관심 표시했어요 · 진행되면 알려드릴게요';}
+      function done(){b.classList.add('on');b.textContent='✓ 관심 표시함';var s=b.previousElementSibling;if(s)s.innerHTML='진행되면 알려드릴게요 🙌';}
       try{if(localStorage.getItem(k)==='1')done();}catch(e){}
       b.addEventListener('click',function(){if(b.classList.contains('on')||PREVIEW)return;logEvent('groupbuy_interest',{theme_key:theme.key,page:'스터디 앱'});try{localStorage.setItem(k,'1');}catch(e){}done();});})();
     app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelectorAll('.sd-book')[+bt.dataset.goto];if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
