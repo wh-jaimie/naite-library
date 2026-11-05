@@ -197,7 +197,7 @@ a{color:var(--tealD)}
 .copy.ok{color:var(--coral)}
 .empty{padding:40px 0;text-align:center;color:var(--soft)}
 .foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
-@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt{font-size:.86rem}}
+@media (max-width:520px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{border-radius:11px}.bb{padding:7px 7px 9px;gap:4px}.bt{font-size:.78rem}.age{font-size:.7rem}.note{font-size:.68rem}.bd{gap:3px}.bd span{font-size:.6rem;padding:1px 4px}.price{font-size:.72rem}.price b{font-size:.84rem}.price small{font-size:.62rem}.buy{font-size:.72rem;padding:6px 3px;border-radius:8px}.copy{font-size:.7rem;padding:3px}.cv .rk{font-size:.62rem;padding:1px 5px;top:4px;left:4px}.cv .ser{font-size:.6rem;padding:1px 4px;top:4px;right:4px}}
 </style></head><body>
 <div class="wrap">
   <div class="top"><span class="brand"><span class="mark">100</span><span class="t">국내 인기 책장</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top .back{display:none}.top .sharebtn{margin-left:auto}</style>')</script>
