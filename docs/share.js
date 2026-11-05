@@ -12,9 +12,10 @@
   var b=document.createElement('button');b.type='button';b.className='nt-share';b.textContent='📤 공유';b.title='이 페이지 공유하기';
   var top=document.querySelector('header.top'),host=top&&(top.querySelector('.wrap')||top);
   if(host){
-    var back=host.querySelector('.back');
+    var back=host.querySelector('.back'),acts=host.querySelector('.header-actions');
     b.classList.add('in-top');
     if(back){back.style.marginLeft='auto';b.style.marginLeft='8px';back.parentNode.insertBefore(b,back.nextSibling);}
+    else if(acts){acts.insertBefore(b,acts.firstChild);} // '← 홈' 없이 바로가기 줄만 있는 페이지(가이드)
     else{host.style.display=host.style.display||'';host.appendChild(b);var cs=getComputedStyle(host);if(cs.display!=='flex'){host.style.display='flex';host.style.alignItems='center';host.style.gap=host.style.gap||'8px';}}
   }else{b.classList.add('float');document.body.appendChild(b);}
   function url(){var u=new URL(location.href);['notrack','embed','from'].forEach(function(k){u.searchParams.delete(k);});u.hash='';return u.toString();}

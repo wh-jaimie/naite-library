@@ -776,6 +776,11 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-book .sd-tip{margin-top:10px;background:var(--pine-soft);border-radius:12px;padding:10px 12px;cursor:default}
 .sd-book .sd-tip .sd-label{margin-bottom:4px}
 .sd-book .sd-tip p{margin:0;font-size:13px;color:var(--ink);line-height:1.55;white-space:pre-wrap}
+.sd-gb{margin-top:14px;padding:16px 16px 14px;background:#FBEFE3;border:1px solid #EBCFAF;border-radius:16px}
+.sd-gb b{display:block;font-size:14.5px;color:var(--ink)}
+.sd-gb small{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.sd-gb button{margin-top:10px;width:100%;border:0;background:var(--clay);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:11px;border-radius:12px;cursor:pointer}
+.sd-gb button.on{background:var(--pine);cursor:default}
 </style>
 </head>
 <body>
@@ -883,6 +888,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
          '<p>워크지는 출판사·작가 공식 무료 활동지로 연결돼요. 책을 누르면 책정보(구매처)가 열리고, 도서관·다른 서점에선 제목 복사 후 검색창에 붙여넣으세요.</p>'+
          '<p>글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. <a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형 알아보기</a></p></details>'+
        '<div class="sd-books">'+bh+'</div>'+
+       '<div class="sd-gb" id="sdGb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
        (hasBuy?'<p class="disc">책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
     if(how.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
        (how.length>1?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'<p class="prose1">'+esc(how[0])+'</p>')+'</div></section>';
@@ -920,6 +926,11 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)
+    (function(){var b=document.getElementById('sdGbBtn');if(!b)return;var k='naite_gb_'+theme.key;
+      function done(){b.classList.add('on');b.textContent='✓ 관심 표시했어요 · 진행되면 알려드릴게요';}
+      try{if(localStorage.getItem(k)==='1')done();}catch(e){}
+      b.addEventListener('click',function(){if(b.classList.contains('on')||PREVIEW)return;logEvent('groupbuy_interest',{theme_key:theme.key,page:'스터디 앱'});try{localStorage.setItem(k,'1');}catch(e){}done();});})();
     app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelectorAll('.sd-book')[+bt.dataset.goto];if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
     // 지난 달(?m=키) 자료를 보고 있으면 맨 위에 '이번 달로 돌아가기'
     if(!PREVIEW&&curParam())client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(r){
