@@ -546,8 +546,8 @@
   // 앱 안에서 바로 찍기: 폰 카메라 앱으로 넘어가면 그 사이 안드로이드가 설치 앱을 닫아 사진이 안 들어오는 경우가 있어서
   function canCamera(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.isSecureContext!==false);}
   // 인증 사진 오버레이(리본·프레임·필름): 찍는 화면에 실시간으로 띄우고, 찍은 사진에 같은 모양으로 그려 넣음
-  var TPLS=[['paper','카드'],['ribbon','리본'],['frame','프레임'],['film','필름']];
-  function getTpl(){try{var t=localStorage.getItem('naite_stamp_tpl');return /^(paper|ribbon|frame|film)$/.test(t)?t:'paper';}catch(e){return 'paper';}}
+  var TPLS=[['ribbon','리본'],['frame','프레임'],['film','필름']];
+  function getTpl(){try{var t=localStorage.getItem('naite_stamp_tpl');return /^(ribbon|frame|film)$/.test(t)?t:'ribbon';}catch(e){return 'ribbon';}}
   function setTpl(t){try{localStorage.setItem('naite_stamp_tpl',t);}catch(e){}}
   function stampLines(day){
     var t=logicalToday(),isT=!day||day===t;day=day||t;
@@ -599,27 +599,7 @@
     c.fillStyle='#fff';c.textAlign='left';c.fillText('나이테',lx+R+gap,lcy+f*.04);ls('0px');
     c.restore();
   }
-  // 카드: 사진은 그대로 밝게 두고, 아래에 크림색 카드만 얹음
-  function drawPaper(c,W,H,day){
-    var L=stampLines(day),u=W/352,serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
-    var m=14*u,ch=62*u,cx0=m,cy0=H-m-ch,cw=W-2*m;
-    c.save();
-    c.shadowColor='rgba(0,0,0,.18)';c.shadowBlur=10*u;c.shadowOffsetY=2*u;c.fillStyle='rgba(255,252,245,.93)';rrect(c,cx0,cy0,cw,ch,12*u);c.fill();
-    c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
-    var ring=28*u,rx=cx0+14*u+ring/2,ry=cy0+ch/2,rr=ring/2;c.strokeStyle='#1D463A';c.lineWidth=2*u*28/40;
-    [[17,1],[11,.72],[5.5,.5]].forEach(function(k){c.globalAlpha=k[1];c.beginPath();c.arc(rx,ry,rr*k[0]/20,0,Math.PI*2);c.stroke();});
-    c.globalAlpha=1;c.fillStyle='#D1965C';c.beginPath();c.arc(rx,ry-rr*15.5/20,rr*2.4/20,0,Math.PI*2);c.fill();
-    var tx=cx0+14*u+ring+10*u,h1=15*1.12*u,h2=15*u,h3=14*u,tot=h1+3*u+h2+2*u+h3,y=cy0+(ch-tot)/2;
-    c.textAlign='left';c.textBaseline='middle';
-    c.font='700 '+(15*u)+'px '+serif;c.fillStyle='#20261C';c.fillText(L.b?L.a+' '+L.b:L.a,tx,y+h1/2);y+=h1+3*u;
-    var dot=5*u;c.fillStyle='#D1965C';c.beginPath();c.arc(tx+dot/2,y+h2/2,dot/2,0,Math.PI*2);c.fill();
-    c.font='700 '+(10*u)+'px '+sans;c.fillStyle='#5E5241';c.fillText(L.c,tx+dot+5*u,y+h2/2);y+=h2+2*u;
-    var iw=10*u,iy=y+h3/2;c.strokeStyle='#B87343';c.lineWidth=1.05*u;rrect(c,tx+iw*.125,iy-iw*.375,iw*.75,iw*.75,iw*.21);c.stroke();c.beginPath();c.arc(tx+iw/2,iy,iw/6,0,Math.PI*2);c.stroke();
-    c.font='700 '+(9.5*u)+'px '+sans;c.fillStyle='#B87343';c.fillText(L.ig,tx+iw+4*u,iy);
-    c.restore();
-  }
   function drawOvl(c,W,H,tpl,day){
-    if(tpl==='paper'){drawPaper(c,W,H,day);return;}
     if(tpl==='ribbon'){drawRibbon(c,W,H,day);return;}
     var L=stampLines(day),u=W/352,film=tpl==='film',mono='ui-monospace,"Roboto Mono",monospace',serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
     c.save();
@@ -671,7 +651,7 @@
         function attach(st){stream=st;v.srcObject=st;try{v.play();}catch(e){}v.classList.toggle('mirror',facing==='user');}
         function fit(){if(!v.videoWidth)return;var ar=v.videoWidth/v.videoHeight;frame.style.aspectRatio=v.videoWidth+' / '+v.videoHeight;frame.style.width='min(100cqw, calc(100cqh * '+ar.toFixed(4)+'))';}
         v.addEventListener('loadedmetadata',fit);v.addEventListener('resize',fit);
-        function paintStamp(){if(!opt.stamp)return;var L=stampLines(opt.day),rb=tpl==='ribbon'||tpl==='paper';ov.querySelector('[data-s1]').textContent=rb&&L.b?L.a+' '+L.b:L.a;ov.querySelector('[data-s2]').textContent=rb?'':L.b;ov.querySelector('[data-s3]').textContent=tpl==='ribbon'?L.c.replace(/^나이테 /,''):L.c;}
+        function paintStamp(){if(!opt.stamp)return;var L=stampLines(opt.day),rb=tpl==='ribbon';ov.querySelector('[data-s1]').textContent=rb&&L.b?L.a+' '+L.b:L.a;ov.querySelector('[data-s2]').textContent=rb?'':L.b;ov.querySelector('[data-s3]').textContent=rb?L.c.replace(/^나이테 /,''):L.c;}
         paintStamp();if(opt.stamp)tick=setInterval(paintStamp,10000);
         ov.querySelectorAll('[data-tpl]').forEach(function(b){b.onclick=function(){tpl=b.getAttribute('data-tpl');setTpl(tpl);
           ov.querySelectorAll('[data-tpl]').forEach(function(x){x.setAttribute('aria-pressed',x===b);});
