@@ -21,7 +21,10 @@ a.brand{text-decoration:none;color:inherit}
 .brand b{font-family:'Gowun Batang',Georgia,serif;font-size:1.25rem;color:var(--tealD)}
 .brand span{font-family:'Noto Sans KR',sans-serif;color:var(--soft);font-size:.9rem;font-weight:500}
 .brand span::before{content:"·";margin:0 6px 0 2px;color:#A9B09E}
-.back{margin-left:auto;font-size:.85rem;font-weight:700;text-decoration:none;color:var(--tealD);border:1px solid var(--line);background:var(--surface);padding:8px 13px;border-radius:999px;white-space:nowrap}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.back,.month-link{font-size:.82rem;font-weight:700;text-decoration:none;border:1px solid var(--line);padding:8px 12px;border-radius:999px;white-space:nowrap}
+.back{color:var(--tealD);background:var(--surface)}
+.month-link{color:#fff;background:var(--tealD);border-color:var(--tealD)}
 main{padding:34px 0 52px}.article{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(22px,5vw,44px);box-shadow:var(--sh)}
 .eyebrow{font-size:.8rem;font-weight:800;letter-spacing:.1em;color:var(--coral)}
 h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;line-height:1.35;text-wrap:balance}
@@ -35,11 +38,11 @@ p{margin:0 0 16px}.intro{font-size:1.04rem}
 .callout{margin-top:18px;padding:18px;background:#F3F3E9;border-left:4px solid var(--amber);border-radius:10px}
 .next{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:.95rem}
 .foot{color:var(--soft);font-size:.82rem;text-align:center;padding:0 0 36px}
-@media(max-width:560px){main{padding:20px 0 36px}.step{grid-template-columns:1fr;gap:3px;padding:13px 14px}}
+@media(max-width:560px){header .wrap{flex-wrap:wrap;gap:8px}main{padding:20px 0 36px}.step{grid-template-columns:1fr;gap:3px;padding:13px 14px}.header-actions{width:100%;margin-left:0}.header-actions a{flex:1;min-width:0;text-align:center;white-space:normal;padding:8px;font-size:.78rem;line-height:1.3}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><a class="brand" href="../" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b><span>영어책육아 메이트</span></a><a class="back" href="../guide.html">← 가이드 목록</a></div></header>
+<header><div class="wrap"><a class="brand" href="../" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b><span>영어책육아 메이트</span></a><nav class="header-actions" aria-label="바로가기"><a class="back" href="../guide.html">← 가이드 목록</a><a class="month-link" href="../record/app.html?tab=month">나이테 이번 달 자료 보러가기</a></nav></div></header>
 <main class="wrap"><article class="article">
   <div class="eyebrow">엄마표영어 가이드 #2</div>
   <h1>엄마표영어 로드맵<br>소리부터 챕터북까지 한눈에</h1>
@@ -69,8 +72,7 @@ p{margin:0 0 16px}.intro{font-size:1.04rem}
 
   <h2>나이테 120은 어디쯤일까요?</h2>
   <p>나이테 120은 이 흐름에서<br><strong>그림책 읽어주기</strong> 자리에 있어요<br>파닉스 전, 엄마가 읽어주는 첫 영어 그림책 120권이에요</p>
-  <div class="callout">다음 글에서는 그림책·리더스북·챕터북이 각각 어떤 책인지 자세히 볼게요</div>
-  <p class="next"><a href="../challenge.html">나이테 120 목록 보러 가기 →</a></p>
+  <div class="callout">다음 글에서는 <a href="03-books.html">그림책·리더스북·챕터북이 각각 어떤 책인지</a> 자세히 볼게요</div>
 </article></main>
 <footer class="foot">나이테 영어도서관 · 한 권씩, 아이의 영어에 나이테를 만들어요.</footer>
 </body>
