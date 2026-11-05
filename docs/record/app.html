@@ -807,6 +807,14 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
   function parseExpr(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var m=l.split(/\s*[|\-–]\s*/);return {en:m[0]||'',ko:m.slice(1).join(' - ')};});}
   function parseList(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean);}
   function parseExtras(t){return (t||'').split(/\n/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){var i=l.indexOf('|');return i<0?{title:'',url:l.trim()}:{title:l.slice(0,i).trim(),url:l.slice(i+1).trim()};});}
+  // 제목 없이 URL만 넣은 링크 → 주소 대신 '블로그 글'처럼 무엇인지 보여줌 — 2026-11-05
+  function linkMeta(u){var h='';try{h=new URL(u).hostname.replace(/^(www|m)\./,'');}catch(e){}
+    if(/(^|\.)blog\.naver\.com$/.test(h))return {label:'블로그 글 보기',src:'네이버 블로그'};
+    if(/(^|\.)cafe\.naver\.com$/.test(h))return {label:'카페 글 보기',src:'네이버 카페'};
+    if(/tistory\.com$/.test(h))return {label:'블로그 글 보기',src:'티스토리 블로그'};
+    if(/instagram\.com$/.test(h))return {label:'인스타그램 게시물 보기',src:'인스타그램'};
+    if(/wh-jaimie\.github\.io$/.test(h))return {label:'나이테 자료 보기',src:'나이테 영어도서관'};
+    return {label:'자료 보기',src:h?('링크 · '+h):'링크'};}
   function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
   var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
 
@@ -848,7 +856,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
     var exhtml=extras.map(function(x){var id=ytid(x.url);
       if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
-      return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||x.url)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(x.title||x.url)+'</b><small>링크</small></span></a>';
+      var lm=linkMeta(x.url),tt=x.title||lm.label;
+      return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(tt)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(tt)+'</b><small>'+esc(lm.src)+'</small></span></a>';
     }).join('');
     var secs=[['s-books','이번 달 5권']];
     if(how.length)secs.push(['s-how','읽어주기']);
