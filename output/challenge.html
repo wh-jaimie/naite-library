@@ -88,6 +88,8 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .panel .bar{flex:1 1 30px;margin:0;order:2}
 .panel .share{order:3;width:auto;margin:0;padding:6px 10px;font-size:.76rem;border-radius:999px;white-space:nowrap}
 .panel .reset{order:4;margin-left:0;padding:5px 9px;font-size:.72rem}
+a.cover{display:block;text-decoration:none;color:inherit}
+.panel .appnote{order:5;flex-basis:100%;font-size:.78rem;font-weight:700;color:var(--teal-deep);text-decoration:none}
 .joinmini{text-align:center;margin:28px auto 8px}
 .joinmini a{font-weight:800;color:var(--teal-deep);text-decoration:underline;text-underline-offset:3px}
 .joinmini span{display:block;font-size:.8rem;color:var(--ink-soft);margin-top:4px}
@@ -201,11 +203,11 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
         <span class="sub" id="prSub">읽어준 책을 체크하면 진행률이 쌓여요</span>
-        <button class="reset" id="prReset">기록 초기화</button>
       </div>
       <div class="bar"><i id="prBar"></i></div>
       <button class="prthumb" id="prThumb" aria-label="진행 이미지 크게 보기·공유"><img id="prImg" alt="나이테 120 진행 이미지"></button>
       <button class="share" id="prShare">🖼️ 이미지 저장</button>
+      <a class="appnote" href="record/app.html?tab=log">📲 진행률은 스터디 앱에서 읽은 책을 기록하면 쌓여요 ›</a>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
   </section>
@@ -214,7 +216,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
-if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}</style>');
+if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}.panel .appnote{display:none}</style>');
 </script>
 
 <div class="ov" id="ov"><div class="ovb">
@@ -242,13 +244,8 @@ const DORD=[1,3,2,4,5];const POS={};DORD.forEach((t,i)=>POS[t]=i+1);
 const LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
 const LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
 function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;const a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
-// 봤어요 기록
-const KEY='joy-challenge-seen';let seen=new Set();
-try{const r=localStorage.getItem(KEY);if(r)seen=new Set(JSON.parse(r));}catch(e){}
-const save=()=>{if(FROMLOG)return;try{localStorage.setItem(KEY,JSON.stringify([...seen]));}catch(e){}};
-// 스터디 앱 안(독서 로드맵, ?embed=record)에서는 직접 체크하지 않고 '읽기 기록'에 남긴 책을 그대로 보여줌(2026-11-07)
+// 완주율 = 스터디 앱 '읽기 기록'에 남긴 책(2026-11-08). 표지 체크 기능은 없앰 — 앱 안·사이트 모두 같은 기준
 // 기록(naite_reads_v2)의 책 번호 → 책 정보(naite_bookmeta: 제목·주제·유형) → 120권 중 같은 제목(없으면 같은 주제·유형)
-const FROMLOG=/[?&]embed=record/.test(location.search);
 function logSeen(){
   const s=new Set(),norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]/g,''),byT={},byKT={};
   themes.forEach(t=>t.books.forEach(b=>{byT[norm(b.title)]=b.id;byKT[t.key+'|'+b.tier]=b.id;}));
@@ -261,7 +258,8 @@ function logSeen(){
   }catch(e){}
   return s;
 }
-if(FROMLOG){seen=logSeen();try{localStorage.removeItem(KEY);}catch(e){}} // 앱 안: 예전에 직접 누른 체크는 지움(다시 안 나오게)
+let seen=logSeen();
+try{localStorage.removeItem('joy-challenge-seen');}catch(e){} // 예전 표지 체크 기록은 지움
 window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 
 // 범례
@@ -274,14 +272,13 @@ if(document.getElementById('legend'))document.getElementById('legend').innerHTML
 })();
 
 function stepHTML(b){
-  return `<div class="step${seen.has(b.id)?' seen':''}" data-id="${b.id}">
+  return `<div class="step" data-id="${b.id}">
     <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
-    <div class="cover${b.cover?'':' noimg'}" data-id="${b.id}"${FROMLOG?'':' role="button" tabindex="0" title="봤어요 체크"'}>
+    ${b.buy_url?`<a class="cover${b.cover?'':' noimg'}" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기">`:`<div class="cover${b.cover?'':' noimg'}">`}
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
       ${(b.pop_rank||b.kr_popular)?`<div class="cbg">${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}</div>`:''}
-      <div class="chk">✓</div>
-    </div>
+    ${b.buy_url?'</a>':'</div>'}
     ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
     ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.series||[]).map(x=>`<span class="ser" title="노래 CD·세이펜이 있는 ${x} 시리즈">🎵 ${x}</span>`).join('')}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
@@ -291,10 +288,9 @@ function stepHTML(b){
   </div>`;
 }
 function themeHTML(t){
-  const done=t.books.filter(b=>seen.has(b.id)).length;
   return `<div class="theme" data-key="${esc(t.key)}">
     <div class="th"><span class="emo">${t.emoji}</span><h3>${esc(t.ko)}</h3>
-      <span class="en">${esc(t.en)}</span><span class="done tnum" data-role="done">${done}/5</span></div>
+      <span class="en">${esc(t.en)}</span></div>
     <div class="ladder">${[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]).map(stepHTML).join('')}</div>
   </div>`;
 }
@@ -316,20 +312,8 @@ function updateProgress(){
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
   document.getElementById('prSub').textContent = done===0
-    ? (FROMLOG?'읽기 기록에 남긴 책이 여기에 저절로 체크돼요':'읽어준 책을 체크하면 진행률이 쌓여요')
+    ? '스터디 앱 읽기 기록에 남긴 책이 여기에 쌓여요'
     : `${total}권 중 ${done}권 읽어줬어요 · ${pct}%` + (done>=total?' 🎉 120권 완주!':'');
-}
-function toggle(id){
-  if(FROMLOG)return; // 앱 안에서는 읽기 기록으로만
-  if(seen.has(id))seen.delete(id);else seen.add(id);
-  save();updateProgress();
-  document.querySelectorAll(`.step[data-id="${CSS.escape(id)}"]`).forEach(s=>s.classList.toggle('seen',seen.has(id)));
-  // 주제별 done 갱신
-  document.querySelectorAll('.theme').forEach(th=>{
-    const steps=[...th.querySelectorAll('.step')];
-    const d=steps.filter(s=>s.classList.contains('seen')).length;
-    const el=th.querySelector('[data-role=done]');if(el)el.textContent=`${d}/5`;
-  });
 }
 async function copyTitle(btn){
   const t=btn.dataset.copy||'';
@@ -340,21 +324,9 @@ async function copyTitle(btn){
 }
 document.getElementById('course-body').addEventListener('click',e=>{
   const cp=e.target.closest('.cp');if(cp){copyTitle(cp);return;}
-  const c=e.target.closest('.cover');if(c)toggle(c.dataset.id);
 });
-document.getElementById('course-body').addEventListener('keydown',e=>{
-  if((e.key==='Enter'||e.key===' ')){const c=e.target.closest('.cover');if(c){e.preventDefault();toggle(c.dataset.id);}}
-});
-document.getElementById('prReset').addEventListener('click',()=>{
-  if(seen.size&&confirm('체크한 기록을 모두 지울까요?')){seen.clear();save();updateProgress();renderBody();}
-});
-if(FROMLOG){
-  const rb=document.getElementById('prReset');if(rb)rb.hidden=true;
-  const cm=document.getElementById('chkMsg');if(cm)cm.textContent='스터디 앱 읽기 기록에 남긴 책이 저절로 체크돼요.';
-  document.write('<style>.step .cover{cursor:default}</style>');
-  // 앱에서 기록이 바뀌면(같은 저장소) 바로 다시 그림
-  window.addEventListener('storage',e=>{if(e.key==='naite_reads_v2'||e.key==='naite_bookmeta'){seen=logSeen();renderBody();updateProgress();}});
-}
+// 앱에서 기록이 바뀌면(같은 저장소) 완주율만 다시
+window.addEventListener('storage',e=>{if(e.key==='naite_reads_v2'||e.key==='naite_bookmeta'){seen=logSeen();updateProgress();}});
 const root=document.documentElement;
 try{localStorage.removeItem('joy-theme');}catch(e){}
 // ── 진행 공유 이미지 ──
