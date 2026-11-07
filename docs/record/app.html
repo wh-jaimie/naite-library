@@ -894,13 +894,17 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
           (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+'</div></div>'+
         '<div class="acts">'+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
-          (b.buy_url?'<a class="act buy cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+ic('bag',15)+'구매하기</a>':'')+'</div>'+
-        '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
+          (b.buy_url?'<a class="act buy cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+ic('bag',15)+'구매하기</a>':'')+'</div></article>';
     }).join('');
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';
       return '<div class="sd-vcard"><div class="sd-vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
     var tips=books.filter(function(b){return b.tip;});
+    // 매달 공통으로 보여 줄 읽어주기 가이드(1개월차 '읽어주는 방법'의 공통 문장) + 그 달에만 있는 문장
+    var COMMON_HOW=['하루 1~2권, 같은 책을 여러 번 반복해도 좋아요. 반복이 아이에겐 최고의 학습이에요.',
+      '뜻을 일일이 한국어로 통역하지 마세요. 그림을 가리키며 영어 단어만 반복해도 충분해요.',
+      "아이가 지루해하면 바로 덮어도 괜찮아요. '즐거운 기억'이 다음 책으로 이어집니다."];
+    how=COMMON_HOW.concat(how.filter(function(t){return COMMON_HOW.indexOf(t)<0;}));
     var exhtml=extras.map(function(x){var id=ytid(x.url);
       if(id)return '<a class="sd-extra" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(x.title||'부가자료')+'"><span class="th"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="" onerror="this.remove()"><span class="play"><span>'+ic('play',14)+'</span></span></span><span><b>'+esc(x.title||'부가 영상')+'</b><small>영상 · YouTube</small></span></a>';
       var lm=linkMeta(x.url),tt=x.title||lm.label;
