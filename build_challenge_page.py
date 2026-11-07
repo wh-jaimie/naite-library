@@ -72,6 +72,23 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .join{display:block;width:100%;margin-top:14px;text-align:center;text-decoration:none;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.12rem;color:#fff;background:linear-gradient(135deg,var(--coral),#D1965C);border:none;border-radius:14px;padding:16px;box-shadow:var(--shadow);cursor:pointer}
 .join:hover{filter:brightness(.97)}
 .join .sub{display:block;font-family:'Noto Sans KR',sans-serif;font-size:.8rem;font-weight:600;opacity:.95;margin-top:4px}
+.guide120{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.guide120 h3{font-size:1.1rem;margin:0 0 6px}
+.guide120 .g-sub{font-size:.92rem;line-height:1.6;color:var(--ink-soft);margin:0}
+.guide120 .g-types{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.guide120 .g-types span{background:color-mix(in srgb,var(--teal) 10%,var(--surface));border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.84rem;font-weight:700}
+.guide120 .g-tlink{display:inline-block;font-size:.88rem;font-weight:700;color:var(--teal-deep)}
+.guide120 ul{margin:12px 0 0;padding:0;list-style:none;font-size:.9rem;line-height:1.55}
+.guide120 li{position:relative;padding-left:20px;margin:5px 0}
+.guide120 li::before{content:"✓";position:absolute;left:0;color:var(--teal-deep);font-weight:800}
+.guide120 .small-disc{font-size:.74rem;color:var(--ink-soft);margin:14px 0 0}
+/* 진행 카드 작게(2026-11-07) */
+.panel{margin-top:14px;padding:14px 16px}
+.panel .big{font-size:1.5rem}
+.panel .bar{height:10px;margin-top:10px}
+.panel .prthumb{display:none}
+.panel .share{margin-top:12px;padding:9px;font-size:.88rem}
+.guide120{margin-top:16px}
 .joinmini{text-align:center;margin:28px auto 8px}
 .joinmini a{font-weight:800;color:var(--teal-deep);text-decoration:underline;text-underline-offset:3px}
 .joinmini span{display:block;font-size:.8rem;color:var(--ink-soft);margin-top:4px}
@@ -174,12 +191,14 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <section class="hero">
     <div class="eyebrow">파닉스 전, 첫 영어 그림책 로드맵</div>
     <h1>나이테 120</h1>
-    <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong> 24개 주제 × 5권. 레벨 순서가 아니라 재미 순서라, 마음에 드는 주제부터 시작하면 돼요.</p>
-    <div id="cn1"><details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
-      뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
-      각 주제는 <strong>조작북·반복·라임·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
-      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 120권을 다 읽어주면 완주예요.</div></details></div>
 
+    <div id="cn2" class="guide120">
+      <h3>레벨 순서가 아니라, 재미 순서로.</h3>
+      <p class="g-sub">매달 다른 주제 24가지. 다른 유형 5권.</p>
+      <div class="g-types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
+      <a class="g-tlink" href="types.html">🧩 왜 이 5가지일까요? 유형별 재미 알아보기 →</a>
+      <p class="small-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+    </div>
     <div class="panel">
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
@@ -191,25 +210,12 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       <button class="share" id="prShare">🖼️ 진행 이미지 저장 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
-    <div id="cn2"><p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
-      학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
-      한 권을 여러 번 읽어도, 순서를 바꿔도 괜찮아요.<br>
-      표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요. <strong>🎵 노부영·픽토리</strong> 는 노래 CD·세이펜이 함께 나오는 시리즈(전집으로도 많이 사요)에 든 책이에요.</p>
-
-    <div class="legend" id="legend"></div>
-    <div id="statline" class="note"></div>
-    <p class="note" style="margin-top:6px">※ <b>글밥 단계</b>는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요. 아이 수준을 매기는 게 아니라, <b>엄마가 읽어줄 때 얼마나 수월할지</b> 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>
-    <p class="note" style="margin-top:6px">🌱 글밥 적음 · 🌿 글밥 보통 · 🌳 글밥 많음 — 3~4살은 🌱부터, 한 주제를 다 읽지 않아도 괜찮아요. (글밥 기준: 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상)</p>
-    <p class="note" style="margin-top:6px">🧩 <a href="types.html"><b>이 5가지 유형을 왜 골랐는지</b> 자세히 보기 →</a></p>
-__BUY_DISCLOSURE__</div>
   </section>
 
   <section><div id="course-body"></div></section>
 </main>
-<script>/* 스터디 앱 안(독서 로드맵, ?embed=)에서는 위 설명을 목록 아래로 — 들어오자마자 책 목록이 보이게(2026-11-07) */
-if(/[?&]embed=/.test(location.search)){var _m=document.querySelector('main.wrap'),_b=document.createElement('section');_b.className='cnotes';
-  _b.innerHTML='<h2 class="cn-h">나이테 120 안내</h2>';['cn1','cn2'].forEach(function(id){var e=document.getElementById(id);if(e)_b.appendChild(e);});_m.appendChild(_b);
-  document.write('<style>.hero{padding-block:16px 0}.cnotes{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}.cn-h{font-size:1.15rem;margin:0 0 10px}.cnotes .more{margin-bottom:10px}</style>');}
+<script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
+if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:16px 0}.joinmini{display:none}</style>');
 </script>
 
 <div class="ov" id="ov"><div class="ovb">
@@ -240,11 +246,27 @@ function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;const
 // 봤어요 기록
 const KEY='joy-challenge-seen';let seen=new Set();
 try{const r=localStorage.getItem(KEY);if(r)seen=new Set(JSON.parse(r));}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify([...seen]));}catch(e){}};
+const save=()=>{if(FROMLOG)return;try{localStorage.setItem(KEY,JSON.stringify([...seen]));}catch(e){}};
+// 스터디 앱 안(독서 로드맵, ?embed=record)에서는 직접 체크하지 않고 '읽기 기록'에 남긴 책을 그대로 보여줌(2026-11-07)
+// 기록(naite_reads_v2)의 책 번호 → 책 정보(naite_bookmeta: 제목·주제·유형) → 120권 중 같은 제목(없으면 같은 주제·유형)
+const FROMLOG=/[?&]embed=record/.test(location.search);
+function logSeen(){
+  const s=new Set(),norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]/g,''),byT={},byKT={};
+  themes.forEach(t=>t.books.forEach(b=>{byT[norm(b.title)]=b.id;byKT[t.key+'|'+b.tier]=b.id;}));
+  try{
+    const st=JSON.parse(localStorage.getItem('naite_reads_v2')||'null'),meta=JSON.parse(localStorage.getItem('naite_bookmeta')||'{}');
+    ((st&&st.rows)||[]).forEach(r=>{
+      if(r.k==='_other'){const id=byT[norm(r.o)];if(id)s.add(id);return;} // '다른 책'으로 적은 제목이 120권에 있으면 포함
+      const m=meta[r.b];if(!m)return;const id=byT[norm(m.title)]||byKT[(m.k||r.k)+'|'+m.tier];if(id)s.add(id);
+    });
+  }catch(e){}
+  return s;
+}
+if(FROMLOG)seen=logSeen();
 window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 
 // 범례
-document.getElementById('legend').innerHTML='<span class="lg" style="color:var(--ink)">5가지 유형:</span>'+
+if(document.getElementById('legend'))document.getElementById('legend').innerHTML='<span class="lg" style="color:var(--ink)">5가지 유형:</span>'+
   DORD.map(t=>`<span class="lg"><span class="sw" style="background:var(--t${POS[t]})"></span>${POS[t]}. ${esc(tier_labels[t])}</span>`).join('');
 (function(){var fmt={'팝업':0,'플랩':0,'놀이북':0},lvc={1:0,2:0,3:0};
  themes.forEach(t=>t.books.forEach(b=>{if(b.format)fmt[b.format]=(fmt[b.format]||0)+1;var L=level(b);if(L)lvc[L]++;}));
@@ -255,7 +277,7 @@ document.getElementById('legend').innerHTML='<span class="lg" style="color:var(-
 function stepHTML(b){
   return `<div class="step${seen.has(b.id)?' seen':''}" data-id="${b.id}">
     <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
-    <div class="cover${b.cover?'':' noimg'}" data-id="${b.id}" role="button" tabindex="0" title="봤어요 체크">
+    <div class="cover${b.cover?'':' noimg'}" data-id="${b.id}"${FROMLOG?'':' role="button" tabindex="0" title="봤어요 체크"'}>
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
       ${(b.pop_rank||b.kr_popular)?`<div class="cbg">${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}</div>`:''}
@@ -295,10 +317,11 @@ function updateProgress(){
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
   document.getElementById('prSub').textContent = done===0
-    ? '읽어준 책을 체크하면 진행률이 쌓여요'
+    ? (FROMLOG?'읽기 기록에 남긴 책이 여기에 저절로 체크돼요':'읽어준 책을 체크하면 진행률이 쌓여요')
     : `${total}권 중 ${done}권 읽어줬어요 · ${pct}%` + (done>=total?' 🎉 120권 완주!':'');
 }
 function toggle(id){
+  if(FROMLOG)return; // 앱 안에서는 읽기 기록으로만
   if(seen.has(id))seen.delete(id);else seen.add(id);
   save();updateProgress();
   document.querySelectorAll(`.step[data-id="${CSS.escape(id)}"]`).forEach(s=>s.classList.toggle('seen',seen.has(id)));
@@ -326,6 +349,13 @@ document.getElementById('course-body').addEventListener('keydown',e=>{
 document.getElementById('prReset').addEventListener('click',()=>{
   if(seen.size&&confirm('체크한 기록을 모두 지울까요?')){seen.clear();save();updateProgress();renderBody();}
 });
+if(FROMLOG){
+  const rb=document.getElementById('prReset');if(rb)rb.hidden=true;
+  const cm=document.getElementById('chkMsg');if(cm)cm.textContent='스터디 앱 읽기 기록에 남긴 책이 저절로 체크돼요.';
+  document.write('<style>.step .cover{cursor:default}</style>');
+  // 앱에서 기록이 바뀌면(같은 저장소) 바로 다시 그림
+  window.addEventListener('storage',e=>{if(e.key==='naite_reads_v2'||e.key==='naite_bookmeta'){seen=logSeen();renderBody();updateProgress();}});
+}
 const root=document.documentElement;
 try{localStorage.removeItem('joy-theme');}catch(e){}
 // ── 진행 공유 이미지 ──
