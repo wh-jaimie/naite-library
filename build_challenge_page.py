@@ -239,6 +239,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
+if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.html"]').forEach(function(x){x.href='types.html?embed=record';}); // 유형 글에서 돌아올 때도 앱 모드 유지
 if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}.panel .appnote{display:none}</style>');
 </script>
 

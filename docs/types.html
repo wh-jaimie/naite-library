@@ -129,5 +129,11 @@ a.brand{text-decoration:none;color:inherit}
 <div class="foot"><div class="wrap">나이테 영어책육아 메이트 · 한 권씩, 아이의 영어에 나이테를 만들어요.</div></div>
 <script src="track.js" data-page="5가지 유형"></script>
 <script src="share.js" defer></script>
+<script>/* 스터디 앱 안(?embed=)에서 열리면: 나이테 120으로 돌아갈 때도 앱 모드 유지, 로고(사이트 홈) 링크는 끔 — 2026-11-08 */
+(function(){var m=location.search.match(/[?&](embed=[^&]+)/);if(!m)return;
+  document.querySelectorAll('a[href="challenge.html"]').forEach(function(a){a.href='challenge.html?'+m[1];});
+  var b=document.querySelector('.top .brand');if(b){b.removeAttribute('href');b.style.cursor='default';}
+  document.querySelectorAll('a[href="index.html"]').forEach(function(a){a.style.display='none';}); // 앱 안에선 사이트 메인(전체 책장)으로 안 나가게
+})();</script>
 </body>
 </html>
