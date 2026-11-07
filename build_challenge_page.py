@@ -42,7 +42,7 @@ TEMPLATE = r"""<!doctype html>
   --t1:#245648;--t2:#2F6E58;--t3:#4F9A72;--t4:#B87343;--t5:#7A4520;
 }
 *{box-sizing:border-box}
-body{background:var(--ground);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
 h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;font-weight:600;line-height:1.14;text-wrap:balance;margin:0}
 .tnum{font-variant-numeric:tabular-nums}
@@ -89,6 +89,28 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .panel .prthumb{display:none}
 .panel .share{margin-top:12px;padding:9px;font-size:.88rem}
 .guide120{margin-top:16px}
+/* 더 작게(2026-11-07): 안내 칸·유형 배지·진행 카드 */
+.guide120{padding:12px 14px;border-radius:14px;margin-top:12px}
+.guide120 h3{font-size:1rem;margin:0 0 2px}
+.guide120 .g-sub{font-size:.86rem;line-height:1.45}
+.guide120 .g-types{gap:4px;margin:8px 0 6px}
+.guide120 .g-types span{padding:2px 7px;font-size:.74rem;font-weight:700;border-radius:7px}
+.guide120 .g-tlink{font-size:.8rem}
+.panel{margin-top:10px;padding:10px 14px;border-radius:14px}
+.panel .r1{gap:8px;align-items:center}
+.panel .big{font-size:1.2rem}
+.panel .sub{font-size:.8rem}
+.panel .bar{height:8px;margin-top:8px}
+.panel .share{margin-top:8px;padding:7px;font-size:.8rem;border-radius:10px}
+.bottom-disc{font-size:.72rem;color:var(--ink-soft);margin:22px 0 0;text-align:center}
+/* 기록 표시 칸 한 줄로(2026-11-07): 숫자 · 막대 · 작은 저장 버튼, 문구 숨김 */
+.panel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px}
+.panel .r1{display:contents}
+.panel .sub{display:none}
+.panel .big{font-size:1.05rem;order:1;white-space:nowrap}
+.panel .bar{flex:1 1 30px;margin:0;order:2}
+.panel .share{order:3;width:auto;margin:0;padding:6px 10px;font-size:.76rem;border-radius:999px;white-space:nowrap}
+.panel .reset{order:4;margin-left:0;padding:5px 9px;font-size:.72rem}
 .joinmini{text-align:center;margin:28px auto 8px}
 .joinmini a{font-weight:800;color:var(--teal-deep);text-decoration:underline;text-underline-offset:3px}
 .joinmini span{display:block;font-size:.8rem;color:var(--ink-soft);margin-top:4px}
@@ -197,7 +219,6 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       <p class="g-sub">매달 다른 주제 24가지. 다른 유형 5권.</p>
       <div class="g-types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
       <a class="g-tlink" href="types.html">🧩 왜 이 5가지일까요? 유형별 재미 알아보기 →</a>
-      <p class="small-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
     </div>
     <div class="panel">
       <div class="r1">
@@ -207,15 +228,16 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       </div>
       <div class="bar"><i id="prBar"></i></div>
       <button class="prthumb" id="prThumb" aria-label="진행 이미지 크게 보기·공유"><img id="prImg" alt="나이테 120 진행 이미지"></button>
-      <button class="share" id="prShare">🖼️ 진행 이미지 저장 · 공유</button>
+      <button class="share" id="prShare">🖼️ 이미지 저장</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
   </section>
 
   <section><div id="course-body"></div></section>
+  <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
-if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:16px 0}.joinmini{display:none}</style>');
+if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}</style>');
 </script>
 
 <div class="ov" id="ov"><div class="ovb">
