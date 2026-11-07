@@ -175,10 +175,10 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <div class="eyebrow">파닉스 전, 첫 영어 그림책 로드맵</div>
     <h1>나이테 120</h1>
     <p class="lead"><strong>매번 고르지 않아도 되는 120권의 영어 그림책.</strong> 24개 주제 × 5권. 레벨 순서가 아니라 재미 순서라, 마음에 드는 주제부터 시작하면 돼요.</p>
-    <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
+    <div id="cn1"><details class="more"><summary>ⓘ 자세히</summary><div class="mbody">
       뭘 읽지? → 검색 → 후기 → 주문 → 실패 → 또 검색. 이 반복을 없앴어요.
       각 주제는 <strong>조작북·반복·라임·유머·스토리</strong> 5가지 유형을 골고루 담았습니다.
-      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 120권을 다 읽어주면 완주예요. 책 제목을 누르면 쿠팡에서 바로 볼 수 있어요.</div></details>
+      읽어준 책 표지를 누르면 체크되고 진행률이 쌓여요. 120권을 다 읽어주면 완주예요.</div></details></div>
 
     <div class="panel">
       <div class="r1">
@@ -191,7 +191,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
       <button class="share" id="prShare">🖼️ 진행 이미지 저장 · 공유</button>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
-    <p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
+    <div id="cn2"><p class="note">※ 120권은 엄마표 영어를 <strong>시작하고 오래 이어가기 위한 읽기 로드맵</strong>이에요.
       학습 효과를 보장하는 학습지가 아니라, 좋은 영어책을 충분히 만나는 경험에 초점을 둡니다.
       한 권을 여러 번 읽어도, 순서를 바꿔도 괜찮아요.<br>
       표지의 <strong>🌍 세계 인기</strong> 는 전세계 인기 그림책 106권에 든 책, <strong>🇰🇷 국내 인기</strong> 는 국내 서점 통합 베스트예요. <strong>🎵 노부영·픽토리</strong> 는 노래 CD·세이펜이 함께 나오는 시리즈(전집으로도 많이 사요)에 든 책이에요.</p>
@@ -201,11 +201,16 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <p class="note" style="margin-top:6px">※ <b>글밥 단계</b>는 AR(영어 글 난이도 지수, 추정)을 참고해 나눴어요. 아이 수준을 매기는 게 아니라, <b>엄마가 읽어줄 때 얼마나 수월할지</b> 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>
     <p class="note" style="margin-top:6px">🌱 글밥 적음 · 🌿 글밥 보통 · 🌳 글밥 많음 — 3~4살은 🌱부터, 한 주제를 다 읽지 않아도 괜찮아요. (글밥 기준: 🌱 조작북·AR 2 미만 · 🌿 AR 2~3 · 🌳 AR 3 이상)</p>
     <p class="note" style="margin-top:6px">🧩 <a href="types.html"><b>이 5가지 유형을 왜 골랐는지</b> 자세히 보기 →</a></p>
-__BUY_DISCLOSURE__
+__BUY_DISCLOSURE__</div>
   </section>
 
   <section><div id="course-body"></div></section>
 </main>
+<script>/* 스터디 앱 안(독서 로드맵, ?embed=)에서는 위 설명을 목록 아래로 — 들어오자마자 책 목록이 보이게(2026-11-07) */
+if(/[?&]embed=/.test(location.search)){var _m=document.querySelector('main.wrap'),_b=document.createElement('section');_b.className='cnotes';
+  _b.innerHTML='<h2 class="cn-h">나이테 120 안내</h2>';['cn1','cn2'].forEach(function(id){var e=document.getElementById(id);if(e)_b.appendChild(e);});_m.appendChild(_b);
+  document.write('<style>.hero{padding-block:16px 0}.cnotes{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}.cn-h{font-size:1.15rem;margin:0 0 10px}.cnotes .more{margin-bottom:10px}</style>');}
+</script>
 
 <div class="ov" id="ov"><div class="ovb">
   <img id="ovimg" alt="나이테 120 진행 이미지">
