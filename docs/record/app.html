@@ -848,6 +848,54 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-classic .sd-extra b{font-size:15px}
 .sd-classic .sd-extra small{font-size:13px}
 .sd-classic .disc{font-size:12.5px}
+/* 탭·영상 목록·첫 화면 줄이기(2026-11-07) */
+.sd-classic .sd-hero .intro.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sd-classic .sd-hero .intro.clamp.open{display:block}
+.sd-classic .sd-hero .more{font-size:14px}
+.sd-classic .sd-hero{padding:12px 14px}
+/* 이번 달 5권 = 표지 책장(3열, 5권이 한 화면에) */
+.sd-shelf{display:flex;flex-wrap:wrap;justify-content:center;gap:16px 10px;margin-top:2px}
+.sd-classic .sd-book.gcard{flex:0 0 calc((100% - 20px)/3);min-width:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;text-decoration:none;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gcard .gcv{position:relative;width:100%;height:132px;display:flex;align-items:flex-end;justify-content:center}
+.gcard .gcv img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:3px 7px 7px 3px;box-shadow:0 1px 2px rgba(0,0,0,.18),0 10px 20px rgba(35,41,31,.24);transition:transform .15s,box-shadow .15s}
+.gcard .gcv .fbx{width:100%;height:100%;aspect-ratio:auto}
+.gcard:active .gcv img{transform:translateY(2px) scale(.97);box-shadow:0 1px 2px rgba(0,0,0,.18),0 4px 10px rgba(35,41,31,.2)}
+.gcard .gbd{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(35,41,31,.82);color:#fff;font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px}
+.gcard .gt{margin-top:9px;width:100%;text-align:center;font-family:var(--serif);font-weight:700;font-size:14px;line-height:1.3;word-break:keep-all;overflow-wrap:anywhere}
+.gcard .ggo{display:inline-flex;align-items:center;gap:1px;margin-top:4px;font-size:12.5px;font-weight:800;color:var(--clay)}
+.shelf-more{display:flex;align-items:center;justify-content:center;gap:4px;margin:14px auto 0;border:0;background:none;color:var(--pine);font:inherit;font-size:14px;font-weight:800;cursor:pointer;padding:6px 10px}
+/* 책 소개 목록(책장 아래) */
+.binfo-h{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--ink);margin:22px 0 0;scroll-margin-top:70px}
+.sd-classic .sd-book.binfo .sd-cv{width:92px;flex:0 0 92px}
+.sd-classic .sd-book.binfo .act.wb{display:inline-flex;flex:none;margin-top:10px;padding:7px 12px}
+.sd-classic #s-books .guide{margin-top:16px}
+/* 탭 이름과 겹치는 섹션 제목은 숨김(다음 달은 '12월 · 주제' 정보가 있어 유지) */
+.sd-classic section[id^="s-"]:not(#s-next)>.sh{display:none}
+.sd-classic section[id^="s-"]{margin-top:12px}
+.sd-classic section[id^="s-"]>.note:first-of-type{margin-top:2px}
+.sd-classic .sd-hero .hrow{position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:4px 10px;flex-wrap:wrap}
+.sd-classic .sd-hero .theme{margin:0}
+.sd-classic .sd-hero h1{font-size:23px}
+.sd-classic .sd-hero h1 .emo{font-size:21px;margin-right:5px}
+.sd-classic .sd-hero .en{font-size:13px}
+.sd-classic .sd-hero .eyebrow{font-size:13px;letter-spacing:0;white-space:nowrap}
+.sd-classic .sd-hero .prog{margin-top:6px}
+.sd-classic .sd-gbline{margin-top:9px;padding:5px 5px 5px 11px;font-size:13px}
+.sd-classic .sd-gbline button{padding:6px 11px;font-size:13px}
+.sd-classic .sd-chips{gap:8px;padding:10px 16px 11px}
+.sd-classic .sd-chips .chip{font-size:15px;padding:8px 15px}
+.sd-classic .sd-chips .chip.on{box-shadow:0 2px 8px rgba(36,86,72,.25)}
+.sd-classic .guide summary{font-size:15px}
+.sd-classic .guide p{font-size:14.5px;line-height:1.6;color:var(--ink)}
+.sd-classic .guide .legend{margin-top:10px}
+.sd-classic .sd-vids{grid-template-columns:1fr;gap:10px}
+.sd-classic .sd-vcard{display:flex;align-items:center;gap:0;cursor:pointer}
+.sd-classic .sd-vcard .sd-vid{flex:0 0 132px}
+.sd-classic .sd-vcard .vt{flex:1;min-width:0;padding:10px 14px;line-height:1.35}
+.sd-classic .sd-vcard .vt small{display:flex;align-items:center;gap:4px;margin-top:5px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;color:var(--pine)}
+.sd-classic .sd-vcard .play>span{width:38px;height:38px}
+.sd-classic .sd-vcard.playing{display:block;cursor:default}
+.sd-classic .sd-vcard.playing .vt small{display:none}
 </style>
 </head>
 <body>
@@ -906,25 +954,33 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     });
     var hasBuy=books.some(function(b){return b.buy_url;});
     // 책 카드: 책 소개만(영상·읽어주기 팁은 아래 섹션으로 — 예전 구성 흐름: 책 소개 → 영상 → 읽어주는 방법 → 활용 → 영어표현)
+    // 이번 달 5권 = 표지 책장(2026-11-07): 표지 크게, 카드 전체가 책정보(쿠팡) 링크. 설명·배지 목록은 빼고 한 가지 자랑만
     var bh=books.map(function(b){
-      var lv=level(b),meta=[]; // 배지: 예전처럼 종류별 색
+      var bd=b.award?'🏅 수상작':(b.kr_popular?'🇰🇷 국내 인기':(b.pop_rank?'🌍 세계 인기':''));
+      var cv=b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>';
+      var inner='<span class="gcv">'+cv+(bd?'<span class="gbd">'+bd+'</span>':'')+'</span>'+
+        '<span class="gt">'+esc(b.title)+'</span>'+(b.buy_url?'<span class="ggo">책 보기'+ic('right',13)+'</span>':'');
+      return b.buy_url?'<a class="sd-book gcard cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+inner+'</a>'
+        :'<div class="sd-book gcard" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+inner+'</div>';
+    }).join('');
+    // 책 소개(책장 아래): 지은이·유형·글밥·소개·배지·워크지, 제목 옆 복사 아이콘. 카드를 누르면 책정보(쿠팡)
+    var binfo=books.map(function(b){
+      var lv=level(b),meta=[];
       if(b.award)meta.push(['a',esc(b.award)]);
       if(b.kr_popular)meta.push(['k','🇰🇷 국내 인기']);
       if(b.pop_rank)meta.push(['g','🌍 세계 인기']);
       if(b.lib_loans)meta.push(['l','📚 도서관 '+esc(b.lib_loans)+'회']);
       if(b.format)meta.push(['fmt',esc(b.format)]);
       var cv=b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>';
-      return '<article class="sd-book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
+      return '<article class="sd-book binfo" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="bk-top">'+(b.buy_url?'<a class="sd-cv cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+cv+'</a>':'<div class="sd-cv">'+cv+'</div>')+
         '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
           '<h3>'+esc(b.title)+'<button type="button" class="cp-ic" data-copy="'+esc(b.title)+'" data-cpfrom="study" aria-label="제목 복사" title="제목 복사">'+ic('copy',15)+'</button></h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
-          (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+'</div></div>'+
-        '<div class="acts">'+
-          (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
-          (b.buy_url?'<a class="act buy cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+ic('bag',15)+'구매하기</a>':'')+'</div></article>';
+          (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+
+          (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+'</div></div></article>';
     }).join('');
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';
-      return '<div class="sd-vcard"><div class="sd-vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',22)+'</span></span></div></div><div class="vt">'+esc(b.title)+'</div></div>';}).filter(Boolean).join('');
+      return '<div class="sd-vcard"><div class="sd-vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',16)+'</span></span></div></div><div class="vt">'+esc(b.title)+'<small>'+ic('play',13)+'눌러서 영상 보기</small></div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
     var tips=books.filter(function(b){return b.tip;});
     // 매달 공통으로 보여 줄 읽어주기 가이드(1개월차 '읽어주는 방법'의 공통 문장) + 그 달에만 있는 문장
@@ -937,24 +993,36 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       var lm=linkMeta(x.url),tt=x.title||lm.label;
       return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(tt)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(tt)+'</b><small>'+esc(lm.src)+'</small></span></a>';
     }).join('');
+    // 자료 탭(2026-11-07): 순서는 아래 섹션 순서 그대로, 누르면 그 내용만 보임
+    var secs=[['s-books','이번 달 5권']];
+    if(how.length||tips.length)secs.push(['s-how','읽어주기']);
+    if(vids)secs.push(['s-vid','영상']);
+    if(acts.length)secs.push(['s-play','활용']);
+    if(exprs.length)secs.push(['s-exp','영어표현']);
+    if(exhtml)secs.push(['s-extra','부가자료']);
+    secs.push(['s-next','다음 달']);
     var h='<div id="v-study" class="sd sd-classic"><div class="sd-wrap">';
     h+='<div class="sd-bar"><span class="brand">'+SD_RING+'나이테</span>'+(PREVIEW?'':'<button type="button" class="ghost" data-pn="welcome">처음 오셨나요?</button>')+'</div>';
     if(!PREVIEW)h+='<div id="sdBack"></div><div id="newsLatest"></div>';
-    // 이번 달 소개(소개글은 접지 않고 전부)
+    // 이번 달 소개(주제 설명글은 빼고 주제·진행만 — 2026-11-07)
     h+='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
-       '<div class="eyebrow">'+(c.month_label?esc(c.month_label):'이번 달 영어책')+'</div>'+
-       '<div class="theme"><h1>'+(theme.emoji?'<span class="emo" aria-hidden="true">'+esc(theme.emoji)+'</span>':'')+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
-       (c.subject?'<p class="intro full">'+esc(c.subject)+'</p>':'')+
+       // 한 줄: 주제 이름(왼쪽) + 달·차수(오른쪽, 연도는 빼고) — 카드 높이 줄이기
+       '<div class="hrow"><div class="theme"><h1>'+(theme.emoji?'<span class="emo" aria-hidden="true">'+esc(theme.emoji)+'</span>':'')+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
+       '<div class="eyebrow">'+(c.month_label?esc(String(c.month_label).replace(/^\s*\d{4}\s*년\s*/,'')):'이번 달 영어책')+'</div></div>'+
        (theme.blog_url?'<a class="sublink" href="'+esc(theme.blog_url)+'" target="_blank" rel="noopener" data-blog="cur">이 5권을 고른 이유'+ic('right',14)+'</a>':'')+
-       '<div class="prog" data-rprog></div>'+
-       '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div></div>';
-    // 1. 이번 달 5권(안내는 펼쳐서)
+       '<div class="prog" data-rprog></div></div>';
+    h+='<nav class="sd-chips" id="sdChips" role="tablist" aria-label="이번 달 자료">'+secs.map(function(s,i){return '<button type="button" role="tab" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
+    // 1. 이번 달 5권(표지 책장 먼저 → 공동구매 → 책 소개 → 안내)
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
-       '<div class="guide"><b>글밥 적은 책부터 시작해 보세요.</b> 3~4살은 새싹 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. 다 못 읽어도 괜찮아요. <b>핵심은 재미</b>예요.'+
-         '<div class="legend"><span class="lv l1">'+ic('seed',13)+'글밥 적음</span><span class="lv l2">'+ic('leaf',13)+'글밥 보통</span><span class="lv l3">'+ic('tree',13)+'글밥 많음</span></div></div>'+
-       '<p class="note">각 책의 <b>워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>제목 복사</b> 후 검색창에 붙여넣으세요. '+
-         '<a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형이 궁금하다면 →</a></p>'+
-       '<div class="sd-books">'+bh+'</div>'+
+       '<div class="sd-shelf">'+bh+'</div>'+
+       '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
+       '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
+       '<h3 class="binfo-h" id="sdInfo">5권 소개</h3><div class="sd-books">'+binfo+'</div>'+
+       '<details class="guide"><summary><span><b>글밥 적은 책부터</b> · 다 못 읽어도 괜찮아요</span>'+ic('chev',14)+'</summary>'+
+         '<p>3~4살은 새싹 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. <b>핵심은 재미</b>예요.</p>'+
+         '<div class="legend"><span class="lv l1">'+ic('seed',13)+'글밥 적음</span><span class="lv l2">'+ic('leaf',13)+'글밥 보통</span><span class="lv l3">'+ic('tree',13)+'글밥 많음</span></div>'+
+         '<p>각 책의 <b>워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>제목 복사</b> 후 검색창에 붙여넣으세요. '+
+         '<a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형이 궁금하다면 →</a></p></details>'+
        '<p class="note small">글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
        (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
     // 2. 읽어주는 방법(공통 + 책별 팁)
@@ -992,20 +1060,21 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
     app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,.sd-tip'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
-    app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
+    // 영상 목록: 작은 줄 → 누르면 그 줄만 크게 펼쳐서 재생
+    app.querySelectorAll('.sd-vcard .vt').forEach(function(t){t.addEventListener('click',function(){var fr=t.parentNode.querySelector('.fr');if(fr)fr.click();});});
+    app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;var vc=el.closest('.sd-vcard');if(vc)vc.classList.add('playing');el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
     app.querySelectorAll('.sd-book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
     var more=document.getElementById('sdMore'),intro=document.getElementById('sdIntro');
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
-    var em=document.getElementById('sdExpMore');if(em)em.onclick=function(){var l=document.getElementById('sdExp'),o=l.classList.toggle('all');em.textContent=o?'접기':(l.querySelectorAll('li.x').length+'개 더 보기');};
     initChips();
+    var ig=document.getElementById('sdInfoGo');if(ig)ig.addEventListener('click',function(){var t=document.getElementById('sdInfo'),nav=document.getElementById('sdChips');if(t)window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav?nav.offsetHeight:0)-8,behavior:'smooth'});logEvent('book_info_go',{});});
     // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)
     (function(){var b=document.getElementById('sdGbBtn');if(!b)return;var k='naite_gb_'+theme.key;
       function done(){b.classList.add('on');b.textContent='✓ 관심 표시함';var s=b.previousElementSibling;if(s)s.innerHTML='진행되면 알려드릴게요 🙌';}
       try{if(localStorage.getItem(k)==='1')done();}catch(e){}
       b.addEventListener('click',function(){if(b.classList.contains('on')||PREVIEW)return;logEvent('groupbuy_interest',{theme_key:theme.key,page:'스터디 앱'});try{localStorage.setItem(k,'1');}catch(e){}done();});})();
-    app.querySelectorAll('.sd-covers [data-goto]').forEach(function(bt){bt.addEventListener('click',function(){var el=app.querySelectorAll('.sd-book')[+bt.dataset.goto];if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
     // 지난 달(?m=키) 자료를 보고 있으면 맨 위에 '이번 달로 돌아가기'
     if(!PREVIEW&&curParam())client.from('settings').select('current_theme').eq('id',1).maybeSingle().then(function(r){
       var cur=r&&r.data&&r.data.current_theme,box=document.getElementById('sdBack');
@@ -1058,18 +1127,29 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       s+='<path d="'+d+'Z" fill="none" stroke="#245648" stroke-width="'+(1.2+t).toFixed(1)+'" opacity="'+(0.08+0.3*t).toFixed(2)+'"/>';}
     return s;
   }
-  // 섹션 칩: 누르면 이동, 스크롤 위치에 따라 활성
+  // 자료 탭(2026-11-07): 칩을 누르면 그 섹션만 보여줌 — 한 화면이 짧아지게
+  var sdTab='s-books';
+  function applyTab(){
+    var v=document.getElementById('v-study');if(!v)return;
+    v.querySelectorAll('section[id^="s-"]').forEach(function(s){s.hidden=s.id!==sdTab;});
+    v.querySelectorAll('#sdChips [data-sdt]').forEach(function(c){var on=c.dataset.sdt===sdTab;c.classList.toggle('on',on);c.setAttribute('aria-selected',on?'true':'false');});
+  }
+  function showTab(id){
+    sdTab=id;applyTab();
+    var nav=document.getElementById('sdChips');if(!nav)return;
+    var c=nav.querySelector('[data-sdt="'+id+'"]');
+    if(c&&nav.scrollWidth>nav.clientWidth){var l=c.offsetLeft-16;if(l<nav.scrollLeft||c.offsetLeft+c.offsetWidth>nav.scrollLeft+nav.clientWidth)nav.scrollTo({left:l,behavior:'smooth'});}
+    // 탭 줄이 화면 위에 붙어 있으면, 바뀐 내용의 처음이 보이도록 탭 줄 자리로 올림
+    var hero=nav.previousElementSibling,y=hero?hero.getBoundingClientRect().bottom+scrollY:0;
+    if(scrollY>y)window.scrollTo({top:y});
+  }
   function initChips(){
     var nav=document.getElementById('sdChips');if(!nav)return;
-    nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;var s=document.getElementById(b.dataset.sdt);if(!s)return;
-      window.scrollTo({top:s.getBoundingClientRect().top+window.scrollY-nav.offsetHeight-6,behavior:'smooth'});});
+    nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;showTab(b.dataset.sdt);logEvent('study_tab',{tab:b.textContent});});
+    applyTab();
     var raf=0;window.addEventListener('scroll',function(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;
       var v=document.getElementById('v-study');if(!v||v.hidden)return;
-      var chips=[].slice.call(nav.querySelectorAll('[data-sdt]:not([hidden])')),y=nav.offsetHeight+20,cur=chips[0];
-      chips.forEach(function(c){var s=document.getElementById(c.dataset.sdt);if(s&&s.getBoundingClientRect().top<=y)cur=c;});
-      chips.forEach(function(c){c.classList.toggle('on',c===cur);});
       nav.classList.toggle('stuck',nav.getBoundingClientRect().top<=0.5);
-      if(cur&&nav.scrollWidth>nav.clientWidth){var l=cur.offsetLeft-16;if(l<nav.scrollLeft||cur.offsetLeft+cur.offsetWidth>nav.scrollLeft+nav.clientWidth)nav.scrollTo({left:l,behavior:'smooth'});}
     });},{passive:true});
   }
   function curParam(){try{return new URLSearchParams(location.search).get('m')||'';}catch(e){return '';}}
@@ -1185,6 +1265,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<button type="button" class="copyall" data-copy="'+esc(all)+'" data-cpfrom="next_all">'+ic('copy',16)+'5권 제목 한 번에 복사</button><div class="hint">도서관 희망도서 신청 · 장바구니 검색할 때 편해요</div></div>'+
         (nx.blog_url?'<a class="linkrow" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1"><span>이 5권을 고른 이유<small>블로그</small></span>'+ic('right',18)+'</a>':'')+'</section>';
       var nc=document.querySelector('[data-sdt="s-next"]');if(nc)nc.hidden=false;
+      applyTab();
       el.querySelectorAll('[data-np]').forEach(function(a){a.addEventListener('click',function(){logEvent('buy_click',{title:a.dataset.np,from:'next_preview'});});});
       var bl=el.querySelector('[data-npblog]');if(bl)bl.addEventListener('click',function(){logEvent('blog_click',{theme:nx.key,from:'next_preview'});});
     }catch(e){}
