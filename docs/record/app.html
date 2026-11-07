@@ -821,6 +821,33 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-classic .legend{gap:6px}
 .sd-classic .sd-cv{width:116px;flex:0 0 116px}
 .sd-classic .sd-book .bk-top{gap:14px}
+/* 이번 달 자료: 글씨 크게(예전 크기에 맞춤) */
+.sd-classic{font-size:15px}
+.sd-classic .sh h2{font-size:21px}
+.sd-classic .sd-hero .intro.full{font-size:15px;line-height:1.65}
+.sd-classic .sd-hero .eyebrow{font-size:13px}
+.sd-classic .sd-gbline{font-size:13.5px}
+.sd-classic .sd-gbline button{font-size:13.5px}
+.sd-classic .guide{font-size:14.5px;line-height:1.6}
+.sd-classic .note{font-size:14px}
+.sd-classic .note.small{font-size:13px}
+.sd-classic .sd-book h3{font-size:19px}
+.sd-classic .sd-book .au{font-size:13.5px}
+.sd-classic .sd-book .desc{font-size:14.5px;line-height:1.55}
+.sd-classic .sd-book .type,.sd-classic .lv{font-size:12.5px}
+.sd-classic .sd-book .bdg span{font-size:12.5px}
+.sd-classic .sd-book .act{font-size:14px;padding:10px 4px}
+.sd-classic .tips li{font-size:15px;line-height:1.6}
+.sd-classic .btip b{font-size:15.5px}
+.sd-classic .btip p{font-size:14.5px;line-height:1.6}
+.sd-classic .btip img{width:52px;flex-basis:52px}
+.sd-classic .sd-vcard .vt{font-size:16px}
+.sd-classic .ideas{font-size:15px;line-height:1.65}
+.sd-classic .exp .e{font-size:16px}
+.sd-classic .exp .k{font-size:14px}
+.sd-classic .sd-extra b{font-size:15px}
+.sd-classic .sd-extra small{font-size:13px}
+.sd-classic .disc{font-size:12.5px}
 </style>
 </head>
 <body>
@@ -930,13 +957,13 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
        '<div class="sd-books">'+bh+'</div>'+
        '<p class="note small">글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
        (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
-    // 2. Read Aloud 영상
-    if(vids)h+='<section id="s-vid"><div class="sh">'+ic('play',20)+'<h2>Read Aloud 영상</h2></div>'+
-       '<p class="note">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="sd-vids">'+vids+'</div></section>';
-    // 3. 읽어주는 방법(공통 + 책별 팁)
+    // 2. 읽어주는 방법(공통 + 책별 팁)
     if(how.length||tips.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
        (how.length?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'')+
        (tips.length?'<div class="btips">'+tips.map(function(b){return '<div class="btip">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b><p>'+esc(b.tip)+'</p></div></div>';}).join('')+'</div>':'')+'</div></section>';
+    // 3. Read Aloud 영상
+    if(vids)h+='<section id="s-vid"><div class="sh">'+ic('play',20)+'<h2>Read Aloud 영상</h2></div>'+
+       '<p class="note">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="sd-vids">'+vids+'</div></section>';
     // 4. 책 활용 아이디어
     if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 아이디어</h2></div><div class="card"><ul class="ideas">'+acts.map(function(a){
        var m=/^(.{2,24}?)\s*[:：]\s*(.+)$/.exec(a);return '<li>'+(m?'<b>'+esc(m[1])+'</b> '+esc(m[2]):esc(a))+'</li>';}).join('')+'</ul></div></section>';
