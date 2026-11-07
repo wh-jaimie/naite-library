@@ -882,8 +882,11 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-classic .sd-hero .prog{margin-top:6px}
 .sd-classic .sd-gbline{margin-top:9px;padding:5px 5px 5px 11px;font-size:13px}
 .sd-classic .sd-gbline button{padding:6px 11px;font-size:13px}
-.sd-classic .sd-chips{gap:8px;padding:10px 16px 11px}
-.sd-classic .sd-chips .chip{font-size:15px;padding:8px 15px}
+/* 탭 줄: 넘기지 않고 두 줄에 전부(3칸씩, '다음 달'까지 7개면 4칸씩) */
+.sd-classic .sd-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 16px 9px;overflow:visible}
+.sd-classic .sd-chips:has(.chip[data-sdt="s-next"]:not([hidden])){grid-template-columns:repeat(4,1fr)}
+.sd-classic .sd-chips .chip{min-width:0;white-space:nowrap;text-align:center;font-size:13px;padding:7px 0;border-radius:10px}
+.sd-classic .sd-chips .chip[hidden]{display:none}
 .sd-classic .sd-chips .chip.on{box-shadow:0 2px 8px rgba(36,86,72,.25)}
 .sd-classic .guide summary{font-size:15px}
 .sd-classic .guide p{font-size:14.5px;line-height:1.6;color:var(--ink)}
@@ -994,10 +997,10 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       return '<a class="sd-extra lk" href="'+esc(x.url)+'" target="_blank" rel="noopener" data-title="'+esc(tt)+'"><span class="th">'+ic('clip',22)+'</span><span><b>'+esc(tt)+'</b><small>'+esc(lm.src)+'</small></span></a>';
     }).join('');
     // 자료 탭(2026-11-07): 순서는 아래 섹션 순서 그대로, 누르면 그 내용만 보임
-    var secs=[['s-books','이번 달 5권']];
-    if(how.length||tips.length)secs.push(['s-how','읽어주기']);
-    if(vids)secs.push(['s-vid','영상']);
-    if(acts.length)secs.push(['s-play','활용']);
+    var secs=[['s-books','이번 달 5권']]; // 탭은 두 줄로 전부 보이게(이름은 줄이지 않음)
+    if(how.length||tips.length)secs.push(['s-how','읽어주기 방법']);
+    if(vids)secs.push(['s-vid','읽어주기 영상']);
+    if(acts.length)secs.push(['s-play','놀이 활동']);
     if(exprs.length)secs.push(['s-exp','영어표현']);
     if(exhtml)secs.push(['s-extra','부가자료']);
     secs.push(['s-next','다음 달']);
