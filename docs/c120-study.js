@@ -10,7 +10,7 @@
     if(!pub)return;
     document.querySelectorAll('.theme[data-key]').forEach(function(el){
       var k=el.getAttribute('data-key');
-      if(!pub[k]||el.querySelector('.c120-study'))return;
+      if(!pub[k]||el.querySelector('.c120-study,.rl-study'))return; // 앱이 붙인 버튼이 있으면 그대로
       var now=k===cur,a=document.createElement('a');
       a.className='c120-study';
       a.href='record/app.html?m='+encodeURIComponent(k)+'&from=c120';
