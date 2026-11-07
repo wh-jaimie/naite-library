@@ -1,7 +1,7 @@
 /* 나이테 스터디 — 읽기 기록 (record/app.html 전용)
  * 2026-11-03부터 비밀번호 없이 누구나 씀(migrate_open_app.sql). 기록 주인 = 기기별 ID(naite_reader).
  * 폰을 바꾸거나 앱을 지워도 이어 보려면 '기록 백업'(닉네임 + 숫자 4자리, backup_reader/restore_reader).
- * 하단 메뉴: 이번 달 자료 · 읽기 기록(기록하기+읽기 통계, 2026-11-07) · 독서 로드맵 · 인기 책장.
+ * 하단 메뉴: 이번 달 책(id study) · 읽기 기록(기록하기+읽기 통계, 2026-11-07) · 독서 로드맵 · 인기 책장.
  * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 기록하기 탭 표지(오늘/어제 선택).
  * 기록하기 탭 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
  * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
@@ -981,7 +981,7 @@
   var RING='<svg class="rk-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="20" stroke="#245648" stroke-width="2.4"/><circle cx="24" cy="24" r="13.5" stroke="#245648" stroke-width="2.4" opacity=".75"/><circle cx="24" cy="24" r="7" stroke="#245648" stroke-width="2.4" opacity=".5"/><circle cx="24" cy="5" r="2.6" fill="#B87343"/></svg>';
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:[svg(22,IC.study,1.9),'이번 달 자료'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장']};
+    var T={study:[svg(22,IC.study,1.9),'이번 달 책'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
       return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
@@ -1028,7 +1028,7 @@
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
           (recent.length>5?'<button type="button" class="rs-more" data-rmore>'+(S.recentOpen?'접기':'더 보기 ('+(recent.length-5)+'개)')+'</button>':'')
-        :'<p class="rv-empty">아직 기록이 없어요. 위의 표지나 이번 달 자료의 \'읽었어요\'를 누르면 여기에 쌓여요.</p>')+
+        :'<p class="rv-empty">아직 기록이 없어요. 위 달력의 날짜나 \'오늘 기록\' 버튼으로 기록하면 여기에 쌓여요.</p>')+
       (backupName()?'<p class="rv-note">기록이 <b>'+esc(backupName())+'</b> 이름으로 백업돼 있어요. 폰을 바꿔도 이어보기로 다시 볼 수 있어요.</p>'
         :'<p class="rv-note">기록은 이 폰(브라우저)에 저장돼요. 폰을 바꾸거나 앱을 지워도 이어 보려면 <b>기록 백업</b>을 해 두세요.</p>')+
       '<div class="rk-footlinks">'+(isStandalone()?'':'<button type="button" class="rv-leave" data-rinstall="shelf">'+svg(14,'<rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.5 18.5h3"/>',2)+'앱 설치하기</button><span aria-hidden="true">·</span>')+

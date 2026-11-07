@@ -108,8 +108,9 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtabs.enter{animation:rlUp .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes rlUp{from{transform:translateY(40%);opacity:.4}to{transform:none;opacity:1}}
 .rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
-.rtab.go{border-left:1px solid var(--line);border-radius:0 12px 12px 0}
-.rtab.go+.rtab.go{border-left:0;border-radius:12px}
+.rtab.go{border-radius:12px} /* 읽기 기록 옆 세로줄 제거(2026-11-07) */
+.sd-barbtns{display:inline-flex;gap:6px}
+.sd-barbtns a.ghost{text-decoration:none}
 .v-embed{position:fixed;top:0;left:0;right:0;bottom:64px;z-index:30;background:#E4E7DD}
 .v-embed[hidden]{display:none}
 .v-embed iframe{width:100%;height:100%;border:0;display:block}
@@ -909,7 +910,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261107b"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261107c"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -1010,7 +1011,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     if(exhtml)secs.push(['s-extra','부가자료']);
     secs.push(['s-next','다음 달']);
     var h='<div id="v-study" class="sd sd-classic"><div class="sd-wrap">';
-    h+='<div class="sd-bar"><span class="brand">'+SD_RING+'나이테</span>'+(PREVIEW?'':'<button type="button" class="ghost" data-pn="welcome">처음 오셨나요?</button>')+'</div>';
+    // 맨 위 줄 오른쪽: 엄마표영어 가이드(읽을거리) + 처음 오셨나요? — 가이드는 화면 맨 아래에서 옮김(2026-11-07)
+    h+='<div class="sd-bar"><span class="brand">'+SD_RING+'나이테</span>'+(PREVIEW?'':'<span class="sd-barbtns"><a class="ghost" href="../guide.html" target="_blank" rel="noopener" data-guidego>📚 가이드</a><button type="button" class="ghost" data-pn="welcome">처음 오셨나요?</button></span>')+'</div>';
     if(!PREVIEW)h+='<div id="sdBack"></div><div id="newsLatest"></div>';
     // 이번 달 소개(주제 설명글은 빼고 주제·진행만 — 2026-11-07)
     h+='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
@@ -1049,7 +1051,6 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     // 6. 부가자료
     if(exhtml)h+='<section id="s-extra"><div class="sh">'+ic('clip',20)+'<h2>부가자료</h2></div><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+exhtml+'</div></section>';
     h+='<div id="nextPrev"></div>';
-    h+='<a class="linkrow" href="../guide.html" target="_blank" rel="noopener"><span>엄마표영어 읽을거리 둘러보기<small>기본 개념 · Q&amp;A · ORT · 픽처북 vs 리더스북</small></span>'+ic('right',18)+'</a>';
     h+='<div id="arch"></div>';
     h+='<div class="sd-foot"><a class="ig" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+ic('ig',17)+'@naite_library</a><br>'+
        '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br>'+
@@ -1077,6 +1078,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     var more=document.getElementById('sdMore'),intro=document.getElementById('sdIntro');
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     initChips();
+    var gg=app.querySelector('[data-guidego]');if(gg)gg.addEventListener('click',function(){logEvent('guide_click',{from:'app_top'});});
     var ig=document.getElementById('sdInfoGo');if(ig)ig.addEventListener('click',function(){var t=document.getElementById('sdInfo'),nav=document.getElementById('sdChips');if(t)window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav?nav.offsetHeight:0)-8,behavior:'smooth'});logEvent('book_info_go',{});});
     // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)
     (function(){var b=document.getElementById('sdGbBtn');if(!b)return;var k='naite_gb_'+theme.key;
@@ -1192,7 +1194,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     var inst=window.NaiteReading.isStandalone();
     return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
       '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
-        '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 자료·기록·통계·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
+        '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 책·기록·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
         '<li><b>기록 백업해 두기 (선택)</b><span class="wsub">닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 기록이 이어져요.</span><button type="button" class="wbtn" data-rbackup>🔒 기록 백업하기</button></li>'+
         '<li><b>함께하면 더 좋아요 (선택)</b><span class="wsub">카톡 스터디방에서는 인증하고 고민을 나눠요. 인스타에서는 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~ 당근모임에서는 근처에 사는 엄마들을 만날 수 있어요 😊</span><a class="wbtn" href="../join.html?from=app">💬 스터디방 둘러보기</a> <a class="wbtn" data-ig="welcome" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 @naite_library</a> <a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 구경하기</a></li>'+
       '</ol></div>'+
