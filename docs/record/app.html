@@ -909,7 +909,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261107"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261107b"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -1230,13 +1230,13 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     document.getElementById('pnT').textContent=kind==='news'?'📢 공지':'🌱 처음 오셨나요?';
     document.getElementById('pnB').innerHTML=kind==='news'?newsHTML():welcomeHTML();
     pn.hidden=false;pn.scrollTop=0;document.body.style.overflow='hidden';
-    try{history.replaceState(null,'',location.pathname+location.search+'#'+kind);}catch(e){}
+    try{history.replaceState(history.state,'',location.pathname+location.search+'#'+kind);}catch(e){}
     if(kind==='news'&&NEWS.length){lsSet(NEWS_SEEN_KEY,String(Math.max.apply(null,NEWS.map(function(n){return n.id;}))));paintNewsBar();}
     if(kind==='welcome')lsSet(WELCOME_KEY,'1');
     logEvent(kind==='news'?'news_open':'welcome_open',{});
   }
   function closePanel(){var pn=document.getElementById('pn');if(!pn)return;pn.hidden=true;document.body.style.overflow='';
-    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+    try{history.replaceState(history.state,'',location.pathname+location.search);}catch(e){}}
   var panelsWired=false;
   function initPanels(){
     if(!panelsWired){panelsWired=true;

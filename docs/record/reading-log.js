@@ -1145,22 +1145,60 @@
     if(EMBED[id]){var v=$('v-'+id),tb=$('rtabs');
       if(v){v.style.bottom=(tb?tb.offsetHeight:64)+'px';
         if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.allow='web-share; clipboard-write';f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}}}
-    try{history.replaceState(null,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){}
+    try{history.replaceState(history.state,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){} // state 유지(뒤로가기 표시)
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();
     if(!EMBED[id])window.scrollTo(0,id==='study'?studyY:0);
     if(S.onEvent)S.onEvent('tab_view',{tab:id});
   }
 
+  /* ── 폰 뒤로가기(2026-11-07): 위에 열린 창이나 다른 탭에서는 앱을 나가지 않고 한 단계 전으로 ──
+     열린 것(카메라·아래 창·오늘 기록 메뉴·공지/처음 오셨나요?·자료 아닌 탭)이 생기면 기록을 한 칸 쌓고,
+     뒤로가기가 오면 맨 위 것 하나만 닫음. 버튼으로 닫으면 쌓아 둔 칸을 조용히 되돌림. */
+  var BG={on:false,skip:0};
+  function layerOpen(){
+    if(document.querySelector('.rl-cam'))return true;
+    if(sheetEl&&!sheetEl.hidden)return true;
+    var f=$('tdFab');if(f&&!f.hidden&&f.classList.contains('open'))return true;
+    var pn=document.getElementById('pn');if(pn&&!pn.hidden)return true;
+    return !!(S&&S.tab&&S.tab!=='study');
+  }
+  function closeTop(){
+    var cams=document.querySelectorAll('.rl-cam');
+    if(cams.length){var c=cams[cams.length-1],x=c.querySelector('[data-camx],[data-ax]');if(x)x.click();else{c.remove();document.documentElement.classList.remove('rl-lock');}return;}
+    if(sheetEl&&!sheetEl.hidden){closeSheet();return;}
+    var f=$('tdFab');if(f&&f.classList.contains('open')){fabToggle(false);return;}
+    var pn=document.getElementById('pn');if(pn&&!pn.hidden){var pc=pn.querySelector('[data-pnclose]');if(pc)pc.click();else pn.hidden=true;return;}
+    if(S&&S.tab!=='study')showTab('study');
+  }
+  function syncBack(){
+    var open=layerOpen();
+    if(open&&!BG.on){BG.on=true;try{history.pushState({naiteBack:1},'',location.href);}catch(e){BG.on=false;}}
+    else if(!open&&BG.on){BG.on=false;if(history.state&&history.state.naiteBack){BG.skip++;history.back();}}
+  }
+  var backWired=false;
+  function wireBack(){
+    if(backWired)return;backWired=true;
+    window.addEventListener('popstate',function(){
+      if(BG.skip){BG.skip--;return;}
+      if(!BG.on)return;
+      BG.on=false;closeTop();
+      setTimeout(syncBack,0); // 아직 열린 게 남아 있으면 다시 한 칸
+    });
+    var q=0;new MutationObserver(function(){if(q)return;q=setTimeout(function(){q=0;syncBack();},0);})
+      .observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
+    syncBack();
+  }
+
   /* ── 이벤트(한 번만 등록) ── */
   var wired=false;
   function wire(){
-    if(wired)return;wired=true;
+    if(wired)return;wired=true;wireBack();
     document.addEventListener('click',function(e){
       if(!S)return;var t;
       if($('tdFab')&&$('tdFab').classList.contains('open')&&!e.target.closest('#tdFab'))fabToggle(false);
       if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'),t.getAttribute('data-src')||'card');return;}
-      if((t=e.target.closest('[data-rtab]'))){showTab(t.getAttribute('data-rtab'));return;}
+      if((t=e.target.closest('[data-rtab]'))){if(t.tagName==='A')e.preventDefault();showTab(t.getAttribute('data-rtab'));return;} // a href=#… 이 주소 기록을 쌓지 않게(뒤로가기 처리와 엉키지 않도록)
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
       if((t=e.target.closest('[data-rshelf]'))){S.shelfKey=t.getAttribute('data-rshelf');S.shelfScroll=true;paintShelf();if(S.onEvent)S.onEvent('shelf_month',{theme:S.shelfKey});return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
