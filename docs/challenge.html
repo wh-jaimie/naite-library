@@ -261,7 +261,7 @@ function logSeen(){
   }catch(e){}
   return s;
 }
-if(FROMLOG)seen=logSeen();
+if(FROMLOG){seen=logSeen();try{localStorage.removeItem(KEY);}catch(e){}} // 앱 안: 예전에 직접 누른 체크는 지움(다시 안 나오게)
 window._imgErr=el=>{el.parentElement.classList.add('noimg');el.remove();};
 
 // 범례
