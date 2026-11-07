@@ -807,6 +807,18 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd .ideas{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink);line-height:1.6}
 .sd .ideas li+li{margin-top:6px}
 .sd .ideas b{color:var(--pine)}
+.sd-book h3 .cp-ic{display:inline-grid;place-items:center;vertical-align:middle;margin-left:6px;width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--pine);cursor:pointer;padding:0}
+.sd-book .act.buy{background:var(--clay);border-color:var(--clay);color:#fff}
+.sd-book .act.buy svg{color:#fff}
+.sd-book .bdg{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.sd-book .bdg span{font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px}
+.sd-book .bdg .g{background:#e7f1f0;color:#245648}.sd-book .bdg .l{background:#fbeee0;color:#8a5a1a}.sd-book .bdg .a{background:#f3e9c9;color:#7a5a00}
+.sd-book .bdg .k{background:#fbe0de;color:#a2231d}.sd-book .bdg .fmt{background:#efe7f5;color:#6a4a8a}
+.sd .lv.l1,.sd .lv.l2,.sd .lv.l3{padding:2px 8px;border-radius:6px;gap:3px}
+.sd .lv.l1{background:#e3f1df;color:#2f6e58}.sd .lv.l1 svg{color:#2f6e58}
+.sd .lv.l2{background:#d8ecee;color:#1f6f72}.sd .lv.l2 svg{color:#1f6f72}
+.sd .lv.l3{background:#fbe3d6;color:#b05a2a}.sd .lv.l3 svg{color:#b05a2a}
+.sd-classic .legend{gap:6px}
 </style>
 </head>
 <body>
@@ -866,21 +878,21 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     var hasBuy=books.some(function(b){return b.buy_url;});
     // 책 카드: 책 소개만(영상·읽어주기 팁은 아래 섹션으로 — 예전 구성 흐름: 책 소개 → 영상 → 읽어주는 방법 → 활용 → 영어표현)
     var bh=books.map(function(b){
-      var lv=level(b),meta=[];
-      if(b.award)meta.push(esc(b.award));
-      if(b.kr_popular)meta.push('국내 인기');
-      if(b.pop_rank)meta.push('세계 인기');
-      if(b.lib_loans)meta.push('도서관 대출 '+esc(b.lib_loans)+'회');
-      if(b.format)meta.push(esc(b.format));
+      var lv=level(b),meta=[]; // 배지: 예전처럼 종류별 색
+      if(b.award)meta.push(['a',esc(b.award)]);
+      if(b.kr_popular)meta.push(['k','🇰🇷 국내 인기']);
+      if(b.pop_rank)meta.push(['g','🌍 세계 인기']);
+      if(b.lib_loans)meta.push(['l','📚 도서관 '+esc(b.lib_loans)+'회']);
+      if(b.format)meta.push(['fmt',esc(b.format)]);
       var cv=b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>';
       return '<article class="sd-book" data-bid="'+b.id+'" data-title="'+esc(b.title)+'">'+
         '<div class="bk-top">'+(b.buy_url?'<a class="sd-cv cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+cv+'</a>':'<div class="sd-cv">'+cv+'</div>')+
-        '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
-          '<h3>'+esc(b.title)+'</h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
-          (meta.length?'<div class="meta">'+meta.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>':'')+'</div></div>'+
+        '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
+          '<h3>'+esc(b.title)+'<button type="button" class="cp-ic" data-copy="'+esc(b.title)+'" data-cpfrom="study" aria-label="제목 복사" title="제목 복사">'+ic('copy',15)+'</button></h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
+          (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+'</div></div>'+
         '<div class="acts">'+
           (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+
-          '<button type="button" class="act" data-copy="'+esc(b.title)+'" data-cpfrom="study">'+ic('copy',15)+'제목 복사</button></div>'+
+          (b.buy_url?'<a class="act buy cvlink" href="'+esc(b.buy_url)+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+esc(b.title)+'">'+ic('bag',15)+'구매하기</a>':'')+'</div>'+
         '<div class="rrow bk-foot" data-rrow="'+b.id+'"></div></article>';
     }).join('');
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';
@@ -906,7 +918,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     // 1. 이번 달 5권(안내는 펼쳐서)
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
        '<div class="guide"><b>글밥 적은 책부터 시작해 보세요.</b> 3~4살은 새싹 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. 다 못 읽어도 괜찮아요. <b>핵심은 재미</b>예요.'+
-         '<div class="legend"><span>'+ic('seed',14)+'글밥 적음</span><span>'+ic('leaf',14)+'보통</span><span>'+ic('tree',14)+'많음</span></div></div>'+
+         '<div class="legend"><span class="lv l1">'+ic('seed',13)+'글밥 적음</span><span class="lv l2">'+ic('leaf',13)+'글밥 보통</span><span class="lv l3">'+ic('tree',13)+'글밥 많음</span></div></div>'+
        '<p class="note">각 책의 <b>워크지</b>는 출판사·작가 공식 무료 활동지로 연결돼요. <b>책을 누르면</b> 책정보(구매처)를 볼 수 있어요. 도서관·다른 서점에서 찾을 땐 <b>제목 복사</b> 후 검색창에 붙여넣으세요. '+
          '<a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형이 궁금하다면 →</a></p>'+
        '<div class="sd-books">'+bh+'</div>'+
@@ -991,6 +1003,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     play:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor"/>',
     doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
     copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+    bag:'<path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
     chev:'<path d="M6 9l6 6 6-6"/>',right:'<path d="M9 6l6 6-6 6"/>',
     book:'<path d="M4 5.5A2 2 0 0 1 6 4h5v16H6a2 2 0 0 1-2-2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-5v16h5a2 2 0 0 0 2-2z"/>',
     voice:'<path d="M4 12a8 8 0 0 1 8-8"/><path d="M8 12a4 4 0 0 1 4-4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 16v4M9 20h6"/>',
