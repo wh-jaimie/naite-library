@@ -110,6 +110,10 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
 .rtab.go{border-radius:12px} /* 읽기 기록 옆 세로줄 제거(2026-11-07) */
 .sd-barbtns{display:inline-flex;gap:6px}
+.sd-swin{animation:sdSwIn .22s ease}.sd-swinl{animation:sdSwInL .22s ease}
+@keyframes sdSwIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes sdSwInL{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sd-swin,.sd-swinl{animation:none}}
 .sd-barbtns a.ghost{text-decoration:none}
 .v-embed{position:fixed;top:0;left:0;right:0;bottom:64px;z-index:30;background:#E4E7DD}
 .v-embed[hidden]{display:none}
@@ -1157,6 +1161,24 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
     var nav=document.getElementById('sdChips');if(!nav)return;
     nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;showTab(b.dataset.sdt);logEvent('study_tab',{tab:b.textContent});});
     applyTab();
+    // 옆으로 밀어서 탭 넘기기(2026-11-08): 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭
+    (function(){
+      var v=document.getElementById('v-study');if(!v)return;var x0=0,y0=0,t0=0,ok=false;
+      v.addEventListener('touchstart',function(e){
+        var t=e.touches[0];ok=e.touches.length===1&&!e.target.closest('.shelf,.np-row,.sd-vid iframe,input,textarea,select,.sd-chips');
+        x0=t.clientX;y0=t.clientY;t0=Date.now();
+      },{passive:true});
+      v.addEventListener('touchend',function(e){
+        if(!ok||v.hidden)return;ok=false;
+        var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;
+        if(Date.now()-t0>700||Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*0.6)return; // 짧고 분명한 가로 밀기만
+        if(document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))return; // 위에 창이 열려 있으면 무시
+        var ids=[].slice.call(nav.querySelectorAll('[data-sdt]:not([hidden])')).map(function(c){return c.dataset.sdt;}),i=ids.indexOf(sdTab);
+        var j=dx<0?i+1:i-1;if(i<0||j<0||j>=ids.length)return;
+        showTab(ids[j]);logEvent('study_tab',{tab:ids[j],via:'swipe'});
+        var sec=document.getElementById(ids[j]);if(sec){sec.classList.remove('sd-swin','sd-swinl');void sec.offsetWidth;sec.classList.add(dx<0?'sd-swin':'sd-swinl');}
+      },{passive:true});
+    })();
     var raf=0;window.addEventListener('scroll',function(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;
       var v=document.getElementById('v-study');if(!v||v.hidden)return;
       nav.classList.toggle('stuck',nav.getBoundingClientRect().top<=0.5);
