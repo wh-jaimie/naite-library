@@ -107,7 +107,7 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px -14px rgba(43,42,38,.5)}
 .rtabs.enter{animation:rlUp .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes rlUp{from{transform:translateY(40%);opacity:.4}to{transform:none;opacity:1}}
-.rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+.rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
 .rtab.go{border-left:1px solid var(--line);border-radius:0 12px 12px 0}
 .rtab.go+.rtab.go{border-left:0;border-radius:12px}
 .v-embed{position:fixed;top:0;left:0;right:0;bottom:64px;z-index:30;background:#E4E7DD}
@@ -486,6 +486,11 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .retake{background:none;border:none;color:#cfd3c6;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin:4px auto 0;display:block;padding:8px}
 /* ── 기록 탭: 달력 중심 ── */
 .rk-calhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 2px}
+/* 읽기 기록(기록하기+통계 한 화면, 2026-11-07) */
+.rk-onehead{justify-content:center}
+.rk .st-kpi{margin-top:12px}
+.rk .rk-kpigap{height:14px}
+.rk #v-statsin .st-card:first-child{margin-top:18px}
 .rk-calhead h2{font-family:var(--serif);font-weight:700;font-size:24px;margin:0;color:var(--ink)}
 .rk-btn.sm{flex:0 0 auto;font-size:14px;padding:10px 14px;border-radius:12px;gap:6px}
 .rk-calsum{font-size:13px;color:var(--ink-soft);margin:0 0 12px}
@@ -904,7 +909,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js"></script>
+<script src="reading-log.js?v=20261107"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -1050,7 +1055,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
        '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br>'+
        '© 2026 나이테 영어책육아 메이트. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 공유할 때는 출처(나이테)를 함께 밝혀 주세요.'+
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
-    h+='<div id="v-shelf" hidden></div><div id="v-stats" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
+    h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
     if(PREVIEW){ // 관리자 미리보기: 기록 기능 없이 화면만(읽었어요 줄은 모양만)
       app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
@@ -1195,22 +1200,22 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<li><b>매달 1일</b> — 새 주제 5권으로 시작</li>'+
         '<li><b>한 달 동안</b> — 읽어준 날 인증 (나이테 앱·카톡 채팅방·당근모임·인스타 스토리 중 편한 곳에)</li>'+
         '<li><b>마지막 주</b> — 다음 달 책 공개<span class="wsub">📢 공지로 알려드려요</span></li>'+
-        '<li><b>한 달 끝</b> — <a href="#stats" data-pnclose data-rtab="stats">읽기 통계</a>에서 우리 아이 한 달 기록 보며 뿌듯해하기 🌳</li>'+
+        '<li><b>한 달 끝</b> — <a href="#shelf" data-pnclose data-rtab="shelf">읽기 기록</a>에서 우리 아이 한 달 기록 보며 뿌듯해하기 🌳</li>'+
       '</ul></div>'+
       '<div class="wsec"><h3>🎯 스터디 미션</h3><ol>'+
         '<li><b>책 준비 인증</b> (사진 or 말)<span class="wsub">5권 전부 아니어도 돼요. 준비되는 대로!</span></li>'+
-        '<li><b>읽어준 날 인증</b> (사진 or 말)<span class="wsub">이번 달 주제 책이 아니어도 괜찮아요. 빠진 날이 있어도 괜찮아요, 다시 이어가면 돼요</span><span class="wsub">💡 <a href="#shelf" data-pnclose data-rtab="shelf">기록하기 탭</a>에서 날짜 스탬프 사진을 찍어 올려보세요</span></li>'+
+        '<li><b>읽어준 날 인증</b> (사진 or 말)<span class="wsub">이번 달 주제 책이 아니어도 괜찮아요. 빠진 날이 있어도 괜찮아요, 다시 이어가면 돼요</span><span class="wsub">💡 <a href="#shelf" data-pnclose data-rtab="shelf">읽기 기록</a>에서 날짜 스탬프 사진을 찍어 올려보세요</span></li>'+
         '<li><b>아이와 도서관 가기</b> (선택)<span class="wsub">한 달에 한 번, 아이가 직접 영어책을 골라보는 경험을 해주세요</span></li>'+
       '</ol></div>'+
       '<div class="wsec"><h3>📸 인증은 이렇게 해요</h3><p style="margin:0 0 8px;font-size:.92rem">아래 네 가지 중 편한 방법으로 하면 돼요.</p><ol>'+
-        '<li><b>나이테 앱</b><span class="wsub"><a href="#shelf" data-pnclose data-rtab="shelf">기록하기 탭</a>에서 표지를 눌러 기록하거나 날짜 스탬프 사진을 남겨요</span></li>'+
+        '<li><b>나이테 앱</b><span class="wsub"><a href="#shelf" data-pnclose data-rtab="shelf">읽기 기록</a>의 달력에서 표지를 눌러 기록하거나 날짜 스탬프 사진을 남겨요</span></li>'+
         '<li><b>카톡 채팅방</b><span class="wsub">사진이나 말로 올려요</span></li>'+
         '<li><b>당근모임</b><span class="wsub"><b>챌린지 게시판</b>에 올려 주세요</span></li>'+
         '<li><b>인스타 스토리</b><span class="wsub"><b>@naite_library</b>를 태그해 주세요</span></li>'+
       '</ol></div>'+
       '<div class="wsec"><h3>📚 더 알고 싶다면 (선택)</h3><ul>'+
         '<li><a href="'+GUIDE_POST_URL+'" target="_blank" rel="noopener">스터디 자세한 운영 방법 (블로그) ↗</a></li>'+
-        '<li><a href="#c120" data-pnclose data-rtab="c120">나이테 120 전체 목록 보기 →</a></li>'+
+        '<li><a href="#c120" data-pnclose data-rtab="c120">독서 로드맵(나이테 120) 전체 목록 보기 →</a></li>'+
         '<li><a href="../types.html" target="_blank" rel="noopener">왜 5가지 유형으로 골랐을까요? ↗</a></li>'+
       '</ul></div>'+
       '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+

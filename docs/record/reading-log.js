@@ -1,7 +1,7 @@
 /* 나이테 스터디 — 읽기 기록 (record/app.html 전용)
  * 2026-11-03부터 비밀번호 없이 누구나 씀(migrate_open_app.sql). 기록 주인 = 기기별 ID(naite_reader).
  * 폰을 바꾸거나 앱을 지워도 이어 보려면 '기록 백업'(닉네임 + 숫자 4자리, backup_reader/restore_reader).
- * 하단 메뉴: 이번 달 자료 · 기록하기 탭 · 읽기 통계.
+ * 하단 메뉴: 이번 달 자료 · 읽기 기록(기록하기+읽기 통계, 2026-11-07) · 독서 로드맵 · 인기 책장.
  * 기록하는 곳: 자료 탭 카드의 '읽었어요'(항상 오늘, 메시지에서 [어제로]) · 기록하기 탭 표지(오늘/어제 선택).
  * 기록하기 탭 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
  * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
@@ -15,7 +15,7 @@
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
   var DOUBLE_TAP_MS=1500;  // 같은 책 1.5초 안 연속 탭은 1회
   var READER_KEY='naite_reader', MEMBER_KEY='naite_member', BACKUP_KEY='naite_backup_name';
-  var TAB_IDS=['study','shelf','stats','c120','shop'],TAB_KEY='naite_last_tab';
+  var TAB_IDS=['study','shelf','c120','shop'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   var EMBED={c120:'../challenge.html?embed=record',shop:'../domestic.html?embed=record'};
   var S=null;              // 현재 마운트 상태
@@ -946,7 +946,8 @@
   function paintToday(){
     var el=$('tdFab');
     if(!el){el=document.createElement('div');el.id='tdFab';el.className='td-fab';document.body.appendChild(el);}
-    el.hidden=S.tab!=='study';if(el.hidden){el.classList.remove('open');return;}
+    // 이번 달 자료 + 읽기 기록 화면에(읽기 기록 머리의 '오늘 기록' 버튼 대신)
+    el.hidden=S.tab!=='study'&&S.tab!=='shelf';if(el.hidden){el.classList.remove('open');return;}
     var d=logicalToday(),inf=dayInfo(d),done=inf.sum||inf.ph,open=el.classList.contains('open');
     el.innerHTML='<div class="td-menu" role="menu">'+
         (done?'<button type="button" role="menuitem" data-tshare>'+svg(18,IC.share)+'오늘 기록 공유</button>':'')+
@@ -980,7 +981,7 @@
   var RING='<svg class="rk-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="20" stroke="#245648" stroke-width="2.4"/><circle cx="24" cy="24" r="13.5" stroke="#245648" stroke-width="2.4" opacity=".75"/><circle cx="24" cy="24" r="7" stroke="#245648" stroke-width="2.4" opacity=".5"/><circle cx="24" cy="5" r="2.6" fill="#B87343"/></svg>';
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:[svg(22,IC.study,1.9),'이번 달 자료'],shelf:[svg(22,IC.shelf,1.9),'기록하기'],stats:[svg(22,IC.stats,1.9),'읽기 통계'],c120:[svg(22,IC.c120,1.9),'나이테 120'],shop:[svg(22,IC.shop,1.9),'인기 책장']};
+    var T={study:[svg(22,IC.study,1.9),'이번 달 자료'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
       return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
@@ -1017,10 +1018,12 @@
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
     var mi=viewMonth(),mrows=mi?monthRows(mi):[],mdays={},off=S.viewOff||0;mrows.forEach(function(r){mdays[r.d]=1;});
     if(S.recSheet)S.recSheet.render();
+    // 읽기 기록(2026-11-07): 기록하기 + 읽기 통계를 한 화면으로 — 달 넘기기 하나, 숫자 3개 → 달력 → 통계 카드 → 최근 기록·백업
     el.innerHTML='<div class="rv rk">'+
-      '<div class="rk-calhead"><h2>'+(mi?monthNav((mi.year!==monthInfo().year?mi.year+'년 ':'')+mi.month+'월 달력'):'달력')+'</h2><button type="button" class="rk-btn fill sm" data-rtoday>'+svg(16,IC.plus,2.6)+'오늘 기록</button></div>'+
-      (mi?'<p class="rk-calsum">'+(off?mi.month+'월에':'이번 달')+' <b>'+cntKeys(mdays)+'일</b> · <b>'+mrows.length+'권</b> 읽었어요</p>'+calendarHtml(mi,!S.rows.length&&!off):'')+
+      '<div class="rk-calhead rk-onehead"><h2>'+(mi?monthNav((mi.year!==monthInfo().year?mi.year+'년 ':'')+mi.month+'월 읽기 기록'):'읽기 기록')+'</h2></div>'+
+      (mi?statsKpi(mi)+calendarHtml(mi,!S.rows.length&&!off):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
+      '<div id="v-statsin"></div>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
@@ -1030,6 +1033,24 @@
         :'<p class="rv-note">기록은 이 폰(브라우저)에 저장돼요. 폰을 바꾸거나 앱을 지워도 이어 보려면 <b>기록 백업</b>을 해 두세요.</p>')+
       '<div class="rk-footlinks">'+(isStandalone()?'':'<button type="button" class="rv-leave" data-rinstall="shelf">'+svg(14,'<rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.5 18.5h3"/>',2)+'앱 설치하기</button><span aria-hidden="true">·</span>')+
         '<button type="button" class="rv-leave" data-rbackup>'+(backupName()?'기록 백업됨 · '+esc(backupName()):'기록 백업 · 이어보기')+'</button></div></div>';
+    paintStats(); // 통계 카드는 같은 화면 안(v-statsin)에 — paintShelf만 다시 그려도 함께 그려지게
+  }
+  // 읽기 기록 맨 위 숫자 3개(이번 달 책 · 총 읽기 · 읽은 날)
+  function statsKpi(mi){
+    var rows=monthRows(mi),total=rows.length,days={},homeIds={},off=S.viewOff||0,vb=viewBooks(mi);
+    rows.forEach(function(r){days[r.d]=1;});
+    vb.forEach(function(b){homeIds[b.id]=1;});
+    var metM=vb.filter(function(b){return rows.some(function(r){return r.b===b.id;});}).length;
+    var others=rows.filter(function(r){return r.k==='_other';}).length,study=total-others;
+    var past=rows.filter(function(r){return r.k!=='_other'&&!homeIds[r.b];}).length;
+    return '<div class="st-kpi">'+
+        '<div class="k"><div class="lb">'+(off?mi.month+'월 책':'이번 달 책')+'</div><div class="v">'+metM+'<s> / '+(vb.length||5)+'권</s></div></div>'+
+        '<div class="k"><div class="lb">총 읽기</div><div class="v">'+total+'<s> 번</s></div></div>'+
+        '<div class="k"><div class="lb">읽은 날</div><div class="v">'+cntKeys(days)+'<s>'+(mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</s></div></div>'+
+      '</div>'+
+      (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
+      (past&&vb.length?'<p class="st-line">스터디 책 중 <b>다른 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'')+
+      '<div class="rk-kpigap"></div>';
   }
   // 통계 탭 공유 카드 썸네일: 기록·사진이 바뀌었을 때만 다시 그림
   function monthThumb(mi){
@@ -1045,23 +1066,11 @@
     },function(){});
   }
   function paintStats(){
-    var el=$('v-stats');if(!el||!S.member||S.tab!=='stats')return;
-    var mi=viewMonth(),rows=monthRows(mi),total=rows.length,days={},homeIds={},off=S.viewOff||0,mt=monthTheme(mi),vb=viewBooks(mi);
-    rows.forEach(function(r){days[r.d]=1;});
-    vb.forEach(function(b){homeIds[b.id]=1;});
-    var metM=vb.filter(function(b){return rows.some(function(r){return r.b===b.id;});}).length;
-    var others=rows.filter(function(r){return r.k==='_other';}).length,study=total-others;
-    var past=rows.filter(function(r){return r.k!=='_other'&&!homeIds[r.b];}).length;
+    // 읽기 기록 화면 안의 통계 카드(제목·숫자 3개는 위 statsKpi, 날짜별 흐름은 달력과 같은 정보라 뺌)
+    var el=$('v-statsin');if(!el||!S.member||S.tab!=='shelf')return;
+    var mi=viewMonth(),rows=monthRows(mi),total=rows.length,off=S.viewOff||0,vb=viewBooks(mi);
     function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
-    var h='<div class="rv st"><div class="st-head">'+RING+'<h1>'+(mi?monthNav(mi.month+'월 읽기 통계'):'읽기 통계')+'</h1>'+
-      (mt&&mt.ko?'<span class="chip"><span class="d"></span>'+esc(mt.ko)+' 테마'+(mi?' · '+mi.month+'월':'')+'</span>':'')+'</div>'+
-      '<div class="st-kpi">'+
-        '<div class="k"><div class="lb">'+(off?mi.month+'월 책':'이번 달 책')+'</div><div class="v">'+metM+'<s> / '+(vb.length||5)+'권</s></div></div>'+
-        '<div class="k"><div class="lb">총 읽기</div><div class="v">'+total+'<s> 번</s></div></div>'+
-        '<div class="k"><div class="lb">읽은 날</div><div class="v">'+cntKeys(days)+'<s>'+(mi&&mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</s></div></div>'+
-      '</div>'+
-      (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
-      (past&&vb.length?'<p class="st-line">스터디 책 중 <b>다른 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'');
+    var h='<div class="st">';
     var mPre=mi?mi.year+'-'+pad(mi.month)+'-':'',hasP=!!mi&&Object.keys(S.photoUrls).some(function(d){return d.indexOf(mPre)===0;});
     if(mi&&(total||hasP)){
       h+='<div class="st-card st-sharecard"><h2>'+(off?mi.month+'월':'이번 달')+' 나이테 공유</h2><div class="row"><button type="button" class="thumb" data-rmonth aria-label="달력 이미지 크게 보기">'+(S.thumb&&S.thumb.url?'<img src="'+S.thumb.url+'" alt="">':'')+'</button>'+
@@ -1069,7 +1078,7 @@
         '<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button></div>';
       monthThumb(mi);
     }
-    if(!total){el.innerHTML=h+'<p class="rv-empty" style="margin-top:18px">'+(off?mi.month+'월':'이번 달')+' 기록이 아직 없어요. 기록이 쌓이면 가장 많이 읽은 책과 유형별 통계가 여기에 나타나요.</p></div>';return;}
+    if(!total){el.innerHTML=h+'</div>';return;} // 기록이 없으면 통계 카드는 숨김(아래 최근 기록에 안내가 있음)
     // 이번 달에 읽은 책들(지난 달 책 포함)
     var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
     var readBooks=Object.keys(readIds).map(function(id){return S.byId[+id]||{id:+id,title:'(지난 달 책)',type:''};});
@@ -1095,18 +1104,10 @@
       :(tops.length===types.length?'여러 유형을 골고루 읽었어요.':'우리 아이는 <b>'+tops.map(esc).join(', ')+'</b> 책을 가장 자주 골랐어요.');
     h+='<div class="st-card st-types"><h2>유형별 읽기 횟수</h2>'+types.map(function(t){return '<div class="row'+(tops.indexOf(t)>=0&&tops.length<types.length?' max':'')+'"><span class="tl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="tv">'+tc[t]+'</span></div>';}).join('')+
       '<div class="typebox">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
-    // 날짜별 흐름(스터디 달 기준)
-    if(mi){
-      var per=[],today=logicalToday();for(var d=1;d<=mi.days;d++){var ds=mi.year+'-'+pad(mi.month)+'-'+pad(d),n=0;rows.forEach(function(r){if(r.d===ds)n++;});per.push({d:d,ds:ds,n:n});}
-      var pm=Math.max(3,Math.max.apply(null,per.map(function(p){return p.n;})));
-      h+='<div class="st-card"><h2>날짜별 흐름</h2><div class="st-flowwrap"><div class="max">최대 '+pm+'번</div><div class="st-flow" role="img" aria-label="'+mi.month+'월 날짜별 읽기 횟수">'+
-        per.map(function(p){var cls=p.ds>today||!p.n?'zero':(p.ds===today?'today':'');return '<i class="'+cls+'" style="height:'+(p.n?Math.round(14+p.n/pm*58):2)+'px" title="'+mi.month+'/'+p.d+' '+p.n+'번"></i>';}).join('')+
-        '</div></div><div class="st-flowx">'+[1,8,15,22,mi.days].map(function(x){return '<span>'+x+'</span>';}).join('')+'</div></div>';
-    }
     el.innerHTML=h+'</div>';
   }
   function cntKeys(o){return Object.keys(o).length;}
-  function paint(anim){paintCards();paintTabs(anim);paintShelf();paintStats();}
+  function paint(anim){paintCards();paintTabs(anim);paintShelf();}
 
   /* ── 탭 ── */
   // 나이테 120(앱 안 iframe): 자료가 공개된 주제에만 '📖 스터디 자료 보기' → 앱 안에서 그 달 자료(?m=키)
@@ -1134,8 +1135,9 @@
     try{new f.contentWindow.MutationObserver(function(){apply();}).observe(body,{childList:true,subtree:true});}catch(e){}
     if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
   }
-  var studyY=0,T_NAME={c120:'나이테 120',shop:'국내 인기 책장'};
+  var studyY=0,T_NAME={c120:'독서 로드맵(나이테 120)',shop:'국내 인기 책장'};
   function showTab(id){
+    if(id==='stats')id='shelf';
     if(TAB_IDS.indexOf(id)<0)id='study';
     if(S.tab==='study'&&id!=='study')studyY=window.scrollY;
     S.tab=id;
@@ -1202,8 +1204,9 @@
         if(pk&&Date.now()-pk<180000){setTimeout(function(){toast('사진을 고르는 사이 앱이 다시 시작됐어요. 인증 카드에서 📷 바로 찍기로 해 주세요.');},900);if(S.onEvent)S.onEvent('photo_reload',{});}}catch(e){}
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
       // ?tab=month|log|stats|c120|shop(메인 버튼) 또는 #study|shelf|stats|c120|shop
-      var qt=(new URLSearchParams(location.search)).get('tab')||'',QT={month:'study',log:'shelf'};
+      var qt=(new URLSearchParams(location.search)).get('tab')||'',QT={month:'study',log:'shelf',stats:'shelf'};
       var h=QT[qt]||qt||(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
+      if(h==='stats')h='shelf';if(last==='stats')last='shelf';
       // 주소로 바로 온 탭(메인의 나이테 120·인기 책장 버튼 등)은 그대로, 마지막 탭이 앱 안 페이지면 자료 탭으로
       if(TAB_IDS.indexOf(h)<0){h=last;if(EMBED[h])h='study';}
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
