@@ -57,6 +57,8 @@ select.sm{width:auto;font-size:.84rem;padding:6px 10px}
 .kpi .s{font-size:.72rem;color:var(--soft);margin-top:2px}
 .up{color:#2F6E58;font-weight:800}.down{color:#a2231d;font-weight:800}
 .shd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.fun{display:grid;gap:10px}.fr2{display:grid;grid-template-columns:minmax(120px,1.3fr) 2fr auto;gap:10px;align-items:center}.fl{font-size:.86rem;font-weight:700}.fl small,.fn small{display:block;font-size:.7rem;color:var(--soft);font-weight:500}.fb{background:#EEF0E8;border-radius:8px;height:22px;overflow:hidden}.fb span{display:block;height:100%;border-radius:8px}.fn{text-align:right;font-size:.8rem;min-width:70px}.fn b{font-family:'Gowun Batang',Georgia,serif;font-size:1.25rem;color:var(--tealD)}
+@media(max-width:520px){.fr2{grid-template-columns:1fr auto}.fb{grid-column:1/-1;grid-row:2}}
 .shd h3{margin:0}.shd .r{margin-left:auto}
 .tblw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
 table{width:100%;border-collapse:collapse;font-size:.86rem}
@@ -316,65 +318,139 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         :'<p class="status">아직 누른 사람이 없어요. 메인의 이번 달 5권 아래 ‘관심 있어요’ 버튼에서 모여요.</p>');
     }catch(e){el.innerHTML='<h3>🛍 공동구매 관심</h3><div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';}
   }
-  // 한눈에
-  function renderHome(body,X){
-    var R=X.R;
-    // 전략(2026-11-02) 5단계: 유입 → 관심 → 활성화 → 유지 → 매출 신호. 스터디방(채팅방)은 보조 지표
-    function m(list){
-      var pub=list.filter(isPublic),pv=pub.filter(function(e){return e.type==='page_view';});
-      function n(t){return list.filter(function(e){return e.type===t;}).length;}
-      return {visitors:cnt(sessions(pv)),app:cnt(sessions(list.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}))),
-        join:n('join_click'),buy:n('buy_click'),gb:n('groupbuy_interest'),cta:n('cta_click')};
-    }
-    // 기록한 폰 · 3일 이상 기록한 폰
-    function rd(logs){if(!logs)return {r:'–',k:'–'};var d={};logs.forEach(function(l){(d[l.reader]=d[l.reader]||{})[l.read_on]=1;});
-      var ids=Object.keys(d);return {r:ids.length,k:ids.filter(function(i){return cnt(d[i])>=3;}).length};}
-    var a=m(X.cur),b=m(X.prv),ra=rd(X.lc),rb=X.lp?rd(X.lp):{r:null,k:null};
-    function pct(x,y){return typeof x==='number'&&typeof y==='number'&&y?' '+Math.round(x/y*100)+'%':'';}
-    function stage(no,label,sub,n,prev){return kpi('<b style="color:var(--coral)">'+no+'</b> '+label+'<br><span style="font-weight:500">'+sub+'</span>',n,prev,R);}
-    var h='<div class="card" style="background:none;border:0;box-shadow:none;padding:0"><div class="kgrid">'+
-      stage('① 유입','🌱 나이테 방문자','나이테 사이트를 본 사람',a.visitors,b.visitors)+
-      stage('② 관심','📲 스터디 앱 연 사람','바로 앱으로 온 사람 포함',a.app,b.app)+
-      stage('③ 활성화','📖 기록한 폰','1번이라도 기록',ra.r,rb.r)+
-      stage('④ 유지','🔁 3일 이상 기록','기록한 폰 중'+pct(ra.k,ra.r),ra.k,rb.k)+
-      stage('⑤ 매출 신호','🛒 쿠팡 클릭 · 공구 관심','쿠팡 '+a.buy+' · 공구 '+a.gb,a.buy+a.gb,b.buy+b.gb)+
-    '</div>'+
-    '<div class="kgrid" style="margin-top:10px;opacity:.85">'+
-      kpi('👆 메인 버튼 클릭',a.cta,b.cta,R)+
-      kpi('✅ 읽기 기록',X.lc?X.lc.length:'–',X.lp?X.lp.length:null,R)+
-      kpi('💬 스터디방 참여 클릭 (보조)',a.join,b.join,R)+
-    '</div>'+rangeNote(R)+'</div>'+
-    '<div class="card" id="instcard"><h3>📲 앱 설치</h3><p class="status">불러오는 중…</p></div>'+
-    '<div class="card" id="gbcard"><h3>🛍 공동구매 관심 <span class="hint">메인 ‘관심 있어요’ · 기기당 1번 · 전체 기간</span></h3><p class="status">불러오는 중…</p></div>';
-    var M={visitors:['나이테 방문자','#2F6E58',function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
-      cta:['메인 버튼 클릭','#8A6D2F',function(){return perDay(X.cur.filter(function(e){return e.type==='cta_click';}),R,function(e){return dstr(e.created_at);});}],
-      gb:['공동구매 관심','#7A4520',function(){return perDay(X.cur.filter(function(e){return e.type==='groupbuy_interest';}),R,function(e){return dstr(e.created_at);});}],
-      join:['스터디 참여 클릭','#B87343',function(){return perDay(X.cur.filter(function(e){return e.type==='join_click';}),R,function(e){return dstr(e.created_at);});}],
-      opens:['스터디 앱 연 폰','#6A4A8A',function(){return perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
-      readers:['기록한 폰','#4F9A72',function(){return X.lc?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):R.days.map(function(){return 0;});}],
-      reads:['읽기 기록','#245648',function(){return X.lc?perDay(X.lc,R,function(l){return l.read_on;}):R.days.map(function(){return 0;});}],
-      buy:['쿠팡 클릭','#a2231d',function(){return perDay(X.cur.filter(function(e){return e.type==='buy_click';}),R,function(e){return dstr(e.created_at);});}]};
-    var TODAY=S.period==='today',HR={days:[]};
-    if(TODAY){ // 오늘은 시간대별(0시~지금). 읽기 기록은 날짜만 있어 시간대별로 못 나눔 → 목록에서 뺌
-      var nowH=new Date().getHours();for(var hh=0;hh<=nowH;hh++)HR.days.push('h'+hh);
-      var hk=function(e){return 'h'+new Date(e.created_at).getHours();},sid=function(e){return e.session_id;};
-      M={visitors:['나이테 방문자',M.visitors[1],function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),HR,hk,sid);}],
-        opens:['스터디 앱 연 폰',M.opens[1],function(){return perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),HR,hk,sid);}],
-        cta:['메인 버튼 클릭',M.cta[1],function(){return perDay(X.cur.filter(function(e){return e.type==='cta_click';}),HR,hk);}],
-        buy:['쿠팡 클릭',M.buy[1],function(){return perDay(X.cur.filter(function(e){return e.type==='buy_click';}),HR,hk);}],
-        gb:['공동구매 관심',M.gb[1],function(){return perDay(X.cur.filter(function(e){return e.type==='groupbuy_interest';}),HR,hk);}],
-        join:['스터디 참여 클릭',M.join[1],function(){return perDay(X.cur.filter(function(e){return e.type==='join_click';}),HR,hk);}]};
-    }
-    h+='<div class="card"><div class="shd"><h3>'+(TODAY?'🕘 오늘 시간대별':'📈 날짜별 추이')+'</h3><select class="t sm r" id="hm">'+Object.keys(M).map(function(k){return '<option value="'+k+'">'+M[k][0]+'</option>';}).join('')+'</select></div><div id="hchart"></div>'+
-      '<p class="hint">'+(TODAY?'막대 하나 = 한 시간(0시부터 지금까지). 읽기 기록은 날짜만 남아서 시간대별로는 안 보여요.':'막대에 마우스를 올리면 그날 숫자가 보여요. 주황 막대는 오늘이에요.')+'</p></div>';
-    var recent=X.all.slice(0,40).map(function(e){return [esc(new Date(e.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})),esc(e.type),esc(pageOf(e)),esc((e.meta&&(e.meta.title||e.meta.from||e.meta.seconds))||'')];});
-    h+='<div class="card"><details class="raw"><summary>원본 이벤트 (최근 40개)</summary><div style="margin-top:10px">'+table(['시각','유형','화면','비고'],recent,9)+'</div></details></div>';
-    body.innerHTML=h;
-    var sel=document.getElementById('hm');function draw(){var x=M[sel.value];document.getElementById('hchart').innerHTML=barChart(TODAY?HR.days:R.days,x[2](),x[1]);}
-    groupbuyCard();installCard();
-    sel.onchange=draw;draw();
+  // 한눈에 (2026-11-08 재구성): 보고 싶은 순서대로
+  //  ① 나이테 사이트 유입(매일 몇 명)·쿠팡 누른 사람 ② 흐름: 사이트 → 스터디 앱 → 설치 ③ 메인에서 어디로
+  //  ④ 스터디 앱: 매일 설치·들어와서 주로 하는 것 ⑤ 스터디 참여 인원 추이(스터디 앱 사용자 기준, 전체 기간)
+  var EVN={tab_view:'탭 이동',study_tab:'이번 달 자료 안 메뉴 이동',book_click:'책 표지 눌러 보기',read_aloud_click:'Read Aloud 영상',workbook_click:'워크지',buy_click:'쿠팡 클릭',
+    extra_click:'부가자료 열기',blog_click:'블로그 글',insta_click:'인스타',guide_click:'가이드',title_copy:'책 제목 복사',book_info_go:'책 정보 보기',groupbuy_interest:'공동구매 관심',
+    record_sheet_open:'읽은 책 기록 창 열기',other_read:'다른 책 기록',stamp_camera_open:'인증샷 카메라 열기',stamp_photo_save:'인증샷 저장',stamp_photo_share:'인증샷 공유',stamp_photo_open:'인증샷 보기',
+    stamp_album:'인증샷 모아보기',today_fab:'✏️ 오늘 기록 버튼',today_cam:'✏️ → 인증샷',today_book:'✏️ → 읽은 책 기록',today_share:'✏️ → 공유',cal_day_open:'달력 날짜 열기',cal_from_card:'카드에서 달력 열기',
+    month_nav:'달 넘기기',shelf_month:'기록 달 바꾸기',backup_made:'기록 백업',backup_restored:'백업 이어보기',install_click:'설치 버튼',install_offer:'설치 안내 뜸',install_bar_close:'설치 안내 닫기',
+    app_installed:'설치 완료',camera_fail:'카메라 실패',photo_reload:'사진 다시 불러오기'};
+  var TABN={study:'📘 이번 달 자료',shelf:'📖 읽기 기록',stats:'📖 읽기 기록',c120:'🌳 나이테 120',shop:'🛒 국내 인기 책장'};
+  var MAINCTA={hero_month:'첫 화면 · 이번 달 책 5권',hero_shop:'첫 화면 · 국내 인기 책장',month_study:'이번 달 5권 → 스터디 앱',find_shop:'책 찾기 · 국내 인기 책장',find_c120:'책 찾기 · 나이테 120',
+    road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 스터디방'};
+  // 사이트 방문 = 공개 페이지 page_view. 스터디 앱 안에서 연 120·책장(src=record)은 앱 사용이라 뺌
+  function isSiteView(e){return e.type==='page_view'&&isPublic(e)&&!(e.meta&&e.meta.src==='record');}
+  function isAppView(e){return e.type==='page_view'&&appOf(e)==='record';}
+  function isInst(e){return e.type==='app_installed'||(e.type==='page_view'&&e.meta&&(e.meta.pwa===1||e.meta.pwa==='1'));}
+  // 전체 기간 스터디 앱 기록(앱 연 것 + 설치) — 한 번만 불러옴
+  async function loadAppAll(){
+    if(S.appAll)return S.appAll;
+    var ev=await pageAll(function(){return client.from('events').select('type,session_id,meta,created_at').or('type.eq.app_installed,and(type.eq.page_view,path.like.*/record/*)').order('created_at',{ascending:true});});
+    var first={},inst={},byDay={};
+    ev.forEach(function(e){var k=e.session_id;if(!k)return;var d=dstr(e.created_at);
+      if(e.type==='page_view'){if(!first[k]||d<first[k])first[k]=d;(byDay[d]=byDay[d]||{})[k]=1;}
+      if(isInst(e)&&(!inst[k]||d<inst[k]))inst[k]=d;});
+    return (S.appAll={first:first,inst:inst,byDay:byDay});
   }
-
+  function lineChart(days,vals,col,unit){
+    var narrow=window.innerWidth<700,max=Math.max.apply(null,vals.concat([3])),W=narrow?380:700,H=narrow?150:130,n=days.length,step=n>1?W/(n-1):W;
+    var every=Math.max(1,Math.ceil(n/(narrow?5:9)));
+    var pts=vals.map(function(v,i){return [(n>1?i*step:W/2),H-v/max*(H-18)];});
+    var s='<svg viewBox="-8 0 '+(W+16)+' '+(H+20)+'" role="img"><line x1="0" y1="16" x2="'+W+'" y2="16" stroke="#E2E5DA" stroke-dasharray="3 4"/><text x="'+W+'" y="12" text-anchor="end" font-size="10" fill="#565E4E">'+max+(unit||'')+'</text>'+
+      '<polyline fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" points="'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'"/>';
+    pts.forEach(function(p,i){s+='<g><title>'+md(days[i])+' · '+vals[i]+(unit||'')+'</title><circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(n>40?1.5:3)+'" fill="'+col+'"/></g>';});
+    if(n)s+='<text x="'+pts[n-1][0].toFixed(1)+'" y="'+(pts[n-1][1]-6).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#23291F">'+vals[n-1]+(unit||'')+'</text>';
+    s+='<line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#CBD0C1"/>';
+    days.forEach(function(k,i){if(i%every===0||i===n-1)s+='<text x="'+pts[i][0].toFixed(1)+'" y="'+(H+14)+'" text-anchor="middle" font-size="10" fill="#565E4E">'+md(k)+'</text>';});
+    return '<div class="chart">'+s+'</svg></div>';
+  }
+  function funnel(steps){var top=steps[0][1]||0;
+    return '<div class="fun">'+steps.map(function(s,i){var w=top?Math.max(3,Math.round(s[1]/top*100)):0,p=i&&steps[i-1][1]?Math.round(s[1]/steps[i-1][1]*100)+'%':'';
+      return '<div class="fr2"><div class="fl">'+s[0]+(s[2]?'<small>'+s[2]+'</small>':'')+'</div><div class="fb"><span style="width:'+w+'%;background:'+s[3]+'"></span></div><div class="fn"><b>'+s[1]+'</b>명'+(p?'<small>앞 단계의 '+p+'</small>':'')+'</div></div>';}).join('')+'</div>';}
+  function readersOf(logs){var o={};(logs||[]).forEach(function(l){o[l.reader]=1;});return o;}
+  function renderHome(body,X){
+    var R=X.R,TODAY=S.period==='today';
+    function uniq(list,f){return cnt(sessions(list.filter(f)));}
+    function isBuy(e){return e.type==='buy_click';}
+    var a={site:uniq(X.cur,isSiteView),app:uniq(X.cur,isAppView),buy:uniq(X.cur,isBuy)},
+        b={site:uniq(X.prv,isSiteView),app:uniq(X.prv,isAppView),buy:uniq(X.prv,isBuy)};
+    var nd=Math.max(1,R.days.length),h='';
+    // ── 1. 사이트 유입
+    h+='<div class="card"><div class="shd"><h3>🌱 나이테 사이트에 들어온 사람</h3><span class="hint r">'+esc(R.label)+'</span></div><div class="kgrid">'+
+      kpi('들어온 사람',a.site,b.site,R,'명')+
+      (TODAY?'':kpi('하루 평균',Math.round(a.site/nd*10)/10,Math.round(b.site/nd*10)/10,R,'명'))+
+      kpi('🛒 쿠팡 누른 사람',a.buy,b.buy,R,'명')+
+    '</div><div id="hsite" style="margin-top:12px"></div><p class="hint">'+(TODAY?'막대 하나 = 한 시간.':'막대 하나 = 하루, 그날 들어온 사람 수(같은 폰은 하루 1명). 주황 막대는 오늘.')+' 스터디 앱 안에서 연 나이테 120·책장은 앱 사용이라 여기서 빠져요. 쿠팡은 사이트·앱 어디서 눌렀든 다 세요.</p></div>';
+    // ── 2. 흐름
+    var V=sessions(X.cur.filter(isSiteView)),A=sessions(X.cur.filter(isAppView)),vA=Object.keys(V).filter(function(k){return A[k];});
+    h+='<div class="card"><h3>🔻 사이트에서 앱 설치까지</h3><div id="hfun"><p class="status">불러오는 중…</p></div>'+
+      '<p class="hint">같은 폰(브라우저 기준)으로 이어서 센 숫자예요. 아이폰은 사파리와 홈 화면 앱이 따로라 설치 단계가 적게 잡힐 수 있어요. 설치는 11/8부터 세요.</p></div>';
+    // ── 3. 메인에서 어디로 (cta_click = 주요 버튼, ui_click = 그 밖의 링크. cta 버튼은 ui_click에도 남으니 cta 버튼 글자는 ui 쪽에서 뺌)
+    var mainV=sessions(X.cur.filter(function(e){return e.type==='page_view'&&pageOf(e)==='🏠 메인';})),clicks={},ctaSid={};
+    X.cur.forEach(function(e){if(pageOf(e)==='🏠 메인'&&e.type==='cta_click'&&e.session_id)ctaSid[e.session_id+'|'+String(e.created_at).slice(0,16)]=1;});
+    X.cur.forEach(function(e){if(pageOf(e)!=='🏠 메인')return;var k=null;
+      if(e.type==='cta_click'&&e.meta&&e.meta.cta)k=MAINCTA[e.meta.cta]||e.meta.cta;
+      else if(e.type==='ui_click'&&e.meta&&e.meta.label&&!ctaSid[(e.session_id||'')+'|'+String(e.created_at).slice(0,16)])k='· '+e.meta.label;
+      if(!k)return;var o=clicks[k]=clicks[k]||{s:{},n:0};o.n++;if(e.session_id)o.s[e.session_id]=1;});
+    var mv=cnt(mainV),ck=Object.keys(clicks).sort(function(x,y){return cnt(clicks[y].s)-cnt(clicks[x].s)||clicks[y].n-clicks[x].n;}).slice(0,12);
+    h+='<div class="card"><h3>👉 메인에서 어디로 가요?</h3><p class="hint" style="margin:-4px 0 8px">메인을 본 사람 <b>'+mv+'명</b> 중 각 버튼을 누른 사람</p>'+
+      table(['누른 곳','사람','메인 본 사람 중','클릭'],ck.map(function(k){var n=cnt(clicks[k].s);return [esc(k),n,mv?Math.round(n/mv*100)+'%':'–',clicks[k].n];}),1)+
+      '<p class="hint">이름 앞에 · 이 붙은 건 주요 버튼 말고 메인의 그 밖의 링크·버튼(버튼 글자 그대로)이에요.</p></div>';
+    // ── 4. 스터디 앱
+    var acts={};
+    X.cur.forEach(function(e){if(appOf(e)!=='record'||e.type==='page_view'||e.type==='dwell'||e.type==='ui_click')return;
+      var k=e.type==='tab_view'?('탭 · '+(TABN[e.meta&&e.meta.tab]||(e.meta&&e.meta.tab)||'?')):(EVN[e.type]||e.type);
+      var o=acts[k]=acts[k]||{s:{},n:0};o.n++;if(e.session_id)o.s[e.session_id]=1;});
+    if(X.lc&&X.lc.length)acts['✅ 책 읽기 기록']={s:readersOf(X.lc),n:X.lc.length};
+    var ak=Object.keys(acts).sort(function(x,y){return cnt(acts[y].s)-cnt(acts[x].s)||acts[y].n-acts[x].n;}).slice(0,15);
+    h+='<div class="card"><div class="shd"><h3>📖 스터디 앱</h3><span class="hint r">'+esc(R.label)+'</span></div><div class="kgrid">'+
+      kpi('앱 연 사람',a.app,b.app,R,'명')+'<div id="hinst" class="kpi"><div class="l">새로 설치</div><div class="n">…</div></div>'+
+      kpi('기록한 폰',X.lc?cnt(readersOf(X.lc)):'–',X.lp?cnt(readersOf(X.lp)):null,R,'대')+
+    '</div><div class="shd" style="margin-top:14px"><b style="font-size:.9rem">'+(TODAY?'오늘':'날짜별')+'</b><select class="t sm r" id="hap" style="width:auto"><option value="u">앱 연 사람</option><option value="i">새로 설치</option></select></div><div id="hachart"></div>'+
+      '<h4 style="margin:16px 0 8px;font-size:.92rem">들어와서 주로 하는 것</h4>'+
+      table(['한 일','사람','횟수'],ak.map(function(k){return [esc(k),cnt(acts[k].s),acts[k].n];}),1)+
+      '<p class="hint">사람 = 그 일을 한 번이라도 한 폰 수. 책 읽기 기록은 기록 데이터(폰별 익명 ID) 기준이라 다른 줄과 세는 방식이 조금 달라요.</p></div>';
+    // ── 5. 참여 인원 추이(전체 기간)
+    h+='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 전체 기간</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
+      '<div class="shd" style="margin-top:14px"><b style="font-size:.9rem">추이</b><select class="t sm r" id="hall" style="width:auto"><option value="c">누적 사용자</option><option value="w">주별 앱 연 사람</option><option value="d">날짜별 앱 연 사람</option><option value="i">누적 설치</option></select></div><div id="hallchart"></div>'+
+      '<p class="hint">누적 사용자 = 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 전체 기간이에요.</p></div>';
+    h+='<div class="card" id="gbcard"><h3>🛍 공동구매 관심</h3><p class="status">불러오는 중…</p></div>';
+    var recent=X.all.slice(0,40).map(function(e){return [esc(new Date(e.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})),esc(e.type),esc(pageOf(e)),esc((e.meta&&(e.meta.title||e.meta.label||e.meta.cta||e.meta.tab||e.meta.from||e.meta.seconds))||'')];});
+    h+='<div class="card"><details class="raw"><summary>원본 이벤트 (최근 40개)</summary><div style="margin-top:10px">'+table(['시각','유형','화면','비고'],recent,9)+'</div></details></div>'+rangeNote(R);
+    body.innerHTML=h;
+    // 사이트 차트(오늘이면 시간대별)
+    var sv=X.cur.filter(isSiteView),HR=[];
+    if(TODAY){var nowH=new Date().getHours();for(var hh=0;hh<=nowH;hh++)HR.push('h'+hh);}
+    function hk(e){return 'h'+new Date(e.created_at).getHours();}
+    function dk(e){return dstr(e.created_at);}
+    function sid(e){return e.session_id;}
+    document.getElementById('hsite').innerHTML=TODAY?barChart(HR,perDayUniq(sv,{days:HR},hk,sid),'#2F6E58','명'):barChart(R.days,perDayUniq(sv,R,dk,sid),'#2F6E58','명');
+    groupbuyCard();
+    loadAppAll().then(function(AA){
+      var s0=dstr(R.start),e0=dstr(R.end);
+      function instIn(a0,b0){return Object.keys(AA.inst).filter(function(k){return AA.inst[k]>=a0&&AA.inst[k]<b0;}).length;}
+      var nI=instIn(s0,e0),pI=instIn(dstr(R.pstart),dstr(R.pend)),vI=vA.filter(function(k){return AA.inst[k]&&AA.inst[k]<e0;}).length;
+      document.getElementById('hfun').innerHTML=funnel([['🌱 사이트에 들어온 사람',cnt(V),'','#2F6E58'],['📲 그중 스터디 앱도 연 사람',vA.length,'','#4F9A72'],['🏠 그중 홈 화면에 설치한 사람',vI,'설치 앱으로 연 적 있음','#B87343']])+
+        '<p class="hint" style="margin-top:8px">사이트를 거치지 않고 스터디 앱으로 바로 온 사람: <b>'+Object.keys(A).filter(function(k){return !V[k];}).length+'명</b> (카톡·인스타 링크, 설치 앱 등)</p>';
+      var hi=document.getElementById('hinst');if(hi)hi.outerHTML=kpi('새로 설치',nI,TODAY?null:pI,R,'명');
+      function drawApp(){var v=document.getElementById('hap').value,el=document.getElementById('hachart');
+        if(TODAY){var lst=X.cur.filter(isAppView);
+          el.innerHTML=v==='i'?barChart(R.days,[nI],'#B87343','명'):barChart(HR,perDayUniq(lst,{days:HR},hk,sid),'#6A4A8A','명');return;}
+        if(v==='i')el.innerHTML=barChart(R.days,R.days.map(function(d){return Object.keys(AA.inst).filter(function(k){return AA.inst[k]===d;}).length;}),'#B87343','명');
+        else el.innerHTML=barChart(R.days,R.days.map(function(d){return cnt(AA.byDay[d]||{});}),'#6A4A8A','명');}
+      document.getElementById('hap').onchange=drawApp;drawApp();
+      // 전체 기간
+      var ds=Object.keys(AA.byDay).sort(),total=Object.keys(AA.first).length,ti=Object.keys(AA.inst).length;
+      if(!ds.length){document.getElementById('hallk').innerHTML='<p class="empty">아직 데이터가 없어요.</p>';return;}
+      var days=[],today=dstr(new Date());for(var d=new Date(ds[0]+'T00:00:00');dstr(d)<=today;d=addDays(d,1))days.push(dstr(d));
+      var newBy={},iBy={};Object.keys(AA.first).forEach(function(k){newBy[AA.first[k]]=(newBy[AA.first[k]]||0)+1;});Object.keys(AA.inst).forEach(function(k){iBy[AA.inst[k]]=(iBy[AA.inst[k]]||0)+1;});
+      var cum=[],ci=[],c=0,c2=0;days.forEach(function(x){c+=newBy[x]||0;c2+=iBy[x]||0;cum.push(c);ci.push(c2);});
+      var d7=dstr(addDays(new Date(),-6)),act7={},nw=0;days.forEach(function(x){if(x<d7)return;nw+=newBy[x]||0;Object.keys(AA.byDay[x]||{}).forEach(function(k){act7[k]=1;});});
+      document.getElementById('hallk').innerHTML=
+        '<div class="kpi"><div class="l">지금까지 앱 쓴 사람</div><div class="n">'+total+'<small>명</small></div><div class="s">'+md(ds[0])+'부터 · 최근 7일 새로 '+nw+'명</div></div>'+
+        '<div class="kpi"><div class="l">최근 7일 앱 연 사람</div><div class="n">'+cnt(act7)+'<small>명</small></div><div class="s">전체의 '+(total?Math.round(cnt(act7)/total*100):0)+'%</div></div>'+
+        '<div class="kpi"><div class="l">홈 화면에 설치</div><div class="n">'+ti+'<small>명</small></div><div class="s">11/8부터 집계</div></div>';
+      function weeks(){var o=[],v=[];for(var i=0;i<days.length;i+=7){var w=days.slice(i,i+7),u={};w.forEach(function(x){Object.keys(AA.byDay[x]||{}).forEach(function(k){u[k]=1;});});o.push(w[0]);v.push(cnt(u));}return [o,v];}
+      function drawAll(){var v=document.getElementById('hall').value,el=document.getElementById('hallchart');
+        if(v==='c')el.innerHTML=lineChart(days,cum,'#245648','명');
+        else if(v==='i')el.innerHTML=lineChart(days,ci,'#B87343','명');
+        else if(v==='w'){var w=weeks();el.innerHTML=barChart(w[0],w[1],'#4F9A72','명')+'<p class="hint">막대 하나 = 일주일(아래 날짜부터 7일), 그 주에 앱을 연 사람 수</p>';}
+        else el.innerHTML=barChart(days,days.map(function(x){return cnt(AA.byDay[x]||{});}),'#6A4A8A','명');}
+      document.getElementById('hall').onchange=drawAll;drawAll();
+    }).catch(function(e){var el=document.getElementById('hfun');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
+  }
   // 나이테 (유입)
   function renderNaite(body,X){
     var R=X.R;
