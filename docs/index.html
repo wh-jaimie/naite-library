@@ -188,6 +188,15 @@ a{color:inherit;text-decoration:none}
 .chan small{color:var(--soft);font-size:.85rem;flex:1}
 .chan small em{font-style:normal;font-weight:800;color:#B0306A}
 .chan .cgo{margin-top:10px;font-weight:800;font-size:.88rem}
+/* 함께하기 안 '스터디 앱 보러가기' — 자료는 앱으로 배포(2026-11-08) */
+.capp{display:flex;align-items:center;gap:12px;margin-top:14px;padding:15px 18px;background:var(--pine);color:#fff;border-radius:16px;text-decoration:none;transition:transform .15s}
+.capp:hover{transform:translateY(-2px)}
+.capp .ic{font-size:1.6rem;line-height:1}
+.capp .tx{flex:1 1 0;min-width:0}
+.capp b{display:block;font-size:1rem}
+.capp small{display:block;color:rgba(255,255,255,.8);font-size:.84rem;margin-top:2px}
+.capp .go{margin-left:auto;font-weight:800;white-space:nowrap;background:#fff;color:var(--pine);padding:8px 13px;border-radius:999px;font-size:.88rem}
+@media(max-width:520px){.capp{flex-wrap:wrap}.capp .go{margin-left:0;width:100%;text-align:center}}
 .ch-kakao{border-color:#F2DA4A}.ch-kakao .cgo{color:#7A6400}
 .ch-ig{border-color:#E7A9C6}.ch-ig .cgo{color:#B0306A}
 .ch-dg{border-color:#F4B183}.ch-dg .cgo{color:#C2560E}
@@ -373,6 +382,7 @@ a{color:inherit;text-decoration:none}
       <a class="chan ch-dg" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">
         <span class="ci">🥕</span><b>당근모임</b><small>근처에 사는 엄마들을 만나요</small><span class="cgo">당근모임 구경하기 →</span></a>
     </div>
+    <a class="capp" data-app="month" data-cta="comm_app" href="record/"><span class="ic">📚</span><span class="tx"><b>스터디 자료는 스터디 앱에서 받아요</b><small>이번 달 5권 · 읽어주기 팁 · 영상 · 워크지 · 읽기 기록</small></span><span class="go">스터디 앱 보러가기 →</span></a>
   </section>
 
   <section class="sec" style="padding-top:36px">

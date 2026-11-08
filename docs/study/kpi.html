@@ -329,7 +329,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     app_installed:'설치 완료',camera_fail:'카메라 실패',photo_reload:'사진 다시 불러오기'};
   var TABN={study:'📘 이번 달 자료',shelf:'📖 읽기 기록',stats:'📖 읽기 기록',c120:'🌳 나이테 120',shop:'🛒 국내 인기 책장'};
   var MAINCTA={hero_month:'첫 화면 · 이번 달 책 5권',hero_shop:'첫 화면 · 국내 인기 책장',month_study:'이번 달 5권 → 스터디 앱',find_shop:'책 찾기 · 국내 인기 책장',find_c120:'책 찾기 · 나이테 120',
-    road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 스터디방'};
+    road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 함께하기',comm_app:'함께하기 · 스터디 앱 보러가기'};
   // 사이트 방문 = 공개 페이지 page_view. 스터디 앱 안에서 연 120·책장(src=record)은 앱 사용이라 뺌
   function isSiteView(e){return e.type==='page_view'&&isPublic(e)&&!(e.meta&&e.meta.src==='record');}
   function isAppView(e){return e.type==='page_view'&&appOf(e)==='record';}
