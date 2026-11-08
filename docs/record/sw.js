@@ -15,3 +15,20 @@ self.addEventListener('fetch', function(e){
     :fetch(req,{cache:'no-cache'});
   e.respondWith(p.catch(function(){return fetch(req);}));
 });
+
+// 푸시 알림(2026-11-08): 관리자가 보낸 알림을 띄우고, 누르면 그 화면을 엶(이미 열린 앱 창이 있으면 그 창으로)
+self.addEventListener('push', function(e){
+  var d={};try{d=e.data?e.data.json():{};}catch(x){d={title:'나이테 스터디',body:e.data?e.data.text():''};}
+  e.waitUntil(self.registration.showNotification(d.title||'나이테 스터디',{
+    body:d.body||'',icon:'/naite-library/icon-192.png',badge:'/naite-library/icon-192.png',
+    tag:d.tag||'naite',data:{url:d.url||'/naite-library/record/app.html'}
+  }));
+});
+self.addEventListener('notificationclick', function(e){
+  e.notification.close();
+  var url=new URL((e.notification.data&&e.notification.data.url)||'/naite-library/record/app.html',self.location.origin).href;
+  e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(cs){
+    for(var i=0;i<cs.length;i++){var c=cs[i];if(c.url.indexOf('/naite-library/record/')>=0&&'focus' in c){return c.navigate(url).then(function(w){return (w||c).focus();}).catch(function(){return c.focus();});}}
+    return self.clients.openWindow(url);
+  }));
+});

@@ -139,6 +139,9 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .pn-top button{border:1px solid var(--line);background:var(--surface);font:inherit;font-weight:800;font-size:.85rem;padding:7px 12px;border-radius:9px;cursor:pointer;color:var(--tealD)}
 .pn-top b{font-family:'Gowun Batang',Georgia,serif;font-size:1.1rem}
 .pn-body{max-width:720px;margin:0 auto;padding:14px 16px 60px}
+.pushbox{display:flex;flex-direction:column;gap:3px;background:#FFF8E8;border:1px solid #EBDDB9;border-radius:14px;padding:12px 14px;margin:8px 0 4px}
+.pushbox .pb-t{font-weight:800;font-size:.92rem}.pushbox .pb-t em{font-style:normal;font-size:.75rem;color:#2F6E58;background:#E3F0E8;border-radius:999px;padding:2px 8px;margin-left:4px}
+.pushbox .pb-s{font-size:.82rem;color:var(--soft)}.pushbox .wbtn{align-self:flex-start;margin-top:6px;display:inline-block;border:1px solid var(--line);background:#fff;font:inherit;font-size:.82rem;font-weight:800;color:var(--tealD);padding:6px 12px;border-radius:999px;cursor:pointer}.pushbox .wbtn.pb-on{background:var(--tealD);color:#fff;border-color:var(--tealD)}
 .nitem{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;box-shadow:var(--sh)}
 .nitem.new{border-color:#E7CF9E}
 .nitem .nh2{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
@@ -1209,16 +1212,57 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     try{var r=await client.rpc('list_app_notices',{p_code:window.NaiteReading.getCode()});if(r.error)return;NEWS=r.data||[];}catch(e){return;}
     paintNewsBar();
   }
+  // ---------- 푸시 알림(2026-11-08): 새 자료·공지 알림 받기 ----------
+  // 알림 주소는 Supabase push_subs(save_push_sub)에, 발송은 Edge Function send-push가 함(관리 페이지에서 보냄)
+  // 아이폰은 홈 화면에 추가한 앱에서만 됨(사파리 탭에는 PushManager가 없음)
+  var PUSH_FN=window.SUPA_URL+'/functions/v1/send-push',PUSH_EP_KEY='naite_push_ep';
+  function pushOK(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;}
+  function isIOS(){return /iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+  async function pushSub(){if(!pushOK())return null;try{var r=await navigator.serviceWorker.getRegistration('/naite-library/record/');return r?await r.pushManager.getSubscription():null;}catch(e){return null;}}
+  function b64u(s){var p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/')),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+  var PUSH_KEY=null;function pushKey(){if(!PUSH_KEY)PUSH_KEY=fetch(PUSH_FN,{headers:{apikey:window.SUPA_ANON}}).then(function(r){return r.ok?r.json():null;}).then(function(j){return j&&j.publicKey||null;}).catch(function(){return null;});return PUSH_KEY;}
+  async function pushOn(){
+    var perm=await Notification.requestPermission();
+    if(perm!=='granted'){logEvent('push_denied',{});throw new Error(perm==='denied'?'denied':'dismissed');}
+    var pk=await pushKey();if(!pk)throw new Error('준비 중이에요');var k={publicKey:pk};
+    var reg=await navigator.serviceWorker.register('sw.js',{scope:'/naite-library/record/',updateViaCache:'none'});await navigator.serviceWorker.ready;
+    var sub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k.publicKey)});
+    var j=sub.toJSON(),rd='';try{rd=localStorage.getItem('naite_reader')||'';}catch(e){}
+    var r=await client.rpc('save_push_sub',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_reader:rd,p_ua:(isIOS()?'ios ':'')+navigator.userAgent.slice(0,150)});
+    if(r.error)throw r.error;
+    lsSet(PUSH_EP_KEY,j.endpoint);logEvent('push_on',{});
+  }
+  async function pushOff(){var sub=await pushSub();if(sub){try{await client.rpc('remove_push_sub',{p_endpoint:sub.endpoint});}catch(e){}try{await sub.unsubscribe();}catch(e){}}lsSet(PUSH_EP_KEY,'');logEvent('push_off',{});}
+  function pushBoxHTML(){return '<div class="pushbox" data-pushbox><span class="pb-t">🔔 새 자료·공지 알림</span><span class="pb-s">확인 중…</span></div>';}
+  async function paintPush(){
+    var boxes=document.querySelectorAll('[data-pushbox]');if(!boxes.length)return;
+    // 알림 함수(send-push)가 아직 없으면 알림 칸을 통째로 숨김
+    if(!(await pushKey())){document.querySelectorAll('[data-pushli],[data-pushbox]').forEach(function(x){x.hidden=true;});return;}
+    var html;
+    if(!pushOK())html='<span class="pb-t">🔔 새 자료·공지 알림</span><span class="pb-s">'+(isIOS()?'아이폰은 <b>홈 화면에 추가한 앱</b>에서 알림을 켤 수 있어요.':'이 브라우저는 알림을 지원하지 않아요.')+'</span>';
+    else if(Notification.permission==='denied')html='<span class="pb-t">🔔 알림이 꺼져 있어요</span><span class="pb-s">폰 설정 › 알림에서 이 앱(또는 브라우저) 알림을 허용하면 받을 수 있어요.</span>';
+    else{var on=Notification.permission==='granted'&&!!(await pushSub());
+      html='<span class="pb-t">🔔 새 자료·공지 알림 '+(on?'<em>받는 중</em>':'')+'</span><span class="pb-s">'+(on?'새 달 자료가 열리거나 공지가 올라오면 알려 드려요.':'새 달 자료가 열리거나 공지가 올라오면 알려 드려요. 자주 보내지 않아요.')+'</span>'+
+        '<button type="button" class="wbtn'+(on?'':' pb-on')+'" data-push="'+(on?'off':'on')+'">'+(on?'알림 끄기':'🔔 알림 받기')+'</button>';}
+    boxes.forEach(function(b){b.innerHTML=html;});
+  }
+  document.addEventListener('click',async function(e){var t=e.target.closest('[data-push]');if(!t)return;e.preventDefault();
+    var on=t.getAttribute('data-push')==='on';t.disabled=true;t.textContent=on?'켜는 중…':'끄는 중…';
+    try{if(on)await pushOn();else await pushOff();if(window.NaiteReading&&window.NaiteReading.toast)window.NaiteReading.toast(on?'🔔 알림을 켰어요':'알림을 껐어요');}
+    catch(err){var m=String(err&&err.message||err);alert(m==='denied'?'알림이 막혀 있어요. 폰 설정 › 알림에서 허용해 주세요.':m==='dismissed'?'알림 허용을 누르면 받을 수 있어요.':'알림을 켜지 못했어요: '+m);}
+    paintPush();});
+
   function newsHTML(){
     var s=seenId();
-    if(!NEWS.length)return '<p style="color:var(--soft);text-align:center;padding:40px 0">아직 올라온 공지가 없어요.</p>';
-    return NEWS.map(function(n){return '<div class="nitem'+(n.id>s?' new':'')+'"><div class="nh2"><h3>'+(n.pinned?'📌 ':'')+(n.id>s?'🆕 ':'')+esc(n.title||'공지')+'</h3><span class="nd">'+esc(fmtDay(n.created_at))+'</span></div><div class="nb">'+linkify(n.body||'')+'</div></div>';}).join('');
+    if(!NEWS.length)return pushBoxHTML()+'<p style="color:var(--soft);text-align:center;padding:40px 0">아직 올라온 공지가 없어요.</p>';
+    return pushBoxHTML()+NEWS.map(function(n){return '<div class="nitem'+(n.id>s?' new':'')+'"><div class="nh2"><h3>'+(n.pinned?'📌 ':'')+(n.id>s?'🆕 ':'')+esc(n.title||'공지')+'</h3><span class="nd">'+esc(fmtDay(n.created_at))+'</span></div><div class="nb">'+linkify(n.body||'')+'</div></div>';}).join('');
   }
   function welcomeHTML(){
     var inst=window.NaiteReading.isStandalone();
     return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
       '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
         '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 책·기록·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
+        '<li data-pushli><b>새 자료·공지 알림 받기 (선택)</b>'+pushBoxHTML()+'</li>'+
         '<li><b>함께하면 더 좋아요 (선택)</b><span class="wsub">카톡 스터디방에서는 인증하고 고민을 나눠요. 인스타에서는 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~ 당근모임에서는 근처에 사는 엄마들을 만날 수 있어요 😊</span><a class="wbtn" href="../join.html?from=app">💬 스터디방 둘러보기</a> <a class="wbtn" data-ig="welcome" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 @naite_library</a> <a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 구경하기</a></li>'+
       '</ol></div>'+
       '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
@@ -1253,7 +1297,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     if(!pn){pn=document.createElement('div');pn.id='pn';pn.className='pn';pn.setAttribute('role','dialog');
       pn.innerHTML='<div class="pn-top"><button type="button" data-pnclose>← 닫기</button><b id="pnT"></b></div><div class="pn-body" id="pnB"></div>';document.body.appendChild(pn);}
     document.getElementById('pnT').textContent=kind==='news'?'📢 공지':'🌱 처음 오셨나요?';
-    document.getElementById('pnB').innerHTML=kind==='news'?newsHTML():welcomeHTML();
+    document.getElementById('pnB').innerHTML=kind==='news'?newsHTML():welcomeHTML();paintPush();
     pn.hidden=false;pn.scrollTop=0;document.body.style.overflow='hidden';
     try{history.replaceState(history.state,'',location.pathname+location.search+'#'+kind);}catch(e){}
     if(kind==='news'&&NEWS.length){lsSet(NEWS_SEEN_KEY,String(Math.max.apply(null,NEWS.map(function(n){return n.id;}))));paintNewsBar();}
