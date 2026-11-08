@@ -288,10 +288,13 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var el=document.getElementById('instcard');if(!el)return;
     try{
       var ev=await pageAll(function(){return client.from('events').select('type,session_id,created_at').or('type.eq.app_installed,meta->>pwa.eq.1').order('created_at',{ascending:true});});
+      // 스터디 앱을 한 번이라도 연 폰(설치 앱·브라우저 모두) — 전체 기간 2026-11-08
+      var allOpen={};try{(await pageAll(function(){return client.from('events').select('session_id').eq('type','page_view').like('path','%/record/%').order('created_at',{ascending:true});})).forEach(function(e){if(e.session_id)allOpen[e.session_id]=1;});}catch(e){allOpen=null;}
       var first={},todayOpen={},td=dstr(new Date()),yd=dstr(addDays(new Date(),-1)),wk=dstr(addDays(new Date(),-6));
       ev.forEach(function(e){var k=e.session_id;if(!k)return;var d=dstr(e.created_at);if(!first[k]||d<first[k])first[k]=d;if(d===td&&e.type==='page_view')todayOpen[k]=1;});
       var ids=Object.keys(first),nT=ids.filter(function(k){return first[k]===td;}).length,nY=ids.filter(function(k){return first[k]===yd;}).length,nW=ids.filter(function(k){return first[k]>=wk;}).length;
-      el.innerHTML='<h3>📲 앱 설치 <span class="hint">홈 화면에 추가한 폰 · 전체 기간</span></h3><div class="kgrid">'+
+      el.innerHTML='<h3>📲 스터디 앱 · 설치 <span class="hint">전체 기간</span></h3><div class="kgrid">'+
+        '<div class="kpi"><div class="l">스터디 앱 연 폰 (전체 기간)</div><div class="n">'+(allOpen?cnt(allOpen):'–')+'<small>대</small></div><div class="s">설치 앱·브라우저 모두</div></div>'+
         '<div class="kpi"><div class="l">설치한 폰 (누적)</div><div class="n">'+ids.length+'<small>대</small></div></div>'+
         '<div class="kpi"><div class="l">오늘 새로 설치</div><div class="n">'+nT+'<small>대</small></div><div class="s">어제 '+nY+'대 · 최근 7일 '+nW+'대</div></div>'+
         '<div class="kpi"><div class="l">오늘 설치 앱으로 연 폰</div><div class="n">'+cnt(todayOpen)+'<small>대</small></div></div></div>'+
