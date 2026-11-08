@@ -125,14 +125,14 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['books','📚 이번 달 책']];
-  var PERIODS=[['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
+  var PERIODS=[['today','오늘'],['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
   try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
 
   // ---------- 공통 유틸 ----------
   function pad(n){return (n<10?'0':'')+n;}
   function dstr(x){var d=new Date(x);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-  function md(s){var p=s.split('-');return (+p[1])+'/'+(+p[2]);}
+  function md(s){if(/^h\d+$/.test(s))return s.slice(1)+'시';var p=s.split('-');return (+p[1])+'/'+(+p[2]);}
   function cnt(o){return Object.keys(o).length;}
   function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
   function midnight(d){var x=new Date(d);x.setHours(0,0,0,0);return x;}
@@ -169,11 +169,15 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       // 비교는 지난달의 '같은 날짜까지'(예: 10/1~16 ↔ 9/1~16) — 진행 중인 달을 지난달 전체와 비교하면 늘 줄어 보임
       pstart=new Date(y,m-1,1);pend=new Date(y,m-1,1+Math.round((end-start)/864e5));if(pend>start)pend=start;
       label=(m+1)+'월'+(meta.ko?' '+(meta.emoji||'')+' '+meta.ko:'');plabel='지난달 같은 기간';
+    }else if(S.period==='today'){
+      // 오늘 하루(0시~지금). 비교는 어제 같은 시각까지 — 진행 중인 하루를 어제 하루 전체와 비교하면 늘 줄어 보임. 읽기 기록은 날짜만 있어 어제 하루 전체와 비교 — 2026-11-06
+      start=midnight(now);end=addDays(start,1);pstart=addDays(start,-1);pend=new Date(pstart.getTime()+(now-start));
+      label='오늘';plabel='어제 이 시각까지';var lpend=start;
     }else{
       var n=+S.period;start=addDays(end,-n);pstart=addDays(start,-n);pend=start;label='최근 '+n+'일';plabel='이전 '+n+'일';
     }
     var days=[];for(var d=new Date(start);d<end;d=addDays(d,1))days.push(dstr(d));
-    return {start:start,end:end,pstart:pstart,pend:pend,label:label,plabel:plabel,days:days};
+    return {start:start,end:end,pstart:pstart,pend:pend,lpend:lpend||pend,label:label,plabel:plabel,days:days};
   }
   function inR(ts,a,b){var t=new Date(ts);return t>=a&&t<b;}
   function inRd(ds,a,b){return ds>=dstr(a)&&ds<dstr(b);} // read_on(YYYY-MM-DD)이 [a, b) 안인지
@@ -273,12 +277,27 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     if(S.tab==='books'){await renderBooks(body);return;}
     var R=periodRange(),D=await loadPeriod();
     var cur=D.ev.filter(function(e){return inR(e.created_at,R.start,R.end);}),prv=D.ev.filter(function(e){return inR(e.created_at,R.pstart,R.pend);});
-    var lc=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.start,R.end);}):null,lp=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.pstart,R.pend);}):null;
+    var lc=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.start,R.end);}):null,lp=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.pstart,R.lpend);}):null;
     var X={R:R,cur:cur,prv:prv,lc:lc,lp:lp,all:D.ev};
     if(S.tab==='naite')renderNaite(body,X);else if(S.tab==='record')renderRecord(body,X);else renderHome(body,X);
   }
-  function rangeNote(R){return '<p class="hint" style="margin:10px 2px 0">기간: <b>'+esc(R.label)+'</b> ('+md(R.days[0])+' ~ '+md(R.days[R.days.length-1])+') · 비교: '+R.plabel+'. 관리자 로그인 기기와 ?notrack=1 기기는 집계에서 빠져요.</p>';}
+  function rangeNote(R){return '<p class="hint" style="margin:10px 2px 0">기간: <b>'+esc(R.label)+'</b> ('+(R.days.length===1?md(R.days[0]):md(R.days[0])+' ~ '+md(R.days[R.days.length-1]))+') · 비교: '+R.plabel+'. 관리자 로그인 기기와 ?notrack=1 기기는 집계에서 빠져요.</p>';}
 
+  // 앱 설치(2026-11-08~): 홈 화면 앱으로 연 page_view(meta.pwa=1) 또는 app_installed 이벤트. 폰(session_id)마다 처음 잡힌 날 = 설치일. 전체 기간
+  async function installCard(){
+    var el=document.getElementById('instcard');if(!el)return;
+    try{
+      var ev=await pageAll(function(){return client.from('events').select('type,session_id,created_at').or('type.eq.app_installed,meta->>pwa.eq.1').order('created_at',{ascending:true});});
+      var first={},todayOpen={},td=dstr(new Date()),yd=dstr(addDays(new Date(),-1)),wk=dstr(addDays(new Date(),-6));
+      ev.forEach(function(e){var k=e.session_id;if(!k)return;var d=dstr(e.created_at);if(!first[k]||d<first[k])first[k]=d;if(d===td&&e.type==='page_view')todayOpen[k]=1;});
+      var ids=Object.keys(first),nT=ids.filter(function(k){return first[k]===td;}).length,nY=ids.filter(function(k){return first[k]===yd;}).length,nW=ids.filter(function(k){return first[k]>=wk;}).length;
+      el.innerHTML='<h3>📲 앱 설치 <span class="hint">홈 화면에 추가한 폰 · 전체 기간</span></h3><div class="kgrid">'+
+        '<div class="kpi"><div class="l">설치한 폰 (누적)</div><div class="n">'+ids.length+'<small>대</small></div></div>'+
+        '<div class="kpi"><div class="l">오늘 새로 설치</div><div class="n">'+nT+'<small>대</small></div><div class="s">어제 '+nY+'대 · 최근 7일 '+nW+'대</div></div>'+
+        '<div class="kpi"><div class="l">오늘 설치 앱으로 연 폰</div><div class="n">'+cnt(todayOpen)+'<small>대</small></div></div></div>'+
+        '<p class="hint">11월 8일부터 세기 시작했어요. 그 전에 설치한 폰은 설치한 앱으로 다시 열 때 그날 ‘새로 설치’로 잡혀서, 처음 며칠은 오늘 설치 숫자가 실제보다 많을 수 있어요. 아이폰은 사파리와 설치 앱이 따로라 같은 폰이 두 번 셀 수 있어요.</p>';
+    }catch(e){el.innerHTML='<h3>📲 앱 설치</h3><div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';}
+  }
   // 공동구매 관심(events.groupbuy_interest, meta.theme_key) — 주제별 관심 기기 수, 전체 기간
   async function groupbuyCard(){
     var el=document.getElementById('gbcard');if(!el)return;
@@ -322,6 +341,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       kpi('✅ 읽기 기록',X.lc?X.lc.length:'–',X.lp?X.lp.length:null,R)+
       kpi('💬 스터디방 참여 클릭 (보조)',a.join,b.join,R)+
     '</div>'+rangeNote(R)+'</div>'+
+    '<div class="card" id="instcard"><h3>📲 앱 설치</h3><p class="status">불러오는 중…</p></div>'+
     '<div class="card" id="gbcard"><h3>🛍 공동구매 관심 <span class="hint">메인 ‘관심 있어요’ · 기기당 1번 · 전체 기간</span></h3><p class="status">불러오는 중…</p></div>';
     var M={visitors:['나이테 방문자','#2F6E58',function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;});}],
       cta:['메인 버튼 클릭','#8A6D2F',function(){return perDay(X.cur.filter(function(e){return e.type==='cta_click';}),R,function(e){return dstr(e.created_at);});}],
@@ -331,13 +351,24 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       readers:['기록한 폰','#4F9A72',function(){return X.lc?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):R.days.map(function(){return 0;});}],
       reads:['읽기 기록','#245648',function(){return X.lc?perDay(X.lc,R,function(l){return l.read_on;}):R.days.map(function(){return 0;});}],
       buy:['쿠팡 클릭','#a2231d',function(){return perDay(X.cur.filter(function(e){return e.type==='buy_click';}),R,function(e){return dstr(e.created_at);});}]};
-    h+='<div class="card"><div class="shd"><h3>📈 날짜별 추이</h3><select class="t sm r" id="hm">'+Object.keys(M).map(function(k){return '<option value="'+k+'">'+M[k][0]+'</option>';}).join('')+'</select></div><div id="hchart"></div>'+
-      '<p class="hint">막대에 마우스를 올리면 그날 숫자가 보여요. 주황 막대는 오늘이에요.</p></div>';
+    var TODAY=S.period==='today',HR={days:[]};
+    if(TODAY){ // 오늘은 시간대별(0시~지금). 읽기 기록은 날짜만 있어 시간대별로 못 나눔 → 목록에서 뺌
+      var nowH=new Date().getHours();for(var hh=0;hh<=nowH;hh++)HR.days.push('h'+hh);
+      var hk=function(e){return 'h'+new Date(e.created_at).getHours();},sid=function(e){return e.session_id;};
+      M={visitors:['나이테 방문자',M.visitors[1],function(){return perDayUniq(X.cur.filter(function(e){return isPublic(e)&&e.type==='page_view';}),HR,hk,sid);}],
+        opens:['스터디 앱 연 폰',M.opens[1],function(){return perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),HR,hk,sid);}],
+        cta:['메인 버튼 클릭',M.cta[1],function(){return perDay(X.cur.filter(function(e){return e.type==='cta_click';}),HR,hk);}],
+        buy:['쿠팡 클릭',M.buy[1],function(){return perDay(X.cur.filter(function(e){return e.type==='buy_click';}),HR,hk);}],
+        gb:['공동구매 관심',M.gb[1],function(){return perDay(X.cur.filter(function(e){return e.type==='groupbuy_interest';}),HR,hk);}],
+        join:['스터디 참여 클릭',M.join[1],function(){return perDay(X.cur.filter(function(e){return e.type==='join_click';}),HR,hk);}]};
+    }
+    h+='<div class="card"><div class="shd"><h3>'+(TODAY?'🕘 오늘 시간대별':'📈 날짜별 추이')+'</h3><select class="t sm r" id="hm">'+Object.keys(M).map(function(k){return '<option value="'+k+'">'+M[k][0]+'</option>';}).join('')+'</select></div><div id="hchart"></div>'+
+      '<p class="hint">'+(TODAY?'막대 하나 = 한 시간(0시부터 지금까지). 읽기 기록은 날짜만 남아서 시간대별로는 안 보여요.':'막대에 마우스를 올리면 그날 숫자가 보여요. 주황 막대는 오늘이에요.')+'</p></div>';
     var recent=X.all.slice(0,40).map(function(e){return [esc(new Date(e.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})),esc(e.type),esc(pageOf(e)),esc((e.meta&&(e.meta.title||e.meta.from||e.meta.seconds))||'')];});
     h+='<div class="card"><details class="raw"><summary>원본 이벤트 (최근 40개)</summary><div style="margin-top:10px">'+table(['시각','유형','화면','비고'],recent,9)+'</div></details></div>';
     body.innerHTML=h;
-    var sel=document.getElementById('hm');function draw(){var x=M[sel.value];document.getElementById('hchart').innerHTML=barChart(R.days,x[2](),x[1]);}
-    groupbuyCard();
+    var sel=document.getElementById('hm');function draw(){var x=M[sel.value];document.getElementById('hchart').innerHTML=barChart(TODAY?HR.days:R.days,x[2](),x[1]);}
+    groupbuyCard();installCard();
     sel.onchange=draw;draw();
   }
 

@@ -1096,7 +1096,9 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
       box.innerHTML='<div class="sd-back"><span>지난 달 <b>'+esc(theme.ko)+'</b> 자료를 보고 있어요</span><a href="app.html" data-sdback>이번 달로 돌아가기 '+ic('right',14)+'</a></div>';
       box.querySelector('[data-sdback]').addEventListener('click',function(){try{localStorage.setItem('naite_last_tab','study');}catch(e){}});
     },function(){});
-    logEvent('page_view',{theme:theme.ko});
+    // pwa:1 = 홈 화면에 설치한 앱으로 연 것 → KPI '설치한 폰' 집계(처음 설치 앱으로 연 날 = 설치일) — 2026-11-08
+    logEvent('page_view',{theme:theme.ko,pwa:window.NaiteReading&&window.NaiteReading.isStandalone()?1:0});
+    if(!window.__naiteInstEv){window.__naiteInstEv=1;window.addEventListener('appinstalled',function(){logEvent('app_installed',{});});}
     // 체류시간
     var start=Date.now();
     document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden'){logEvent('dwell',{seconds:Math.round((Date.now()-start)/1000)});}});
