@@ -129,6 +129,7 @@ a{color:var(--tealD)}
 .sharebtn{border:0;background:linear-gradient(135deg,var(--coral),#D1965C);color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:var(--sh)}
 @media (max-width:420px){.top .brand span.t{display:none}.top a.back{padding:7px 10px}.sharebtn{padding:8px 11px}}
 .more{margin-top:6px}.more summary{cursor:pointer;color:var(--tealD);font-weight:800;font-size:.85rem;list-style:none}.more summary::-webkit-details-marker{display:none}.more[open] summary{margin-bottom:4px}.more .mbody{color:var(--soft);font-size:.88rem;line-height:1.7;max-width:62ch}
+.roadbn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0 8px;padding:11px 14px;border-radius:12px;background:#F3E7DA;border:1px solid #E6D3C0;color:#7A4520;font-weight:800;font-size:.92rem;text-decoration:none}
 .hero{padding:10px 0 6px}
 .hero .eyebrow{color:var(--coral);font-weight:800;font-size:.85rem}
 .hero h1{font-size:clamp(1.5rem,5vw,2rem);margin-top:2px}
@@ -205,6 +206,7 @@ a{color:var(--tealD)}
     <p>국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·종류로 골라 보세요.</p>
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</div></details></div>
 </div>
+<div class="wrap"><a class="roadbn" href="road.html" target="_blank" rel="noopener" data-cta="shop_road">📖 나이테가 실제로 써 본 책, 세트 보기 <span>›</span></a></div>
 <div class="bar"><div class="wrap">
   <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select><button type="button" class="fbtn" id="fopen">필터<b id="fcnt" hidden></b></button></div>
   <div class="chips quick" data-g="age"></div>
