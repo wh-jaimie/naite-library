@@ -129,7 +129,6 @@ a{color:var(--tealD)}
 .sharebtn{border:0;background:linear-gradient(135deg,var(--coral),#D1965C);color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:var(--sh)}
 @media (max-width:420px){.top .brand span.t{display:none}.top a.back{padding:7px 10px}.sharebtn{padding:8px 11px}}
 .more{margin-top:6px}.more summary{cursor:pointer;color:var(--tealD);font-weight:800;font-size:.85rem;list-style:none}.more summary::-webkit-details-marker{display:none}.more[open] summary{margin-bottom:4px}.more .mbody{color:var(--soft);font-size:.88rem;line-height:1.7;max-width:62ch}
-.roadbn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0 8px;padding:11px 14px;border-radius:12px;background:#F3E7DA;border:1px solid #E6D3C0;color:#7A4520;font-weight:800;font-size:.92rem;text-decoration:none}
 .hero{padding:10px 0 6px}
 .hero .eyebrow{color:var(--coral);font-weight:800;font-size:.85rem}
 .hero h1{font-size:clamp(1.5rem,5vw,2rem);margin-top:2px}
@@ -176,6 +175,8 @@ a{color:var(--tealD)}
 .count button{border:0;background:none;color:var(--coral);font:inherit;font-weight:800;cursor:pointer;padding:0 0 0 6px}
 .grid{display:grid;grid-auto-flow:row dense;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;padding-bottom:40px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;min-width:0}
+.card:has(a.cvl){cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 3px rgba(35,41,31,.24),0 6px 14px rgba(35,41,31,.28);transition:transform .1s,box-shadow .1s}
+.card:has(a.cvl):active{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26)}
 .cv{position:relative;aspect-ratio:3/4;background:#EBEDE3;display:block}
 .cv img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
 .cv .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;color:#fff;font-family:'Gowun Batang',serif;font-weight:700;background:linear-gradient(150deg,var(--teal),var(--tealD))}
@@ -194,7 +195,8 @@ a{color:var(--tealD)}
 .buy{display:block;text-align:center;text-decoration:none;font-weight:800;font-size:.82rem;border-radius:9px;padding:8px 6px;margin-top:6px}
 .buy.cp{background:var(--coral);color:#fff}
 .buy.find{border:1px solid var(--line);color:var(--soft);background:#fff}
-.copy{display:block;width:100%;margin-top:5px;border:0;background:none;color:var(--tealD);font:inherit;font-weight:800;font-size:.78rem;padding:4px;cursor:pointer}
+.copy{display:inline-grid;place-items:center;vertical-align:-3px;width:22px;height:22px;margin-left:4px;padding:0;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--tealD);cursor:pointer}
+.cptoast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:#23291F;color:#fff;font-size:.82rem;padding:9px 14px;border-radius:10px;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.28)}
 .copy.ok{color:var(--coral)}
 .empty{padding:40px 0;text-align:center;color:var(--soft)}
 .foot{font-size:.76rem;color:var(--soft);padding:0 0 40px}
@@ -206,7 +208,6 @@ a{color:var(--tealD)}
     <p>국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·종류로 골라 보세요.</p>
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 보고, 쿠팡에서 바로 확인할 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</div></details></div>
 </div>
-<div class="wrap"><a class="roadbn" href="road.html" target="_blank" rel="noopener" data-cta="shop_road">📖 나이테가 실제로 써 본 책, 세트 보기 <span>›</span></a></div>
 <div class="bar"><div class="wrap">
   <div class="search"><input id="q" type="search" placeholder="책 제목·작가로 찾기 (영어·한글)" autocomplete="off"><select id="sort" aria-label="정렬"><option value="rank">인기순</option><option value="price">가격 낮은순</option><option value="age">어린 나이순</option></select><button type="button" class="fbtn" id="fopen">필터<b id="fcnt" hidden></b></button></div>
   <div class="chips quick" data-g="age"></div>
@@ -227,6 +228,7 @@ a{color:var(--tealD)}
 <script>
 var DATA=__DATA__;
 var URL_="https://vvfqrewseibjdwcuscaz.supabase.co",ANON="sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi";
+var CPI='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function norm(t){t=(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/'/g,'');return t.replace(/[^a-z0-9]+/g,' ').trim();}
 var AGES=[['all','전체'],['0-2','0~2세'],['3-4','3~4세'],['5-7','5~7세'],['8-','8세+']];
@@ -277,11 +279,9 @@ function card(it){
   // 표지를 누르면 쿠팡(링크 있으면 상품, 없으면 검색) — 나이테 120·스터디 앱과 같은 동작
   return '<article class="card"><a class="cv cvl" href="'+esc(href)+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(it.en)+'" data-k="'+(L?'cp':'find')+'" aria-label="'+esc(it.ko)+' 쿠팡에서 보기">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
     '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</a>'+
-    '<div class="bb"><div class="bt">'+esc(it.ko)+'</div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
+    '<div class="bb"><div class="bt">'+esc(it.ko)+'<button type="button" class="copy" data-copy="'+esc(it.en)+'" aria-label="제목 복사" title="제목 복사">'+CPI+'</button></div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
     (bd?'<div class="bd">'+bd+'</div>':'')+price+
-    (L?'<a class="buy cp" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.en)+'">🛒 쿠팡에서 보기</a>':
-       '<a class="buy find" href="https://www.coupang.com/np/search?q='+cq+'" target="_blank" rel="noopener" data-t="'+esc(it.en)+'">🔎 쿠팡에서 찾아보기</a>')+
-    '<button type="button" class="copy" data-copy="'+esc(it.en)+'">📋 제목 복사</button></div></article>';}
+    '</div></article>';}
 function paint(){
   ['age','kind','price','author'].forEach(function(g){document.querySelectorAll('[data-g="'+g+'"] .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S[g]);});});
   document.querySelectorAll('[data-g="more"] .chip').forEach(function(b){b.classList.toggle('on',!!S.more[b.dataset.v]);});
@@ -315,6 +315,8 @@ document.getElementById('shareBtn').addEventListener('click',function(){var btn=
   try{var b=await fetch(URL_+'/rest/v1/shop_links?select=en,buy_url',{headers:h});if(b.ok)(await b.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.en)]=r.buy_url;});}catch(e){}
   paint();})();
 // 쿠팡 클릭 집계(관리자·notrack 기기 제외)
+// 카드 어디를 눌러도 쿠팡(표지 링크). 제목 복사 버튼은 그대로
+document.addEventListener('click',function(e){if(!e.target.closest('a,button')){var c=e.target.closest('.card');if(c){var v=c.querySelector('a.cvl');if(v){v.click();return;}}}});
 document.addEventListener('click',function(e){var a=e.target.closest('a.buy,a.cvl');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
   fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},
     body:JSON.stringify({type:(a.classList.contains('cp')||a.dataset.k==='cp')?'buy_click':'shop_search_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'}}),keepalive:true}).catch(function(){});}catch(x){}});
@@ -326,8 +328,9 @@ function copyText(t){if(navigator.clipboard&&window.isSecureContext)return navig
 function ev(type,meta){try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
   fetch(URL_+'/rest/v1/events',{method:'POST',headers:{apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:type,session_id:sid,path:location.pathname,meta:meta}),keepalive:true}).catch(function(){});}catch(x){}}
 document.addEventListener('click',function(e){var b=e.target.closest('button.copy');if(!b)return;var t=b.dataset.copy;
-  copyText(t).then(function(){b.textContent='복사됨 ✓ 서점에서 붙여넣기 하세요';b.classList.add('ok');setTimeout(function(){b.textContent='📋 제목 복사';b.classList.remove('ok');},1800);},
-    function(){b.textContent=t;});
+  function say(m){var x=document.querySelector('.cptoast');if(!x){x=document.createElement('div');x.className='cptoast';document.body.appendChild(x);}x.textContent=m;clearTimeout(x._t);x._t=setTimeout(function(){x.remove();},1800);}
+  copyText(t).then(function(){b.innerHTML='✓';b.classList.add('ok');setTimeout(function(){b.innerHTML=CPI;b.classList.remove('ok');},1800);say('제목을 복사했어요. 서점에서 붙여넣기 하세요');},
+    function(){say(t);});
   ev('title_copy',{title:t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'});});
 </script>
 <script src="track.js" data-page="국내 인기 책장"></script>

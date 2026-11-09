@@ -135,6 +135,8 @@ a.cover{display:block;text-decoration:none;color:inherit}
 .step{display:flex;flex-direction:column;gap:6px;position:relative;min-width:0;overflow-wrap:anywhere}
 .step .tier{font-size:.66rem;font-weight:800;color:#fff;padding:2px 7px;border-radius:6px;align-self:flex-start}
 .step .cover{position:relative;aspect-ratio:3/4;border-radius:9px;overflow:hidden;background:var(--surface-2);box-shadow:var(--shadow);cursor:pointer}
+a.cover{display:block;box-shadow:0 1px 3px rgba(35,41,31,.24),0 6px 14px rgba(35,41,31,.28) !important;transition:transform .1s,box-shadow .1s}
+a.cover:active{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26) !important}
 .step .cover img{width:100%;height:100%;object-fit:cover;display:block}
 .step .cover .ph{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:8px;text-align:center;color:#fff;background:linear-gradient(150deg,var(--teal),var(--teal-deep))}
 .step .cover .ph .pt{font-family:'Gowun Batang',serif;font-weight:600;font-size:.72rem;line-height:1.15}
