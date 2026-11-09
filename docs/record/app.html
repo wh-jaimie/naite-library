@@ -107,7 +107,7 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .rtabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px -14px rgba(43,42,38,.5)}
 .rtabs.enter{animation:rlUp .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes rlUp{from{transform:translateY(40%);opacity:.4}to{transform:none;opacity:1}}
-.rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
+.rtabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
 .rtab.go{border-radius:12px} /* 읽기 기록 옆 세로줄 제거(2026-11-07) */
 .sd-barbtns{display:inline-flex;gap:6px}
 .sd-swin{animation:sdSwIn .22s ease}.sd-swinl{animation:sdSwInL .22s ease}
@@ -798,6 +798,9 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-gbline b{font-weight:800}
 .sd-gbline button{flex:0 0 auto;border:0;background:var(--clay);color:#fff;font:inherit;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;cursor:pointer}
 .sd-gbline button.on{background:var(--pine);cursor:default}
+/* 표지 = 쿠팡으로 가는 버튼처럼(2026-11-11) */
+a.sd-cv img,.sd a.nb .cv img,.gcard .gcv img{box-shadow:0 1px 3px rgba(35,41,31,.24),0 6px 14px rgba(35,41,31,.28);transition:transform .1s,box-shadow .1s}
+a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26)}
 /* ── 이번 달 자료: 예전 구성 + 나이테 스타일 ── */
 .sd-classic .intro.full{display:block;-webkit-line-clamp:unset;white-space:pre-wrap}
 .sd-classic .guide{display:block}
@@ -917,7 +920,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261110b"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261111e"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -1063,7 +1066,7 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
        '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br>'+
        '© 2026 나이테 영어책육아 메이트. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 공유할 때는 출처(나이테)를 함께 밝혀 주세요.'+
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
-    h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
+    h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><div id="v-pick" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
     if(PREVIEW){ // 관리자 미리보기: 기록 기능 없이 화면만(읽었어요 줄은 모양만)
       app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
@@ -1287,7 +1290,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<li><a href="#c120" data-pnclose data-rtab="c120">독서 로드맵(나이테 120) 전체 목록 보기 →</a></li>'+
         '<li><a href="../types.html" target="_blank" rel="noopener">왜 5가지 유형으로 골랐을까요? ↗</a></li>'+
       '</ul></div>'+
-      '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p><p style="margin:8px 0 0;font-size:.92rem"><a href="../road.html" target="_blank" rel="noopener">나이테(드니맘)가 걸어온 길 보기 ›</a></p>'+
+      '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
         '<p style="margin:8px 0 0;font-size:.88rem;color:var(--soft)">인스타 팔로우, 블로그 이웃추가 부탁드려요 🙏<br>이달의 5권이 인스타·블로그에도 올라가서 지난 달 책 다시 찾을 때 편해요</p>'+
         '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타그램 팔로우</a> '+
         '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';

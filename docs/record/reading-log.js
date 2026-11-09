@@ -15,10 +15,10 @@
   var CUTOFF_H=4;          // 새벽 4시 전 기록은 전날로
   var DOUBLE_TAP_MS=1500;  // 같은 책 1.5초 안 연속 탭은 1회
   var READER_KEY='naite_reader', MEMBER_KEY='naite_member', BACKUP_KEY='naite_backup_name';
-  var TAB_IDS=['study','shelf','c120','shop'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
+  var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261110b',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV};
+  var EV='20261111e',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -977,12 +977,13 @@
     shelf:'<path d="M12 20h8"/><path d="M15.5 4.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
     stats:'<path d="M4 20V10M10 20V5M16 20v-8M22 20H2"/>',
     c120:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
-    shop:'<path d="M12 4l2.3 4.7 5.2.8-3.7 3.6.9 5.1L12 15.8 7.3 18.3l.9-5.1L4.5 9.5l5.2-.8z"/>'
+    shop:'<path d="M12 4l2.3 4.7 5.2.8-3.7 3.6.9 5.1L12 15.8 7.3 18.3l.9-5.1L4.5 9.5l5.2-.8z"/>',
+    pick:'<path d="M12 20.5s-7.2-4.5-9.1-9A5 5 0 0 1 12 6.8a5 5 0 0 1 9.1 4.7c-1.9 4.5-9.1 9-9.1 9z"/>'
   };
   var RING='<svg class="rk-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="20" stroke="#245648" stroke-width="2.4"/><circle cx="24" cy="24" r="13.5" stroke="#245648" stroke-width="2.4" opacity=".75"/><circle cx="24" cy="24" r="7" stroke="#245648" stroke-width="2.4" opacity=".5"/><circle cx="24" cy="5" r="2.6" fill="#B87343"/></svg>';
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:[svg(22,IC.study,1.9),'이번 달 책'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장']};
+    var T={study:[svg(22,IC.study,1.9),'이번 달 책'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장'],pick:[svg(22,IC.pick,1.9),'나이테 Pick']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
       return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
@@ -1136,7 +1137,7 @@
     try{new f.contentWindow.MutationObserver(function(){apply();}).observe(body,{childList:true,subtree:true});}catch(e){}
     if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
   }
-  var studyY=0,T_NAME={c120:'독서 로드맵(나이테 120)',shop:'국내 인기 책장'};
+  var studyY=0,T_NAME={c120:'독서 로드맵(나이테 120)',shop:'국내 인기 책장',pick:'나이테 Pick'};
   function showTab(id){
     if(id==='stats')id='shelf';
     if(TAB_IDS.indexOf(id)<0)id='study';
