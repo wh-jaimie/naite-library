@@ -124,6 +124,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
 <div id="root"><div class="wrap"><p style="padding:60px 0;text-align:center;color:var(--soft)">불러오는 중…</p></div></div>
 <div id="pdfout"></div>
 <script src="config.js"></script>
+<script src="../road-data.js?v=20261110a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <script>
@@ -136,7 +137,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var _hv=(location.hash||'').slice(1);
   var DEFAULT_STUDY_ROOM_URL='https://open.kakao.com/o/p8qXEfUi';
-  var STATE={view:(['ops','content','buyurls','guides','members'].indexOf(_hv)>=0?_hv:'ops'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
+  var STATE={view:(['ops','content','buyurls','road','guides','members'].indexOf(_hv)>=0?_hv:'ops'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
   // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
   var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
@@ -199,7 +200,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   // ---------- SHELL ----------
   function renderApp(){
     var v=STATE.view||'ops';
-    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['guides','📚 가이드'],['members','🔑 회원 비밀번호']];
+    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['road','🌱 걸어온 길'],['guides','📚 가이드'],['members','🔑 회원 비밀번호']];
     var h='<div class="top"><div class="wrap" style="display:block;padding:0 18px">'+
       '<div class="bar1"><span class="brand">🛠️ 나이테 관리</span><span class="sp"><a class="btn" href="kpi.html">📊 KPI</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
@@ -213,7 +214,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     document.getElementById('mbtn').addEventListener('click',function(ev){ev.stopPropagation();menu.classList.toggle('open');});
     document.addEventListener('click',function(){menu.classList.remove('open');});
     document.getElementById('logout').addEventListener('click',async function(){await client.auth.signOut();STATE.user=null;renderLogin(null);});
-    if(v==='ops')renderOps(); else if(v==='buyurls')renderBuyUrls(); else if(v==='guides')renderGuides(); else if(v==='members')renderMembers(); else renderContent();
+    if(v==='ops')renderOps(); else if(v==='buyurls')renderBuyUrls(); else if(v==='road')renderRoadLinks(); else if(v==='guides')renderGuides(); else if(v==='members')renderMembers(); else renderContent();
   }
 
 
@@ -542,6 +543,40 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var sh=document.querySelectorAll('.shopurl'),have=STATE.shopLinks||{};
     for(var j=0;j<sh.length;j++){var en=sh[j].dataset.en,v=(sh[j].value||'').trim();
       if((have[en]||'')!==v){var r2=await client.from('shop_links').upsert({en:en,buy_url:v,updated_at:new Date().toISOString()});if(r2.error)errs++;else{have[en]=v;n++;}}}
+    st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
+  }
+
+  // ---------- 🌱 걸어온 길: 쿠팡 파트너스 링크 입력 (road_links) ----------
+  async function renderRoadLinks(){
+    var body=document.getElementById('body');
+    body.innerHTML='<div class="card"><p class="hint">불러오는 중…</p></div>';
+    var q=await client.from('road_links').select('key,buy_url');
+    if(q.error){body.innerHTML='<div class="card"><div class="warn">road_links 테이블이 아직 없어요. Supabase에서 <b>supabase/migrate_road_links.sql</b>을 먼저 실행해 주세요.</div></div>';return;}
+    var have={};(q.data||[]).forEach(function(r){have[r.key]=r.buy_url||'';});STATE.roadLinks=have;
+    var items=roadLinkItems(),groups=['세트·시리즈','대박책'];
+    var filled=items.filter(function(it){return have[it.key];}).length;
+    var h='<div class="card"><div style="font-weight:800;color:var(--tealD)">🌱 나이테가 걸어온 길 쿠팡 링크</div>'+
+      '<p class="hint">https://link.coupang.com/a/... 형태의 파트너스 링크를 넣고 저장하세요. 비우면 그 책은 링크 없이 보여요. <b id="roadCnt">'+filled+' / '+items.length+'</b> 입력됨</p>'+
+      '<label style="display:flex;gap:6px;align-items:center;font-size:.85rem;margin:6px 0"><input type="checkbox" id="roadEmpty"> 아직 안 넣은 것만 보기</label>';
+    groups.forEach(function(g){
+      h+='<div style="font-weight:800;font-size:.9rem;margin-top:14px">'+g+'</div>';
+      items.filter(function(it){return it.group===g;}).forEach(function(it){
+        h+='<div class="roadrow" data-has="'+(have[it.key]?1:0)+'" style="display:flex;gap:8px;align-items:center;margin:5px 0">'+
+          '<div style="flex:0 0 40%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem" title="'+esc(it.title)+'">'+esc(it.title)+'</div>'+
+          '<input class="t roadurl" data-key="'+esc(it.key)+'" data-title="'+esc(it.title)+'" style="flex:1;font-size:.78rem;padding:7px 9px" placeholder="https://link.coupang.com/a/..." value="'+esc(have[it.key]||'')+'"></div>';
+      });
+    });
+    h+='<div style="display:flex;align-items:center;gap:10px;margin-top:14px"><button class="btn cor" id="saveRoad">저장</button><span class="hint" id="roadSt"></span></div></div>';
+    body.innerHTML=h;
+    document.getElementById('roadEmpty').addEventListener('change',function(e){var on=e.target.checked;document.querySelectorAll('.roadrow').forEach(function(r){r.style.display=(on&&r.dataset.has==='1')?'none':'flex';});});
+    document.getElementById('saveRoad').addEventListener('click',saveRoadLinks);
+  }
+  async function saveRoadLinks(){
+    var st=document.getElementById('roadSt'),have=STATE.roadLinks||{},ins=document.querySelectorAll('.roadurl'),n=0,errs=0;st.textContent='저장 중…';
+    for(var i=0;i<ins.length;i++){var k=ins[i].dataset.key,v=(ins[i].value||'').trim();
+      if((have[k]||'')!==v){var r=await client.from('road_links').upsert({key:k,title:ins[i].dataset.title,buy_url:v,updated_at:new Date().toISOString()});if(r.error)errs++;else{have[k]=v;n++;ins[i].closest('.roadrow').dataset.has=v?'1':'0';}}}
+    var f=0;ins.forEach(function(x){if((have[x.dataset.key]||''))f++;});
+    document.getElementById('roadCnt').textContent=f+' / '+ins.length;
     st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
   }
 

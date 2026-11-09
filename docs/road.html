@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>나이테가 걸어온 길</title>
+<meta name="description" content="드니 5개월부터 지금까지, 우리 집에서 써 본 영어책과 영상.">
+<link rel="icon" href="favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EFF1EA;--surface:#FCFCF8;--ink:#23291F;--soft:#4B5343;--line:#DDE1D4;--pine:#245648;--pine-soft:#E4EEE7;--clay-ink:#7A4520}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,sans-serif;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+.top{display:flex;justify-content:flex-end;padding:12px 0 0}
+.top a{font-size:.85rem;font-weight:700;color:var(--pine);text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px}
+.hero{padding:10px 0 2px}
+h1{font-family:'Gowun Batang',serif;font-size:26px;line-height:1.3;margin:0 0 4px}
+.hero p{margin:0;font-size:.98rem;color:var(--soft)}
+h2{font-family:'Gowun Batang',serif;font-size:20px;margin:22px 0 8px;color:var(--pine)}
+.it{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px}
+.it .h{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.it b{font-size:1.04rem}
+.it .k{font-size:.74rem;font-weight:700;color:var(--pine);background:var(--pine-soft);border-radius:6px;padding:1px 7px}
+.it p{margin:4px 0 0;font-size:.93rem;color:var(--soft)}
+.it .when{font-weight:800;color:var(--clay-ink)}
+.it .date{font-size:.82rem}
+h2 small{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;color:var(--soft);margin-left:7px}
+.it a{display:inline-block;margin-top:6px;font-size:.88rem;font-weight:800;color:var(--pine);text-decoration:none}
+.picks{margin-top:8px;border-top:1px dashed var(--line);padding-top:7px}
+.picks summary{cursor:pointer;font-size:.9rem;font-weight:800;color:var(--pine)}
+.picks ul{list-style:none;margin:6px 0 0;padding:0}
+.picks li{padding:6px 0}
+.picks li b{display:block;font-size:.96rem}
+.picks li span{font-size:.9rem;color:var(--soft)}
+.row{display:flex;gap:12px;align-items:flex-start}
+.row>img,.row>.ph{flex:0 0 68px;width:68px}
+.tx{flex:1;min-width:0}
+.it img{display:block;height:auto;max-height:96px;object-fit:cover;border-radius:4px 7px 7px 4px;box-shadow:0 2px 7px rgba(35,41,31,.22)}
+.ph{display:grid;place-items:center;height:68px;border-radius:8px;background:var(--pine-soft);font-size:1.5rem}
+.picks li{display:flex;gap:10px;align-items:flex-start}
+.picks li img,.picks li .ph{flex:0 0 46px;width:46px}
+.picks li .ph{height:46px;font-size:1.1rem}
+.bsub{margin:0 0 10px;font-size:.92rem;color:var(--soft)}
+.bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px}
+.bk{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.bk img{display:block;width:100%;height:auto;max-height:150px;object-fit:contain;border-radius:3px 7px 7px 3px;box-shadow:0 2px 7px rgba(35,41,31,.22)}
+.bk .ph{width:100%;height:110px}
+.bk .bt{font-size:.82rem;font-weight:700;line-height:1.3}
+.hero p.ask{margin-top:6px;color:var(--ink);font-weight:700}
+.hero p.ask a{color:var(--pine)}
+.cv{display:block;color:inherit;text-decoration:none}
+.row>.cv{flex:0 0 68px;width:68px}
+.row>.cv>img,.row>.cv>.ph{width:100%}
+.picks li .cv{flex:0 0 46px;width:46px}
+.picks li .cv img{width:100%}
+.bk .cv{width:100%}
+.disc{margin:18px 0 0;font-size:.76rem;color:var(--soft);text-align:center}
+.foot{text-align:center;font-size:.8rem;color:var(--soft);padding:22px 0 40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="./">← 나이테</a></div>
+  <header class="hero">
+    <h1>나이테가 걸어온 길</h1>
+    <p>드니 5개월부터 지금까지, 우리 집에서 써 본 영어책과 영상이에요.</p>
+    <p class="ask">자세한 후기가 궁금하다면, <a href="join.html?from=road">채팅방</a>에서 나이테에게 물어보세요!</p>
+  </header>
+  <main id="list"></main>
+  <section><h2>드니의 대박책</h2><p class="bsub">우리 집에서 드니가 가장 좋아한 책들이에요.</p><div class="bgrid" id="best"></div></section>
+  <p class="disc" id="disc" hidden>※ 이 페이지의 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+  <p class="foot">© 2026 나이테 영어책육아 메이트</p>
+</div>
+<script src="road-data.js?v=20261110a"></script>
+<script>
+/* 드니 나이: 2021년 1월생 기준. 카드 = 개월, 연도 제목 = 연 나이 */
+function age(w){var m=/(\d{4})년 (\d{1,2})월/.exec(w);return m?((+m[1]-2021)*12+(+m[2])-1)+'개월':'';}
+var LINKS={};
+function lk(t,i){return LINKS[roadKey(t)]||(i&&i.buy)||"";}
+function wrap(u,h,t){return u?'<a class="cv" href="'+u.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+String(t).replace(/"/g,"&quot;")+'">'+h+"</a>":h;}
+function _ie(x){var o=document.createElement('span');o.className='ph';o.textContent='📚';x.replaceWith(o);}
+function img(c){return '<img loading="lazy" src="'+(c.indexOf('road/')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg')+'" alt="" onerror="_ie(this)">';}
+function cov(i){if(i.photo)return '<img loading="lazy" src="'+i.photo+'" alt="">';if(i.c)return img(i.c);var m={'영상':'🎬','노래':'🎵','노래책':'🎵','구매':'📦'};return '<span class="ph">'+(m[i.k]||'📚')+'</span>';}
+function paintRoad(){function e(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+document.getElementById('list').innerHTML=ROAD.map(function(y){return '<h2>'+y[0]+'<small>'+(+y[0]-2020)+'살</small></h2>'+y[1].map(function(i){
+ return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span></div><p><span class="when">'+e(age(i.w))+'</span> <span class="date">'+e(i.w)+'</span><br>'+e(i.d)+'</p>'+
+  (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b><span>'+e(x[2])+'</span></div></li>';}).join('')+'</ul></details>':'')+
+  (lk(i.n,i)?'<a class="buy" href="'+e(lk(i.n,i))+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+e(i.n)+'">쿠팡에서 보기 ›</a>':'')+
+  (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('');}).join('');
+document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span></div>';}).join('');
+document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
+paintRoad();
+(function(){var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',H={apikey:K,Authorization:'Bearer '+K};
+  fetch(U+'/rest/v1/road_links?select=key,buy_url',{headers:H}).then(function(r){return r.ok?r.json():[];}).then(function(rows){var n=0;(rows||[]).forEach(function(r){if(r.buy_url){LINKS[r.key]=r.buy_url;n++;}});if(n)paintRoad();}).catch(function(){});
+  document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-buy]');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;
+    fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},keepalive:true,body:JSON.stringify({type:'buy_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{title:a.dataset.buy,page:'걸어온 길'}})}).catch(function(){});}catch(e){}});
+})();
+</script>
+<script src="track.js" defer></script>
+</body>
+</html>
