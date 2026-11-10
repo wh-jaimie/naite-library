@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261111e',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261111f',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -775,7 +775,10 @@
     if(!it.length&&!ph){openRecordSheet(day);return;}
     var sum=it.reduce(function(a,x){return a+x.n;},0);
     var sh=openSheet('<h3>'+esc(dayFull(day))+'</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'사진만 있고 읽은 책 기록은 없어요')+'</p>'+
-      (ph?'<img class="cd-photo" src="'+ph+'" alt="이날 읽은 책 사진">':'')+
+      (ph?'<img class="cd-photo" src="'+ph+'" alt="이날 읽은 책 사진">'+
+        '<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
+        '<a class="rk-btn out" href="'+ph+'" download="naite-'+day+'.jpg" data-dsave>'+svg(17,IC.save)+'사진 저장</a></div>'+
+        '<p class="rl-note cd-note" hidden></p>':'')+
       (it.length?'<ul class="cd-list">'+it.map(function(x){return '<li><span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><span class="t">'+esc(x.title)+'</span>'+(x.n>1?'<b>×'+x.n+'</b>':'')+'</li>';}).join('')+'</ul>':'')+
       '<div class="rk-dayacts">'+
         '<button type="button" class="rk-btn out" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
@@ -788,6 +791,14 @@
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
     sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
     sh.querySelector('[data-dalbum]').onclick=function(){closeSheet();openStampAlbum(day);};
+    // 찍을 때 저장을 못 했어도 나중에 여기서 저장·공유(이 폰에 보관된 사진)
+    var ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]');
+    if(ds)ds.addEventListener('click',function(){if(S.onEvent)S.onEvent('day_photo_save',{day:day});});
+    if(dsh)dsh.onclick=function(){
+      var bl=S.photoBlobs[day],file=null,nt=sh.querySelector('.cd-note');
+      try{file=new File([bl],'naite-'+day+'.jpg',{type:bl.type||'image/jpeg'});}catch(e){}
+      if(!(file&&navigator.canShare&&navigator.canShare({files:[file]}))){nt.hidden=false;nt.textContent='이 브라우저에서는 바로 공유가 안 돼요. 사진 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
+      navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('day_photo_share',{day:day});},function(){});};
     var db=sh.querySelector('[data-cddel]');
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}delPhoto(day);closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');};
     if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph});

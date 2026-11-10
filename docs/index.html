@@ -108,6 +108,7 @@ a{color:inherit;text-decoration:none}
 .finder{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
 .fcard{padding:22px;display:flex;flex-direction:column;gap:10px;transition:transform .16s}
 .fcard:hover{transform:translateY(-3px)}
+.fpick{grid-column:1/-1}
 .fcard .big{font-family:'Gowun Batang',serif;font-size:2.4rem;color:var(--coral);line-height:1}
 .fcard h3{font-size:1.3rem}
 .fcard p{margin:0;color:var(--soft);font-size:.92rem}
@@ -227,7 +228,7 @@ a{color:inherit;text-decoration:none}
   <header class="top">
     <a class="home" href="./" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><span class="bt"><b>나이테</b><span class="tagl">영어책육아 메이트</span></span></a>
     <nav class="nav" aria-label="바로가기">
-      <a data-app="month" href="record/">이번 달 5권</a><a data-app="shop" href="domestic.html">인기 책장 100</a><a data-app="c120" href="challenge.html">나이테 120</a><a data-app="log" href="record/">기록</a><a class="app" data-app="month" href="record/">📲 앱 열기</a>
+      <a data-app="month" href="record/">이번 달 5권</a><a data-app="shop" href="domestic.html">인기 책장 100</a><a data-app="c120" href="challenge.html">나이테 120</a><a data-app="pick" href="road.html">나이테 Pick</a><a data-app="log" href="record/">기록</a><a class="app" data-app="month" href="record/">📲 앱 열기</a>
     </nav>
   </header>
 
@@ -291,6 +292,11 @@ a{color:inherit;text-decoration:none}
         <p>24가지 주제 × 5가지 재미. 나이테가 어떤 기준으로 책을 고르는지 한눈에 보여요.</p>
         <div class="covers" id="c120"></div>
         <span class="go">120권 둘러보기 →</span>
+      </a>
+      <a class="panel fcard fpick" data-app="pick" data-cta="find_pick" href="road.html">
+        <h3>나이테 Pick</h3>
+        <p>드니맘이 실제로 써 본 책·세트와, 드니가 가장 좋아한 대박책을 모았어요.</p>
+        <span class="go">나이테 Pick 보기 →</span>
       </a>
     </div>
   </section>
