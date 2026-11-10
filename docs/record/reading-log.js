@@ -843,24 +843,24 @@
     var it=dayItems(day),pl=(S.photoList[day]||[]).slice(),ph=pl.length?pl[pl.length-1].u:null,sel=pl.length-1;
     if(!it.length&&!ph){openRecordSheet(day);return;}
     var sum=it.reduce(function(a,x){return a+x.n;},0),collage=!(pl.length===1&&!it.length),card=null;
-    var sh=openSheet('<h3>'+esc(dayFull(day))+'</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'사진만 있고 읽은 책 기록은 없어요')+'</p>'+
+    // 한 화면에 다 들어오게: 작은 갤러리 + 버튼 4개 한 줄 + 글자 링크 한 줄
+    var sh=openSheet('<div class="cd-day"><div class="cd-head"><h3>'+esc(dayFull(day))+'</h3><span class="sub">'+(sum?'영어책 '+sum+'권':'사진만 있어요')+'</span></div>'+
       // 사진(최근 것 먼저) + 읽은 책 표지를 옆으로 넘겨 보기
       '<div class="cd-gal'+(pl.length+it.length===1?' solo':'')+'">'+
-        pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(12,IC.cam,2.4)+'인증 사진</figcaption></figure>';}).join('')+
+        pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(11,IC.cam,2.4)+'인증 사진</figcaption></figure>';}).join('')+
         it.map(function(x){return '<figure class="gi bk'+(x.other?' o':'')+'"><span class="cv">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><figcaption><b>'+esc(x.title)+'</b>'+(x.n>1?' <em>×'+x.n+'</em>':'')+'</figcaption></figure>';}).join('')+
       '</div>'+
-      (pl.length>1?'<p class="rl-note cd-pick">지울 사진은 눌러서 고를 수 있어요</p>':'')+
-      (true?'<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
-        '<a class="rk-btn out'+(collage?' wait':'')+'" href="'+(collage?'#':ph)+'" download="naite-'+day+'.jpg" data-dsave>'+svg(17,IC.save)+(collage?'이미지 저장':'사진 저장')+'</a></div>'+
-        '<p class="rl-note cd-note" hidden></p>':'')+
-      '<div class="rk-dayacts">'+
-        '<button type="button" class="rk-btn out" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
-        '<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+(pl.length?'사진 더 찍기':'날짜 스탬프 사진')+'</button>'+
+      '<div class="cd-acts">'+
+        '<button type="button" data-dshare>'+svg(18,IC.share)+'<span>공유</span></button>'+
+        '<a class="'+(collage?'wait':'')+'" href="'+(collage?'#':ph)+'" download="naite-'+day+'.jpg" data-dsave>'+svg(18,IC.save)+'<span>저장</span></a>'+
+        '<button type="button" data-dadd>'+svg(18,IC.plus,2.4)+'<span>책 기록</span></button>'+
+        '<button type="button" class="fill" data-dstamp>'+svg(18,IC.cam)+'<span>'+(pl.length?'사진 더 찍기':'스탬프 사진')+'</span></button>'+
       '</div>'+
-      (pl.length>=PMAX?'<p class="rl-note cd-max">하루 사진은 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'')+
-      '<button type="button" class="subtle" data-dalbum>앨범 사진에 날짜 스탬프 넣기</button>'+
-      (ph?'<button type="button" class="subtle" data-cddel>'+(pl.length>1?'이 사진 지우기':'사진 지우기')+'</button>':'')+
-      '<button type="button" class="subtle" data-sclose>닫기</button>');
+      '<p class="rl-note cd-note" hidden></p>'+
+      (pl.length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'')+
+      '<div class="cd-links"><button type="button" data-dalbum>앨범 사진에 스탬프</button>'+
+        (ph?'<button type="button" data-cddel>'+(pl.length>1?'고른 사진 지우기':'사진 지우기')+'</button>':'')+
+        '<button type="button" data-sclose>닫기</button></div></div>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
     sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
