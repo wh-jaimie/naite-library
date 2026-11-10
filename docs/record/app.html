@@ -556,7 +556,6 @@ button.rs-book{border:0;background:none;padding:0;font:inherit;color:inherit;cur
 .nc .mc img{width:100%;height:100%;object-fit:cover;display:block}
 .nc .mc.o{background:#F3E7DA;display:grid;place-items:center}
 .nc .mc.o i{font-style:normal;font-size:.62rem}
-.nc .mc.ph{width:100%;aspect-ratio:1/1;border-radius:4px}
 .nc .mc.ph i{position:absolute;right:2px;bottom:2px;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.92);color:#B87343;display:grid;place-items:center}
 .nc .plus{font-size:9px;font-weight:700;color:var(--ink-soft,#545C4B);align-self:center}
 .nc .bdg{position:absolute;right:-2px;top:-5px;z-index:1;background:#B87343;color:#fff;font-size:9px;font-weight:700;border-radius:99px;padding:0 5px;line-height:15px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
@@ -916,12 +915,44 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .sd-classic .sd-vcard .play>span{width:38px;height:38px}
 .sd-classic .sd-vcard.playing{display:block;cursor:default}
 .sd-classic .sd-vcard.playing .vt small{display:none}
+.cd-gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:12px -20px 4px;padding:0 20px 6px;scroll-padding:0 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cd-gal::-webkit-scrollbar{display:none}
+.cd-gal .gi{flex:0 0 auto;width:min(40%,170px);margin:0;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px}
+.cd-gal.solo .gi{width:min(64%,260px)}
+.cd-gal.solo{justify-content:center}
+.cd-pick{text-align:center;font-size:12px;margin:2px 0 0}
+.cd-gal .gi>img,.cd-gal .gi .cv{width:100%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;display:block;object-fit:cover;background:#EBEDE3;border:2px solid transparent;box-sizing:border-box}
+.cd-gal .gi.on>img{border-color:#B87343}
+.cd-gal .gi .cv{display:grid;place-items:center;background:#F1F0E8;padding:10px}
+.cd-gal .gi.ph{cursor:pointer}
+.cd-gal .gi .cv img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;box-shadow:0 3px 10px rgba(0,0,0,.22)}
+.cd-gal .gi.o .cv i{font-style:normal;font-size:2.4rem}
+.cd-gal figcaption{font-size:12.5px;color:var(--ink-soft,#545C4B);display:flex;align-items:center;gap:4px;padding:0 2px;line-height:1.35}
+.cd-gal .gi.ph figcaption{color:#B87343;font-weight:700}
+.cd-gal figcaption b{font-weight:700;color:var(--ink,#23291F);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.cd-gal figcaption em{font-style:normal;font-weight:800;color:#B87343;flex:0 0 auto}
+.cd-max{text-align:center;font-size:12px}
+.nc .mg{display:grid;gap:2px;width:100%;align-self:flex-start}
+.nc .mg.c1{grid-template-columns:62%;justify-content:center}
+.nc .mg.c1.p1{grid-template-columns:100%}
+.nc .mg.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.nc .mg.c3{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5px}
+.nc .mg.c4{grid-template-columns:repeat(4,minmax(0,1fr));gap:1px}
+.nc .mg .mc{width:auto;aspect-ratio:3/4}
+.nc .mg.p1 .mc{aspect-ratio:1/1}
+.nc .mg .mc.ph{border-radius:3px}
+.nc .mg .mc.ph i{width:12px;height:12px;right:1px;bottom:1px}
+.nc .mg.c3 .mc.ph i,.nc .mg.c4 .mc.ph i{display:none}
+.nc .mg.c2 .mc.ph i{width:10px;height:10px}.nc .mg.c2 .mc.ph i svg{width:6px;height:6px}
+.nc .mg .rn{position:absolute;right:0;top:0;background:#B87343;color:#fff;font-size:8px;line-height:11px;min-width:11px;text-align:center;border-radius:0 0 0 4px;font-weight:800}
+.nc .mg.c4 .rn{font-size:7px;line-height:9px;min-width:9px}
+.nc .mg .mc.more{display:grid;place-items:center;font-size:8px;font-weight:800;color:var(--ink-soft,#545C4B)}
 </style>
 </head>
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261111g"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261111h"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){

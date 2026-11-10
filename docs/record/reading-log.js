@@ -506,30 +506,49 @@
     fillShare(sh.querySelector('.sc-wrap'),blobP,name,kind,meta,title);
     return sh;
   }
-  /* ── 인증 사진: 이 폰 안(IndexedDB)에만 날짜별 한 장. 서버에는 올리지 않음 ── */
+  /* ── 인증 사진: 이 폰 안(IndexedDB)에만 날짜별 최대 3장. 서버에는 올리지 않음 ── */
   var PDB=null;
   function pdb(){
     if(!PDB)PDB=new Promise(function(res,rej){try{var r=indexedDB.open('naite_photos',1);r.onupgradeneeded=function(){r.result.createObjectStore('p');};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});
     return PDB;
   }
   function ptx(mode,fn){return pdb().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('p',mode);fn(tx.objectStore('p'));tx.oncomplete=function(){res();};tx.onerror=function(){rej(tx.error);};});});}
-  function setPhotoUrl(day,blob){
-    if(S.photoUrls[day])URL.revokeObjectURL(S.photoUrls[day]);
-    if(blob){S.photoBlobs[day]=blob;S.photoUrls[day]=URL.createObjectURL(blob);}else{delete S.photoBlobs[day];delete S.photoUrls[day];}
+  // 하루 여러 장: S.photoList[날짜]=[{k,b,u}] (찍은 순서). S.photoUrls/photoBlobs[날짜]는 그날 마지막 사진(달력 이미지·N일째 계산용)
+  var PMAX=3;
+  function pday(k){return String(k).slice(0,10);}
+  function syncDay(day){
+    var L=S.photoList[day];
+    if(L&&L.length){S.photoBlobs[day]=L[L.length-1].b;S.photoUrls[day]=L[L.length-1].u;}
+    else{delete S.photoList[day];delete S.photoBlobs[day];delete S.photoUrls[day];}
+  }
+  function addPhotoMem(k,blob){
+    var day=pday(k),L=S.photoList[day]||(S.photoList[day]=[]);
+    L.push({k:k,b:blob,u:URL.createObjectURL(blob)});L.sort(function(a,b){return a.k<b.k?-1:a.k>b.k?1:0;});syncDay(day);
   }
   function loadPhotos(){
     pdb().then(function(db){return new Promise(function(res){var o={},tx=db.transaction('p','readonly');
       tx.objectStore('p').openCursor().onsuccess=function(e){var c=e.target.result;if(c){o[c.key]=c.value;c.continue();}};
       tx.oncomplete=function(){res(o);};tx.onerror=function(){res(o);};});})
-    .then(function(o){if(!S)return;Object.keys(o).forEach(function(d){setPhotoUrl(d,o[d]);});paint();},function(){});
+    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){addPhotoMem(k,o[k]);});paint();},function(){});
   }
-  // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB)
-  function savePhoto(day,im){
+  // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB). 하루 PMAX장이 넘으면 그날 가장 먼저 찍은 사진을 지움
+  function savePhoto(day,im,cb){
     var r=Math.min(1,1080/Math.max(im.width,im.height)),cv=document.createElement('canvas');
     cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
-    cv.toBlob(function(bl){if(!bl||!S)return;setPhotoUrl(day,bl);paint();ptx('readwrite',function(st){st.put(bl,day);}).catch(function(){});},'image/jpeg',.82);
+    cv.toBlob(function(bl){if(!bl||!S)return;
+      var L=S.photoList[day]||[],k=L.length?day+'#'+Date.now():day,drop=[];
+      addPhotoMem(k,bl);
+      while(S.photoList[day].length>PMAX){var x=S.photoList[day].shift();URL.revokeObjectURL(x.u);drop.push(x.k);}
+      syncDay(day);paint();
+      ptx('readwrite',function(st){st.put(bl,k);drop.forEach(function(d){st.delete(d);});}).catch(function(){});
+      if(cb)cb(k,drop.length);
+    },'image/jpeg',.82);
   }
-  function delPhoto(day){if(!S)return;setPhotoUrl(day,null);paint();ptx('readwrite',function(st){st.delete(day);}).catch(function(){});}
+  function delPhoto(day,k){if(!S)return;
+    var L=S.photoList[day]||[],keys=[];
+    S.photoList[day]=L.filter(function(x){if(k&&x.k!==k)return true;URL.revokeObjectURL(x.u);keys.push(x.k);return false;});
+    syncDay(day);paint();ptx('readwrite',function(st){keys.forEach(function(d){st.delete(d);});}).catch(function(){});
+  }
 
   // 사진 파일 → 그릴 수 있는 이미지(사진 방향 정보 반영)
   function loadPhoto(f){
@@ -692,7 +711,8 @@
     markPick();inp.click();
   }
   function showStampResult(day,c){
-    savePhoto(day,c);
+    var savedK=null;
+    savePhoto(day,c,function(k,dropped){savedK=k;if(dropped)toast('하루 사진은 '+PMAX+'장까지예요. 가장 먼저 찍은 사진을 지웠어요.');});
     var meta={day:day,tpl:c.tpl||''},ov=document.createElement('div'),noRec=!S.rows.some(function(r){return r.d===day;});ov.className='rl-cam rl-after';
     ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 날짜 스탬프 사진</span><span style="width:34px"></span></div>'+
       '<div class="rl-photo"><p class="rv-empty">이미지를 만드는 중…</p></div>'+
@@ -704,7 +724,7 @@
     ov.querySelector('[data-ax]').onclick=close;
     ov.querySelector('[data-agocal]').onclick=function(){close();goCal(day);};
     var ar=ov.querySelector('[data-arec]');if(ar)ar.onclick=function(){close();openRecordSheet(day);};
-    ov.querySelector('[data-aretake]').onclick=function(){close();openStampCamera(day);};
+    ov.querySelector('[data-aretake]').onclick=function(){if(savedK)delPhoto(day,savedK);close();openStampCamera(day);};
     if(S.onEvent)S.onEvent('stamp_photo_open',meta);
     c.toBlob(function(blob){
       if(!blob){ov.querySelector('.rl-photo').innerHTML='<p class="rv-empty">이미지를 만들지 못했어요.</p>';return;}
@@ -746,18 +766,20 @@
     if(w.length){while(w.length<7)w.push(null);cells.push(w);}
     return cells;
   }
-  function dayInfo(ds){var it=dayItems(ds);return {it:it,sum:it.reduce(function(a,x){return a+x.n;},0),ph:S.photoUrls[ds]};}
+  function dayInfo(ds){var it=dayItems(ds);return {it:it,sum:it.reduce(function(a,x){return a+x.n;},0),ph:S.photoUrls[ds],pl:S.photoList[ds]||[]};}
   function calendarHtml(mi,hint){
     var today=logicalToday();
     return '<div class="ncal"><div class="ncal-wd">'+['일','월','화','수','목','금','토'].map(function(x,i){return '<span'+(i===0?' class="sun"':'')+'>'+x+'</span>';}).join('')+'</div><div class="ncal-grid">'+
       monthGrid(mi).map(function(w){return w.map(function(ds,i){
         if(!ds)return '<div class="nc empty"></div>';
-        var D=dayInfo(ds),it=D.it,th='',shown=0;
-        if(D.ph){th='<span class="mc ph"><img src="'+D.ph+'" alt=""><i>'+svg(9,IC.cam,2.6)+'</i></span>';}
-        else if(it.length){var sh=it.slice(0,2);shown=sh.reduce(function(a,x){return a+1;},0);
-          th=sh.map(function(x){return '<span class="mc'+(sh.length===1?' one':'')+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+'</span>';}).join('')+
-            (it.length>2?'<span class="plus">+'+(it.length-2)+'</span>':'');}
-        var badge=D.sum>1&&D.sum>shown?'<span class="bdg">×'+D.sum+'</span>':'';
+        // 그날 사진(최근 것 먼저) + 읽은 책 표지를 한 칸에 섞어서. 장수에 따라 1·2·3·4열로 줄어듦(최대 16칸)
+        var D=dayInfo(ds),it=D.it,th='',tl=[];
+        D.pl.slice().reverse().forEach(function(x){tl.push('<span class="mc ph"><img src="'+x.u+'" alt=""><i>'+svg(8,IC.cam,2.6)+'</i></span>');});
+        it.forEach(function(x){tl.push('<span class="mc'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="'+esc(x.title)+'" loading="lazy">':'<i>📚</i>')+(x.n>1?'<b class="rn">'+x.n+'</b>':'')+'</span>');});
+        if(tl.length>16){var more=tl.length-15;tl=tl.slice(0,15);tl.push('<span class="mc more">+'+more+'</span>');}
+        var cols=tl.length<=1?1:tl.length<=4?2:tl.length<=9?3:4;
+        if(tl.length)th='<span class="mg c'+cols+(tl.length===1&&D.pl.length?' p1':'')+'">'+tl.join('')+'</span>';
+        var badge='';
         var cls='nc'+(ds===today?' today':'')+(ds>today?' future':'')+(D.ph?' has-p':'')+(it.length||D.ph?' has':'');
         return '<div class="'+cls+'"'+(ds<=today?' data-rcal="'+ds+'" role="button" tabindex="0" aria-label="'+(+ds.slice(5,7))+'월 '+(+ds.slice(8))+'일 '+(it.length||D.ph?'기록 보기':'기록하기')+'"':'')+'>'+
           '<span class="dn'+(i===0?' sun':'')+'">'+(+ds.slice(8))+'</span>'+badge+(th?'<span class="th">'+th+'</span>':'')+
@@ -773,37 +795,47 @@
   }
   // 기록된 날짜: 그날 읽은 책·사진 보기. 기록도 사진도 없으면 바로 기록창
   function openDay(day){
-    var it=dayItems(day),ph=S.photoUrls[day];
+    var it=dayItems(day),pl=(S.photoList[day]||[]).slice(),ph=pl.length?pl[pl.length-1].u:null,sel=pl.length-1;
     if(!it.length&&!ph){openRecordSheet(day);return;}
     var sum=it.reduce(function(a,x){return a+x.n;},0);
     var sh=openSheet('<h3>'+esc(dayFull(day))+'</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'사진만 있고 읽은 책 기록은 없어요')+'</p>'+
-      (ph?'<img class="cd-photo" src="'+ph+'" alt="이날 읽은 책 사진">'+
-        '<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
+      // 사진(최근 것 먼저) + 읽은 책 표지를 옆으로 넘겨 보기
+      '<div class="cd-gal'+(pl.length+it.length===1?' solo':'')+'">'+
+        pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(12,IC.cam,2.4)+'인증 사진</figcaption></figure>';}).join('')+
+        it.map(function(x){return '<figure class="gi bk'+(x.other?' o':'')+'"><span class="cv">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><figcaption><b>'+esc(x.title)+'</b>'+(x.n>1?' <em>×'+x.n+'</em>':'')+'</figcaption></figure>';}).join('')+
+      '</div>'+
+      (ph?(pl.length>1?'<p class="rl-note cd-pick">사진을 눌러 고른 뒤 공유·저장할 수 있어요</p>':'')+'<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
         '<a class="rk-btn out" href="'+ph+'" download="naite-'+day+'.jpg" data-dsave>'+svg(17,IC.save)+'사진 저장</a></div>'+
         '<p class="rl-note cd-note" hidden></p>':'')+
-      (it.length?'<ul class="cd-list">'+it.map(function(x){return '<li><span class="c'+(x.other?' o':'')+'">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><span class="t">'+esc(x.title)+'</span>'+(x.n>1?'<b>×'+x.n+'</b>':'')+'</li>';}).join('')+'</ul>':'')+
       '<div class="rk-dayacts">'+
         '<button type="button" class="rk-btn out" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
-        '<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진</button>'+
+        '<button type="button" class="rk-btn fill" data-dstamp>'+svg(17,IC.cam)+(pl.length?'사진 더 찍기':'날짜 스탬프 사진')+'</button>'+
       '</div>'+
+      (pl.length>=PMAX?'<p class="rl-note cd-max">하루 사진은 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'')+
       '<button type="button" class="subtle" data-dalbum>앨범 사진에 날짜 스탬프 넣기</button>'+
-      (ph?'<button type="button" class="subtle" data-cddel>사진 지우기</button>':'')+
+      (ph?'<button type="button" class="subtle" data-cddel>'+(pl.length>1?'이 사진 지우기':'사진 지우기')+'</button>':'')+
       '<button type="button" class="subtle" data-sclose>닫기</button>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
     sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
     sh.querySelector('[data-dalbum]').onclick=function(){closeSheet();openStampAlbum(day);};
+    var gal=sh.querySelector('.cd-gal'),ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]'),db=sh.querySelector('[data-cddel]');
+    // 공유·저장·지우기 = 고른 사진(테두리). 사진이 여러 장이면 사진을 눌러서 고름. 처음엔 마지막에 찍은 사진
+    function pick(pi){sel=pi;ds.href=pl[pi].u;ds.setAttribute('download','naite-'+day+(pl.length>1?'-'+(pi+1):'')+'.jpg');
+      [].forEach.call(sh.querySelectorAll('[data-gpi]'),function(f){f.classList.toggle('on',pl.length>1&&+f.dataset.gpi===pi);});
+      if(db){delete db.dataset.sure;db.textContent=pl.length>1?'고른 사진 지우기':'사진 지우기';}}
+    if(ds){pick(sel);[].forEach.call(gal.querySelectorAll('[data-gpi]'),function(f){f.onclick=function(){pick(+f.dataset.gpi);};});}
     // 찍을 때 저장을 못 했어도 나중에 여기서 저장·공유(이 폰에 보관된 사진)
-    var ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]');
     if(ds)ds.addEventListener('click',function(){if(S.onEvent)S.onEvent('day_photo_save',{day:day});});
     if(dsh)dsh.onclick=function(){
-      var bl=S.photoBlobs[day],file=null,nt=sh.querySelector('.cd-note');
+      var bl=pl[sel].b,file=null,nt=sh.querySelector('.cd-note');
       try{file=new File([bl],'naite-'+day+'.jpg',{type:bl.type||'image/jpeg'});}catch(e){}
       if(!(file&&navigator.canShare&&navigator.canShare({files:[file]}))){nt.hidden=false;nt.textContent='이 브라우저에서는 바로 공유가 안 돼요. 사진 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
       navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('day_photo_share',{day:day});},function(){});};
-    var db=sh.querySelector('[data-cddel]');
-    if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}delPhoto(day);closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');};
-    if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph});
+    if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}
+      var k=pl[sel].k,left=pl.length-1;delPhoto(day,k);
+      if(left>0){openDay(day);toast('사진을 지웠어요.');}else{closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');}};
+    if(S.onEvent)S.onEvent('cal_day_open',{day:day,photo:!!ph,photos:pl.length});
   }
   // 날짜 기록창: 그 날짜를 고른 뒤 읽은 책을 표지로 누르기 + 다른 책 + 날짜 스탬프 사진
   function openRecordSheet(day){
@@ -868,7 +900,9 @@
     var grid=monthGrid(mi),rows=monthRows(mi),days={},info={},srcs={},today=logicalToday();
     rows.forEach(function(r){days[r.d]=1;});
     grid.forEach(function(w){w.forEach(function(ds){if(!ds)return;var D=dayInfo(ds);info[ds]=D;
-      if(D.ph)srcs[D.ph]=1;else D.it.slice(0,2).forEach(function(x){if(x.cover)srcs[x.cover]=1;});});});
+      D.tiles=D.pl.slice().reverse().map(function(x){return {src:x.u,ph:1};}).concat(D.it.map(function(x){return {src:x.cover,other:x.other,n:x.n};}));
+      if(D.tiles.length>16){D.more=D.tiles.length-15;D.tiles=D.tiles.slice(0,15);}
+      D.tiles.forEach(function(t){if(t.src)srcs[t.src]=1;});});});
     var list=Object.keys(srcs),serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
     return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 76px "Gowun Batang"','10월 읽기 나이테 한 달 동안 권 일을 함께 읽었어요'),document.fonts.load('700 30px "Noto Sans KR"','일월화수목금토@naite_library 0123456789')]).catch(function(){}):null]
       .concat(list.map(loadImg))).then(function(res){
@@ -892,7 +926,7 @@
       c.font='700 26px '+sans;c.textAlign='center';
       ['일','월','화','수','목','금','토'].forEach(function(d,i){c.fillStyle=i===0?'#B87343':'#8A917E';c.fillText(d,GX+i*(cw+gap)+cw/2,top-22);});
       grid.forEach(function(w,ri){w.forEach(function(ds,ci){
-        var x=GX+ci*(cw+gap),y=top+ri*(ch+gap),D=ds?info[ds]:null,has=D&&(D.ph||D.it.length);
+        var x=GX+ci*(cw+gap),y=top+ri*(ch+gap),D=ds?info[ds]:null,has=D&&D.tiles.length;
         if(has){c.save();c.shadowColor='rgba(35,41,31,.10)';c.shadowBlur=14;c.shadowOffsetY=4;rrect(c,x,y,cw,ch,16);c.fillStyle='#FAF9F4';c.fill();c.restore();}
         else{rrect(c,x,y,cw,ch,16);c.fillStyle='rgba(255,255,255,.18)';c.fill();c.save();c.setLineDash([5,5]);c.strokeStyle='rgba(35,41,31,.10)';c.lineWidth=1.5;c.stroke();c.restore();}
         if(ds&&ds===today){rrect(c,x+1.5,y+1.5,cw-3,ch-3,15);c.strokeStyle='#B87343';c.lineWidth=3.5;c.stroke();}
@@ -905,15 +939,16 @@
           if(im){var r=Math.max(bw/im.width,bh/im.height);c.drawImage(im,bx+(bw-im.width*r)/2,by+(bh-im.height*r)/2,im.width*r,im.height*r);}
           else if(other){c.fillStyle='#F3E7DA';c.fillRect(bx,by,bw,bh);c.font=Math.round(bw*.45)+'px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('📚',bx+bw/2,by+bh/2);c.textBaseline='alphabetic';}
           c.restore();}
-        var shown=0;
-        if(D.ph){var pw=cw-24,ph2=Math.min(ah,pw*.98),px=x+12,py=ay+(ah-ph2)/2;cover(D.ph,px,py,pw,ph2);
-          var bx=px+pw-18,by=py+ph2-18;c.fillStyle='rgba(255,255,255,.92)';c.beginPath();c.arc(bx,by,13,0,Math.PI*2);c.fill();
-          c.strokeStyle='#B87343';c.lineWidth=2;rrect(c,bx-7,by-5,14,11,2.5);c.stroke();c.beginPath();c.arc(bx,by+.5,3,0,Math.PI*2);c.stroke();}
-        else{var sh=D.it.slice(0,2);shown=sh.length;
-          if(sh.length===1){var bh=Math.min(ah,(cw-40)/.75),bw=bh*.75;cover(sh[0].cover,x+(cw-bw)/2,ay+(ah-bh)/2,bw,bh,sh[0].other);}
-          else{var bw2=(cw-26)/2,bh2=Math.min(ah,bw2/.75);sh.forEach(function(t,k){cover(t.cover,x+10+k*(bw2+6),ay+(ah-bh2)/2,bw2,bh2,t.other);});}}
-        if(D.sum>1&&D.sum>shown){var txt='×'+D.sum;c.font='700 22px '+sans;var tw=c.measureText(txt).width+22,tx=x+cw-tw+6,ty=y-8;
-          rrect(c,tx,ty,tw,32,16);c.fillStyle='#B87343';c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText(txt,tx+tw/2,ty+23);}
+        // 달력 칸과 같은 규칙: 사진 + 표지를 섞어 1·2·3·4열 격자
+        var T=D.tiles,n=T.length+(D.more?1:0),cols=n<=1?1:n<=4?2:n<=9?3:4,rws=Math.ceil(n/cols),g2=cols>2?4:6,pad=cols===1?12:8;
+        var p1=n===1&&T[0].ph,tw=(cw-pad*2-g2*(cols-1))/cols,tr=p1?1:4/3,th=tw*tr;
+        if(rws*th+(rws-1)*g2>ah){th=(ah-(rws-1)*g2)/rws;tw=th/tr;}
+        if(n===1&&!p1){th=Math.min(ah,(cw-40)/.75);tw=th*.75;}
+        var gw2=cols*tw+(cols-1)*g2,gx=x+(cw-gw2)/2,gy=ay+Math.max(0,(ah-(rws*th+(rws-1)*g2))/2)*(n>4?0:1);
+        T.forEach(function(t,k){var bx=gx+(k%cols)*(tw+g2),by=gy+Math.floor(k/cols)*(th+g2);cover(t.src,bx,by,tw,th,t.other);
+          if(t.n>1){var fs=Math.max(12,Math.round(tw*.32));c.font='800 '+fs+'px '+sans;var bw3=c.measureText(String(t.n)).width+fs*.6;
+            c.fillStyle='#B87343';rrect(c,bx+tw-bw3,by,bw3,fs*1.25,5);c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText(String(t.n),bx+tw-bw3/2,by+fs*1.02);c.textAlign='left';}});
+        if(D.more){var mk=T.length,mx2=gx+(mk%cols)*(tw+g2),my2=gy+Math.floor(mk/cols)*(th+g2);c.fillStyle='#545C4B';c.font='800 '+Math.round(tw*.4)+'px '+sans;c.textAlign='center';c.fillText('+'+D.more,mx2+tw/2,my2+th/2+tw*.14);c.textAlign='left';}
       });});
       // 아래: 인스타 아이콘 + @naite_library
       c.textAlign='left';c.font='700 36px '+sans;var hs='@naite_library',hw=c.measureText(hs).width,ix=(W-(hw+50))/2,iy=1282;
@@ -1245,7 +1280,7 @@
       var code=getCode(),theme=o.theme||{};
       S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,
          reader:readerId(),code:code,member:true,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
-         home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{}};
+         home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{},photoList:{}};
       S.books=rememberBooks(theme.key,o.books);
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
