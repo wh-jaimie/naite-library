@@ -839,6 +839,14 @@
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/jpeg',.9);}catch(e){r2(null);}});
     });
   }
+  // 그날 공유: 공유될 이미지를 먼저 크게 보여 주고 공유·저장. 인증샷 1장뿐인 날은 그 사진, 아니면 인증샷+표지를 모은 한 장
+  // (날짜 창의 '공유·저장'과 이번 달 자료 '오늘 기록' 메뉴의 '오늘 기록 공유'가 같은 이미지)
+  function shareDay(day){
+    var pl=S.photoList[day]||[],it=dayItems(day),collage=!(pl.length===1&&!it.length);
+    if(!pl.length&&!it.length)return;
+    shareSheet(esc(dayFull(day)),collage?'인증샷과 읽은 책 표지를 한 장에 모았어요. 이 이미지가 공유돼요.':'이 인증샷이 그대로 공유돼요.',
+      collage?drawDayCard(day):Promise.resolve(pl[0].b),'naite-'+day+'.jpg',collage?'day_card':'day_photo',{day:day});
+  }
   function openDay(day){
     var it=dayItems(day),pl=(S.photoList[day]||[]).slice(),ph=pl.length?pl[pl.length-1].u:null,sel=pl.length-1;
     if(!it.length&&!ph){openRecordSheet(day);return;}
@@ -866,10 +874,7 @@
       if(db){delete db.dataset.sure;db.textContent=pl.length>1?'고른 사진 지우기':'사진 지우기';}}
     if(pl.length){pick(sel);[].forEach.call(gal.querySelectorAll('[data-gpi]'),function(f){f.onclick=function(){pick(+f.dataset.gpi);};});}
     // 공유·저장: 먼저 어떤 이미지가 나가는지 크게 보여 주고 그 화면에서 공유·저장. 사진 1장뿐인 날은 그 사진, 아니면 사진+표지를 모은 한 장
-    dsh.onclick=function(){
-      shareSheet(esc(dayFull(day)),collage?'인증샷과 읽은 책 표지를 한 장에 모았어요. 이 이미지가 공유돼요.':'이 인증샷이 그대로 공유돼요.',
-        collage?drawDayCard(day):Promise.resolve(pl[0].b),'naite-'+day+'.jpg',collage?'day_card':'day_photo',{day:day});
-    };
+    dsh.onclick=function(){shareDay(day);};
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}
       var k=pl[sel].k,left=pl.length-1;delPhoto(day,k);
       if(left>0){openDay(day);toast('사진을 지웠어요.');}else{closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');}};
@@ -1040,7 +1045,7 @@
     el.innerHTML='<div class="td-menu" role="menu">'+
         (done?'<button type="button" role="menuitem" data-tshare>'+svg(18,IC.share)+'오늘 기록 공유</button>':'')+
         '<button type="button" role="menuitem" data-tbook>'+svg(18,IC.study)+(inf.sum?'책 더 기록':'읽은 책 기록')+'</button>'+
-        '<button type="button" role="menuitem" class="pri" data-tcam>'+svg(18,IC.cam)+'인증샷 찍기'+'</button>'+
+        '<button type="button" role="menuitem" class="pri" data-tcam>'+svg(18,IC.cam)+'오늘 인증샷'+'</button>'+
       '</div>'+
       '<button type="button" class="td-main'+(done?' done':'')+'" data-tfab aria-expanded="'+open+'">'+
         (open?svg(18,IC.x,2.4)+'닫기':done?svg(18,IC.check,2.6)+'오늘 '+(inf.sum?inf.sum+'권':'사진'):svg(18,IC.shelf)+'오늘 기록')+'</button>';
@@ -1299,7 +1304,7 @@
       if((t=e.target.closest('[data-tfab]'))){var fo=!$('tdFab').classList.contains('open');fabToggle(fo);if(fo&&S.onEvent)S.onEvent('today_fab',{});return;}
       if((t=e.target.closest('[data-tcam]'))){fabToggle(false);openStampCamera(logicalToday());if(S.onEvent)S.onEvent('today_cam',{});return;}
       if((t=e.target.closest('[data-tbook]'))){fabToggle(false);openRecordSheet(logicalToday());if(S.onEvent)S.onEvent('today_book',{});return;}
-      if((t=e.target.closest('[data-tshare]'))){fabToggle(false);openShareCard(logicalToday());if(S.onEvent)S.onEvent('today_share',{});return;}
+      if((t=e.target.closest('[data-tshare]'))){fabToggle(false);shareDay(logicalToday());if(S.onEvent)S.onEvent('today_share',{});return;}
       if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=(S.viewOff||0)-1;paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
       if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(0,(S.viewOff||0)+1);paint();}return;}
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
