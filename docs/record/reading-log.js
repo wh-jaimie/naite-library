@@ -553,7 +553,9 @@
   function stampLines(day){
     var t=logicalToday(),isT=!day||day===t;day=day||t;
     var d=new Date(),dd=dateOf(day),h=d.getHours(),pre=day.slice(0,8),days={};
-    S.rows.forEach(function(r){if(r.d.indexOf(pre)===0&&r.d<=day)days[r.d]=1;});days[day]=1;
+    // 'N일째' = 이번 달 1일~그날까지 책을 기록했거나 인증샷을 찍은 날 수(그날 포함). 2026-11-10: 예전엔 책 기록한 날만 세서, 사진만 찍은 날이 끼면 같은 숫자가 반복됐음
+    S.rows.forEach(function(r){if(r.d.indexOf(pre)===0&&r.d<=day)days[r.d]=1;});
+    Object.keys(S.photoUrls||{}).forEach(function(k){if(k.indexOf(pre)===0&&k<=day)days[k]=1;});days[day]=1;
     return {a:(dd.getMonth()+1)+'월 '+dd.getDate()+'일 ('+WD[dd.getDay()]+')',b:isT?(h<12?'오전 ':'오후 ')+((h%12)||12)+':'+pad(d.getMinutes()):'',
       c:'나이테 한달5권 스터디 · '+(dd.getMonth()+1)+'월 '+cntKeys(days)+'일째',ig:'@naite_library'};
   }
