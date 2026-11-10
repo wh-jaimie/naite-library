@@ -794,18 +794,64 @@
     if(S.onEvent)S.onEvent('cal_from_card',{day:day});
   }
   // 기록된 날짜: 그날 읽은 책·사진 보기. 기록도 사진도 없으면 바로 기록창
+  // 하루 모아 공유 이미지(4:5): 날짜 + 인증 사진(찍은 순서) + 읽은 책 표지. 칸에 맞춰 잘라서 깔끔하게
+  function drawDayCard(day){
+    var pl=S.photoList[day]||[],it=dayItems(day),dd=dateOf(day);
+    var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
+    var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',title=(dd.getMonth()+1)+'월 '+dd.getDate()+'일 ('+WD[dd.getDay()]+')';
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 76px "Gowun Batang"',title+' '+stampLines(day).c),document.fonts.load('800 30px "Noto Sans KR"','@naite_library ×0123456789')]).catch(function(){}):null]
+      .concat(pl.map(function(x){return loadImg(x.u);})).concat(it.map(function(x){return loadImg(x.cover);}))).then(function(res){
+      var photos=res.slice(1,1+pl.length),books=it.map(function(x,i){return {im:res[1+pl.length+i],n:x.n,other:x.other};});
+      function tile(im,x,y,w,h,r,other){c.save();c.shadowColor='rgba(0,0,0,.25)';c.shadowBlur=14;c.shadowOffsetY=5;rrect(c,x,y,w,h,r);c.fillStyle=other?'#F3E7DA':'#EBEDE3';c.fill();c.restore();
+        c.save();rrect(c,x,y,w,h,r);c.clip();
+        if(im){var k=Math.max(w/im.width,h/im.height);c.drawImage(im,x+(w-im.width*k)/2,y+(h-im.height*k)/2,im.width*k,im.height*k);}
+        else{c.font=Math.round(w*.4)+'px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('📚',x+w/2,y+h/2);c.textAlign='left';c.textBaseline='alphabetic';}
+        c.restore();}
+      function badge(n,x,y){var t='×'+n;c.font='800 26px '+sans;var w=c.measureText(t).width+22;rrect(c,x-w+8,y-10,w,38,19);c.fillStyle='#B87343';c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText(t,x-w/2+8,y+18);c.textAlign='left';}
+      var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#F4F3EC');g.addColorStop(1,'#E8E7DC');c.fillStyle=g;c.fillRect(0,0,W,H);
+      c.save();c.strokeStyle='rgba(36,86,72,.2)';c.lineWidth=1.6;
+      for(var k=1;k<=8;k++){var R=19*k;c.beginPath();for(var t=0;t<=64;t++){var a=t/64*Math.PI*2,q=R*(1+.09*Math.sin(3*a+k*.7)+.05*Math.sin(5*a+k*1.3));var px=1010+q*Math.cos(a)*1.12,py=96+q*Math.sin(a);t?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.stroke();}
+      c.restore();
+      var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';
+      [[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
+      c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
+      c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';c.fillText('나이테',136,my+2);c.textBaseline='alphabetic';
+      c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText(title,58,222);
+      c.fillStyle='#545C4B';c.font='700 36px '+serif;c.fillText(stampLines(day).c,60,280); // '나이테 한달5권 스터디 · 11월 N일째' (인증 사진 스탬프와 같은 계산)
+      var top=330,bot=1235,L=58,cw=W-116,n=photos.length,m=books.length;
+      var coverH=n&&m?(m>5?190:250):0,gap=28,pBot=bot-(coverH?coverH+gap:0),ph=pBot-top;
+      if(n===1){var w=Math.min(cw,ph*.75),h=w/.75;if(h>ph){h=ph;w=h*.75;}tile(photos[0],L+(cw-w)/2,top+(ph-h)/2,w,h,22);}
+      else if(n===2){var w2=(cw-20)/2,h2=Math.min(ph,w2/.75);photos.forEach(function(im,i){tile(im,L+i*(w2+20),top+(ph-h2)/2,w2,h2,20);});}
+      else if(n>=3){var w3=(cw-20*(n-1))/n,h3=Math.min(ph,w3/.75);photos.forEach(function(im,i){tile(im,L+i*(w3+20),top+(ph-h3)/2,w3,h3,18);});}
+      if(m&&!n){ // 표지만: 큰 격자
+        var cols=m<=2?m:m<=4?2:m<=9?3:4,rows=Math.ceil(m/cols),gg=30,rowH=bot-top,bh=(rowH-gg*(rows-1))/rows,bw=Math.min(bh*.75,(cw-gg*(cols-1))/cols);bh=bw/.75;
+        var x0=L+(cw-(cols*bw+(cols-1)*gg))/2,y0=top+(rowH-(rows*bh+(rows-1)*gg))/2;
+        books.forEach(function(b,i){var x=x0+(i%cols)*(bw+gg),y=y0+Math.floor(i/cols)*(bh+gg);tile(b.im,x,y,bw,bh,12,b.other);if(b.n>1)badge(b.n,x+bw,y);});
+      }else if(m){ // 사진 아래 표지 한 줄
+        var cy=pBot+gap,bh4=coverH,bw4=bh4*.75,g4=m>1?Math.min(24,(cw-m*bw4)/(m-1)):0;
+        if(m*bw4+(m-1)*g4>cw){g4=16;bw4=(cw-(m-1)*g4)/m;bh4=bw4/.75;}
+        var x4=L+(cw-(m*bw4+(m-1)*g4))/2;
+        books.forEach(function(b,i){var x=x4+i*(bw4+g4),y=cy+(coverH-bh4);tile(b.im,x,y,bw4,bh4,10,b.other);if(b.n>1)badge(b.n,x+bw4,y);});
+      }
+      c.font='700 34px '+sans;var hs='@naite_library',hw=c.measureText(hs).width,ix=(W-(hw+50))/2,iy=1290;
+      c.strokeStyle='#245648';c.lineWidth=3;rrect(c,ix,iy-17,34,34,9);c.stroke();c.beginPath();c.arc(ix+17,iy,8,0,Math.PI*2);c.stroke();c.fillStyle='#245648';c.beginPath();c.arc(ix+26.5,iy-8.5,2.2,0,Math.PI*2);c.fill();
+      c.textBaseline='middle';c.fillText(hs,ix+50,iy+1);
+      return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/jpeg',.9);}catch(e){r2(null);}});
+    });
+  }
   function openDay(day){
     var it=dayItems(day),pl=(S.photoList[day]||[]).slice(),ph=pl.length?pl[pl.length-1].u:null,sel=pl.length-1;
     if(!it.length&&!ph){openRecordSheet(day);return;}
-    var sum=it.reduce(function(a,x){return a+x.n;},0);
+    var sum=it.reduce(function(a,x){return a+x.n;},0),collage=!(pl.length===1&&!it.length),card=null;
     var sh=openSheet('<h3>'+esc(dayFull(day))+'</h3><p class="sub">'+(sum?'영어책 '+sum+'권 읽었어요':'사진만 있고 읽은 책 기록은 없어요')+'</p>'+
       // 사진(최근 것 먼저) + 읽은 책 표지를 옆으로 넘겨 보기
       '<div class="cd-gal'+(pl.length+it.length===1?' solo':'')+'">'+
         pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(12,IC.cam,2.4)+'인증 사진</figcaption></figure>';}).join('')+
         it.map(function(x){return '<figure class="gi bk'+(x.other?' o':'')+'"><span class="cv">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><figcaption><b>'+esc(x.title)+'</b>'+(x.n>1?' <em>×'+x.n+'</em>':'')+'</figcaption></figure>';}).join('')+
       '</div>'+
-      (ph?(pl.length>1?'<p class="rl-note cd-pick">사진을 눌러 고른 뒤 공유·저장할 수 있어요</p>':'')+'<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
-        '<a class="rk-btn out" href="'+ph+'" download="naite-'+day+'.jpg" data-dsave>'+svg(17,IC.save)+'사진 저장</a></div>'+
+      (pl.length>1?'<p class="rl-note cd-pick">지울 사진은 눌러서 고를 수 있어요</p>':'')+
+      (true?'<div class="rk-dayacts cd-phacts"><button type="button" class="rk-btn out" data-dshare>'+svg(17,IC.share)+'인스타·카톡 공유</button>'+
+        '<a class="rk-btn out'+(collage?' wait':'')+'" href="'+(collage?'#':ph)+'" download="naite-'+day+'.jpg" data-dsave>'+svg(17,IC.save)+(collage?'이미지 저장':'사진 저장')+'</a></div>'+
         '<p class="rl-note cd-note" hidden></p>':'')+
       '<div class="rk-dayacts">'+
         '<button type="button" class="rk-btn out" data-dadd>'+svg(17,IC.plus,2.4)+(it.length?'책 더 기록하기':'책 기록하기')+'</button>'+
@@ -820,18 +866,20 @@
     sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
     sh.querySelector('[data-dalbum]').onclick=function(){closeSheet();openStampAlbum(day);};
     var gal=sh.querySelector('.cd-gal'),ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]'),db=sh.querySelector('[data-cddel]');
-    // 공유·저장·지우기 = 고른 사진(테두리). 사진이 여러 장이면 사진을 눌러서 고름. 처음엔 마지막에 찍은 사진
-    function pick(pi){sel=pi;ds.href=pl[pi].u;ds.setAttribute('download','naite-'+day+(pl.length>1?'-'+(pi+1):'')+'.jpg');
+    // 고른 사진(테두리) = '고른 사진 지우기' 대상. 처음엔 마지막에 찍은 사진
+    function pick(pi){sel=pi;
       [].forEach.call(sh.querySelectorAll('[data-gpi]'),function(f){f.classList.toggle('on',pl.length>1&&+f.dataset.gpi===pi);});
       if(db){delete db.dataset.sure;db.textContent=pl.length>1?'고른 사진 지우기':'사진 지우기';}}
-    if(ds){pick(sel);[].forEach.call(gal.querySelectorAll('[data-gpi]'),function(f){f.onclick=function(){pick(+f.dataset.gpi);};});}
-    // 찍을 때 저장을 못 했어도 나중에 여기서 저장·공유(이 폰에 보관된 사진)
-    if(ds)ds.addEventListener('click',function(){if(S.onEvent)S.onEvent('day_photo_save',{day:day});});
-    if(dsh)dsh.onclick=function(){
-      var bl=pl[sel].b,file=null,nt=sh.querySelector('.cd-note');
+    if(pl.length){pick(sel);[].forEach.call(gal.querySelectorAll('[data-gpi]'),function(f){f.onclick=function(){pick(+f.dataset.gpi);};});}
+    // 공유·저장: 사진 1장뿐인 날은 그 사진, 아니면 사진+표지를 모은 한 장
+    if(collage)drawDayCard(day).then(function(bl){if(!bl||!document.body.contains(sh))return;card=bl;ds.href=URL.createObjectURL(bl);ds.classList.remove('wait');},function(){});
+    ds.addEventListener('click',function(e){if(collage&&!card){e.preventDefault();toast('이미지를 만드는 중이에요. 잠깐만요.');return;}if(S.onEvent)S.onEvent(collage?'day_card_save':'day_photo_save',{day:day});});
+    dsh.onclick=function(){
+      var bl=collage?card:pl[0].b,file=null,nt=sh.querySelector('.cd-note');
+      if(!bl){toast('이미지를 만드는 중이에요. 잠깐만요.');return;}
       try{file=new File([bl],'naite-'+day+'.jpg',{type:bl.type||'image/jpeg'});}catch(e){}
-      if(!(file&&navigator.canShare&&navigator.canShare({files:[file]}))){nt.hidden=false;nt.textContent='이 브라우저에서는 바로 공유가 안 돼요. 사진 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
-      navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('day_photo_share',{day:day});},function(){});};
+      if(!(file&&navigator.canShare&&navigator.canShare({files:[file]}))){nt.hidden=false;nt.textContent='이 브라우저에서는 바로 공유가 안 돼요. 이미지 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
+      navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent(collage?'day_card_share':'day_photo_share',{day:day});},function(){});};
     if(db)db.onclick=function(){if(!db.dataset.sure){db.dataset.sure='1';db.textContent='한 번 더 누르면 사진이 지워져요';return;}
       var k=pl[sel].k,left=pl.length-1;delPhoto(day,k);
       if(left>0){openDay(day);toast('사진을 지웠어요.');}else{closeSheet();toast('사진을 지웠어요. 읽기 기록은 그대로예요.');}};
