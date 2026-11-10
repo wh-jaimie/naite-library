@@ -372,7 +372,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       kpi('들어온 사람',a.site,b.site,R,'명')+
       (TODAY?'':kpi('하루 평균',Math.round(a.site/nd*10)/10,Math.round(b.site/nd*10)/10,R,'명'))+
       kpi('🛒 쿠팡 누른 사람',a.buy,b.buy,R,'명')+
-    '</div><div id="hsite" style="margin-top:12px"></div><p class="hint">'+(TODAY?'막대 하나 = 한 시간.':'막대 하나 = 하루, 그날 들어온 사람 수(같은 폰은 하루 1명). 주황 막대는 오늘.')+' 스터디 앱 안에서 연 나이테 120·책장은 앱 사용이라 여기서 빠져요. 쿠팡은 사이트·앱 어디서 눌렀든 다 세요.</p></div>';
+    '</div><div class="shd" style="margin-top:14px"><b style="font-size:.9rem">'+(TODAY?'오늘 시간대별':'날짜별 흐름')+'</b><select class="t sm r" id="hsm" style="width:auto"></select></div><div id="hsite"></div><p class="hint">'+(TODAY?'막대 하나 = 한 시간.':'막대 하나 = 하루(사람 수는 같은 폰을 하루 1명으로 셈). 주황 막대는 오늘. 위 기간 버튼으로 7일·30일·이번 달을 바꿔 봐요.')+' 스터디 앱 안에서 연 나이테 120·책장은 앱 사용이라 여기서 빠져요. 쿠팡은 사이트·앱 어디서 눌렀든 다 세요.</p></div>';
     // ── 2. 흐름
     var V=sessions(X.cur.filter(isSiteView)),A=sessions(X.cur.filter(isAppView)),vA=Object.keys(V).filter(function(k){return A[k];});
     h+='<div class="card"><h3>🔻 사이트에서 앱 설치까지</h3><div id="hfun"><p class="status">불러오는 중…</p></div>'+
@@ -416,7 +416,24 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     function hk(e){return 'h'+new Date(e.created_at).getHours();}
     function dk(e){return dstr(e.created_at);}
     function sid(e){return e.session_id;}
-    document.getElementById('hsite').innerHTML=TODAY?barChart(HR,perDayUniq(sv,{days:HR},hk,sid),'#2F6E58','명'):barChart(R.days,perDayUniq(sv,R,dk,sid),'#2F6E58','명');
+    // 날짜별 흐름: 지표를 골라서 봄(7일·30일·이번 달 기간 버튼을 따름). 오늘은 시간대별 — 읽기 기록은 날짜만 있어 오늘엔 뺌
+    function ev(t){return X.cur.filter(function(e){return e.type===t;});}
+    var SM=[['site','🌱 사이트 들어온 사람','#2F6E58',sv,true],['buy','🛒 쿠팡 누른 사람','#a2231d',ev('buy_click'),true],['buyn','🛒 쿠팡 클릭 수','#c2554f',ev('buy_click'),false],
+      ['app','📲 스터디 앱 연 사람','#6A4A8A',X.cur.filter(isAppView),true],['cta','👆 메인 버튼 클릭','#8A6D2F',ev('cta_click'),false],
+      ['join','💬 스터디방 참여 클릭','#B87343',ev('join_click'),false],['gb','🛍 공동구매 관심','#7A4520',ev('groupbuy_interest'),false]];
+    if(!TODAY&&X.lc)SM.push(['readers','📖 기록한 폰','#4F9A72',null,true],['reads','✅ 읽기 기록 수','#245648',null,false]);
+    var hsm=document.getElementById('hsm');hsm.innerHTML=SM.map(function(m){return '<option value="'+m[0]+'">'+m[1]+'</option>';}).join('');
+    try{var _sv=localStorage.getItem('naite_kpi_hsm');if(_sv&&SM.some(function(m){return m[0]===_sv;}))hsm.value=_sv;}catch(e){}
+    function drawSite(){var m=SM.filter(function(x){return x[0]===hsm.value;})[0],u=m[4]?'명':'번',v;
+      if(m[0]==='readers')v=perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;});
+      else if(m[0]==='reads')v=perDay(X.lc,R,function(l){return l.read_on;});
+      else if(TODAY)v=m[4]?perDayUniq(m[3],{days:HR},hk,sid):perDay(m[3],{days:HR},hk);
+      else v=m[4]?perDayUniq(m[3],R,dk,sid):perDay(m[3],R,dk);
+      var tot=v.reduce(function(a,b){return a+b;},0);
+      document.getElementById('hsite').innerHTML=barChart(TODAY&&m[0]!=='readers'&&m[0]!=='reads'?HR:R.days,v,m[2],m[0]==='readers'?'대':u)+
+        '<p class="hint" style="margin-top:4px">막대 합계 '+tot+(m[4]?'(날마다 센 사람 수를 더한 값이라, 위 칸의 기간 전체 사람 수보다 클 수 있어요)':'')+'</p>';
+      try{localStorage.setItem('naite_kpi_hsm',hsm.value);}catch(e){}}
+    hsm.onchange=drawSite;drawSite();
     groupbuyCard();
     loadAppAll().then(function(AA){
       var s0=dstr(R.start),e0=dstr(R.end);
