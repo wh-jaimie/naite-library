@@ -663,7 +663,7 @@
     return getStream().then(function(stream){
       return new Promise(function(res){
         var ov=document.createElement('div');ov.className='rl-cam';
-        ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-camx aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="lbl">'+(opt.stamp?'날짜 스탬프 사진':'사진 찍기')+'</span><span style="width:34px"></span></div>'+
+        ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-camx aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="lbl">'+(opt.stamp?'인증샷 찍기':'사진 찍기')+'</span><span style="width:34px"></span></div>'+
           '<div class="rl-cam-stage"><div class="rl-frame"><video playsinline autoplay muted></video>'+(opt.stamp?ovlHtml(tpl):'')+'</div></div>'+
           '<div class="rl-cam-bottom">'+(opt.stamp?'<div class="rl-styles" role="group" aria-label="글씨 디자인">'+TPLS.map(function(t){return '<button type="button" class="schip" data-tpl="'+t[0]+'" aria-pressed="'+(t[0]===tpl)+'">'+t[1]+'</button>';}).join('')+'</div>':'')+
           '<div class="cam-row"><button type="button" class="cam-cancel" data-camx>취소</button><button type="button" class="shot" data-camshot aria-label="사진 찍기"></button>'+
@@ -714,7 +714,7 @@
     var savedK=null;
     savePhoto(day,c,function(k,dropped){savedK=k;if(dropped)toast('하루 사진은 '+PMAX+'장까지예요. 가장 먼저 찍은 사진을 지웠어요.');});
     var meta={day:day,tpl:c.tpl||''},ov=document.createElement('div'),noRec=!S.rows.some(function(r){return r.d===day;});ov.className='rl-cam rl-after';
-    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 날짜 스탬프 사진</span><span style="width:34px"></span></div>'+
+    ov.innerHTML='<div class="rl-cam-top"><button type="button" class="cam-x" data-ax aria-label="닫기">'+svg(16,IC.x,2.4)+'</button><span class="at">'+esc(dayWord(day))+' 인증샷</span><span style="width:34px"></span></div>'+
       '<div class="rl-photo"><p class="rv-empty">이미지를 만드는 중…</p></div>'+
       '<div class="rl-saved">'+svg(17,IC.check,2.6)+'달력에 저장했어요<button type="button" data-agocal>달력에서 보기</button></div>'+
       (noRec?'<div class="rl-ask"><span>이날 읽은 책도 기록할까요?</span><button type="button" data-arec>책 기록하기</button></div>':'')+
@@ -843,28 +843,24 @@
     var it=dayItems(day),pl=(S.photoList[day]||[]).slice(),ph=pl.length?pl[pl.length-1].u:null,sel=pl.length-1;
     if(!it.length&&!ph){openRecordSheet(day);return;}
     var sum=it.reduce(function(a,x){return a+x.n;},0),collage=!(pl.length===1&&!it.length),card=null;
-    // 한 화면에 다 들어오게: 작은 갤러리 + 버튼 4개 한 줄 + 글자 링크 한 줄
+    // 한 화면에 다 들어오게: 작은 갤러리 + 공유·저장·기록하기 + 글자 링크. 인증 사진 찍기는 '기록하기'(표지 누르기 + 날짜 스탬프 사진) 안에
     var sh=openSheet('<div class="cd-day"><div class="cd-head"><h3>'+esc(dayFull(day))+'</h3><span class="sub">'+(sum?'영어책 '+sum+'권':'사진만 있어요')+'</span></div>'+
       // 사진(최근 것 먼저) + 읽은 책 표지를 옆으로 넘겨 보기
       '<div class="cd-gal'+(pl.length+it.length===1?' solo':'')+'">'+
-        pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(11,IC.cam,2.4)+'인증 사진</figcaption></figure>';}).join('')+
+        pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(11,IC.cam,2.4)+'인증샷</figcaption></figure>';}).join('')+
         it.map(function(x){return '<figure class="gi bk'+(x.other?' o':'')+'"><span class="cv">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><figcaption><b>'+esc(x.title)+'</b>'+(x.n>1?' <em>×'+x.n+'</em>':'')+'</figcaption></figure>';}).join('')+
       '</div>'+
       '<div class="cd-acts">'+
         '<button type="button" data-dshare>'+svg(18,IC.share)+'<span>공유</span></button>'+
         '<a class="'+(collage?'wait':'')+'" href="'+(collage?'#':ph)+'" download="naite-'+day+'.jpg" data-dsave>'+svg(18,IC.save)+'<span>저장</span></a>'+
-        '<button type="button" data-dadd>'+svg(18,IC.plus,2.4)+'<span>책 기록</span></button>'+
-        '<button type="button" class="fill" data-dstamp>'+svg(18,IC.cam)+'<span>'+(pl.length?'사진 더 찍기':'스탬프 사진')+'</span></button>'+
+        '<button type="button" class="fill" data-dadd>'+svg(18,IC.plus,2.4)+'<span>기록하기</span></button>'+
       '</div>'+
       '<p class="rl-note cd-note" hidden></p>'+
-      (pl.length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'')+
-      '<div class="cd-links"><button type="button" data-dalbum>앨범 사진에 스탬프</button>'+
+      '<div class="cd-links">'+
         (ph?'<button type="button" data-cddel>'+(pl.length>1?'고른 사진 지우기':'사진 지우기')+'</button>':'')+
         '<button type="button" data-sclose>닫기</button></div></div>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
-    sh.querySelector('[data-dstamp]').onclick=function(){closeSheet();openStampCamera(day);};
-    sh.querySelector('[data-dalbum]').onclick=function(){closeSheet();openStampAlbum(day);};
     var gal=sh.querySelector('.cd-gal'),ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]'),db=sh.querySelector('[data-cddel]');
     // 고른 사진(테두리) = '고른 사진 지우기' 대상. 처음엔 마지막에 찍은 사진
     function pick(pi){sel=pi;
@@ -911,9 +907,10 @@
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
-        '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'날짜 스탬프 사진'+'</button>'+
+        '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
-        '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>';
+        '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
+        ((S.photoList[day]||[]).length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'');
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
@@ -1049,7 +1046,7 @@
     el.innerHTML='<div class="td-menu" role="menu">'+
         (done?'<button type="button" role="menuitem" data-tshare>'+svg(18,IC.share)+'오늘 기록 공유</button>':'')+
         '<button type="button" role="menuitem" data-tbook>'+svg(18,IC.study)+(inf.sum?'책 더 기록':'읽은 책 기록')+'</button>'+
-        '<button type="button" role="menuitem" class="pri" data-tcam>'+svg(18,IC.cam)+(inf.ph?'인증샷 다시 찍기':'오늘 인증샷')+'</button>'+
+        '<button type="button" role="menuitem" class="pri" data-tcam>'+svg(18,IC.cam)+'인증샷 찍기'+'</button>'+
       '</div>'+
       '<button type="button" class="td-main'+(done?' done':'')+'" data-tfab aria-expanded="'+open+'">'+
         (open?svg(18,IC.x,2.4)+'닫기':done?svg(18,IC.check,2.6)+'오늘 '+(inf.sum?inf.sum+'권':'사진'):svg(18,IC.shelf)+'오늘 기록')+'</button>';
