@@ -974,6 +974,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .pro-lock{margin-top:10px;border:1.5px dashed #D9BFA5;background:#FBF4EC;border-radius:12px;padding:12px;text-align:center}
 .pro-lock b{display:block;color:var(--clay-ink);font-size:14px}.pro-lock p{margin:4px 0 8px;font-size:12.5px;color:var(--ink-soft)}
 .pro-lk{color:var(--clay-ink)!important;font-weight:700}
+.pro-invite{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:22px 2px 6px;background:#FBF4EC;border-radius:14px;padding:14px}.pro-invite b{color:var(--clay-ink);font-size:14.5px}.pro-invite p{margin:3px 0 0;font-size:12.5px;color:var(--ink-soft)}.pro-invite button{flex:none;border:0;background:var(--clay);color:#fff;font:inherit;font-weight:800;font-size:12.5px;border-radius:99px;padding:7px 13px;cursor:pointer}
 .pro-sample{display:inline-block;margin-top:7px;background:#FFF3D6;color:#7A5A00;font-size:11.5px;font-weight:800;border-radius:6px;padding:3px 8px}
 .sd-book .act.wb.locked{opacity:.75}
 .pro-vlock{display:flex;gap:10px;align-items:center;padding:10px;background:#FBF4EC;border:1.5px dashed #D9BFA5;border-radius:14px}
@@ -1036,26 +1037,25 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   // ── PRO 미리보기(유료 스터디 전환판, 2026-11-11) ──
   // 지금은 [무료 회원]/[유료 회원] 버튼으로 화면만 바꿔 봄(localStorage naite_pro_sim). 실제 잠금은 카카오 로그인 + 이용권 + DB(RPC)에서 할 예정
   //   → 그 전까지 유료 자료도 기존 공개 함수로 받아오므로 진짜 잠금이 아님(미리보기 전용)
+  // 무료판 = 맛보기 1권만 '원래 한 권이었던 것처럼'(잠금·자물쇠 표시 없음), 유료판 = 5권 자료 전체 — 2026-11-11
+  // 맛보기 책(테마별, tag = 영어표현의 [책 이름표]). 나중엔 관리자가 고르게
+  var PRO_PICK={vehicles:{book:"Mr Gumpy's Outing",tag:'검피'}};
+  (function(){try{var v=new URLSearchParams(location.search).get('v');if(v==='free'||v==='paid')localStorage.setItem('naite_pro_sim',v);}catch(e){}})(); // ?v=free|paid 로 각 화면 바로 열기
   var PRO={
     paid:function(){try{return localStorage.getItem('naite_pro_sim')==='paid';}catch(e){return false;}},
-    sample:function(books){return books[0]?books[0].id:null;}, // 맛보기 책: 글밥 적은 첫 책(나중에 관리자가 고르게)
-    isSample:function(b,s){return b.id===s;},
-    open:function(b,s){return PRO.paid()||b.id===s;},
-    lockVid:function(b){return '<div class="sd-vcard pro-vlock">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b><p>🔒 읽어주기 영상은 월간 스터디에서 볼 수 있어요</p></div></div>';},
-    more:function(n,what){if(PRO.paid()||n<=0)return '';return '<div class="pro-lock"><b>🔒 '+esc(what)+' '+n+'개 더 있어요</b><p>월간 스터디에서 이번 달 자료를 모두 볼 수 있어요.</p><button type="button" data-projoin>스터디 신청 방법</button></div>';},
+    pick:function(key,books){var p=PRO_PICK[key],b=p&&books.filter(function(x){return x.title===p.book;})[0];return {book:b||books[0]||null,tag:(p&&b)?p.tag:''};},
     bar:function(){var p=PRO.paid();
-      return '<div class="pro-bar"><span>🧪 유료 스터디 <b>미리보기</b></span><span class="pro-seg"><button type="button" data-prosim="free"'+(p?'':' class="on"')+'>무료 회원</button><button type="button" data-prosim="paid"'+(p?' class="on"':'')+'>유료 회원</button></span></div>'+
-        (p?'<div class="pro-who">✅ 11월 월간 스터디 이용 중 (예시)</div>':'<div class="pro-who">무료로 보는 중 · 🎁 맛보기 1권은 자료 전체 공개 <button type="button" data-projoin>월간 스터디 알아보기</button></div>');}
+      return '<div class="pro-bar"><span>🧪 유료 스터디 <b>미리보기</b></span><span class="pro-seg"><button type="button" data-prosim="free"'+(p?'':' class="on"')+'>무료판</button><button type="button" data-prosim="paid"'+(p?' class="on"':'')+'>유료판</button></span></div>';}
   };
   document.addEventListener('click',function(e){var t;
-    if((t=e.target.closest('[data-prosim]'))){try{localStorage.setItem('naite_pro_sim',t.getAttribute('data-prosim'));}catch(_){}location.reload();return;}
+    if((t=e.target.closest('[data-prosim]'))){var u=new URL(location.href);u.searchParams.set('v',t.getAttribute('data-prosim'));location.href=u.toString();return;}
     if((t=e.target.closest('[data-projoin]'))){e.preventDefault();proJoin();}
   },true);
   function proJoin(){
     var ov=document.getElementById('proJoin');
     if(!ov){ov=document.createElement('div');ov.id='proJoin';ov.className='pro-ov';
       ov.innerHTML='<div class="pro-sheet" role="dialog" aria-modal="true"><h3>나이테 월간 스터디</h3><p class="pr">월 9,900원 · 완주하면 다음 달 무료</p>'+
-        '<ul><li>이번 달 5권 자료 전체(읽어주기 팁·영상·놀이 활동·영어표현·워크지)</li><li>영어표현 듣기·주요 단어 뜻 <small>(준비 중)</small></li><li>완주 조건: 5권을 한 번씩 + 읽은 날 15일 (앱이 자동으로 세요)</li></ul>'+
+        '<ul><li>이번 달 5권 자료 전체(읽어주기 팁·영상·놀이 활동·영어표현·워크지)</li><li>영어표현 듣기·주요 단어 뜻</li><li>완주 조건: 5권을 한 번씩 + 읽은 날 15일 (앱이 자동으로 세요)</li></ul>'+
         '<ol class="steps"><li>네이버 프리미엄콘텐츠에서 결제</li><li>이 앱에서 <b>카카오 로그인</b></li><li>네이버 아이디를 적어 신청 확인 → 운영자 확인 후 열림</li></ol>'+
         '<button type="button" class="kakao" disabled>카카오로 로그인 (준비 중)</button><button type="button" class="close" data-proclose>닫기</button></div>';
       document.body.appendChild(ov);ov.addEventListener('click',function(e){if(e.target===ov||e.target.closest('[data-proclose]'))ov.hidden=true;});}
@@ -1071,7 +1071,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
       return (TORD[a.tier]||9)-(TORD[b.tier]||9);
     });
     var hasBuy=books.some(function(b){return b.buy_url;});
-    var SAMPLE=PRO.sample(books);
+    var FREE=!PRO.paid(),PK=PRO.pick(theme.key,books),MB=FREE?(PK.book?[PK.book]:[]):books; // 자료에 쓰는 책: 무료판 1권 / 유료판 5권
     // 책 카드: 책 소개만(영상·읽어주기 팁은 아래 섹션으로 — 예전 구성 흐름: 책 소개 → 영상 → 읽어주는 방법 → 활용 → 영어표현)
     // 이번 달 5권 = 표지 책장(2026-11-07): 표지 크게, 카드 전체가 책정보(쿠팡) 링크. 설명·배지 목록은 빼고 한 가지 자랑만
     var bh=books.map(function(b){
@@ -1096,12 +1096,18 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
         '<div class="bk-info"><div class="tags"><span class="type">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+ic(LV_IC[lv],13)+LV_TXT[lv]+'</span>':'')+'</div>'+
           '<h3>'+esc(b.title)+'<button type="button" class="cp-ic" data-copy="'+esc(b.title)+'" data-cpfrom="study" aria-label="제목 복사" title="제목 복사">'+ic('copy',15)+'</button></h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
           (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+
-          (b.workbook?(PRO.open(b,SAMPLE)?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'<button type="button" class="act wb locked" data-projoin>🔒 워크지</button>'):'')+(PRO.isSample(b,SAMPLE)&&!PRO.paid()?'<span class="pro-sample">🎁 이번 달 맛보기 책 · 자료 전체 공개</span>':'')+'</div></div></article>';
+          (b.workbook&&MB.indexOf(b)>=0?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+'</div></div></article>';
     }).join('');
-    var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';if(!PRO.open(b,SAMPLE))return PRO.lockVid(b);
+    var vids=MB.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';
       return '<div class="sd-vcard"><div class="sd-vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',16)+'</span></span></div></div><div class="vt">'+esc(b.title)+'<small>'+ic('play',13)+'눌러서 영상 보기</small></div></div>';}).filter(Boolean).join('');
     var acts=parseList(c.activities),exprs=parseExpr(c.expressions),extras=parseExtras(c.extras),how=parseList(c.read_method).map(function(t){return t.replace(/^[•·\-*]\s*/,'');});
-    var tips=books.filter(function(b){return b.tip;});
+    var tips=MB.filter(function(b){return b.tip;});
+    if(FREE){ // 무료판: 맛보기 책 이름표가 붙은 표현·놀이만(이름표는 떼고), 부가자료는 없음
+      var tg=PK.tag,hasTg=function(t){return !!tg&&String(t).indexOf('['+tg+']')>=0;};
+      var fe=exprs.filter(function(e){return hasTg(e.ko);});exprs=(fe.length?fe:exprs.slice(0,3)).map(function(e){return {en:e.en,ko:String(e.ko).replace(/\s*\[[^\]]+\]\s*/,' ')};});
+      var fa=acts.filter(function(a){return !!tg&&a.indexOf(tg)>=0;});acts=fa.length?fa:acts.slice(0,2);
+      extras=[];
+    }
     // 매달 공통으로 보여 줄 읽어주기 가이드(1개월차 '읽어주는 방법'의 공통 문장) + 그 달에만 있는 문장
     var COMMON_HOW=['하루 1~2권, 같은 책을 여러 번 반복해도 좋아요. 반복이 아이에겐 최고의 학습이에요.',
       '뜻을 일일이 한국어로 통역하지 마세요. 그림을 가리키며 영어 단어만 반복해도 충분해요.',
@@ -1114,7 +1120,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     }).join('');
     // 자료 탭(2026-11-07): 순서는 아래 섹션 순서 그대로, 누르면 그 내용만 보임
     var secs=[['s-books','이번 달 5권']]; // 탭은 두 줄로 전부 보이게(이름은 줄이지 않음)
-    if(window.NaiteExtras&&NaiteExtras.hasWords(books))secs.push(['s-words','단어·줄거리']); // R2(study-extras.js)
+    if(window.NaiteExtras&&NaiteExtras.hasWords(MB))secs.push(['s-words','단어·줄거리']); // R2(study-extras.js)
     if(how.length||tips.length)secs.push(['s-how','읽어주기 방법']);
     if(vids)secs.push(['s-vid','읽어주기 영상']);
     if(acts.length)secs.push(['s-play','놀이 활동']);
@@ -1147,22 +1153,23 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
          '<a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형이 궁금하다면 →</a></p></details>'+
        '<p class="note small">글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
        (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
-    if(window.NaiteExtras&&NaiteExtras.hasWords(books))h+='<section id="s-words"></section>'; // R2 미리 알아 두면 좋은 단어(study-extras.js)
+    if(window.NaiteExtras&&NaiteExtras.hasWords(MB))h+='<section id="s-words"></section>'; // R2 미리 알아 두면 좋은 단어(study-extras.js)
     // 2. 읽어주는 방법(공통 + 책별 팁)
     if(how.length||tips.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
        (how.length?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'')+
-       (tips.length?'<div class="btips">'+tips.map(function(b){return '<div class="btip">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b>'+(PRO.open(b,SAMPLE)?'<p>'+esc(b.tip)+'</p>':'<p class="pro-lk">🔒 월간 스터디에서 볼 수 있어요</p>')+'</div></div>';}).join('')+'</div>':'')+'</div></section>';
+       (tips.length?'<div class="btips">'+tips.map(function(b){return '<div class="btip">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b>'+'<p>'+esc(b.tip)+'</p>'+'</div></div>';}).join('')+'</div>':'')+'</div></section>';
     // 3. Read Aloud 영상
     if(vids)h+='<section id="s-vid"><div class="sh">'+ic('play',20)+'<h2>Read Aloud 영상</h2></div>'+
        '<p class="note">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="sd-vids">'+vids+'</div></section>';
     // 4. 책 활용 아이디어
-    if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 아이디어</h2></div><div class="card"><ul class="ideas">'+(PRO.paid()?acts:acts.slice(0,1)).map(function(a){
-       var m=/^(.{2,24}?)\s*[:：]\s*(.+)$/.exec(a);return '<li>'+(m?'<b>'+esc(m[1])+'</b> '+esc(m[2]):esc(a))+'</li>';}).join('')+'</ul>'+PRO.more(acts.length-1,'놀이 활동')+'</div></section>';
+    if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 아이디어</h2></div><div class="card"><ul class="ideas">'+acts.map(function(a){
+       var m=/^(.{2,24}?)\s*[:：]\s*(.+)$/.exec(a);return '<li>'+(m?'<b>'+esc(m[1])+'</b> '+esc(m[2]):esc(a))+'</li>';}).join('')+'</ul></div></section>';
     // 5. 관련 영어표현(전부)
     if(exprs.length)h+='<section id="s-exp"><div class="sh">'+ic('chat',20)+'<h2>관련 영어표현</h2></div><div class="card"><ul class="exp all">'+
-       (PRO.paid()?exprs:exprs.slice(0,2)).map(function(e){return '<li><div class="e">'+esc(e.en)+'</div>'+(e.ko?'<div class="k">'+esc(e.ko)+'</div>':'')+'</li>';}).join('')+'</ul>'+PRO.more(exprs.length-2,'영어표현')+'</div></section>';
+       exprs.map(function(e){return '<li><div class="e">'+esc(e.en)+'</div>'+(e.ko?'<div class="k">'+esc(e.ko)+'</div>':'')+'</li>';}).join('')+'</ul></div></section>';
     // 6. 부가자료
-    if(exhtml)h+='<section id="s-extra"><div class="sh">'+ic('clip',20)+'<h2>부가자료</h2></div><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+(PRO.paid()?exhtml:PRO.more(extras.length,'부가자료'))+'</div></section>';
+    if(exhtml)h+='<section id="s-extra"><div class="sh">'+ic('clip',20)+'<h2>부가자료</h2></div><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+exhtml+'</div></section>';
+    if(FREE)h+='<div class="pro-invite"><div><b>나이테 월간 스터디</b><p>매달 5권 자료를 모두 받아 함께 읽어요.</p></div><button type="button" data-projoin>알아보기</button></div>';
     h+='<div id="nextPrev"></div>';
     h+='<div id="arch"></div>';
     h+='<div class="sd-foot"><a class="ig" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+ic('ig',17)+'@naite_library</a><br>'+
@@ -1171,7 +1178,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><div id="v-pick" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
-    if(window.NaiteExtras)NaiteExtras.after({app:app,books:books,open:function(b){return PRO.open(b,SAMPLE);},more:function(n){return PRO.more(n,'단어·줄거리');}}); // R1 듣기·R2 단어
+    if(window.NaiteExtras)NaiteExtras.after({app:app,books:MB,open:function(){return true;},more:function(){return '';}}); // R1 듣기·R2 단어
     if(PREVIEW){ // 관리자 미리보기: 기록 기능 없이 화면만(읽었어요 줄은 모양만)
       app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
       var pg=app.querySelector('[data-rprog]');if(pg)pg.innerHTML='<div class="dots">'+books.map(function(){return '<i></i>';}).join('')+'</div><span class="pt">'+books.length+'권 중 <b>0권</b> 만났어요</span>';
