@@ -1070,7 +1070,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     if(vids)secs.push(['s-vid','읽어주기 영상']);
     if(acts.length)secs.push(['s-play','놀이 활동']);
     if(exprs.length)secs.push(['s-exp','영어표현']);
-    if(exhtml)secs.push(['s-extra','부가자료']);
+    // 부가자료는 탭 없이 '이번 달 5권' 탭 안(5권 소개 아래)에 — 2026-11-12 탭이 많아져서
     secs.push(['s-next','다음 달']);
     var h='<div id="v-study" class="sd sd-classic"><div class="sd-wrap">';
     // 맨 위 줄 오른쪽: 엄마표영어 가이드(읽을거리) + 처음 오셨나요? — 가이드는 화면 맨 아래에서 옮김(2026-11-07)
@@ -1090,6 +1090,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
        '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
        '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
        '<h3 class="binfo-h" id="sdInfo">5권 소개</h3><div class="sd-books">'+binfo+'</div>'+
+       (exhtml?'<div id="s-extra"><h3 class="binfo-h">부가자료</h3><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+exhtml+'</div></div>':'')+
        '<details class="guide"><summary><span><b>글밥 적은 책부터</b> · 다 못 읽어도 괜찮아요</span>'+ic('chev',14)+'</summary>'+
          '<p>3~4살은 새싹 2권만 읽어도 충분해요. 5살 이상이라면 5권 모두 함께 읽어 봐도 좋아요. <b>핵심은 재미</b>예요.</p>'+
          '<div class="legend"><span class="lv l1">'+ic('seed',13)+'글밥 적음</span><span class="lv l2">'+ic('leaf',13)+'글밥 보통</span><span class="lv l3">'+ic('tree',13)+'글밥 많음</span></div>'+
@@ -1112,7 +1113,6 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     if(exprs.length)h+='<section id="s-exp"><div class="sh">'+ic('chat',20)+'<h2>관련 영어표현</h2></div><div class="card"><ul class="exp all">'+
        exprs.map(function(e){return '<li><div class="e">'+esc(e.en)+'</div>'+(e.ko?'<div class="k">'+esc(e.ko)+'</div>':'')+'</li>';}).join('')+'</ul></div></section>';
     // 6. 부가자료
-    if(exhtml)h+='<section id="s-extra"><div class="sh">'+ic('clip',20)+'<h2>부가자료</h2></div><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+exhtml+'</div></section>';
     h+='<div id="nextPrev"></div>';
     h+='<div id="arch"></div>';
     h+='<div class="sd-foot"><a class="ig" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+ic('ig',17)+'@naite_library</a><br>'+
