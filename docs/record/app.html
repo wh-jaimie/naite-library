@@ -965,12 +965,37 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .cd-links{display:flex;justify-content:center;flex-wrap:wrap;gap:2px 4px;margin-top:8px}
 .cd-links button{border:0;background:none;font:inherit;font-size:12.5px;font-weight:700;color:var(--soft);padding:6px 8px;cursor:pointer}
 .cd-links button+button:before{content:'';display:inline-block;width:1px;height:10px;background:var(--line-2,#D4D9C9);margin:0 10px 0 -6px;vertical-align:middle}
+/* 미니 챌린지 카드(읽기 기록 맨 위) */
+.ch-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow);margin:14px 0 4px}
+.ch-card .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ch-card h3{margin:0;font-family:var(--serif);font-size:19px;color:var(--ink)}
+.ch-card .dt{font-size:12.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+.ch-card .pre{margin:8px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.5}
+.ch-card .days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 0 12px}
+.ch-card .d{text-align:center;font-size:11px;color:var(--muted);font-weight:700}
+.ch-card .d i{position:relative;display:block;margin:4px auto 0;width:34px;height:34px;border-radius:50%;border:1.5px dashed var(--line-2,#D4D9C9);font-style:normal;line-height:32px;font-size:15px}
+.ch-card .d.ok i{border:0;background:#E3EDE6;line-height:34px}
+.ch-card .d i em{position:absolute;right:-6px;bottom:-4px;font-style:normal;font-size:12px;line-height:1}
+.ch-card .d.today i{outline:2px solid #B87343;outline-offset:1px}
+.ch-card .ms{display:flex;flex-direction:column;gap:7px}
+.ch-card .m{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);font-weight:700}
+.ch-card .m .bar{flex:1;height:8px;border-radius:9px;background:#EBEDE3;overflow:hidden}.ch-card .m .bar b{display:block;height:100%;background:var(--pine,#245648);border-radius:9px}
+.ch-card .m .n{font-size:13px;color:var(--ink-soft);min-width:48px;text-align:right}
+.ch-card .m.done .n{color:var(--pine,#245648)}
+.ch-card .hint{margin:8px 0 0;font-size:11.5px;color:var(--muted)}
+.ch-card .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.ch-card .acts button{border:1px solid var(--line-2,#D4D9C9);background:var(--surface);border-radius:12px;padding:11px 6px;font:inherit;font-weight:700;font-size:13.5px;color:var(--pine,#245648);cursor:pointer}
+.ch-card .acts button.fill{background:var(--clay,#B87343);color:#fff;border-color:transparent}
+.ch-wbs{display:flex;gap:10px;overflow-x:auto;margin:6px 0 4px}
+.ch-wbs figure{margin:0;flex:0 0 auto;width:110px;text-align:center}
+.ch-wbs img{width:110px;aspect-ratio:3/4;object-fit:cover;border-radius:10px;display:block}
+.ch-wbs button{border:0;background:none;font:inherit;font-size:12px;color:var(--soft);padding:6px;cursor:pointer}
 </style>
 </head>
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261111n"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261112b"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
