@@ -529,7 +529,7 @@
     pdb().then(function(db){return new Promise(function(res){var o={},tx=db.transaction('p','readonly');
       tx.objectStore('p').openCursor().onsuccess=function(e){var c=e.target.result;if(c){o[c.key]=c.value;c.continue();}};
       tx.oncomplete=function(){res(o);};tx.onerror=function(){res(o);};});})
-    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){addPhotoMem(k,o[k]);});paint();},function(){});
+    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){if(String(k).indexOf('wb:')===0)addWbMem(k,o[k]);else addPhotoMem(k,o[k]);});paint();},function(){});
   }
   // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB). 하루 PMAX장이 넘으면 그날 가장 먼저 찍은 사진을 지움
   function savePhoto(day,im,cb){
@@ -1107,6 +1107,111 @@
     }
     return null;
   }
+
+  /* ── 미니 챌린지(2026-11-12): 기간 동안 읽어주기 인증한 날(책 기록 또는 인증샷이 있는 날) + 워크북 인증 사진 → 완주 보고 이미지 ──
+     기간·조건은 관리자 › 🌳 운영 › 🏁 미니 챌린지(DB challenges). 카드는 시작 3일 전 ~ 끝나고 7일까지 보임 */
+  var CHALS=[];
+  function shiftDay(d,n){var x=dateOf(d);x=new Date(x.getFullYear(),x.getMonth(),x.getDate()+n);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());}
+  function loadChals(){
+    if(!S||!S.client||!S.client.from)return;
+    try{S.client.from('challenges').select('*').eq('active',true).then(function(r){if(!S||r.error||!r.data)return;
+      CHALS=r.data.map(function(c){return {id:c.id,title:c.title||'미니 챌린지',start:c.start_date,end:c.end_date,read:c.read_days||3,wb:c.wb_count||1,showFrom:shiftDay(c.start_date,-3),showTo:shiftDay(c.end_date,7)};})
+        .sort(function(a,b){return a.start<b.start?-1:1;});
+      if(curChal())paint();},function(){});}catch(e){}
+  }
+  function curChal(){var t=logicalToday();return CHALS.filter(function(c){return t>=c.showFrom&&t<=c.showTo;})[0]||null;}
+  function chalDays(ch){var a=[],d=dateOf(ch.start),n=Math.max(1,Math.min(14,Math.round((dateOf(ch.end)-d)/864e5)+1));for(var i=0;i<n;i++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+i);a.push(x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate()));}return a;}
+  function addWbMem(k,blob){S.wbList.push({k:k,b:blob,u:URL.createObjectURL(blob)});S.wbList.sort(function(a,b){return a.k<b.k?-1:1;});}
+  function chalWb(ch){return S.wbList.filter(function(x){return x.k.indexOf('wb:'+ch.id+':')===0;});}
+  function chalInfo(ch){
+    var days=chalDays(ch),t=logicalToday();
+    var dd=days.map(function(d){var it=dayItems(d),pl=S.photoList[d]||[];return {d:d,read:!!(it.length||pl.length),it:it,pl:pl,wb:chalWb(ch).some(function(x){return x.k.split(':')[2].slice(0,10)===d;}),today:d===t,future:d>t};});
+    var rd=dd.filter(function(x){return x.read;}).length,wb=chalWb(ch).length;
+    return {days:dd,read:rd,wb:wb,done:rd>=ch.read&&wb>=ch.wb};
+  }
+  function chalCard(){
+    var ch=curChal();if(!ch)return '';var I=chalInfo(ch),WDS=['일','월','화','수','목','금','토'];
+    function bar(n,m){return '<span class="bar"><b style="width:'+Math.min(100,Math.round(n/m*100))+'%"></b></span>';}
+    var started=logicalToday()>=ch.start;
+    return '<div class="ch-card"><div class="top"><h3>🏁 '+esc(ch.title)+'</h3><span class="dt">'+(+ch.start.slice(5,7))+'/'+(+ch.start.slice(8))+' ~ '+(+ch.end.slice(5,7))+'/'+(+ch.end.slice(8))+'</span></div>'+
+      (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일('+WD[dateOf(ch.start).getDay()]+')에 시작해요. '+I.days.length+'일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
+      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
+      '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
+        '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
+      '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+
+      '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button><button type="button" class="fill" data-chshare>📤 '+(I.done?'완주 보고 공유':'챌린지 기록 공유')+'</button></div></div>';
+  }
+  // 워크북 인증: 찍거나 앨범에서 골라 날짜 스탬프를 넣어 저장(달력 인증샷과 따로)
+  function openWbSheet(){
+    var ch=curChal();if(!ch)return;var L=chalWb(ch);
+    var sh=openSheet('<h3>✏️ 워크북 인증</h3><p class="sub">워크북(활동지)을 한 모습을 사진으로 남겨요. 미니 챌린지 동안 '+ch.wb+'번이면 돼요.</p>'+
+      (L.length?'<div class="ch-wbs">'+L.map(function(x){return '<figure><img src="'+x.u+'" alt="워크북 인증 사진"><button type="button" data-wbdel="'+esc(x.k)+'">지우기</button></figure>';}).join('')+'</div>':'')+
+      '<div class="rk-dayacts"><button type="button" class="rk-btn fill" data-wbcam>'+svg(17,IC.cam)+'사진 찍기</button><button type="button" class="rk-btn out" data-wbalb>앨범에서 고르기</button></div>'+
+      '<button type="button" class="subtle" data-sclose>닫기</button>');
+    sh.querySelector('[data-sclose]').onclick=closeSheet;
+    sh.querySelectorAll('[data-wbdel]').forEach(function(b){b.onclick=function(){if(!b.dataset.sure){b.dataset.sure='1';b.textContent='한 번 더 누르면 지워져요';return;}delWb(b.getAttribute('data-wbdel'));openWbSheet();};});
+    var day=logicalToday();
+    sh.querySelector('[data-wbcam]').onclick=function(){closeSheet();
+      if(!canCamera()){toast('이 폰에서는 앱 안 카메라를 열 수 없어요. 앨범에서 골라 주세요.');return;}
+      openCamera({stamp:true,day:day}).then(function(c){if(c)saveWb(ch,day,c);},function(){toast('카메라를 열지 못했어요. 카메라 권한을 허용해 주세요.');});};
+    sh.querySelector('[data-wbalb]').onclick=function(){closeSheet();
+      var inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+      inp.onchange=function(){clearPick();var f=inp.files&&inp.files[0];if(!f)return;
+        loadPhoto(f).then(function(im){var c=document.createElement('canvas'),W=c.width=im.width||im.naturalWidth,H=c.height=im.height||im.naturalHeight,x=c.getContext('2d'),tpl=getTpl();
+          x.drawImage(im,0,0,W,H);stampFonts().then(function(){drawOvl(x,W,H,tpl,day);saveWb(ch,day,c);});},function(){toast('사진을 열지 못했어요. 다른 사진으로 해 주세요.');});};
+      markPick();inp.click();};
+    if(S.onEvent)S.onEvent('chal_wb_open',{id:ch.id});
+  }
+  function saveWb(ch,day,im){
+    var r=Math.min(1,1080/Math.max(im.width,im.height)),cv=document.createElement('canvas');
+    cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+    cv.toBlob(function(bl){if(!bl||!S)return;var k='wb:'+ch.id+':'+day+'#'+Date.now();addWbMem(k,bl);paint();
+      ptx('readwrite',function(st){st.put(bl,k);}).catch(function(){});
+      toast('워크북 인증을 저장했어요 ✏️');if(S.onEvent)S.onEvent('chal_wb_save',{id:ch.id});},'image/jpeg',.82);
+  }
+  function delWb(k){S.wbList=S.wbList.filter(function(x){if(x.k!==k)return true;URL.revokeObjectURL(x.u);return false;});paint();ptx('readwrite',function(st){st.delete(k);}).catch(function(){});}
+  // 완주 보고 이미지(4:5): 7일 칸(그날 인증샷, 없으면 표지) + 워크북 칸 + 미션 두 줄
+  function drawChalCard(ch){
+    var I=chalInfo(ch),wbs=chalWb(ch),W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
+    var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',WDS=['일','월','화','수','목','금','토'],N=Math.min(7,I.days.length);
+    var srcs=I.days.map(function(x){return x.pl.length?x.pl[x.pl.length-1].u:(x.it.filter(function(y){return y.cover;})[0]||{}).cover||null;});
+    var s0=dateOf(ch.start),e0=dateOf(ch.end),rng=(s0.getMonth()+1)+'월 '+s0.getDate()+'일 ('+WD[s0.getDay()]+') ~ '+(e0.getMonth()+1)+'월 '+e0.getDate()+'일 ('+WD[e0.getDay()]+')';
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 70px "Gowun Batang"',ch.title+rng+'나이테'),document.fonts.load('800 30px "Noto Sans KR"','완주 MINI CHALLENGE 7일 중 함께했어요 읽어주기 인증 워크북 활용 번 @naite_library 월화수목금토일0123456789')]).catch(function(){}):null]
+      .concat(srcs.slice(0,7).map(loadImg)).concat([loadImg(wbs.length?wbs[wbs.length-1].u:null)])).then(function(res){
+      var ims=res.slice(1,1+N),wim=res[1+N];
+      function tile(im,x,y,w,h,r){c.save();c.shadowColor='rgba(0,0,0,.22)';c.shadowBlur=12;c.shadowOffsetY=4;rrect(c,x,y,w,h,r);c.fillStyle='#EBEDE3';c.fill();c.restore();
+        c.save();rrect(c,x,y,w,h,r);c.clip();if(im){var k=Math.max(w/im.width,h/im.height);c.drawImage(im,x+(w-im.width*k)/2,y+(h-im.height*k)/2,im.width*k,im.height*k);}c.restore();}
+      function empty(x,y,w,h,label){rrect(c,x,y,w,h,16);c.fillStyle='rgba(255,255,255,.35)';c.fill();c.save();c.setLineDash([8,8]);c.strokeStyle='rgba(35,41,31,.18)';c.lineWidth=2;c.stroke();c.restore();
+        if(label){c.fillStyle='rgba(35,41,31,.35)';c.font='700 26px '+sans;c.textAlign='center';c.fillText(label,x+w/2,y+h/2+9);c.textAlign='left';}}
+      var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#F4F3EC');g.addColorStop(1,'#E8E7DC');c.fillStyle=g;c.fillRect(0,0,W,H);
+      c.save();c.strokeStyle='rgba(36,86,72,.2)';c.lineWidth=1.6;
+      for(var k=1;k<=8;k++){var R=19*k;c.beginPath();for(var t=0;t<=64;t++){var a=t/64*Math.PI*2,q=R*(1+.09*Math.sin(3*a+k*.7)+.05*Math.sin(5*a+k*1.3));var px=1010+q*Math.cos(a)*1.12,py=96+q*Math.sin(a);t?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.stroke();}c.restore();
+      var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';[[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
+      c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
+      c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';c.fillText('나이테',136,my+2);c.textBaseline='alphabetic';
+      c.fillStyle='#23291F';c.font='700 70px '+serif;c.fillText(ch.title,58,215);
+      c.fillStyle='#545C4B';c.font='700 34px '+serif;c.fillText(rng,60,272);
+      if(I.done){c.save();c.translate(905,235);c.rotate(-.18);c.strokeStyle='#B87343';c.lineWidth=6;c.beginPath();c.arc(0,0,82,0,Math.PI*2);c.stroke();c.lineWidth=2;c.beginPath();c.arc(0,0,70,0,Math.PI*2);c.stroke();
+        c.fillStyle='#B87343';c.textAlign='center';c.font='800 40px '+sans;c.fillText('완주',0,6);c.font='800 15px '+sans;c.fillText('MINI CHALLENGE',0,34);c.restore();c.textAlign='left';}
+      else{c.fillStyle='#B87343';c.font='800 34px '+sans;c.textAlign='right';c.fillText(I.days.length+'일 중 '+I.read+'일 함께했어요',W-58,272);c.textAlign='left';}
+      var L=58,cw=W-116,gap=18,tw=(cw-gap*3)/4,th=tw*4/3,top=320;
+      for(var i=0;i<=N;i++){var slot=i<N?i:7,row=slot<4?0:1,col=slot%4,x=L+col*(tw+gap),y=top+row*(th+gap+44),ty=y+40;
+        if(i<N){var dd=dateOf(I.days[i].d);c.fillStyle='#545C4B';c.font='700 26px '+sans;c.fillText(dd.getDate()+' '+WDS[dd.getDay()],x+4,y+28);
+          if(I.days[i].read)tile(ims[i],x,ty,tw,th,16);else empty(x,ty,tw,th,'');}
+        else{c.fillStyle='#B87343';c.font='800 26px '+sans;c.fillText('✏️ 워크북',x+4,y+28);if(wim)tile(wim,x,ty,tw,th,16);else empty(x,ty,tw,th,'워크북');}}
+      var y2=1150;
+      function line(label,val,ok,y){c.font='700 34px '+sans;c.fillStyle='#23291F';c.fillText(label,L,y);c.textAlign='right';c.fillStyle=ok?'#245648':'#8A917E';c.fillText(val+(ok?'  ✓':''),W-58,y);c.textAlign='left';}
+      line('📖 읽어주기 인증',I.read+'일 / '+ch.read+'일',I.read>=ch.read,y2);line('✏️ 워크북 활용',I.wb+'번 / '+ch.wb+'번',I.wb>=ch.wb,y2+56);
+      c.font='700 32px '+sans;var hs='@naite_library',hw=c.measureText(hs).width,ix=(W-(hw+48))/2,iy=1300;
+      c.strokeStyle='#245648';c.lineWidth=3;rrect(c,ix,iy-16,32,32,9);c.stroke();c.beginPath();c.arc(ix+16,iy,7.5,0,Math.PI*2);c.stroke();c.fillStyle='#245648';c.beginPath();c.arc(ix+24.5,iy-8,2,0,Math.PI*2);c.fill();
+      c.textBaseline='middle';c.fillText(hs,ix+48,iy+1);
+      return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/jpeg',.9);}catch(e){r2(null);}});
+    });
+  }
+  function shareChal(){
+    var ch=curChal();if(!ch)return;var I=chalInfo(ch);
+    shareSheet(esc(ch.title),I.done?'완주를 축하해요! 이 이미지로 완주를 보고해 주세요.':'아직 진행 중이어도 지금까지 함께한 기록을 나눌 수 있어요.',drawChalCard(ch),'naite-'+ch.id+'.jpg','chal_card',{id:ch.id,done:I.done,read:I.read,wb:I.wb});
+  }
   function paintShelf(){
     var el=$('v-shelf');if(!el||!S.member||S.tab!=='shelf')return;
     var recent=S.rows.slice().sort(function(a,b){return a.d===b.d?b.t-a.t:(a.d<b.d?1:-1);}).slice(0,30);
@@ -1115,6 +1220,7 @@
     // 읽기 기록(2026-11-07): 기록하기 + 읽기 통계를 한 화면으로 — 달 넘기기 하나, 숫자 3개 → 달력 → 통계 카드 → 최근 기록·백업
     el.innerHTML='<div class="rv rk">'+
       '<div class="rk-calhead rk-onehead"><h2>'+(mi?monthNav((mi.year!==monthInfo().year?mi.year+'년 ':'')+mi.month+'월 읽기 기록'):'읽기 기록')+'</h2></div>'+
+      (off?'':chalCard())+
       (mi?statsKpi(mi)+calendarHtml(mi,!S.rows.length&&!off):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<div id="v-statsin"></div>'+
@@ -1308,6 +1414,8 @@
       if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=(S.viewOff||0)-1;paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
       if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(0,(S.viewOff||0)+1);paint();}return;}
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
+      if((t=e.target.closest('[data-chwb]'))){openWbSheet();return;}
+      if((t=e.target.closest('[data-chshare]'))){shareChal();return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
@@ -1324,14 +1432,14 @@
       var code=getCode(),theme=o.theme||{};
       S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,
          reader:readerId(),code:code,member:true,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
-         home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{},photoList:{}};
+         home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{},photoList:{},wbList:[]};
       S.books=rememberBooks(theme.key,o.books);
       var st=load();S.rows=st.rows;S.outbox=st.outbox;
       S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
       // 공개된 달 목록(기록하기 탭 달 칩)
       rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];(S.pubs||[]).forEach(function(t){if(t.key!==S.home.key)shelfBooks(t.key);});paint();},function(){});
       wire();
-      loadPhotos();
+      loadPhotos();loadChals();
       try{var pk=+localStorage.getItem('naite_pick');clearPick();
         if(pk&&Date.now()-pk<180000){setTimeout(function(){toast('사진을 고르는 사이 앱이 다시 시작됐어요. 인증 카드에서 📷 바로 찍기로 해 주세요.');},900);if(S.onEvent)S.onEvent('photo_reload',{});}}catch(e){}
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)
