@@ -312,7 +312,7 @@
     nomatch:'닉네임이나 숫자가 맞지 않아요.',locked:'여러 번 틀려서 잠시 막혔어요. 1시간 뒤 다시 해 주세요.'};
   function openBackup(mode){
     var cur=backupName();mode=mode||(cur?'done':'make');
-    var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 조이맘)" value="'+esc(mode==='make'?cur:'')+'">'+
+    var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 조이맘)" value="'+esc(mode==='make'?(cur||getDN()):'')+'">'+
       '<input id="bkPin" class="pin" style="margin-top:8px" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="숫자 4자리"><p class="err" id="bkErr"></p><button type="submit" class="pri">'+btn+'</button></form>';};
     var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록이 그대로 돌아와요.</p>'+
         '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'
@@ -1139,7 +1139,7 @@
       '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
         '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
       '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+
-      '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button><button type="button" class="fill" data-chshare>📤 '+(I.done?'완주 보고 공유':'챌린지 기록 공유')+'</button></div></div>';
+      '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button><button type="button" class="fill" data-chshare>📸 완주샷 만들기</button></div></div>';
   }
   // 워크북 인증: 찍거나 앨범에서 골라 날짜 스탬프를 넣어 저장(달력 인증샷과 따로)
   function openWbSheet(){
@@ -1176,7 +1176,7 @@
     var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',WDS=['일','월','화','수','목','금','토'],N=Math.min(7,I.days.length);
     var srcs=I.days.map(function(x){return x.pl.length?x.pl[x.pl.length-1].u:(x.it.filter(function(y){return y.cover;})[0]||{}).cover||null;});
     var s0=dateOf(ch.start),e0=dateOf(ch.end),rng=(s0.getMonth()+1)+'월 '+s0.getDate()+'일 ('+WD[s0.getDay()]+') ~ '+(e0.getMonth()+1)+'월 '+e0.getDate()+'일 ('+WD[e0.getDay()]+')';
-    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 70px "Gowun Batang"',ch.title+rng+'나이테'),document.fonts.load('800 30px "Noto Sans KR"','완주 MINI CHALLENGE 7일 중 함께했어요 읽어주기 인증 워크북 활용 번 @naite_library 월화수목금토일0123456789')]).catch(function(){}):null]
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 70px "Gowun Batang"',ch.title+rng+'나이테 완주의'+getDN()),document.fonts.load('800 30px "Noto Sans KR"','완주 MINI CHALLENGE 7일 중 함께했어요 읽어주기 인증 워크북 활용 번 @naite_library 월화수목금토일0123456789')]).catch(function(){}):null]
       .concat(srcs.slice(0,7).map(loadImg)).concat([loadImg(wbs.length?wbs[wbs.length-1].u:null)])).then(function(res){
       var ims=res.slice(1,1+N),wim=res[1+N];
       function tile(im,x,y,w,h,r){c.save();c.shadowColor='rgba(0,0,0,.22)';c.shadowBlur=12;c.shadowOffsetY=4;rrect(c,x,y,w,h,r);c.fillStyle='#EBEDE3';c.fill();c.restore();
@@ -1189,7 +1189,8 @@
       var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';[[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
       c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
       c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';c.fillText('나이테',136,my+2);c.textBaseline='alphabetic';
-      c.fillStyle='#23291F';c.font='700 70px '+serif;c.fillText(ch.title,58,215);
+      var dn=getDN(),wk=I.days.length===7?'1주':I.days.length+'일',ttl=dn?(I.done?dn+' '+wk+' 완주 🎉':dn+'의 '+ch.title):ch.title,fs=70;
+      c.fillStyle='#23291F';c.font='700 '+fs+'px '+serif;while(fs>40&&c.measureText(ttl).width>(I.done?740:W-116)){fs-=4;c.font='700 '+fs+'px '+serif;}c.fillText(ttl,58,215);
       c.fillStyle='#545C4B';c.font='700 34px '+serif;c.fillText(rng,60,272);
       if(I.done){c.save();c.translate(905,235);c.rotate(-.18);c.strokeStyle='#B87343';c.lineWidth=6;c.beginPath();c.arc(0,0,82,0,Math.PI*2);c.stroke();c.lineWidth=2;c.beginPath();c.arc(0,0,70,0,Math.PI*2);c.stroke();
         c.fillStyle='#B87343';c.textAlign='center';c.font='800 40px '+sans;c.fillText('완주',0,6);c.font='800 15px '+sans;c.fillText('MINI CHALLENGE',0,34);c.restore();c.textAlign='left';}
@@ -1208,9 +1209,21 @@
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/jpeg',.9);}catch(e){r2(null);}});
     });
   }
+  // 완주샷에 넣을 이름(선택) — 이 기기에만(naite_display_name). 서버 저장·중복 검사 없음. 백업 닉네임과는 별개
+  function getDN(){try{return (localStorage.getItem('naite_display_name')||'').trim();}catch(e){return '';}}
+  function setDN(v){try{if(v)localStorage.setItem('naite_display_name',v);else localStorage.removeItem('naite_display_name');}catch(e){}}
   function shareChal(){
     var ch=curChal();if(!ch)return;var I=chalInfo(ch);
-    shareSheet(esc(ch.title),I.done?'완주를 축하해요! 이 이미지로 완주를 보고해 주세요.':'아직 진행 중이어도 지금까지 함께한 기록을 나눌 수 있어요.',drawChalCard(ch),'naite-'+ch.id+'.jpg','chal_card',{id:ch.id,done:I.done,read:I.read,wb:I.wb});
+    var meta={id:ch.id,done:I.done,read:I.read,wb:I.wb},fname='naite-'+ch.id+'.jpg';
+    var sh=shareSheet(esc(ch.title)+' 완주샷',I.done?'완주를 축하해요! 이미지를 저장해서 완주를 보고해 주세요.':'아직 진행 중이어도 지금까지 함께한 기록을 완주샷으로 만들 수 있어요.',drawChalCard(ch),fname,'chal_card',meta,
+      '<div class="ch-name"><input id="chName" maxlength="12" placeholder="완주샷에 넣을 이름 (예: 조이네)" value="'+esc(getDN())+'"><button type="button" id="chNameGo">넣기</button>'+
+      '<p>밖에 공유될 수 있으니 아이 실명보다 닉네임을 권해요. 비워도 괜찮아요.</p></div>');
+    var inp=sh.querySelector('#chName'),go=sh.querySelector('#chNameGo'),last=getDN();
+    function apply(){var v=inp.value.trim().slice(0,12);if(v===last)return;last=v;setDN(v);
+      // 다시 그리는 동안 창 높이가 줄면(아래에 붙은 창) 누른 자리가 바깥으로 빠져 창이 닫힘 → 높이 유지
+      var wr=sh.querySelector('.sc-wrap');wr.style.minHeight=wr.offsetHeight+'px';
+      fillShare(wr,drawChalCard(ch),fname,'chal_card',meta,ch.title);if(S.onEvent)S.onEvent('chal_name',{has:!!v});}
+    go.onclick=apply;inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();apply();}});
   }
   function paintShelf(){
     var el=$('v-shelf');if(!el||!S.member||S.tab!=='shelf')return;
