@@ -63,7 +63,7 @@
     if(!books.length)return '';
     var locked=0;
     var cards=books.map(function(b){
-      if(!ctx.open(b)){locked++;return '<div class="xw-card lock">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b><p>🔒 줄거리와 단어는 월간 스터디에서 볼 수 있어요</p></div></div>';}
+      if(ctx.open&&!ctx.open(b)){locked++;return '<div class="xw-card lock">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b><p>🔒 줄거리와 단어는 월간 스터디에서 볼 수 있어요</p></div></div>';}
       var ws=parseWords(b.words);
       return '<div class="xw-card">'+
         '<div class="xw-top">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'')+'<div><b>'+esc(b.title)+'</b>'+
