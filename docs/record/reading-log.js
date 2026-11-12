@@ -1109,10 +1109,18 @@
   }
 
   /* ── 미니 챌린지(2026-11-12): 기간 동안 읽어주기 인증한 날(책 기록 또는 인증샷이 있는 날) + 워크북 인증 사진 → 완주 보고 이미지 ──
-     지금은 기간을 여기서 정함(관리자 칸은 나중에). show: 카드가 보이는 기간(시작 3일 전 ~ 끝나고 7일) */
-  var CHALS=[{id:'mini1',title:'1주 미니 챌린지',start:'2026-11-16',end:'2026-11-22',read:3,wb:1,showFrom:'2026-11-13',showTo:'2026-11-29'}];
+     기간·조건은 관리자 › 🌳 운영 › 🏁 미니 챌린지(DB challenges). 카드는 시작 3일 전 ~ 끝나고 7일까지 보임 */
+  var CHALS=[];
+  function shiftDay(d,n){var x=dateOf(d);x=new Date(x.getFullYear(),x.getMonth(),x.getDate()+n);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());}
+  function loadChals(){
+    if(!S||!S.client||!S.client.from)return;
+    try{S.client.from('challenges').select('*').eq('active',true).then(function(r){if(!S||r.error||!r.data)return;
+      CHALS=r.data.map(function(c){return {id:c.id,title:c.title||'미니 챌린지',start:c.start_date,end:c.end_date,read:c.read_days||3,wb:c.wb_count||1,showFrom:shiftDay(c.start_date,-3),showTo:shiftDay(c.end_date,7)};})
+        .sort(function(a,b){return a.start<b.start?-1:1;});
+      if(curChal())paint();},function(){});}catch(e){}
+  }
   function curChal(){var t=logicalToday();return CHALS.filter(function(c){return t>=c.showFrom&&t<=c.showTo;})[0]||null;}
-  function chalDays(ch){var a=[],d=dateOf(ch.start);for(var i=0;i<7;i++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+i);a.push(x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate()));}return a;}
+  function chalDays(ch){var a=[],d=dateOf(ch.start),n=Math.max(1,Math.min(14,Math.round((dateOf(ch.end)-d)/864e5)+1));for(var i=0;i<n;i++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+i);a.push(x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate()));}return a;}
   function addWbMem(k,blob){S.wbList.push({k:k,b:blob,u:URL.createObjectURL(blob)});S.wbList.sort(function(a,b){return a.k<b.k?-1:1;});}
   function chalWb(ch){return S.wbList.filter(function(x){return x.k.indexOf('wb:'+ch.id+':')===0;});}
   function chalInfo(ch){
@@ -1122,12 +1130,12 @@
     return {days:dd,read:rd,wb:wb,done:rd>=ch.read&&wb>=ch.wb};
   }
   function chalCard(){
-    var ch=curChal();if(!ch)return '';var I=chalInfo(ch),WDS=['월','화','수','목','금','토','일'];
+    var ch=curChal();if(!ch)return '';var I=chalInfo(ch),WDS=['일','월','화','수','목','금','토'];
     function bar(n,m){return '<span class="bar"><b style="width:'+Math.min(100,Math.round(n/m*100))+'%"></b></span>';}
     var started=logicalToday()>=ch.start;
     return '<div class="ch-card"><div class="top"><h3>🏁 '+esc(ch.title)+'</h3><span class="dt">'+(+ch.start.slice(5,7))+'/'+(+ch.start.slice(8))+' ~ '+(+ch.end.slice(5,7))+'/'+(+ch.end.slice(8))+'</span></div>'+
-      (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일(월)에 시작해요. 일주일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
-      '<div class="days">'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[i]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
+      (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일('+WD[dateOf(ch.start).getDay()]+')에 시작해요. '+I.days.length+'일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
+      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
       '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
         '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
       '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+
@@ -1165,12 +1173,12 @@
   // 완주 보고 이미지(4:5): 7일 칸(그날 인증샷, 없으면 표지) + 워크북 칸 + 미션 두 줄
   function drawChalCard(ch){
     var I=chalInfo(ch),wbs=chalWb(ch),W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
-    var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',WDS=['월','화','수','목','금','토','일'];
+    var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',WDS=['일','월','화','수','목','금','토'],N=Math.min(7,I.days.length);
     var srcs=I.days.map(function(x){return x.pl.length?x.pl[x.pl.length-1].u:(x.it.filter(function(y){return y.cover;})[0]||{}).cover||null;});
     var s0=dateOf(ch.start),e0=dateOf(ch.end),rng=(s0.getMonth()+1)+'월 '+s0.getDate()+'일 ('+WD[s0.getDay()]+') ~ '+(e0.getMonth()+1)+'월 '+e0.getDate()+'일 ('+WD[e0.getDay()]+')';
     return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 70px "Gowun Batang"',ch.title+rng+'나이테'),document.fonts.load('800 30px "Noto Sans KR"','완주 MINI CHALLENGE 7일 중 함께했어요 읽어주기 인증 워크북 활용 번 @naite_library 월화수목금토일0123456789')]).catch(function(){}):null]
-      .concat(srcs.map(loadImg)).concat([loadImg(wbs.length?wbs[wbs.length-1].u:null)])).then(function(res){
-      var ims=res.slice(1,8),wim=res[8];
+      .concat(srcs.slice(0,7).map(loadImg)).concat([loadImg(wbs.length?wbs[wbs.length-1].u:null)])).then(function(res){
+      var ims=res.slice(1,1+N),wim=res[1+N];
       function tile(im,x,y,w,h,r){c.save();c.shadowColor='rgba(0,0,0,.22)';c.shadowBlur=12;c.shadowOffsetY=4;rrect(c,x,y,w,h,r);c.fillStyle='#EBEDE3';c.fill();c.restore();
         c.save();rrect(c,x,y,w,h,r);c.clip();if(im){var k=Math.max(w/im.width,h/im.height);c.drawImage(im,x+(w-im.width*k)/2,y+(h-im.height*k)/2,im.width*k,im.height*k);}c.restore();}
       function empty(x,y,w,h,label){rrect(c,x,y,w,h,16);c.fillStyle='rgba(255,255,255,.35)';c.fill();c.save();c.setLineDash([8,8]);c.strokeStyle='rgba(35,41,31,.18)';c.lineWidth=2;c.stroke();c.restore();
@@ -1185,10 +1193,10 @@
       c.fillStyle='#545C4B';c.font='700 34px '+serif;c.fillText(rng,60,272);
       if(I.done){c.save();c.translate(905,235);c.rotate(-.18);c.strokeStyle='#B87343';c.lineWidth=6;c.beginPath();c.arc(0,0,82,0,Math.PI*2);c.stroke();c.lineWidth=2;c.beginPath();c.arc(0,0,70,0,Math.PI*2);c.stroke();
         c.fillStyle='#B87343';c.textAlign='center';c.font='800 40px '+sans;c.fillText('완주',0,6);c.font='800 15px '+sans;c.fillText('MINI CHALLENGE',0,34);c.restore();c.textAlign='left';}
-      else{c.fillStyle='#B87343';c.font='800 34px '+sans;c.textAlign='right';c.fillText('7일 중 '+I.read+'일 함께했어요',W-58,272);c.textAlign='left';}
+      else{c.fillStyle='#B87343';c.font='800 34px '+sans;c.textAlign='right';c.fillText(I.days.length+'일 중 '+I.read+'일 함께했어요',W-58,272);c.textAlign='left';}
       var L=58,cw=W-116,gap=18,tw=(cw-gap*3)/4,th=tw*4/3,top=320;
-      for(var i=0;i<8;i++){var row=i<4?0:1,col=i%4,x=L+col*(tw+gap),y=top+row*(th+gap+44),ty=y+40;
-        if(i<7){var dd=dateOf(I.days[i].d);c.fillStyle='#545C4B';c.font='700 26px '+sans;c.fillText(dd.getDate()+' '+WDS[i],x+4,y+28);
+      for(var i=0;i<=N;i++){var slot=i<N?i:7,row=slot<4?0:1,col=slot%4,x=L+col*(tw+gap),y=top+row*(th+gap+44),ty=y+40;
+        if(i<N){var dd=dateOf(I.days[i].d);c.fillStyle='#545C4B';c.font='700 26px '+sans;c.fillText(dd.getDate()+' '+WDS[dd.getDay()],x+4,y+28);
           if(I.days[i].read)tile(ims[i],x,ty,tw,th,16);else empty(x,ty,tw,th,'');}
         else{c.fillStyle='#B87343';c.font='800 26px '+sans;c.fillText('✏️ 워크북',x+4,y+28);if(wim)tile(wim,x,ty,tw,th,16);else empty(x,ty,tw,th,'워크북');}}
       var y2=1150;
@@ -1431,7 +1439,7 @@
       // 공개된 달 목록(기록하기 탭 달 칩)
       rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];(S.pubs||[]).forEach(function(t){if(t.key!==S.home.key)shelfBooks(t.key);});paint();},function(){});
       wire();
-      loadPhotos();
+      loadPhotos();loadChals();
       try{var pk=+localStorage.getItem('naite_pick');clearPick();
         if(pk&&Date.now()-pk<180000){setTimeout(function(){toast('사진을 고르는 사이 앱이 다시 시작됐어요. 인증 카드에서 📷 바로 찍기로 해 주세요.');},900);if(S.onEvent)S.onEvent('photo_reload',{});}}catch(e){}
       // 주소의 #탭 → 없으면 마지막에 보던 탭(앱을 다시 열 때)

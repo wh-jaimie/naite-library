@@ -312,6 +312,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
           (OPS.rooms!==null?'<span class="hint" style="margin:0">📱 앱 공지는 <b>migrate_app_notices.sql</b> 실행 후 쓸 수 있어요</span>':''))+'</div>'+
       '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+(OPS.rooms===null?' disabled':'')+'>공지 저장 (올림 체크 시작)</button><span class="status" id="nSt"></span></div>'+
       '<div class="hint">당근·인스타 칸은 고쳐 써도 돼요. 위 원문을 고치면 다시 자동으로 만들어져요.</div></div>';
+    // ③-1 미니 챌린지(2026-11-12) — 스터디 앱 읽기 기록 맨 위 카드·완주 보고 이미지
+    h+='<div class="card" id="chalCard"><h2>🏁 미니 챌린지</h2><p class="sub">정한 기간 동안 스터디 앱 <b>읽기 기록</b> 맨 위에 챌린지 카드가 떠요(시작 3일 전부터 끝나고 7일까지). 읽어주기 인증 = 그 기간에 책을 기록했거나 인증샷을 남긴 날, 워크북 = 카드의 워크북 인증 사진.</p><div id="chalBox" class="hint">불러오는 중…</div></div>';
     // ③-2 푸시 알림 보내기(2026-11-08) — 스터디 앱에서 '알림 받기'를 켠 폰에만 감
     h+='<div class="card" id="pushCard"><h2>🔔 앱 푸시 알림 보내기</h2><p class="sub">스터디 앱에서 <b>알림 받기</b>를 켠 폰에 알림이 가요. 새 달 자료가 열릴 때·중요한 공지 때만 보내요(자주 보내면 알림을 꺼요).</p>'+
       '<div id="pushStat" class="hint" style="margin:0 0 8px">받는 폰 확인 중…</div>'+
@@ -341,7 +343,41 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<a class="btn" href="kpi.html">📊 KPI 자세히</a></div></div>';
     h+='</div>';
     body.innerHTML=h;
-    wireOps();wirePush();
+    wireOps();wirePush();wireChal();
+  }
+  // 미니 챌린지: 목록 + 새로 만들기/고치기
+  async function wireChal(){
+    var box=document.getElementById('chalBox');if(!box)return;
+    var r=await client.from('challenges').select('*').order('start_date',{ascending:false});
+    if(r.error){box.innerHTML='⚙️ Supabase에서 <b>supabase/migrate_challenges.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(r.error.message||'')+'</small>';return;}
+    var list=r.data||[];
+    function row(c,isNew){
+      return '<div class="chrow" data-cid="'+esc(c.id||'')+'" style="border:1px solid var(--line,#e3e3e3);border-radius:12px;padding:10px 12px;margin-top:8px">'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+
+          (isNew?'<input class="t" data-f="id" placeholder="id (영문, 예: mini2)" style="width:130px">':'<b style="font-size:.85rem;color:var(--soft)">'+esc(c.id)+'</b>')+
+          '<input class="t" data-f="title" value="'+esc(c.title||'1주 미니 챌린지')+'" style="flex:1;min-width:150px"></div>'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:.85rem">'+
+          '<input class="t" type="date" data-f="start_date" value="'+esc(c.start_date||'')+'" style="width:150px"> ~ <input class="t" type="date" data-f="end_date" value="'+esc(c.end_date||'')+'" style="width:150px"></div>'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px;font-size:.85rem">완주: 📖 읽어주기 <input class="t" type="number" min="1" max="14" data-f="read_days" value="'+(c.read_days||3)+'" style="width:60px">일 + ✏️ 워크북 <input class="t" type="number" min="0" max="7" data-f="wb_count" value="'+(c.wb_count==null?1:c.wb_count)+'" style="width:60px">번'+
+          '<label style="display:inline-flex;gap:4px;align-items:center;margin-left:6px"><input type="checkbox" data-f="active"'+(c.active===false?'':' checked')+'> 앱에 보이기</label>'+
+          '<button class="btn cor" data-chsave style="margin-left:auto">'+(isNew?'추가':'저장')+'</button></div>'+
+        '<div class="status" data-chst style="font-size:.8rem;margin-top:4px"></div></div>';}
+    box.className='';
+    box.innerHTML=(list.length?list.map(function(c){return row(c,false);}).join(''):'<p class="hint" style="margin:0">아직 챌린지가 없어요.</p>')+
+      '<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800;font-size:.88rem">＋ 새 챌린지 만들기</summary>'+row({},true)+
+      '<div class="hint">id는 한 번 정하면 바꾸지 마세요(회원 폰에 저장된 워크북 사진이 id로 묶여요). 기간은 7일을 권장해요(최대 14일).</div></details>';
+    box.querySelectorAll('[data-chsave]').forEach(function(b){b.onclick=async function(){
+      var el=b.closest('.chrow'),st=el.querySelector('[data-chst]'),v={};
+      el.querySelectorAll('[data-f]').forEach(function(i){v[i.dataset.f]=i.type==='checkbox'?i.checked:i.value.trim();});
+      var id=el.dataset.cid||v.id;
+      if(!/^[a-z0-9_-]{2,30}$/i.test(id||'')){st.textContent='id는 영문·숫자 2~30자로 넣어 주세요.';return;}
+      if(!v.start_date||!v.end_date||v.end_date<v.start_date){st.textContent='시작일·마지막 날을 확인해 주세요.';return;}
+      var row2={id:id,title:v.title||'미니 챌린지',start_date:v.start_date,end_date:v.end_date,read_days:+v.read_days||1,wb_count:+v.wb_count||0,active:!!v.active,updated_at:new Date().toISOString()};
+      st.textContent='저장 중…';
+      var rs=await client.from('challenges').upsert(row2);
+      if(rs.error){st.textContent='실패: '+rs.error.message;return;}
+      st.textContent='✓ 저장했어요. 앱에 바로 반영돼요.';if(!el.dataset.cid)wireChal();
+    };});
   }
   // 푸시: 받는 폰 수·최근 보낸 기록 표시, 테스트/전체 발송(Edge Function send-push)
   async function wirePush(){
