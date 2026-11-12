@@ -971,6 +971,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
 <script src="reading-log.js?v=20261111n"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
@@ -1064,6 +1065,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     }).join('');
     // 자료 탭(2026-11-07): 순서는 아래 섹션 순서 그대로, 누르면 그 내용만 보임
     var secs=[['s-books','이번 달 5권']]; // 탭은 두 줄로 전부 보이게(이름은 줄이지 않음)
+    if(window.NaiteExtras&&NaiteExtras.hasWords(books))secs.push(['s-words','단어·줄거리']); // 미리 알아 두면 좋은 단어(study-extras.js) · 데이터 없으면 탭 없음
     if(how.length||tips.length)secs.push(['s-how','읽어주기 방법']);
     if(vids)secs.push(['s-vid','읽어주기 영상']);
     if(acts.length)secs.push(['s-play','놀이 활동']);
@@ -1095,6 +1097,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
          '<a href="../types.html">조작북·반복·라임·유머·스토리, 5가지 유형이 궁금하다면 →</a></p></details>'+
        '<p class="note small">글밥 단계는 책에 담긴 글의 양과 문장 길이를 참고해 나눴어요. 아이 수준을 매기는 게 아니라, 엄마가 읽어줄 때 얼마나 수월할지 가늠하는 용도예요. 읽는 사람은 엄마니까요.</p>'+
        (hasBuy?'<p class="disc">이 페이지에서 책을 누르면 열리는 책정보 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>':'')+'</section>';
+    if(window.NaiteExtras&&NaiteExtras.hasWords(books))h+='<section id="s-words"></section>'; // 단어·줄거리(study-extras.js가 채움)
     // 2. 읽어주는 방법(공통 + 책별 팁)
     if(how.length||tips.length)h+='<section id="s-how"><div class="sh">'+ic('voice',20)+'<h2>읽어주는 방법</h2></div><div class="card">'+
        (how.length?'<ol class="tips">'+how.map(function(t){return '<li><span>'+esc(t)+'</span></li>';}).join('')+'</ol>':'')+
@@ -1118,6 +1121,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><div id="v-pick" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
     app.innerHTML=h;
+    if(window.NaiteExtras)NaiteExtras.after({app:app,books:books}); // 영어표현 🔊 듣기 · 단어·줄거리(모두 공개)
     if(PREVIEW){ // 관리자 미리보기: 기록 기능 없이 화면만(읽었어요 줄은 모양만)
       app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
       var pg=app.querySelector('[data-rprog]');if(pg)pg.innerHTML='<div class="dots">'+books.map(function(){return '<i></i>';}).join('')+'</div><span class="pt">'+books.length+'권 중 <b>0권</b> 만났어요</span>';
