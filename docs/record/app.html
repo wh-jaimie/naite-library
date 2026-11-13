@@ -1002,12 +1002,41 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .ch-ap-ask button{border:1px solid var(--line-2,#D4D9C9);background:var(--surface);border-radius:99px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:700;color:var(--pine,#245648);cursor:pointer}
 .ch-ap-ask a,.ch-ap-min a{font-size:12.5px;color:var(--soft);font-weight:700}
 .ch-ap-min{margin:10px 0 0;font-size:12.5px;color:var(--pine,#245648);font-weight:700}
+.rs-memo{margin:4px 0 10px;padding:10px 12px;background:#F6F4EC;border-radius:12px}
+.rs-memo label{display:block;font-size:.8rem;color:var(--soft);margin-bottom:6px}
+.rs-memo label b{color:#245648}.rs-memo label span{font-weight:400;opacity:.8}
+.rs-memo .row{display:flex;gap:6px}
+.rs-memo input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:15px;background:#fff;color:#23291F}
+.rs-memo .row button{border:0;border-radius:10px;padding:0 14px;background:#245648;color:#fff;font:inherit;font-weight:700;font-size:.86rem;cursor:pointer}
+.rs-memo .ok{margin:4px 0 0;font-size:.76rem;color:#245648;min-height:1em}
+.cd-notes{display:flex;flex-direction:column;gap:6px;margin:4px 0 12px}
+.cd-notes .cd-note{margin:0;min-height:0;box-shadow:none}
+.cd-note{display:flex;gap:8px;align-items:baseline;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font:inherit;font-size:.84rem;cursor:pointer;color:#23291F}
+.cd-note .t{flex:0 0 auto;max-width:42%;font-weight:800;color:#245648;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd-note .v{flex:1;min-width:0;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd-note.has .v{color:#3A4034}
+.cd-note:not(.has) .v{color:#B87343;font-weight:700}
+.nt-hd{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.nt-hd h3{margin:0}.nt-hd .sub{font-size:.82rem;color:var(--soft)}
+.nt-cv{flex:0 0 auto;width:42px;height:56px;border-radius:8px;overflow:hidden;background:#EBEDE3;display:flex;align-items:center;justify-content:center}
+.nt-cv img{width:100%;height:100%;object-fit:cover}.nt-cv.o{background:#F3E7DA}.nt-cv i{font-style:normal;font-size:20px}
+.nt-ed textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px;line-height:1.5;resize:none;background:#fff;color:#23291F}
+.nt-tip{margin:6px 0 0;font-size:.78rem;color:var(--soft)}
+.nt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nt-list button{display:flex;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;font:inherit;font-size:.9rem;color:#23291F;cursor:pointer}
+.nt-list .d{flex:0 0 auto;font-weight:800;color:#B87343;min-width:3em}.nt-list .v{flex:1;line-height:1.45}
+.st-notes .nt-row{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:10px 0;font:inherit;color:#23291F;cursor:pointer}
+.st-notes .nt-row:first-of-type{border-top:0}
+.st-notes .nt-cv{width:34px;height:46px}
+.st-notes .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:.86rem}
+.st-notes .tx .v{color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-notes .m{flex:0 0 auto;font-size:.74rem;color:var(--soft);text-align:right;line-height:1.4}
 </style>
 </head>
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261113s"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261113t"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
