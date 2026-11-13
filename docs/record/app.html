@@ -937,6 +937,9 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .sd-classic .sd-hero .dots i{width:9px;height:9px}
 .sd-classic .sd-hero .pt{font-size:12.5px}
 .sd-classic .sd-hero .sublink{flex-basis:100%;margin-top:0;font-size:12.5px}
+.sd-classic #s-books .sd-hero{margin:0 0 10px;padding:0 2px;background:none;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.sd-classic #s-books .sd-hero h1{font-size:15px}
+.sd-classic #s-books .sd-hero h1 .emo{font-size:14px}
 .sd-classic .sd-gbline{margin-top:9px;padding:5px 5px 5px 11px;font-size:13px}
 .sd-classic .sd-gbline button{padding:6px 11px;font-size:13px}
 /* 탭 줄: 넘기지 않고 두 줄에 전부(3칸씩, '다음 달'까지 7개면 4칸씩) */
@@ -1217,7 +1220,8 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     h+='<div class="sd-bar"><span class="brand">'+SD_RING+'나이테</span>'+(PREVIEW?'':'<span class="sd-barbtns"><a class="ghost" href="../guide.html" target="_blank" rel="noopener" data-guidego>📚 가이드</a><button type="button" class="ghost" data-pn="welcome">처음 오셨나요?</button></span>')+'</div>';
     if(!PREVIEW)h+='<div id="sdBack"></div><div id="newsLatest"></div>';
     // 이번 달 소개(주제 설명글은 빼고 주제·진행만 — 2026-11-07)
-    h+='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
+    // 주제 카드는 따로 두지 않고 '이번 달 5권' 탭 안 맨 위에 한 줄로 작게(2026-11-13)
+    var hero='<div class="sd-hero"><svg class="deco" viewBox="0 0 460 460" aria-hidden="true">'+decoPaths()+'</svg>'+
        // 한 줄: 주제 이름(왼쪽) + 달·차수(오른쪽, 연도는 빼고) — 카드 높이 줄이기
        '<div class="hrow"><div class="theme"><h1>'+(theme.emoji?'<span class="emo" aria-hidden="true">'+esc(theme.emoji)+'</span>':'')+esc(theme.ko)+'</h1><span class="en">'+esc(theme.en)+'</span></div>'+
        '<div class="eyebrow">'+(c.month_label?esc(String(c.month_label).replace(/^\s*\d{4}\s*년\s*/,'')):'이번 달 영어책')+'</div></div>'+
@@ -1226,7 +1230,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     h+='<nav class="sd-chips" id="sdChips" role="tablist" aria-label="이번 달 자료">'+secs.map(function(s,i){return '<button type="button" role="tab" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     // 1. 이번 달 5권(표지 책장 먼저 → 공동구매 → 책 소개 → 안내)
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
-       '<div id="sdAge"></div>'+
+       hero+'<div id="sdAge"></div>'+
        '<div class="sd-shelf">'+bh+'</div>'+
        '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
        '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
