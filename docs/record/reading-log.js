@@ -1115,7 +1115,7 @@
   function loadChals(){
     if(!S||!S.client||!S.client.from)return;
     try{S.client.from('challenges').select('*').eq('active',true).then(function(r){if(!S||r.error||!r.data)return;
-      CHALS=r.data.map(function(c){return {id:c.id,title:c.title||'미니 챌린지',start:c.start_date,end:c.end_date,read:c.read_days||3,wb:c.wb_count||1,showFrom:shiftDay(c.start_date,-3),showTo:shiftDay(c.end_date,7)};})
+      CHALS=r.data.map(function(c){return {id:c.id,title:c.title||'미니 챌린지',start:c.start_date,end:c.end_date,read:c.read_days||3,wb:c.wb_count||1,apply:/^https?:\/\//i.test(c.apply_url||'')?c.apply_url.trim():'',showFrom:shiftDay(c.start_date,-3),showTo:shiftDay(c.end_date,7)};})
         .sort(function(a,b){return a.start<b.start?-1:1;});
       if(curChal())paint();},function(){});}catch(e){}
   }
@@ -1129,6 +1129,17 @@
     var rd=dd.filter(function(x){return x.read;}).length,wb=chalWb(ch).length;
     return {days:dd,read:rd,wb:wb,done:rd>=ch.read&&wb>=ch.wb};
   }
+  // 신청 버튼(관리자가 넣은 회차별 구글폼 링크가 있을 때만). 상태는 이 기기에만: ''(처음) · 'clicked'(눌렀음 → 신청했어요?) · 'done'(신청했어요)
+  function chalApplyState(ch){try{return localStorage.getItem('naite_chal_apply_'+ch.id)||'';}catch(e){return '';}}
+  function setChalApply(ch,v){try{localStorage.setItem('naite_chal_apply_'+ch.id,v);}catch(e){}}
+  function chalApplyHtml(ch,started){
+    if(!ch.apply)return '';var st=chalApplyState(ch),u=esc(ch.apply);
+    if(st==='done')return '<p class="ch-ap-min">✓ 신청했어요 · <a href="'+u+'" target="_blank" rel="noopener" data-chapply data-again="1">신청 링크 다시 보기</a></p>';
+    if(st==='clicked')return '<div class="ch-ap-ask"><span>신청하셨나요?</span><button type="button" data-chapdone>신청했어요 ✓</button><a href="'+u+'" target="_blank" rel="noopener" data-chapply data-again="1">신청 링크 다시 보기</a></div>';
+    return '<div class="ch-ap"><a class="ch-ap-btn" href="'+u+'" target="_blank" rel="noopener" data-chapply>📝 신청하고 워크지 받기</a>'+
+      '<p>신청하면 아이 워크지·엄마 영어 한 마디를 메일로 보내드려요. 완주샷을 보내 주시면 만들기 키트도 드려요 🎁'+(started?' 늦게 시작해도 괜찮아요.':'')+'</p>'+
+      '<button type="button" class="ch-ap-done" data-chapdone>이미 신청했어요 ✓</button></div>';
+  }
   function chalCard(){
     var ch=curChal();if(!ch)return '';var I=chalInfo(ch),WDS=['일','월','화','수','목','금','토'];
     function bar(n,m){return '<span class="bar"><b style="width:'+Math.min(100,Math.round(n/m*100))+'%"></b></span>';}
@@ -1138,7 +1149,7 @@
       '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
       '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
         '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
-      '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+
+      '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+chalApplyHtml(ch,started)+
       '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button><button type="button" class="fill" data-chshare>📸 완주샷 만들기</button></div></div>';
   }
   // 워크북 인증: 찍거나 앨범에서 골라 날짜 스탬프를 넣어 저장(달력 인증샷과 따로)
@@ -1429,6 +1440,8 @@
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
       if((t=e.target.closest('[data-chwb]'))){openWbSheet();return;}
       if((t=e.target.closest('[data-chshare]'))){shareChal();return;}
+      if((t=e.target.closest('[data-chapply]'))){var c0=curChal();if(c0){if(S.onEvent)S.onEvent('challenge_apply_click',{id:c0.id,again:!!t.getAttribute('data-again')});if(!chalApplyState(c0)){setChalApply(c0,'clicked');setTimeout(paintShelf,400);}}return;} // 링크는 그대로 새 창으로 열림
+      if((t=e.target.closest('[data-chapdone]'))){var c1=curChal();if(c1){setChalApply(c1,'done');paintShelf();if(S.onEvent)S.onEvent('challenge_apply_done',{id:c1.id});}return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
