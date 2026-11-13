@@ -255,6 +255,72 @@
     S.rows.slice().sort(function(a,b){return b.t-a.t;}).forEach(function(r){if(r.k==='_other'&&r.o&&!seen[r.o]){seen[r.o]=1;list.push(r.o);}});
     return list.slice(0,8);
   }
+  /* ── 책 한 줄 메모(2026-11-13) ── 책마다·읽은 날마다 한 줄. key = dayItems id('b:<책 id>' | 'o:<제목>')
+   * 이 기기(naite_notes_v1)에 먼저 저장 → 서버(save_note/my_notes, migrate_book_notes.sql)엔 뒤에서. 서버 함수가 없으면 이 기기에만 남음 */
+  var NOTE_KEY='naite_notes_v1',NOTE_MAX=100;
+  function loadNotes(){try{var j=JSON.parse(localStorage.getItem(NOTE_KEY)||'null');if(j&&j.n&&j.q)return j;}catch(e){}return {n:{},q:[]};}
+  function saveNotes(){try{localStorage.setItem(NOTE_KEY,JSON.stringify(S.notes));}catch(e){}}
+  function noteGet(key,day){var x=S.notes.n[key+'|'+day];return x?x.v:'';}
+  function noteSet(key,day,v){
+    v=String(v||'').trim().slice(0,NOTE_MAX);var id=key+'|'+day;if(v===noteGet(key,day))return false;
+    if(v)S.notes.n[id]={v:v,t:Date.now()};else delete S.notes.n[id];
+    if(S.notes.q.indexOf(id)<0)S.notes.q.push(id);saveNotes();flushNotes();
+    if(S.onEvent)S.onEvent('book_note',{other:key.indexOf('o:')===0,del:!v,len:v.length});
+    return true;
+  }
+  function flushNotes(){
+    if(!S.reader||S.noteBusy||!S.notes.q.length)return;
+    var st=S,id=S.notes.q[0],i=id.lastIndexOf('|'),key=id.slice(0,i),day=id.slice(i+1);st.noteBusy=1;
+    rpc('save_note',{p_reader:st.reader,p_book_key:key,p_read_on:day,p_note:noteGet(key,day)}).then(function(res){
+      st.noteBusy=0;if(st!==S)return;
+      if(res&&res.ok===false&&res.error==='limit')toast('이날 메모가 너무 많아 더 저장할 수 없어요.');
+      S.notes.q=S.notes.q.filter(function(x){return x!==id;});saveNotes();flushNotes();
+    },function(){st.noteBusy=0;}); // 오프라인·함수 없음 → 남겨 두고 다음에
+  }
+  function pullNotes(){
+    if(!S.reader)return;
+    rpc('my_notes',{p_reader:S.reader}).then(function(list){
+      if(!S||!list)return;var n={};
+      list.forEach(function(r){n[r.book_key+'|'+r.read_on]={v:r.note,t:Date.parse(r.updated_at)||0};});
+      S.notes.q.forEach(function(id){if(S.notes.n[id])n[id]=S.notes.n[id];else delete n[id];}); // 아직 못 보낸 변경이 우선
+      S.notes.n=n;saveNotes();paint();
+    },function(){});
+  }
+  function noteBook(key){
+    if(key.indexOf('o:')===0)return {title:key.slice(2)||'다른 책',other:true};
+    var b=S.byId[+key.slice(2)]||{};return {title:b.title||'(지난 달 책)',cover:b.cover};
+  }
+  function noteList(key){ // 그 책의 메모(최근 날짜 먼저)
+    var out=[];Object.keys(S.notes.n).forEach(function(id){var i=id.lastIndexOf('|');if(id.slice(0,i)===key)out.push({d:id.slice(i+1),v:S.notes.n[id].v});});
+    return out.sort(function(a,b){return a.d<b.d?1:-1;});
+  }
+  var NOTE_PH='예: \'Brown bear\' 따라 했어요 · 그림 보고 깔깔';
+  function noteCv(nb){return '<span class="nt-cv'+(nb.other?' o':'')+'">'+(nb.cover?'<img src="'+esc(nb.cover)+'" alt="">':'<i>📚</i>')+'</span>';}
+  // 메모 한 개 쓰기·고치기(그 책, 그 날짜). back: 저장·닫기 뒤 돌아갈 화면
+  function openNoteEdit(key,day,back){
+    var nb=noteBook(key),cur=noteGet(key,day);
+    var sh=openSheet('<div class="nt-ed"><div class="nt-hd">'+noteCv(nb)+'<div><h3>'+esc(shortTitle(nb.title))+'</h3><span class="sub">'+esc(dayFull(day))+' 메모</span></div></div>'+
+      '<textarea id="ntIn" maxlength="'+NOTE_MAX+'" rows="3" placeholder="'+esc(NOTE_PH)+'">'+esc(cur)+'</textarea>'+
+      '<p class="nt-tip">아이가 따라 한 말, 좋아한 장면, 다시 가져온 순간… 짧게 한 줄이면 충분해요.</p>'+
+      '<button type="button" class="pri" data-ntsave>저장</button>'+
+      (cur?'<button type="button" class="subtle" data-ntdel>메모 지우기</button>':'<button type="button" class="subtle" data-ntback>닫기</button>')+'</div>');
+    var ta=sh.querySelector('#ntIn');setTimeout(function(){try{ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}catch(e){}},60);
+    function done(msg){if(back)back();else closeSheet();if(msg)toast(msg);}
+    sh.querySelector('[data-ntsave]').onclick=function(){var v=ta.value.trim();var ch=noteSet(key,day,v);paint();done(ch?(v?'📝 메모를 남겼어요':'메모를 지웠어요'):'');};
+    var d=sh.querySelector('[data-ntdel]');if(d)d.onclick=function(){if(!d.dataset.sure){d.dataset.sure='1';d.textContent='한 번 더 누르면 지워져요';return;}noteSet(key,day,'');paint();done('메모를 지웠어요');};
+    var b=sh.querySelector('[data-ntback]');if(b)b.onclick=function(){done('');};
+  }
+  // 책 한 권의 메모 모아 보기(날짜순)
+  function openNoteBook(key){
+    var nb=noteBook(key),list=noteList(key);
+    var sh=openSheet('<div class="nt-bk"><div class="nt-hd">'+noteCv(nb)+'<div><h3>'+esc(shortTitle(nb.title))+'</h3><span class="sub">메모 '+list.length+'개</span></div></div>'+
+      (list.length?'<ul class="nt-list">'+list.map(function(x){return '<li><button type="button" data-ntd="'+x.d+'"><span class="d">'+esc(md(x.d))+'</span><span class="v">'+esc(x.v)+'</span></button></li>';}).join('')+'</ul>'
+        :'<p class="nt-tip">아직 메모가 없어요. 달력에서 읽은 날을 누르면 남길 수 있어요.</p>')+
+      '<button type="button" class="subtle" data-sclose>닫기</button></div>');
+    sh.querySelector('[data-sclose]').onclick=closeSheet;
+    [].forEach.call(sh.querySelectorAll('[data-ntd]'),function(el){el.onclick=function(){openNoteEdit(key,el.getAttribute('data-ntd'),function(){openNoteBook(key);});};});
+    if(S.onEvent)S.onEvent('note_book_open',{n:list.length});
+  }
   function moveToYesterday(row){
     if(!dropRow(row.c))return;
     var y=addDays(logicalToday(),-1),moved=row.k==='_other'?addOther(row.o,y):addRow(row.b,y);
@@ -347,6 +413,7 @@
           try{localStorage.setItem(READER_KEY,d.reader);}catch(e){}
           setBackupName(d.name||name);
           S.rows=S.rows.filter(function(r){return S.outbox.some(function(o){return o.c===r.c;});});save();
+          var nn={};S.notes.q.forEach(function(id){if(S.notes.n[id])nn[id]=S.notes.n[id];});S.notes.n=nn;saveNotes(); // 안 보낸 메모만 남기고 새 ID로 다시 받음
           location.reload();
         },function(){done();er.textContent='연결이 불안정해요. 잠시 뒤 다시 해 주세요.';});
       }
@@ -858,6 +925,8 @@
         pl.map(function(x,pi){return {x:x,pi:pi};}).reverse().map(function(o){return '<figure class="gi ph" data-gpi="'+o.pi+'"><img src="'+o.x.u+'" alt="이날 인증 사진"><figcaption>'+svg(11,IC.cam,2.4)+'인증샷</figcaption></figure>';}).join('')+
         it.map(function(x){return '<figure class="gi bk'+(x.other?' o':'')+'"><span class="cv">'+(x.cover?'<img src="'+esc(x.cover)+'" alt="">':'<i>📚</i>')+'</span><figcaption><b>'+esc(x.title)+'</b>'+(x.n>1?' <em>×'+x.n+'</em>':'')+'</figcaption></figure>';}).join('')+
       '</div>'+
+      (it.length?'<div class="cd-notes">'+it.map(function(x){var v=noteGet(x.id,day);
+        return '<button type="button" class="cd-note'+(v?' has':'')+'" data-dnote="'+esc(x.id)+'"><span class="t">'+esc(shortTitle(x.title.split(',')[0]))+'</span><span class="v">'+(v?esc(v):'+ 한 줄 메모')+'</span></button>';}).join('')+'</div>':'')+
       '<div class="cd-acts">'+
         '<button type="button" data-dshare>'+svg(18,IC.share)+'<span>공유·저장</span></button>'+
         '<button type="button" class="fill" data-dadd>'+svg(18,IC.plus,2.4)+'<span>기록하기</span></button>'+
@@ -867,6 +936,7 @@
         '<button type="button" data-sclose>닫기</button></div></div>');
     sh.querySelector('[data-sclose]').onclick=closeSheet;
     sh.querySelector('[data-dadd]').onclick=function(){openRecordSheet(day);};
+    [].forEach.call(sh.querySelectorAll('[data-dnote]'),function(el){el.onclick=function(){openNoteEdit(el.getAttribute('data-dnote'),day,function(){openDay(day);});};});
     var gal=sh.querySelector('.cd-gal'),ds=sh.querySelector('[data-dsave]'),dsh=sh.querySelector('[data-dshare]'),db=sh.querySelector('[data-cddel]');
     // 고른 사진(테두리) = '고른 사진 지우기' 대상. 처음엔 마지막에 찍은 사진
     function pick(pi){sel=pi;
@@ -882,7 +952,7 @@
   }
   // 날짜 기록창: 그 날짜를 고른 뒤 읽은 책을 표지로 누르기 + 다른 책 + 날짜 스탬프 사진
   function openRecordSheet(day){
-    var key=S.home.key,last=null,showOther=false;
+    var key=S.home.key,last=null,showOther=false,memo=null,memoT=0;
     var sh=openSheet('<div class="rk-rs"><h3>'+esc(dayWord(day))+(dayWord(day)===dayFull(day)?'':' <small>'+esc(dayFull(day))+'</small>')+' 기록</h3>'+
       '<p class="sub">읽은 책 표지를 누르면 기록돼요. 여러 번 읽었으면 여러 번 눌러요.</p><div data-rsbody></div></div>');
     var box=sh.querySelector('[data-rsbody]');
@@ -893,6 +963,7 @@
       var themes=shelfThemes(),books=shelfBooks(key),od=0,sum=0;
       S.rows.forEach(function(r){if(r.d===day){sum++;if(r.k==='_other')od++;}});
       var keepTitle=(box.querySelector('#rsTitle')||{}).value||'';
+      var mi0=box.querySelector('#rsMemo');if(mi0&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi0.value);} // 다른 책을 누르기 전 쓰던 메모 저장
       box.innerHTML=(themes.length>1?'<div class="rs-months rk-months" role="group" aria-label="어느 달 책">'+themes.map(function(t){
           return '<button type="button" class="rk-mpill" data-rsk="'+esc(t.key)+'" aria-pressed="'+(t.key===key)+'"><span class="mi"></span>'+esc(themeName(t).replace(' ',' · '))+'</button>';}).join('')+'</div>':'')+
         (books?'<div class="rk-grid3">'+books.map(function(b){var k=n(b.id);
@@ -906,13 +977,17 @@
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
+        (memo?'<div class="rs-memo"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
+          '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'"><button type="button" data-smemo>저장</button></div><p class="ok" aria-live="polite"></p></div>':'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
         ((S.photoList[day]||[]).length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'');
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
-    function added(row,label,id){if(!row)return;last={c:row.c,t:label};render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
+    function added(row,label,id){if(!row)return;last={c:row.c,t:label};
+      var mk=row.k==='_other'?'o:'+(row.o||''):'b:'+row.b;if(!memo||memo.key!==mk){var mi1=box.querySelector('#rsMemo');if(mi1&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi1.value);}memo={key:mk,title:noteBook(mk).title};}
+      render(id);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}
     box.onclick=function(e){
       var t;
       if((t=e.target.closest('[data-sb]'))){var bid=+t.getAttribute('data-sb');added(addRead(bid,day),shortTitle((S.byId[bid]||{}).title||''),bid);return;}
@@ -923,8 +998,14 @@
       if((t=e.target.closest('[data-sundo]'))){if(last){dropRow(last.c);save();paint();flush();last=null;render();}return;}
       if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
       if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
-      if((t=e.target.closest('[data-sdone]'))){closeSheet();return;}
+      if((t=e.target.closest('[data-smemo]'))){var mi2=box.querySelector('#rsMemo');clearTimeout(memoT);noteSet(memo.key,day,mi2.value);var ok=box.querySelector('.rs-memo .ok');if(ok)ok.textContent=mi2.value.trim()?'✓ 메모를 남겼어요':'';try{mi2.blur();}catch(x){}paint();return;}
+      if((t=e.target.closest('[data-sdone]'))){saveMemo();closeSheet();return;}
     };
+    function saveMemo(){var mi3=box.querySelector('#rsMemo');if(mi3&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi3.value);}}
+    // 쓰는 대로 잠시 뒤 저장(바깥을 눌러 창을 닫아도 남게)
+    box.addEventListener('input',function(e){if(e.target.id!=='rsMemo'||!memo)return;var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok');if(ok)ok.textContent='';
+      clearTimeout(memoT);memoT=setTimeout(function(){noteSet(k0,day,v0);if(ok&&document.body.contains(ok)&&v0.trim())ok.textContent='✓ 저장됐어요';},700);});
+    box.addEventListener('keydown',function(e){if(e.target.id==='rsMemo'&&e.key==='Enter'){e.preventDefault();var b2=box.querySelector('[data-smemo]');if(b2)b2.click();}});
     render();
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
   }
@@ -1326,6 +1407,12 @@
     var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
     var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
       :(tops.length===types.length?'여러 유형을 골고루 읽었어요.':'우리 아이는 <b>'+tops.map(esc).join(', ')+'</b> 책을 가장 자주 골랐어요.');
+    var nm={},pre2=(mi?mi.year+'-'+pad(mi.month)+'-':'');
+    Object.keys(S.notes.n).forEach(function(id){var i=id.lastIndexOf('|'),d=id.slice(i+1),k=id.slice(0,i);if(pre2&&d.indexOf(pre2)!==0)return;
+      if(!nm[k])nm[k]={k:k,n:0,d:'',v:''};nm[k].n++;if(d>nm[k].d){nm[k].d=d;nm[k].v=S.notes.n[id].v;}});
+    var nks=Object.keys(nm).map(function(k){return nm[k];}).sort(function(a,b){return a.d<b.d?1:-1;});
+    if(nks.length)h+='<div class="st-card st-notes"><h2>📝 '+(mi&&off?mi.month+'월':'이번 달')+' 메모</h2>'+nks.map(function(x){var nb=noteBook(x.k);
+      return '<button type="button" class="nt-row" data-nbook="'+esc(x.k)+'">'+noteCv(nb)+'<span class="tx"><b>'+esc(shortTitle(nb.title))+'</b><span class="v">'+esc(x.v)+'</span></span><span class="m">'+esc(md(x.d))+(x.n>1?'<br>메모 '+x.n+'개':'')+'</span></button>';}).join('')+'</div>';
     h+='<div class="st-card st-types"><h2>유형별 읽기 횟수</h2>'+types.map(function(t){return '<div class="row'+(tops.indexOf(t)>=0&&tops.length<types.length?' max':'')+'"><span class="tl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="tv">'+tc[t]+'</span></div>';}).join('')+
       '<div class="typebox">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
     el.innerHTML=h+'</div>';
@@ -1421,6 +1508,7 @@
     document.addEventListener('click',function(e){
       if(!S)return;var t;
       if($('tdFab')&&$('tdFab').classList.contains('open')&&!e.target.closest('#tdFab'))fabToggle(false);
+      if((t=e.target.closest('[data-nbook]'))){e.preventDefault();e.stopPropagation();openNoteBook(t.getAttribute('data-nbook'));return;}
       if((t=e.target.closest('[data-rbook]'))){e.preventDefault();e.stopPropagation();record(+t.getAttribute('data-rbook'),t.getAttribute('data-src')||'card');return;}
       if((t=e.target.closest('[data-rtab]'))){if(t.tagName==='A')e.preventDefault();showTab(t.getAttribute('data-rtab'));return;} // a href=#… 이 주소 기록을 쌓지 않게(뒤로가기 처리와 엉키지 않도록)
       if((t=e.target.closest('[data-rday]'))){S.recDay=t.getAttribute('data-rday');paintShelf();return;}
@@ -1448,7 +1536,7 @@
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     document.addEventListener('keydown',function(e){var t;if(S&&(e.key==='Enter'||e.key===' ')&&(t=e.target.closest&&e.target.closest('[data-rcal]'))){e.preventDefault();openDay(t.getAttribute('data-rcal'));}});
     window.addEventListener('online',function(){if(S)flush();});
-    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);}});
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();flushNotes();pullNotes();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);}});
   }
 
   window.NaiteReading={
@@ -1460,7 +1548,7 @@
          reader:readerId(),code:code,member:true,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
          home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{},photoList:{},wbList:[]};
       S.books=rememberBooks(theme.key,o.books);
-      var st=load();S.rows=st.rows;S.outbox=st.outbox;
+      var st=load();S.rows=st.rows;S.outbox=st.outbox;S.notes=loadNotes();
       S.rows.forEach(function(r){if(!r.k)r.k=(S.byId[r.b]||{}).k||theme.key;});
       // 공개된 달 목록(기록하기 탭 달 칩)
       rpc('list_published').then(function(list){if(!S)return;S.pubs=list||[];(S.pubs||[]).forEach(function(t){if(t.key!==S.home.key)shelfBooks(t.key);});paint();},function(){});
@@ -1476,7 +1564,7 @@
       // 주소로 바로 온 탭(메인의 나이테 120·인기 책장 버튼 등)은 그대로, 마지막 탭이 앱 안 페이지면 자료 탭으로
       if(TAB_IDS.indexOf(h)<0){h=last;if(EMBED[h])h='study';}
       if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
-      flush();pull();pullOther();checkBackup();
+      flush();pull();pullOther();checkBackup();flushNotes();pullNotes();
       setTimeout(offerInstallOnce,1200);
     }
   };
