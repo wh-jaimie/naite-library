@@ -978,7 +978,8 @@
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
         (memo?'<div class="rs-memo"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
-          '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'"><button type="button" data-smemo>저장</button></div><p class="ok" aria-live="polite"></p></div>':'')+
+          '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
+          '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요 · 날짜를 누르면 다시 볼 수 있어요':'')+'</p></div>':'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
@@ -998,13 +999,13 @@
       if((t=e.target.closest('[data-sundo]'))){if(last){dropRow(last.c);save();paint();flush();last=null;render();}return;}
       if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
       if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
-      if((t=e.target.closest('[data-smemo]'))){var mi2=box.querySelector('#rsMemo');clearTimeout(memoT);noteSet(memo.key,day,mi2.value);var ok=box.querySelector('.rs-memo .ok');if(ok)ok.textContent=mi2.value.trim()?'✓ 메모를 남겼어요':'';try{mi2.blur();}catch(x){}paint();return;}
+      if((t=e.target.closest('[data-smemo]'))){var mi2=box.querySelector('#rsMemo');clearTimeout(memoT);noteSet(memo.key,day,mi2.value);try{mi2.blur();}catch(x){}paint();var b3=box.querySelector('[data-smemo]');if(b3&&mi2.value.trim()){b3.classList.add('pop');try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}return;}
       if((t=e.target.closest('[data-sdone]'))){saveMemo();closeSheet();return;}
     };
     function saveMemo(){var mi3=box.querySelector('#rsMemo');if(mi3&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi3.value);}}
     // 쓰는 대로 잠시 뒤 저장(바깥을 눌러 창을 닫아도 남게)
-    box.addEventListener('input',function(e){if(e.target.id!=='rsMemo'||!memo)return;var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok');if(ok)ok.textContent='';
-      clearTimeout(memoT);memoT=setTimeout(function(){noteSet(k0,day,v0);if(ok&&document.body.contains(ok)&&v0.trim())ok.textContent='✓ 저장됐어요';},700);});
+    box.addEventListener('input',function(e){if(e.target.id!=='rsMemo'||!memo)return;var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok'),sb=box.querySelector('[data-smemo]');if(ok)ok.textContent='';if(sb){sb.classList.remove('done','pop');sb.textContent='저장';}
+      clearTimeout(memoT);memoT=setTimeout(function(){noteSet(k0,day,v0);if(ok&&document.body.contains(ok)&&v0.trim())ok.textContent='자동으로 저장됐어요';},700);});
     box.addEventListener('keydown',function(e){if(e.target.id==='rsMemo'&&e.key==='Enter'){e.preventDefault();var b2=box.querySelector('[data-smemo]');if(b2)b2.click();}});
     render();
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
