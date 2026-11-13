@@ -25,6 +25,15 @@ h2{font-family:'Gowun Batang',serif;font-size:20px;margin:22px 0 8px;color:var(-
 .it p{margin:4px 0 0;font-size:.93rem;color:var(--soft)}
 .it .when{font-weight:800;color:var(--clay-ink)}
 .it .date{font-size:.82rem}
+details.ag{margin-top:10px}
+details.ag>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:11px 14px;-webkit-tap-highlight-color:transparent}
+details.ag>summary::-webkit-details-marker{display:none}
+details.ag>summary .an{font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--pine)}
+details.ag>summary .ar{font-size:.85rem;font-weight:700;color:var(--soft)}
+details.ag>summary::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2.4px solid var(--pine);border-bottom:2.4px solid var(--pine);transform:rotate(45deg);margin-top:-4px;transition:transform .15s}
+details.ag[open]>summary{background:var(--pine-soft);border-color:#C9DCCF}
+details.ag[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+details.ag>.it:last-child{margin-bottom:6px}
 h2 small{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;color:var(--soft);margin-left:7px}
 .it a{display:inline-block;margin-top:6px;font-size:.88rem;font-weight:800;color:var(--pine);text-decoration:none}
 .picks{margin-top:8px;border-top:1px dashed var(--line);padding-top:7px}
@@ -102,10 +111,14 @@ function _ie(x){var o=document.createElement('span');o.className='ph';o.textCont
 function img(c){return '<img loading="lazy" src="'+(c.indexOf('road/')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg')+'" alt="" onerror="_ie(this)">';}
 function cov(i){if(i.photo)return '<img loading="lazy" src="'+i.photo+'" alt="">';if(i.c)return img(i.c);var m={'영상':'🎬','노래':'🎵','노래책':'🎵','구매':'📦'};return '<span class="ph">'+(m[i.k]||'📚')+'</span>';}
 function paintRoad(){function e(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-document.getElementById('list').innerHTML=ROAD.map(function(y){return '<h2>'+y[0]+'<small>'+(+y[0]-2020)+'살</small></h2>'+y[1].map(function(i){
- return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span></div><p><span class="when">'+e(age(i.w))+'</span> <span class="date">'+e(i.w)+'</span><br>'+e(i.d)+'</p>'+
+/* 개월 수로 다시 묶기: 1~12개월=1살, 13~24개월=2살 … (연도 대신 아이 나이 기준) */
+var AG=[];ROAD.forEach(function(y){y[1].forEach(function(i){var m=parseInt(age(i.w),10)||0,g=Math.max(1,Math.ceil(m/12));(AG[g]=AG[g]||[]).push(i);});});
+AG=AG.map(function(l,g){return l?[g,l]:null;}).filter(Boolean);
+document.getElementById('list').innerHTML=AG.map(function(y,yi){var g=y[0];
+ return '<details class="ag"'+(yi===0?' open':'')+'><summary><span class="an">'+g+'살</span><span class="ar">'+((g-1)*12+1)+'~'+(g*12)+'개월 · '+y[1].length+'개</span></summary>'+y[1].map(function(i){
+ return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span></div><p><span class="when">'+e(age(i.w))+'</span><br>'+e(i.d)+'</p>'+
   (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b><span>'+e(x[2])+'</span></div></li>';}).join('')+'</ul></details>':'')+
-  (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('');}).join('');
+  (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('')+'</details>';}).join('');
 document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span></div>';}).join('');
 document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
 paintRoad();
@@ -115,7 +128,7 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
   document.addEventListener('click',function(ev){var t=ev.target;
     // 카드·대박책 어디를 눌러도 책정보(표지 링크)로. 다른 링크·대박책 펼치기는 그대로
     if(t.closest&&!t.closest('a,summary')){var one=t.closest('.picks li,.bk'),cv=null;
-      if(one)cv=one.querySelector('a.cv');else if(!t.closest('details')){var c=t.closest('.it');if(c)cv=c.querySelector('.row>a.cv');}
+      if(one)cv=one.querySelector('a.cv');else if(!t.closest('details.picks')){var c=t.closest('.it');if(c)cv=c.querySelector('.row>a.cv');}
       if(cv){cv.click();return;}}
     var a=t.closest&&t.closest('a[data-buy]');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;
     fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},keepalive:true,body:JSON.stringify({type:'buy_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{title:a.dataset.buy,page:'걸어온 길'}})}).catch(function(){});}catch(e){}});
