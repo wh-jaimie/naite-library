@@ -312,7 +312,7 @@
     nomatch:'닉네임이나 숫자가 맞지 않아요.',locked:'여러 번 틀려서 잠시 막혔어요. 1시간 뒤 다시 해 주세요.'};
   function openBackup(mode){
     var cur=backupName();mode=mode||(cur?'done':'make');
-    var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 조이맘)" value="'+esc(mode==='make'?(cur||getDN()):'')+'">'+
+    var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 드니맘)" value="'+esc(mode==='make'?(cur||getDN()):'')+'">'+
       '<input id="bkPin" class="pin" style="margin-top:8px" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="숫자 4자리"><p class="err" id="bkErr"></p><button type="submit" class="pri">'+btn+'</button></form>';};
     var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록이 그대로 돌아와요.</p>'+
         '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'
@@ -1227,7 +1227,7 @@
     var ch=curChal();if(!ch)return;var I=chalInfo(ch);
     var meta={id:ch.id,done:I.done,read:I.read,wb:I.wb},fname='naite-'+ch.id+'.jpg';
     var sh=shareSheet(esc(ch.title)+' 완주샷',I.done?'완주를 축하해요! 이미지를 저장해서 완주를 보고해 주세요.':'아직 진행 중이어도 지금까지 함께한 기록을 완주샷으로 만들 수 있어요.',drawChalCard(ch),fname,'chal_card',meta,
-      '<div class="ch-name"><input id="chName" maxlength="12" placeholder="완주샷에 넣을 이름 (예: 조이네)" value="'+esc(getDN())+'"><button type="button" id="chNameGo">넣기</button>'+
+      '<div class="ch-name"><input id="chName" maxlength="12" placeholder="완주샷에 넣을 이름 (예: 드니맘)" value="'+esc(getDN())+'"><button type="button" id="chNameGo">넣기</button>'+
       '<p>밖에 공유될 수 있으니 아이 실명보다 닉네임을 권해요. 비워도 괜찮아요.</p></div>');
     var inp=sh.querySelector('#chName'),go=sh.querySelector('#chNameGo'),last=getDN();
     function apply(){var v=inp.value.trim().slice(0,12);if(v===last)return;last=v;setDN(v);
