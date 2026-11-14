@@ -59,6 +59,26 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .guide120 li{position:relative;padding-left:20px;margin:5px 0}
 .guide120 li::before{content:"✓";position:absolute;left:0;color:var(--teal-deep);font-weight:800}
 .guide120 .small-disc{font-size:.74rem;color:var(--ink-soft);margin:14px 0 0}
+/* 이렇게 골랐어요(2026-11-14): 믿고 따라올 근거 */
+.picked{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.picked h3{font-size:1rem;margin:0 0 8px}
+.picked .p-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 8px}
+.picked .p-stats span{background:color-mix(in srgb,var(--coral) 8%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:6px 2px;text-align:center;font-size:.72rem;line-height:1.3;color:var(--ink-soft);font-weight:700}
+.picked .p-stats b{display:block;font-size:1.15rem;color:var(--ink);font-weight:800}
+.picked ul{margin:0;padding:0;list-style:none;font-size:.86rem;line-height:1.5}
+.picked li{position:relative;padding-left:18px;margin:4px 0}
+.picked li::before{content:"✓";position:absolute;left:0;color:var(--teal-deep);font-weight:800}
+.picked .p-start{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--teal) 9%,var(--surface));font-size:.88rem;line-height:1.5}
+.use h3 small{font-size:.74rem;font-weight:700;color:var(--ink-soft);margin-left:4px}
+.use .u-q{margin:0 0 6px;font-size:.84rem;color:var(--ink-soft);font-weight:700}
+.use .u-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.use .u-tabs button{font:inherit;font-size:.8rem;font-weight:700;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer}
+.use .u-tabs button[aria-selected=true]{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff}
+.use .u-pane{margin-top:8px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--teal) 9%,var(--surface));font-size:.86rem;line-height:1.55}
+.use .u-pane b{display:block;font-size:.92rem;margin-bottom:3px;color:var(--ink)}
+.use .u-now{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:.82rem;font-weight:800;color:var(--teal-deep);text-decoration:none}
+.use .u-me{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:.82rem;color:var(--ink-soft)}
+.picked .p-link{display:inline-block;margin-top:8px;font-size:.8rem;font-weight:700;color:var(--teal-deep)}
 /* 진행 카드 작게(2026-11-07) */
 .panel{margin-top:14px;padding:14px 16px}
 .panel .big{font-size:1.5rem}
@@ -196,11 +216,40 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <h1>나이테 120</h1>
 
     <div id="cn2" class="guide120">
-      <h3>레벨 순서가 아니라, 재미 순서로.</h3>
-      <p class="g-sub">매달 다른 주제 24가지. 다른 유형 5권.</p>
+      <h3>매달 다른 주제 24가지, 다른 유형 5권.</h3>
       <div class="g-types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
       <a class="g-tlink" href="types.html">🧩 왜 이 5가지일까요? 유형별 재미 알아보기 →</a>
     </div>
+    <div class="picked">
+      <h3>나이테 120은 이렇게 골랐어요</h3>
+      <div class="p-stats"><span><b>18</b>🏅 수상작</span><span><b>41</b>🇰🇷 국내 인기</span><span><b>37</b>🌍 세계 인기</span><span><b>10</b>📚 대출 인기</span></div>
+      <ul>
+        <li>칼데콧 등 그림책 상 수상, 국내 서점 순위, 전 세계 인기, 도서관 대출 기록을 보고 골랐어요</li>
+      </ul>
+      <a class="p-link" href="road.html">🌳 고른 사람 이야기 · 나이테(드니맘)가 걸어온 길 →</a>
+    </div>
+    <div class="picked use" id="use120">
+      <h3>이렇게 활용해요 <small>0개월~9세 누구나</small></h3>
+      <p class="u-q">집에 영어책이…</p>
+      <div class="u-tabs" role="tablist"><button type="button" role="tab" data-u="0" aria-selected="true">🌱 아직 없어요</button><button type="button" role="tab" data-u="1" aria-selected="false">📦 전집 한 질</button><button type="button" role="tab" data-u="2" aria-selected="false">📚 이미 많아요</button></div>
+      <div class="u-pane" data-u="0"><b>알아보지 말고, 지금 스터디 중인 달부터 그대로 따라오세요.</b>매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.<a class="u-now" id="uNow" href="#" hidden></a></div>
+      <div class="u-pane" data-u="1" hidden><b>전집은 하던 대로, 원서 그림책은 나이테 120으로.</b>잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 나이테 120을 한 달에 5권씩 더해 주세요.</div>
+      <div class="u-pane" data-u="2" hidden><b>읽던 책은 그대로, 이번 달 5권은 전면책장에.</b>매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.<span class="u-me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span></div>
+    </div>
+    <script>(function(){var r=document.getElementById('use120');if(!r)return;var bs=r.querySelectorAll('.u-tabs button'),ps=r.querySelectorAll('.u-pane');
+      function pick(i,save){bs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.u==i?'true':'false');});ps.forEach(function(p){p.hidden=p.dataset.u!=i;});if(save)try{localStorage.setItem('naite_use120',i);}catch(e){}}
+      bs.forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.u,true);});});
+      try{var s=localStorage.getItem('naite_use120');if(s!==null&&/^[012]$/.test(s))pick(s,false);}catch(e){}
+      // 지금 스터디 중인 달(settings.current_theme) → "지금은 N개월차 🚗 탈것 · 바로 보기", 누르면 그 달로 스크롤
+      var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi';
+      fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/settings?select=current_theme&id=eq.1',{headers:{apikey:A,Authorization:'Bearer '+A},cache:'no-store'})
+        .then(function(x){return x.ok?x.json():[];}).then(function(rows){var k=rows&&rows[0]&&rows[0].current_theme;if(!k)return;
+          var el=document.querySelector('.theme[data-key="'+k+'"]');if(!el)return;var m=el.closest('.month'),mh=m&&m.querySelector('.mh');
+          var t=(typeof themes!=='undefined')?themes.filter(function(x){return x.key===k;})[0]:null;
+          var a=document.getElementById('uNow');a.textContent='👉 지금 스터디는 '+(mh?mh.textContent+' ':'')+(t?t.emoji+' '+t.ko:'')+' · 바로 보기 ↓';a.hidden=false;
+          a.onclick=function(e){e.preventDefault();var cur=document.querySelector('.theme[data-key="'+k+'"]')||el;var y=cur.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:'smooth'});};
+        }).catch(function(){});
+    })();</script>
     <div class="panel">
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
@@ -218,7 +267,7 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
   <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
-if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.html"]').forEach(function(x){x.href='types.html?embed=record';}); // 유형 글에서 돌아올 때도 앱 모드 유지
+if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.html"],a[href="road.html"]').forEach(function(x){x.href=x.getAttribute('href')+'?embed=record';}); // 유형 글에서 돌아올 때도 앱 모드 유지
 if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}.panel .appnote{display:none}</style>');
 </script>
 
