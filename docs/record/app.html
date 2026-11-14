@@ -1286,7 +1286,8 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;var vc=el.closest('.sd-vcard');if(vc)vc.classList.add('playing');el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
-    app.querySelectorAll('.sd-book .cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
+    // 표지 책장(.sd-book.gcard)은 카드 자체가 쿠팡 링크라 '.sd-book .cvlink'에 안 걸려 집계가 빠졌음(2026-11-07~11-13) → 둘 다 잡기
+    app.querySelectorAll('.sd-book .cvlink, .sd-book.cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
     var more=document.getElementById('sdMore'),intro=document.getElementById('sdIntro');
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     initChips();
