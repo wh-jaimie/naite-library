@@ -155,6 +155,12 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .wsec li{margin:6px 0}
 .wsec .wsub{display:block;color:var(--soft);font-size:.84rem}
 .wsec{word-break:keep-all}
+.wuse .wu-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.wuse .wu-tabs button{font:inherit;font-size:.8rem;font-weight:800;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--soft);cursor:pointer}
+.wuse .wu-tabs button[aria-selected=true]{background:var(--tealD);border-color:var(--tealD);color:#fff}
+.wuse .wu-pane{margin-top:8px;padding:10px 12px;border-radius:10px;background:#EEF3EA;font-size:.9rem;line-height:1.55}
+.wuse .wu-pane b{display:block;margin-bottom:3px}
+.wuse .wu-pane:empty{display:none}
 .wsec a,.wsec .wbtn{color:var(--tealD);font-weight:800}
 .wsec .wbtn{display:inline-block;margin-top:6px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;cursor:pointer;text-decoration:none}
 .whero{text-align:center;padding:12px 4px 4px}
@@ -870,6 +876,8 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .sd-classic .sd-hero .more{font-size:14px}
 .sd-classic .sd-hero{padding:12px 14px}
 /* 이번 달 5권 = 표지 책장(3열, 5권이 한 화면에) */
+.sd-use{display:flex;align-items:center;gap:6px;margin:14px auto 0;max-width:420px;padding:9px 12px;border-radius:12px;background:var(--pine-soft);color:var(--pine);font-size:13px;font-weight:700;line-height:1.45;text-decoration:none;word-break:keep-all}
+.sd-use b{margin-left:auto;white-space:nowrap;font-weight:800}
 .sd-shelf{display:flex;flex-wrap:wrap;justify-content:center;gap:16px 10px;margin-top:2px}
 .sd-classic .sd-book.gcard{flex:0 0 calc((100% - 20px)/3);min-width:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;text-decoration:none;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .gcard .gcv{position:relative;width:100%;height:132px;display:flex;align-items:flex-end;justify-content:center}
@@ -1083,7 +1091,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261113u"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261114a"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1234,7 +1242,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     // 1. 이번 달 5권(표지 책장 먼저 → 공동구매 → 책 소개 → 안내)
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
        hero+'<div id="sdAge"></div>'+
-       '<div class="sd-shelf">'+bh+'</div>'+
+       '<div class="sd-shelf">'+bh+'</div>'+(PREVIEW?'':useLineHTML())+
        '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
        '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
        '<h3 class="binfo-h" id="sdInfo">5권 소개</h3><div class="sd-books">'+binfo+'</div>'+
@@ -1467,9 +1475,27 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     if(!NEWS.length)return pushBoxHTML()+'<p style="color:var(--soft);text-align:center;padding:40px 0">아직 올라온 공지가 없어요.</p>';
     return pushBoxHTML()+NEWS.map(function(n){return '<div class="nitem'+(n.id>s?' new':'')+'"><div class="nh2"><h3>'+(n.pinned?'📌 ':'')+(n.id>s?'🆕 ':'')+esc(n.title||'공지')+'</h3><span class="nd">'+esc(fmtDay(n.created_at))+'</span></div><div class="nb">'+linkify(n.body||'')+'</div></div>';}).join('');
   }
+  // 🌱 집에 있는 영어책별 활용법(2026-11-14): 나이테 120의 '이렇게 활용해요'와 같은 문구·같은 기억(naite_use120)
+  var USE120=[['🌱 아직 없어요','알아보지 말고, 지금 스터디 중인 달부터 그대로 따라오세요.','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.','🌱 알아보지 말고, 이 5권만 구해서 따라오세요'],
+    ['📦 전집 한 질','전집은 하던 대로, 원서 그림책은 나이테 120으로.','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 나이테 120을 한 달에 5권씩 더해 주세요.','📦 전집은 그대로, 이 5권을 더해 주세요'],
+    ['📚 이미 많아요','읽던 책은 그대로, 이번 달 5권은 전면책장에.','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.','📚 이 5권은 전면책장에 올려 두고 한 번씩 읽어 주세요']];
+  function useGet(){try{var v=localStorage.getItem('naite_use120');return /^[012]$/.test(v||'')?+v:-1;}catch(e){return -1;}}
+  function useLineHTML(){var u=useGet();
+    return '<a class="sd-use" href="../guide/12-naite-120.html?from=app" target="_blank" rel="noopener" data-ev="이번 달 5권 활용법">'+(u<0?'📚 집에 영어책이 없어도, 많아도 — 이 5권 활용법':esc(USE120[u][3]))+'<b>활용법 ›</b></a>';}
+  function usePaneHTML(u){return u<0?'':'<b>'+esc(USE120[u][1])+'</b>'+esc(USE120[u][2]);}
+  document.addEventListener('click',function(e){if(e.target.closest('.sd-use')&&typeof logEvent==='function')try{logEvent('guide_click',{guide:12,from:'month_shelf'});}catch(x){}});
+  document.addEventListener('click',function(e){var t=e.target.closest('[data-wu]');if(!t)return;var u=+t.getAttribute('data-wu');
+    try{localStorage.setItem('naite_use120',String(u));}catch(x){}
+    document.querySelectorAll('[data-wu]').forEach(function(b){b.setAttribute('aria-selected',String(+b.getAttribute('data-wu')===u));});
+    var p=document.getElementById('wuPane');if(p)p.innerHTML=usePaneHTML(u);
+    document.querySelectorAll('.sd-use').forEach(function(a){a.outerHTML=useLineHTML();});
+    if(typeof logEvent==='function')try{logEvent('use120_pick',{u:u,from:'welcome'});}catch(x){}});
   function welcomeHTML(){
     var inst=window.NaiteReading.isStandalone();
     return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
+      (function(){var u=useGet();return '<div class="wsec wuse"><h3>📚 집에 영어책이 얼마나 있나요?</h3><div class="wu-tabs" role="tablist">'+
+        USE120.map(function(x,i){return '<button type="button" role="tab" data-wu="'+i+'" aria-selected="'+(i===u)+'">'+x[0]+'</button>';}).join('')+
+        '</div><div class="wu-pane" id="wuPane">'+usePaneHTML(u)+'</div><a class="wsub" href="#c120" data-pnclose data-rtab="c120" style="display:inline-block;margin-top:8px">독서 로드맵(나이테 120)에서 보기 →</a></div>';})()+
       '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
         '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 책·기록·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
         '<li data-pushli><b>새 자료·공지 알림 받기 (선택)</b>'+pushBoxHTML()+'</li>'+
