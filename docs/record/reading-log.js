@@ -256,8 +256,8 @@
     return list.slice(0,8);
   }
   /* ── 책 한 줄 메모(2026-11-13) ── 책마다·읽은 날마다 한 줄. key = dayItems id('b:<책 id>' | 'o:<제목>')
-   * 2026-11-16 운영자 결정: 메모 내용은 개인정보라 인증 사진처럼 이 기기(naite_notes_v1)에만 둔다.
-   * 서버(save_note)엔 '메모 남김' 표시('1')만 보내고, 서버에서 내용을 다시 받아오지 않음(my_notes 안 씀, migrate_notes_local_only.sql). */
+   * 이 기기(naite_notes_v1)에 먼저 저장 → 서버(save_note)에 올리고, 같은 기록 ID를 쓰는 다른 폰(이어보기·아빠와 같이 쓰기)과 맞춤(my_notes).
+   * 2026-11-17 운영자 결정: 메모·사진은 모든 사용자 서버에 보관(migrate_notes_server.sql) */
   var NOTE_KEY='naite_notes_v1',NOTE_MAX=100;
   function loadNotes(){try{var j=JSON.parse(localStorage.getItem(NOTE_KEY)||'null');if(j&&j.n&&j.q)return j;}catch(e){}return {n:{},q:[]};}
   function saveNotes(){try{localStorage.setItem(NOTE_KEY,JSON.stringify(S.notes));}catch(e){}}
@@ -272,13 +272,22 @@
   function flushNotes(){
     if(!S.reader||S.noteBusy||!S.notes.q.length)return;
     var st=S,id=S.notes.q[0],i=id.lastIndexOf('|'),key=id.slice(0,i),day=id.slice(i+1);st.noteBusy=1;
-    rpc('save_note',{p_reader:st.reader,p_book_key:key,p_read_on:day,p_note:noteGet(key,day)?'1':''}).then(function(res){
+    rpc('save_note',{p_reader:st.reader,p_book_key:key,p_read_on:day,p_note:noteGet(key,day)}).then(function(res){
       st.noteBusy=0;if(st!==S)return;
       if(res&&res.ok===false&&res.error==='limit')toast('이날 메모가 너무 많아 더 저장할 수 없어요.');
       S.notes.q=S.notes.q.filter(function(x){return x!==id;});saveNotes();flushNotes();
     },function(){st.noteBusy=0;}); // 오프라인·함수 없음 → 남겨 두고 다음에
   }
-  function pullNotes(){} // 메모 내용은 서버에 없음(이 기기에만) → 받아올 것 없음
+  function pullNotes(){ // 다른 폰(같은 기록 ID)에서 쓴 메모를 받아 합침. 이 폰에만 있는 메모는 그대로 둠
+    if(!S||!S.reader)return;var st=S;
+    rpc('my_notes',{p_reader:st.reader}).then(function(list){
+      if(st!==S||!list)return;var ch=0;
+      list.forEach(function(r){var id=r.book_key+'|'+r.read_on;if(!r.note||r.note==='1'||S.notes.q.indexOf(id)>=0)return;
+        var t=Date.parse(r.updated_at)||0,cur=S.notes.n[id];if(!cur||(cur.v!==r.note&&t>cur.t)){S.notes.n[id]={v:r.note,t:t};ch=1;}});
+      if(ch){saveNotes();paint();}
+    },function(){});
+  }
+  function queueAllNotes(){S.notes.q=Object.keys(S.notes.n);saveNotes();flushNotes();}
   function noteBook(key){
     if(key.indexOf('o:')===0)return {title:key.slice(2)||'다른 책',other:true};
     var b=S.byId[+key.slice(2)]||{};return {title:b.title||'(지난 달 책)',cover:b.cover};
@@ -373,7 +382,7 @@
     var cur=backupName();mode=mode||(cur?'done':'make');
     var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 드니맘)" value="'+esc(mode==='make'?(cur||getDN()):'')+'">'+
       '<input id="bkPin" class="pin" style="margin-top:8px" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="숫자 4자리"><p class="err" id="bkErr"></p><button type="submit" class="pri">'+btn+'</button></form>';};
-    var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록이 그대로 돌아와요.</p>'+
+    var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록·메모·인증 사진이 그대로 돌아와요.</p>'+
         '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'+fbBlock()
       :mode==='make'?'<h3>기록 백업하기</h3><p class="sub">읽기 기록은 이 폰에 저장돼요. 닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 이어서 볼 수 있고, 아빠 폰과 같이 쓸 수도 있어요. 숫자는 꼭 기억해 주세요.</p>'+form('백업하기')+
         '<button type="button" class="subtle" data-bk="restore">예전에 백업했어요 → 이어보기</button>'+fbBlock()
@@ -407,7 +416,7 @@
           try{localStorage.setItem(READER_KEY,d.reader);}catch(e){}
           setBackupName(d.name||name);
           S.rows=S.rows.filter(function(r){return S.outbox.some(function(o){return o.c===r.c;});});save();
-          S.notes.q=Object.keys(S.notes.n);saveNotes(); // 메모는 이 기기에만 → 그대로 두고 '메모 남김' 표시만 새 ID로 다시 보냄
+          S.notes.q=Object.keys(S.notes.n);saveNotes();pqSet([]);try{localStorage.removeItem(PSYNC_KEY);}catch(e){} // 이 폰 메모·사진은 그대로 두고 새 ID(백업 쪽)로 다시 올림(다시 열면 전부 올리고 백업 쪽 것도 받아옴)
           location.reload();
         },function(){done();er.textContent='연결이 불안정해요. 잠시 뒤 다시 해 주세요.';});
       }
@@ -594,7 +603,7 @@
   var FB_KEY_RE=/^(wb:[A-Za-z0-9_-]{1,40}:)?\d{4}-\d{2}-\d{2}(#\d{1,15})?$/;
   function fbCounts(){var n=Object.keys((S.notes||{}).n||{}).length,p=0;Object.keys(S.photoList||{}).forEach(function(d){p+=S.photoList[d].length;});p+=(S.wbList||[]).length;return {n:n,p:p};}
   function fbBlock(){var c=fbCounts();
-    return '<div class="fb-box"><b>📦 메모·사진 파일로 백업</b><p>메모 '+c.n+'개 · 사진 '+c.p+'장이 이 폰에만 있어요. 파일로 저장해 두면 폰을 바꾸거나 아빠 폰에서도 불러올 수 있어요. 파일은 구글 드라이브나 카톡 \'나에게 보내기\'에 두면 편해요.</p>'+
+    return '<div class="fb-box"><b>📦 메모·사진 파일로 백업</b><p>메모 '+c.n+'개 · 사진 '+c.p+'장. 나이테에도 보관되지만, 내 파일로도 따로 저장해 둘 수 있어요(구글 드라이브·카톡 \'나에게 보내기\' 등).</p>'+
       '<div class="fb-btns"><button type="button" class="subtle" data-fbsave'+(c.n||c.p?'':' disabled')+'>파일로 저장</button><button type="button" class="subtle" data-fbload>파일에서 불러오기</button></div></div>';}
   function fbWire(sh){
     var s=sh.querySelector('[data-fbsave]'),l=sh.querySelector('[data-fbload]');
@@ -633,6 +642,7 @@
         var add=pics.filter(function(p){return !have[p.k];}).map(function(p){
           var bin=atob(p.d),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return {k:p.k,b:new Blob([u],{type:'image/jpeg'})};});
         add.forEach(function(p){if(p.k.indexOf('wb:')===0)addWbMem(p.k,p.b);else addPhotoMem(p.k,p.b);np++;});
+        add.forEach(function(p){pqAdd(p.k);});
         return (add.length?ptx('readwrite',function(st){add.forEach(function(p){st.put(p.b,p.k);});}):Promise.resolve()).then(function(){
           paint();closeSheet();toast(nn||np?'메모 '+nn+'개 · 사진 '+np+'장을 불러왔어요 ✓':'새로 불러올 메모·사진이 없어요(이미 다 있어요).');
           if(S.onEvent)S.onEvent('file_restore',{n:nn,p:np});});
@@ -643,12 +653,12 @@
   // 아빠와 같이 쓰기: 같은 닉네임 백업을 이어보기 하면 두 폰이 같은 읽기 기록을 씀(메모·사진은 각자 폰 → 파일로 옮김)
   function openFamily(){
     var cur=backupName();
-    var html='<h3>👨‍👩‍👧 아빠와 같이 쓰기</h3><p class="sub">엄마 폰과 아빠 폰이 <b>같은 읽기 기록</b>을 함께 써요. 아빠가 읽어 준 날도 한 달력에 쌓여요.</p>'+
+    var html='<h3>👨‍👩‍👧 아빠와 같이 쓰기</h3><p class="sub">엄마 폰과 아빠 폰이 <b>같은 읽기 기록·메모·사진</b>을 함께 써요. 아빠가 읽어 준 날도 한 달력에 쌓여요.</p>'+
       '<ol class="fam-steps">'+
         (cur?'<li>이 폰은 <b>'+esc(cur)+'</b> 닉네임으로 백업돼 있어요 ✓</li>':'<li>먼저 <b>이 폰에서 기록 백업</b>을 해요(닉네임 + 숫자 4자리).</li>')+
         '<li>아빠 폰에서 나이테 스터디 앱을 열고 <b>읽기 기록 › 아빠와 같이 쓰기 › 받는 쪽이에요</b>를 눌러요.</li>'+
         '<li>'+(cur?'닉네임 <b>'+esc(cur)+'</b>와 ':'같은 닉네임과 ')+'숫자 4자리를 넣으면 끝! 그다음부터는 어느 폰에서 기록해도 같이 보여요.</li></ol>'+
-      '<p class="bk-note">같이 보이는 것: 읽기 기록·달력·통계. 메모와 인증 사진은 각자 폰에 저장돼요. 옮기고 싶으면 아래 <b>파일로 저장</b> → 아빠 폰에서 <b>파일에서 불러오기</b>를 해 주세요.</p>'+
+      '<p class="bk-note">같이 보이는 것: 읽기 기록·달력·통계·메모·인증 사진. 어느 폰에서 남겨도 다른 폰에서 앱을 열면 같이 보여요.</p>'+
       (cur?'<button type="button" class="pri" data-famshare>아빠에게 앱 링크 보내기</button>':'<button type="button" class="pri" data-bk="make">이 폰에서 백업하기</button>')+
       '<button type="button" class="subtle" data-bk="restore">받는 쪽이에요 (엄마가 백업했어요)</button>'+fbBlock();
     var sh=openSheet(html);
@@ -666,15 +676,14 @@
     if(!S||location.hash==='#preview')return;
     var mon=logicalToday().slice(0,7),last='';try{last=localStorage.getItem('naite_bk_nudge')||'';}catch(e){}
     if(last===mon)return;
-    var hadPrev=S.rows.some(function(r){return r.d<mon;}),c=fbCounts(),need=!backupName()||(c.n+c.p>0&&(function(){try{return (localStorage.getItem('naite_fb_last')||'')<mon;}catch(e){return true;}})());
+    var hadPrev=S.rows.some(function(r){return r.d<mon;}),c=fbCounts(),need=!backupName();
     try{localStorage.setItem('naite_bk_nudge',mon);}catch(e){}
     if(!last&&!hadPrev)return;            // 처음 쓰는 사람·지난달 기록 없음 → 다음 달부터
     if(!hadPrev||!need)return;
     if(sheetEl&&!sheetEl.hidden)return;
     var m=+mon.slice(5,7),pm=m===1?12:m-1;
     var html='<h3>🌱 '+m+'월이 시작됐어요</h3><p class="sub">'+pm+'월에 쌓은 기록, 지금 백업해 두면 폰을 바꿔도 그대로 이어서 볼 수 있어요.</p>'+
-      (backupName()?'<p class="bk-note">읽기 기록은 <b>'+esc(backupName())+'</b> 이름으로 백업돼 있어요 ✓</p>':'<button type="button" class="pri" data-bk="make">읽기 기록 백업하기</button>')+
-      (c.n+c.p?fbBlock():'')+'<button type="button" class="subtle" data-sclose>다음에 할게요</button>';
+      (backupName()?'<p class="bk-note">읽기 기록은 <b>'+esc(backupName())+'</b> 이름으로 백업돼 있어요 ✓</p>':'<button type="button" class="pri" data-bk="make">기록 백업하기</button>')+'<button type="button" class="subtle" data-sclose>다음에 할게요</button>';
     var sh=openSheet(html);
     sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
     var cl=sh.querySelector('[data-sclose]');if(cl)cl.onclick=closeSheet;
@@ -691,6 +700,40 @@
     return PDB;
   }
   function ptx(mode,fn){return pdb().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('p',mode);fn(tx.objectStore('p'));tx.oncomplete=function(){res();};tx.onerror=function(){rej(tx.error);};});});}
+  /* ── 사진 서버 보관(2026-11-17 운영자 결정): 인증 사진·워크북 사진을 Edge Function photo-backup(비공개 저장소)에 올리고,
+   * 같은 기록 ID를 쓰는 다른 폰(이어보기·아빠와 같이 쓰기)은 열 때 받아옴. 함수가 없거나 오프라인이면 줄(naite_photo_q)에 두고 다음에.
+   * 처음 한 번은 이 폰에 있던 사진을 전부 올림(naite_photo_synced) */
+  var PQ_KEY='naite_photo_q',PSYNC_KEY='naite_photo_synced';
+  function photoFn(){var u=(typeof SUPA_URL!=='undefined'&&SUPA_URL)||(S&&S.client&&S.client.supabaseUrl)||'';return u?u+'/functions/v1/photo-backup':'';}
+  function pqGet(){try{return JSON.parse(localStorage.getItem(PQ_KEY)||'[]')||[];}catch(e){return [];}}
+  function pqSet(q){try{localStorage.setItem(PQ_KEY,JSON.stringify(q));}catch(e){}}
+  function opKey(x){return x.charAt(0)==='-'?x.slice(1):x;}
+  function pqAdd(op){if(!S)return;var q=pqGet().filter(function(x){return opKey(x)!==opKey(op);});q.push(op);pqSet(q);flushPhotos();}
+  function queueAllPhotos(){if(!S)return;var q=pqGet(),has={};q.forEach(function(x){has[opKey(x)]=1;});allPhotoKeys().forEach(function(k){if(!has[k])q.push(k);});pqSet(q);try{localStorage.setItem(PSYNC_KEY,'1');}catch(e){}flushPhotos();}
+  function pfetch(body){var u=photoFn();if(!u)return Promise.reject({});
+    return fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok||j.error)throw j;return j;});});}
+  function flushPhotos(){
+    if(!S||S.pBusy)return;var q=pqGet();if(!q.length)return;
+    var st=S,op=q[0],k=opKey(op);st.pBusy=1;
+    var go=op!==k?pfetch({a:'del',reader:st.reader,key:k}):(function(){var bl=blobOf(k);if(!bl)return Promise.resolve({});return blobB64(bl).then(function(d){return pfetch({a:'put',reader:st.reader,key:k,data:d});});})();
+    go.then(function(){st.pBusy=0;if(st!==S)return;pqSet(pqGet().filter(function(x){return x!==op;}));flushPhotos();},
+      function(e){st.pBusy=0;if(st!==S)return;var er=e&&e.error;
+        if(er==='key'||er==='data'){pqSet(pqGet().filter(function(x){return x!==op;}));flushPhotos();return;} // 이 한 장만 건너뜀
+        if(er==='full'&&!st.pFullTold){st.pFullTold=1;toast('나이테에 보관할 수 있는 사진 수를 넘었어요. 사진은 이 폰에는 그대로 있어요.');}
+      }); // 그 밖(기록 전·함수 없음·오프라인)은 줄에 두고 다음에
+  }
+  function pullPhotos(){
+    if(!S||S.pPulled&&Date.now()-S.pPulled<3e5)return;var st=S;st.pPulled=Date.now();
+    pfetch({a:'list',reader:st.reader}).then(function(j){
+      if(st!==S)return;var have={},pend={};allPhotoKeys().forEach(function(k){have[k]=1;});pqGet().forEach(function(x){pend[opKey(x)]=1;});
+      var need=(j.files||[]).filter(function(f){return f&&f.key&&f.url&&!have[f.key]&&!pend[f.key];}).slice(0,90);
+      need.reduce(function(pr,f){return pr.then(function(){return fetch(f.url).then(function(r){if(!r.ok)throw 0;return r.blob();}).then(function(bl){
+          if(st!==S)return;if(f.key.indexOf('wb:')===0)addWbMem(f.key,bl);else addPhotoMem(f.key,bl);
+          return ptx('readwrite',function(o){o.put(bl,f.key);});}).catch(function(){});});},Promise.resolve())
+        .then(function(){if(st===S&&need.length)paint();});
+    },function(){});
+  }
+  function syncPhotos(){var done='';try{done=localStorage.getItem(PSYNC_KEY)||'';}catch(e){}if(!done)queueAllPhotos();else flushPhotos();pullPhotos();}
   // 하루 여러 장: S.photoList[날짜]=[{k,b,u}] (찍은 순서). S.photoUrls/photoBlobs[날짜]는 그날 마지막 사진(달력 이미지·N일째 계산용)
   var PMAX=3;
   function pday(k){return String(k).slice(0,10);}
@@ -707,7 +750,7 @@
     pdb().then(function(db){return new Promise(function(res){var o={},tx=db.transaction('p','readonly');
       tx.objectStore('p').openCursor().onsuccess=function(e){var c=e.target.result;if(c){o[c.key]=c.value;c.continue();}};
       tx.oncomplete=function(){res(o);};tx.onerror=function(){res(o);};});})
-    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){if(String(k).indexOf('wb:')===0)addWbMem(k,o[k]);else addPhotoMem(k,o[k]);});paint();setTimeout(monthNudge,1800);},function(){setTimeout(monthNudge,1800);});
+    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){if(String(k).indexOf('wb:')===0)addWbMem(k,o[k]);else addPhotoMem(k,o[k]);});paint();syncPhotos();setTimeout(monthNudge,1800);},function(){setTimeout(monthNudge,1800);});
   }
   // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB). 하루 PMAX장이 넘으면 그날 가장 먼저 찍은 사진을 지움
   function savePhoto(day,im,cb){
@@ -719,6 +762,7 @@
       while(S.photoList[day].length>PMAX){var x=S.photoList[day].shift();URL.revokeObjectURL(x.u);drop.push(x.k);}
       syncDay(day);paint();
       ptx('readwrite',function(st){st.put(bl,k);drop.forEach(function(d){st.delete(d);});}).catch(function(){});
+      drop.forEach(function(d){pqAdd('-'+d);});pqAdd(k);
       if(cb)cb(k,drop.length);
     },'image/jpeg',.82);
   }
@@ -726,6 +770,7 @@
     var L=S.photoList[day]||[],keys=[];
     S.photoList[day]=L.filter(function(x){if(k&&x.k!==k)return true;URL.revokeObjectURL(x.u);keys.push(x.k);return false;});
     syncDay(day);paint();ptx('readwrite',function(st){keys.forEach(function(d){st.delete(d);});}).catch(function(){});
+    keys.forEach(function(d){pqAdd('-'+d);});
   }
 
   // 사진 파일 → 그릴 수 있는 이미지(사진 방향 정보 반영)
@@ -1370,10 +1415,10 @@
     var r=Math.min(1,1080/Math.max(im.width,im.height)),cv=document.createElement('canvas');
     cv.width=Math.round(im.width*r);cv.height=Math.round(im.height*r);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
     cv.toBlob(function(bl){if(!bl||!S)return;var k='wb:'+ch.id+':'+day+'#'+Date.now();addWbMem(k,bl);paint();
-      ptx('readwrite',function(st){st.put(bl,k);}).catch(function(){});
+      ptx('readwrite',function(st){st.put(bl,k);}).catch(function(){});pqAdd(k);
       toast('워크북 인증을 저장했어요 ✏️');if(S.onEvent)S.onEvent('chal_wb_save',{id:ch.id});},'image/jpeg',.82);
   }
-  function delWb(k){S.wbList=S.wbList.filter(function(x){if(x.k!==k)return true;URL.revokeObjectURL(x.u);return false;});paint();ptx('readwrite',function(st){st.delete(k);}).catch(function(){});}
+  function delWb(k){S.wbList=S.wbList.filter(function(x){if(x.k!==k)return true;URL.revokeObjectURL(x.u);return false;});paint();ptx('readwrite',function(st){st.delete(k);}).catch(function(){});pqAdd('-'+k);}
   // 완주 보고 이미지(4:5): 7일 칸(그날 인증샷, 없으면 표지) + 워크북 칸 + 미션 두 줄
   function drawChalCard(ch){
     var I=chalInfo(ch),wbs=chalWb(ch),W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
@@ -1441,7 +1486,7 @@
       (mi?statsKpi(mi)+calendarHtml(mi,!S.rows.length&&!off):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<div id="v-statsin"></div>'+
-      '<button type="button" class="fam-cta" data-rfamily><span class="fi">👨‍👩‍👧</span><span class="ft"><b>아빠와 같이 쓰기</b><small>아빠 폰에서도 같은 읽기 기록을 함께 써요</small></span><span class="fa" aria-hidden="true">›</span></button>'+
+      '<button type="button" class="fam-cta" data-rfamily><span class="fi">👨‍👩‍👧</span><span class="ft"><b>아빠와 같이 쓰기</b><small>아빠 폰에서도 같은 기록·메모·사진을 함께 써요</small></span><span class="fa" aria-hidden="true">›</span></button>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
@@ -1650,7 +1695,7 @@
     },true); // 캡처 단계: 책 카드의 클릭 집계보다 먼저 처리
     document.addEventListener('keydown',function(e){var t;if(S&&(e.key==='Enter'||e.key===' ')&&(t=e.target.closest&&e.target.closest('[data-rcal]'))){e.preventDefault();openDay(t.getAttribute('data-rcal'));}});
     window.addEventListener('online',function(){if(S)flush();});
-    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();flushNotes();pullNotes();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);}});
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(clearPick,1500);if(S&&document.visibilityState==='visible'){S.recDay=logicalToday();paint();flush();pull();pullOther();flushNotes();pullNotes();flushPhotos();pullPhotos();if(S.shelfKey&&S.shelfKey!==S.home.key)pull(S.shelfKey);}});
   }
 
   window.NaiteReading={
