@@ -112,6 +112,13 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   .tab .x{display:none}
   .tab{padding:7px 9px;font-size:.8rem}
 }
+.pr{cursor:pointer}.pr:hover td,.pr.open td{background:#F6F7F2}
+.pk{display:inline-block;padding:1px 8px;border-radius:9px;font-size:.78rem;background:#EEF0E8;white-space:nowrap}
+.ptbl td{white-space:nowrap}.pd td{white-space:normal;background:#FBFBF8}
+.pdw{display:flex;flex-wrap:wrap;gap:12px 22px;padding:4px 2px}
+.cal{display:grid;grid-template-columns:repeat(7,16px);gap:3px;margin-top:6px}.cal i{width:16px;height:16px;border-radius:3px;background:#ECEEE6}
+.cal i.l1{background:#B9D8C6}.cal i.l2{background:#6FAE8C}.cal i.l3{background:#2F6E58}.cal i.td{outline:2px solid #B87343;outline-offset:1px}
+.pdl{flex:1 1 260px;font-size:.86rem;line-height:1.7}
 </style>
 </head>
 <body>
@@ -126,7 +133,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     root.innerHTML='<div class="wrap"><div class="warn" style="margin-top:40px">⚙️ 먼저 <code>config.js</code> 설정이 필요해요.</div></div>';return;
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
-  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['books','📚 이번 달 책']];
+  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['books','📚 이번 달 책'],['people','👤 사람별']];
   var PERIODS=[['today','오늘'],['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
   try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
@@ -264,7 +271,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
           '<a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a><button id="logout">로그아웃</button></div></span></span></div>'+
       '<div class="bar2"><div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(S.tab===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
-        (S.tab==='books'?'':'<div class="seg">'+PERIODS.map(function(p){return '<button class="'+(S.period===p[0]?'on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';}).join('')+'</div>')+
+        (S.tab==='books'||S.tab==='people'?'':'<div class="seg">'+PERIODS.map(function(p){return '<button class="'+(S.period===p[0]?'on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';}).join('')+'</div>')+
       '</div></div></div><div class="wrap" id="body"><div class="card"><p class="status">불러오는 중…</p></div></div>';
     root.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){S.tab=b.dataset.t;try{history.replaceState(null,'','#'+S.tab);}catch(e){}shell();};});
     root.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){S.period=b.dataset.p;try{localStorage.setItem('naite_kpi_period',S.period);}catch(e){}shell();};});
@@ -277,6 +284,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   async function render(){
     var body=document.getElementById('body');
     if(S.tab==='books'){await renderBooks(body);return;}
+    if(S.tab==='people'){await renderPeople(body);return;}
     var R=periodRange(),D=await loadPeriod();
     var cur=D.ev.filter(function(e){return inR(e.created_at,R.start,R.end);}),prv=D.ev.filter(function(e){return inR(e.created_at,R.pstart,R.pend);});
     var lc=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.start,R.end);}):null,lp=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.pstart,R.lpend);}):null;
@@ -747,6 +755,93 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
 
   // ---------- 로그인 ----------
+  // 사람별 기록(2026-11-16): 폰(기록 ID)마다 언제부터·얼마나·어떤 책을 기록하는지. 전체 기간.
+  // 이름은 기록 백업 닉네임이 있을 때만 보이고, 없으면 기록 ID 끝 4자리. 메모 내용은 본인만 보는 약속이라 여기서 읽지 않음.
+  var PKINDS=[['steady','🔥 꾸준히','최근 2주 중 7일 이상 기록'],['some','🙂 가끔','최근 2주 중 1~6일 기록'],['new','✨ 새로 시작','기록한 날이 아직 하루(최근 2주 안)'],['rest','💤 쉬는 중','최근 2주 기록 없음']];
+  function hourLabel(h){if(h==null)return '–';return (h<12?'오전 ':'오후 ')+(h%12||12)+'시';}
+  async function renderPeople(body){
+    body.innerHTML='<div class="card"><p class="status">불러오는 중…</p></div>';
+    if(!S.ppl){
+      var logs=await pageAll(function(){return client.from('reading_logs').select('reader,book_id,theme_key,read_on,created_at,other_title').order('id');});
+      var bk=await client.from('reader_backups').select('reader,name');
+      var bs=[];try{bs=await pageAll(function(){return client.from('books').select('id,title,theme_key').order('id');});}catch(e){}
+      S.ppl={logs:logs,names:{},books:{}};
+      (bk.data||[]).forEach(function(b){S.ppl.names[b.reader]=b.name;});
+      bs.forEach(function(b){S.ppl.books[b.id]=b;});
+    }
+    var P=S.ppl,now=new Date(),td=dstr(now),d14=dstr(addDays(now,-13)),by={};
+    if(!P.logs.length){body.innerHTML='<div class="card"><p class="empty">아직 읽기 기록이 없어요.</p></div>';return;}
+    P.logs.forEach(function(l){
+      var p=by[l.reader]=by[l.reader]||{id:l.reader,n:0,study:0,other:0,days:{},books:{},others:{},themes:{},hours:{}};
+      p.n++;p.days[l.read_on]=(p.days[l.read_on]||0)+1;
+      if(l.book_id!=null){p.study++;p.books[l.book_id]=(p.books[l.book_id]||0)+1;if(l.theme_key)p.themes[l.theme_key]=1;}
+      else{p.other++;var t=(l.other_title||'').trim()||'(제목 없이)';p.others[t]=(p.others[t]||0)+1;}
+      if(l.created_at){var h=new Date(l.created_at).getHours();p.hours[h]=(p.hours[h]||0)+1;}
+    });
+    var list=Object.keys(by).map(function(k){
+      var p=by[k],ds=Object.keys(p.days).sort();
+      p.first=ds[0];p.last=ds[ds.length-1];p.nd=ds.length;
+      p.r14=ds.filter(function(d){return d>=d14;}).length;
+      var best=1,run=1;for(var i=1;i<ds.length;i++){if(dstr(addDays(new Date(ds[i-1]+'T12:00:00'),1))===ds[i]){run++;if(run>best)best=run;}else run=1;}
+      p.streak=best;
+      var hk=Object.keys(p.hours).sort(function(a,b){return p.hours[b]-p.hours[a];})[0];p.hour=hk==null?null:+hk;
+      p.ago=Math.round((new Date(td+'T12:00:00')-new Date(p.last+'T12:00:00'))/864e5);
+      p.perDay=Math.round(p.n/p.nd*10)/10;
+      p.kind=!p.r14?'rest':p.nd===1?'new':p.r14>=7?'steady':'some';
+      p.name=P.names[k]||'';
+      p.label=p.name||('폰 '+String(k).slice(-4).toUpperCase());
+      return p;
+    });
+    var kc={};list.forEach(function(p){kc[p.kind]=(kc[p.kind]||0)+1;});
+    var nAll=list.length,named=list.filter(function(p){return p.name;}).length;
+    var burst=list.filter(function(p){return p.perDay>=3;}).length,withOther=list.filter(function(p){return p.other>0;}).length,
+        multi=list.filter(function(p){return cnt(p.themes)>=2;}).length,avgD=Math.round(list.reduce(function(a,p){return a+p.nd;},0)/nAll*10)/10;
+    var h='<div class="card"><h3>👤 사람별 기록 <span class="hint">전체 기간 · 폰 기준</span></h3><div class="kgrid">'+
+      '<div class="kpi"><div class="l">기록한 폰</div><div class="n">'+nAll+'<small>대</small></div><div class="s">한 사람 평균 '+avgD+'일 기록 · 백업한 사람 '+named+'명</div></div>'+
+      PKINDS.map(function(k){return '<div class="kpi"><div class="l">'+k[1]+'</div><div class="n">'+(kc[k[0]]||0)+'<small>대</small></div><div class="s">'+esc(k[2])+'</div></div>';}).join('')+
+      '</div>'+
+      '<h3 class="sub" style="margin-top:16px">어떻게 기록하나요</h3>'+hbars([
+        ['하루에 몰아서 (하루 평균 3번 이상)',burst],
+        ['스터디 책 말고 다른 책도 기록',withOther],
+        ['두 달(주제) 이상 이어서 기록',multi]
+      ],nAll)+
+      '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모 내용은 본인만 보는 약속이라 여기 나오지 않아요.</p></div>';
+    h+='<div class="card"><div class="shd"><h3>📋 한 명씩 보기</h3><span class="r" style="display:flex;gap:6px;flex-wrap:wrap">'+
+      '<select class="t sm" id="pk"><option value="">전체 '+nAll+'</option>'+PKINDS.map(function(k){return '<option value="'+k[0]+'"'+(S.pk===k[0]?' selected':'')+'>'+k[1]+' '+(kc[k[0]]||0)+'</option>';}).join('')+'</select>'+
+      '<select class="t sm" id="ps"><option value="last">최근 기록순</option><option value="nd"'+(S.ps==='nd'?' selected':'')+'>기록한 날 많은순</option><option value="first"'+(S.ps==='first'?' selected':'')+'>먼저 시작한 순</option></select>'+
+      '</span></div><div id="plist"></div><p class="hint">줄을 누르면 최근 5주 기록 달력과 읽은 책이 보여요.</p></div>';
+    body.innerHTML=h;
+    function kindLabel(k){return (PKINDS.filter(function(x){return x[0]===k;})[0]||['',''])[1];}
+    function detail(p){
+      var cells='';
+      for(var i=0;i<35;i++){var d=dstr(addDays(now,i-34)),v=p.days[d]||0;cells+='<i class="'+(v>=3?'l3':v===2?'l2':v?'l1':'')+(d===td?' td':'')+'" title="'+md(d)+' · '+v+'번"></i>';}
+      var themes={};Object.keys(p.books).forEach(function(id){var b=P.books[id]||{title:'(책 #'+id+')',theme_key:''};(themes[b.theme_key]=themes[b.theme_key]||[]).push([b.title,p.books[id]]);});
+      var bl=Object.keys(themes).map(function(k){return '<div><b>'+esc(themeLabel(themeBy(k))||k||'스터디 책')+'</b> · '+themes[k].sort(function(a,b){return b[1]-a[1];}).map(function(x){return esc(x[0])+' <span class="ty">×'+x[1]+'</span>';}).join(', ')+'</div>';}).join('');
+      var ol=Object.keys(p.others).sort(function(a,b){return p.others[b]-p.others[a];}).map(function(t){return esc(t)+' <span class="ty">×'+p.others[t]+'</span>';}).join(', ');
+      return '<div class="pdw"><div><div class="hint">최근 5주 (주황 테두리 = 오늘)</div><div class="cal">'+cells+'</div></div><div class="pdl">'+
+        (bl||'<div class="hint">스터디 책 기록 없음</div>')+(ol?'<div><b>📚 다른 책</b> · '+ol+'</div>':'')+
+        '<div class="hint" style="margin-top:4px">하루 평균 '+p.perDay+'번 기록 · 가장 길게 이어서 '+p.streak+'일 · 주로 '+hourLabel(p.hour)+'쯤</div></div></div>';
+    }
+    function draw(){
+      var k=S.pk||'',s=S.ps||'last';
+      var rows=list.filter(function(p){return !k||p.kind===k;}).sort(function(a,b){
+        if(s==='nd')return b.nd-a.nd||b.n-a.n;if(s==='first')return a.first<b.first?-1:a.first>b.first?1:0;
+        return a.last<b.last?1:a.last>b.last?-1:b.n-a.n;});
+      var el=document.getElementById('plist');
+      if(!rows.length){el.innerHTML='<p class="empty">해당하는 사람이 없어요.</p>';return;}
+      el.innerHTML='<div class="tblw"><table class="ptbl"><thead><tr><th>이름</th><th>상태</th><th class="num">시작</th><th class="num">마지막</th><th class="num">기록한 날</th><th class="num">총 기록</th><th class="num">만난 스터디 책</th><th class="num">최장 연속</th></tr></thead><tbody>'+
+        rows.map(function(p,i){return '<tr class="pr" data-pi="'+i+'"><td><b>'+esc(p.label)+'</b></td><td><span class="pk">'+kindLabel(p.kind)+'</span></td>'+
+          '<td class="num">'+md(p.first)+'</td><td class="num">'+md(p.last)+(p.ago?' <span class="ty">('+p.ago+'일 전)</span>':' <span class="ty">(오늘)</span>')+'</td>'+
+          '<td class="num">'+p.nd+'일</td><td class="num">'+p.n+'번'+(p.other?' <span class="ty">(다른 책 '+p.other+')</span>':'')+'</td>'+
+          '<td class="num">'+cnt(p.books)+'권</td><td class="num">'+p.streak+'일</td></tr>'+
+          '<tr class="pd" data-pd="'+i+'" hidden><td colspan="8">'+detail(p)+'</td></tr>';}).join('')+'</tbody></table></div>';
+      el.querySelectorAll('.pr').forEach(function(tr){tr.onclick=function(){var d=el.querySelector('[data-pd="'+tr.dataset.pi+'"]');d.hidden=!d.hidden;tr.classList.toggle('open',!d.hidden);};});
+    }
+    document.getElementById('pk').onchange=function(){S.pk=this.value;draw();};
+    document.getElementById('ps').onchange=function(){S.ps=this.value;draw();};
+    draw();
+  }
+
   function renderLogin(msg){
     root.innerHTML='<div class="wrap"><div class="login card"><h1>📊 나이테 KPI</h1>'+
       '<p class="hint" style="margin:10px 0 16px">관리자 이메일과 비밀번호로 로그인하세요.</p>'+
