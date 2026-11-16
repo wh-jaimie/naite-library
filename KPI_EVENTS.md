@@ -85,6 +85,8 @@
 - `ui_click` `{page, label, href, src}`: 버튼 이름은 `data-ev` → 글자(40자) → aria-label 순서로 정해요.
 - `cta_click` `{cta}`: 메인 주요 버튼이에요. 이름표는 KPI `MAINCTA`에 있어요.
 - `groupbuy_interest`, `join_click` `{from}`
+- 나이테 120(독서 로드맵) 탭(2026-11-16): `ui_click` label로 남아요 — `로드맵 탭: 120권 목록` / `로드맵 탭: 나이테 120 소개`, 소개 탭 안 `소개: 0~3세`·`소개: 4~6세`·`소개: 7~9세`·`소개: 책 없음`·`소개: 전집 한 질`·`소개: 이미 많아요`·`소개: 목록 보러 가기`, 목록 탭 `로드맵: 지금 스터디 달로`. 처음 연 기기는 소개 탭부터(`naite_c120_about_seen`), `?tab=about|list`로 지정. 고른 답은 `naite_age120`·`naite_use120`(앱 '처음 오셨나요?'와 공유).
+- `share_click` `{page, how}`: how = `link`(목록 탭 링크) · `link_about`(소개 탭 링크, `?tab=about`) · `image` · `image_save`. 이름표는 KPI `HOW`.
 
 ## 5. 새 기능을 만들 때 체크리스트
 1. 사용자가 누르는 주요 버튼과 화면 열기마다 이벤트를 남겨요. 사이트 페이지는 `track.js`가 자동으로 남기니, 이름이 애매하면 `data-ev`를 붙여요.

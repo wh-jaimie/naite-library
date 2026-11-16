@@ -82,6 +82,58 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .guide120 li{position:relative;padding-left:20px;margin:5px 0}
 .guide120 li::before{content:"✓";position:absolute;left:0;color:var(--teal-deep);font-weight:800}
 .guide120 .small-disc{font-size:.74rem;color:var(--ink-soft);margin:14px 0 0}
+/* 로드맵 탭(2026-11-16): 120권 목록 / 나이테 120 소개 */
+.pvtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:12px;background:var(--surface-2);border-radius:14px;padding:4px}
+.pvtabs button{font:inherit;font-size:.92rem;font-weight:800;border:0;border-radius:11px;padding:10px 4px;background:transparent;color:var(--ink-soft);cursor:pointer}
+.pvtabs button[aria-selected=true]{background:var(--surface);color:var(--teal-deep);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.nowbtn{display:block;margin-top:12px;text-align:center;background:var(--teal-deep);color:#fff!important;text-decoration:none;font-weight:800;font-size:.9rem;border-radius:12px;padding:11px}
+#pvAbout{--t1:#C0532E;--t2:#2F6E58;--t3:#7B4FA0;--t4:#C98A1E;--t5:#3E7D3A;word-break:keep-all}
+#pvAbout .lead{margin:14px 0 4px;font-size:.98rem;line-height:1.55;color:var(--ink-soft)}#pvAbout .lead b{color:var(--ink)}
+#pvAbout .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;margin-top:10px}
+#pvAbout .qh{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+#pvAbout .qh .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--teal-deep);color:#fff;font-size:.8rem;font-weight:800;display:grid;place-items:center}
+#pvAbout .qh h2{font-size:1.02rem;margin:0;font-weight:800;font-family:inherit}
+#pvAbout .ans{font-family:'Gowun Batang',serif;font-size:1.1rem;font-weight:700;line-height:1.45;margin:0 0 10px}
+#pvAbout .steps{list-style:none;margin:0;padding:0}
+#pvAbout .steps li{position:relative;padding:0 0 14px 16px;border-left:2px dashed #c9d3c3;margin-left:6px}
+#pvAbout .steps li:last-child{border-left-color:transparent;padding-bottom:0}
+#pvAbout .steps li::before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--teal-deep)}
+#pvAbout .sn{display:block;font-size:.66rem;font-weight:800;color:var(--coral);letter-spacing:.08em}
+#pvAbout .steps b{font-size:.95rem}
+#pvAbout .src{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+#pvAbout .src span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:700}
+#pvAbout .src small{color:var(--ink-soft);font-weight:500}
+#pvAbout .hit{margin:6px 0 0;font-size:.85rem;color:var(--ink-soft)}#pvAbout .hit b{color:var(--teal-deep);font-size:inherit}
+#pvAbout .emo{margin-top:6px;font-size:1.05rem;letter-spacing:2px;line-height:1.5}
+#pvAbout .foot{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:.74rem;color:var(--ink-soft)}
+#pvAbout .anote{margin:0 0 12px;font-size:.84rem;line-height:1.5;color:var(--ink-soft);background:#f6f1e8;border-radius:10px;padding:8px 10px}
+#pvAbout .scale{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;color:var(--ink-soft);margin-bottom:6px}
+#pvAbout .scale i{flex:1;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--t1),var(--t5))}
+#pvAbout .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#pvAbout .tg,#pvAbout .rhyme{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+#pvAbout .tg p,#pvAbout .rhyme p{margin:6px 0 0;font-size:.8rem;line-height:1.4;color:var(--ink-soft);text-align:center}
+#pvAbout .tg p b{color:var(--ink)}
+#pvAbout .fl{display:grid;gap:6px;grid-template-columns:1fr 1fr}
+#pvAbout .fb{text-align:center}
+#pvAbout .fb .cv{aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:#eee;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+#pvAbout .fb .cv img{width:100%;height:100%;object-fit:cover;display:block}
+#pvAbout .fb .ty{display:inline-block;margin-top:5px;font-size:.66rem;font-weight:800;color:#fff;border-radius:6px;padding:1px 5px}
+#pvAbout .rhyme{display:flex;gap:10px;align-items:center;margin-top:8px}
+#pvAbout .rhyme .fl{grid-template-columns:1fr;width:64px;flex:none}
+#pvAbout .rhyme p{text-align:left;margin:0}#pvAbout .rhyme p b{display:block;color:var(--ink);font-size:.86rem}
+#pvAbout .ex{font-size:.74rem;color:var(--ink-soft);margin:8px 0 0}
+#pvAbout .lnk{display:inline-block;margin-top:8px;font-size:.82rem;font-weight:800;color:var(--teal-deep)}
+#pvAbout .sel{margin:0 0 8px}#pvAbout .sel p{margin:0 0 5px;font-size:.8rem;font-weight:800;color:var(--ink-soft)}
+#pvAbout .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#pvAbout .seg button{font:inherit;font-size:.8rem;font-weight:800;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer}
+#pvAbout .seg button[aria-pressed=true]{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff}
+#pvAbout .res{margin-top:10px;border-radius:12px;background:#EEF3EA;padding:12px}
+#pvAbout .res .r{display:flex;gap:8px;font-size:.88rem;line-height:1.55}
+#pvAbout .res .r+.r{margin-top:8px;padding-top:8px;border-top:1px dashed #cfd8c8}
+#pvAbout .res .r i{font-style:normal;flex:none}#pvAbout .res .r b{display:block;color:var(--ink)}
+#pvAbout .res .me{display:block;margin-top:6px;font-size:.8rem;color:var(--ink-soft)}
+#pvAbout .golist{display:block;margin-top:12px;text-align:center;background:var(--teal-deep);color:#fff;font-weight:800;font-size:.9rem;border-radius:12px;padding:11px;border:0;width:100%;font-family:inherit;cursor:pointer}
+#pvAbout .road{text-align:center;margin:14px 0 0}
 /* 이렇게 골랐어요(2026-11-14): 믿고 따라올 근거 */
 .picked{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .picked h3{font-size:1rem;margin:0 0 8px}
@@ -238,12 +290,13 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <div class="eyebrow">파닉스 전, 첫 영어 그림책 로드맵</div>
     <h1>나이테 120</h1>
 
-    <div id="cn2" class="guide120">
-      <h3>매달 다른 주제 24가지, 다른 유형 5권.</h3>
-      <div class="g-types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
-      <a class="g-tlink" href="types.html">🧩 왜 이 5가지일까요? 유형별 재미 알아보기 →</a>
-    </div>
-__PICKED__
+    <div class="pvtabs" role="tablist"><button type="button" role="tab" data-pv="list" data-ev="로드맵 탭: 120권 목록" aria-selected="true">📚 120권 목록</button><button type="button" role="tab" data-pv="about" data-ev="로드맵 탭: 나이테 120 소개" aria-selected="false">💡 나이테 120 소개</button></div>
+  </section>
+  <div id="pvAbout" hidden>
+__ABOUT__
+  </div>
+  <div id="pvList">
+    <a class="nowbtn" id="uNow" href="#" hidden></a>
     <div class="panel">
       <div class="r1">
         <span class="big" id="prBig">0 / 120</span>
@@ -255,9 +308,8 @@ __PICKED__
       <a class="appnote" href="record/app.html?tab=log">📲 진행률은 스터디 앱에서 읽은 책을 기록하면 쌓여요 ›</a>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
-  </section>
-
   <section><div id="course-body"></div></section>
+  </div>
   <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
@@ -265,6 +317,7 @@ if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.h
 if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}.panel .appnote{display:none}</style>');
 </script>
 
+__ABOUT_JS__
 <div class="ov" id="ov"><div class="ovb">
   <img id="ovimg" alt="나이테 120 진행 이미지">
   <div class="btns"><button class="save" id="ovShare">📤 공유</button><button class="save" id="ovSave">💾 저장</button><button class="close" id="ovClose">닫기</button></div>
@@ -425,10 +478,12 @@ function shareEv(how){try{if(localStorage.getItem('naite_notrack')==='1'||/[?&]e
 }catch(e){}}
 // 🔗 페이지(링크) 공유 — 모바일은 네이티브 공유시트, 아니면 링크 복사
 function sharePage(){
-  shareEv('link');
-  var url=location.origin+location.pathname;
+  // 소개 탭을 보고 있으면 소개 탭 주소(?tab=about)로 공유(2026-11-16)
+  var ab=!document.getElementById('pvAbout').hidden;
+  shareEv(ab?'link_about':'link');
+  var url=location.origin+location.pathname+(ab?'?tab=about':'');
   var btn=document.getElementById('prLink');
-  if(navigator.share){navigator.share({title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
+  if(navigator.share){navigator.share(ab?{title:'나이테 120은 이렇게 만들었어요',text:'인기·수상 데이터로 모은 유명 원서를 24가지 주제 × 5가지 유형으로 · 나이테 120',url:url}:{title:'나이테 120 — 파닉스 전, 첫 영어책',text:'파닉스 전, 아이 첫 영어 그림책 120권 큐레이션 · 나이테 120',url:url}).catch(function(){});return;}
   function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유';},1600);}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}
   else{try{var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}done();}
@@ -470,37 +525,89 @@ _disc = ('    <p class="note" style="margin-top:6px">※ 책 제목을 누르면
 # 이렇게 골랐어요(2026-11-14): 숫자는 challenge.json 뱃지에서 계산(책을 바꾸면 자동으로 맞춰짐)
 _all = [b for t in data["themes"] for b in t["books"]]
 _n = lambda k: sum(1 for b in _all if b.get(k))
-_picked = f'''    <div class="picked">
-      <h3>나이테 120은 이렇게 골랐어요</h3>
-      <div class="p-stats"><span><b>{_n("award")}</b>🏅 수상작</span><span><b>{_n("kr_popular")}</b>🇰🇷 국내 인기</span><span><b>{_n("pop_rank")}</b>🌍 세계 인기</span><span><b>{_n("lib_loans")}</b>📚 대출 인기</span></div>
-      <ul>
-        <li>칼데콧 등 그림책 상 수상, 국내 서점 순위, 전 세계 인기, 도서관 대출 기록을 보고 골랐어요</li>
-      </ul>
-      <a class="p-link" href="road.html">🌳 고른 사람 이야기 · 나이테(드니맘)가 걸어온 길 →</a>
-    </div>
-    <div class="picked use" id="use120">
-      <h3>이렇게 활용해요 <small>0개월~9세 누구나</small></h3>
-      <p class="u-q">집에 영어책이…</p>
-      <div class="u-tabs" role="tablist"><button type="button" role="tab" data-u="0" aria-selected="true">🌱 아직 없어요</button><button type="button" role="tab" data-u="1" aria-selected="false">📦 전집 한 질</button><button type="button" role="tab" data-u="2" aria-selected="false">📚 이미 많아요</button></div>
-      <div class="u-pane" data-u="0"><b>알아보지 말고, 지금 스터디 중인 달부터 그대로 따라오세요.</b>매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.<a class="u-now" id="uNow" href="#" hidden></a></div>
-      <div class="u-pane" data-u="1" hidden><b>전집은 하던 대로, 원서 그림책은 나이테 120으로.</b>잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 나이테 120을 한 달에 5권씩 더해 주세요.</div>
-      <div class="u-pane" data-u="2" hidden><b>읽던 책은 그대로, 이번 달 5권은 전면책장에.</b>매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.<span class="u-me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span></div>
-    </div>
-''' + r'''    <script>(function(){var r=document.getElementById('use120');if(!r)return;var bs=r.querySelectorAll('.u-tabs button'),ps=r.querySelectorAll('.u-pane');
-      function pick(i,save){bs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.u==i?'true':'false');});ps.forEach(function(p){p.hidden=p.dataset.u!=i;});if(save)try{localStorage.setItem('naite_use120',i);}catch(e){}}
-      bs.forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.u,true);});});
-      try{var s=localStorage.getItem('naite_use120');if(s!==null&&/^[012]$/.test(s))pick(s,false);}catch(e){}
-      // 지금 스터디 중인 달(settings.current_theme) → "지금은 N개월차 🚗 탈것 · 바로 보기", 누르면 그 달로 스크롤
-      var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi';
-      fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/settings?select=current_theme&id=eq.1',{headers:{apikey:A,Authorization:'Bearer '+A},cache:'no-store'})
-        .then(function(x){return x.ok?x.json():[];}).then(function(rows){var k=rows&&rows[0]&&rows[0].current_theme;if(!k)return;
-          var el=document.querySelector('.theme[data-key="'+k+'"]');if(!el)return;var m=el.closest('.month'),mh=m&&m.querySelector('.mh');
-          var t=(typeof themes!=='undefined')?themes.filter(function(x){return x.key===k;})[0]:null;
-          var a=document.getElementById('uNow');a.textContent='👉 지금 스터디는 '+(mh?mh.textContent+' ':'')+(t?t.emoji+' '+t.ko:'')+' · 바로 보기 ↓';a.hidden=false;
-          a.onclick=function(e){e.preventDefault();var cur=document.querySelector('.theme[data-key="'+k+'"]')||el;var y=cur.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:'smooth'});};
-        }).catch(function(){});
-    })();</script>'''
-html_out = TEMPLATE.replace("/*DATA*/", payload).replace("__BUY_DISCLOSURE__", _disc).replace("__PICKED__", _picked)
+# 나이테 120 소개 탭(2026-11-16): 데이터로 모으기 → 24주제 → 5유형 → 우리 집 활용. 숫자는 challenge.json 뱃지에서 계산
+_all = [b for t in data["themes"] for b in t["books"]]
+_n = lambda k: sum(1 for b in _all if b.get(k))
+_emo = "".join(t["emoji"] for t in data["themes"])
+_about = f"""    <p class="lead">알아보는 수고는 나이테가 할게요.<br><b>매달 5권, 그냥 따라오세요.</b></p>
+    <section class="card">
+      <div class="qh"><span class="n">1</span><h2>어떻게 모았나요?</h2></div>
+      <p class="ans">감이 아니라 데이터로 모았어요.</p>
+      <ol class="steps">
+        <li><span class="sn">STEP 1</span><b>4가지 데이터를 합쳤어요</b>
+          <div class="src"><span>🌍 세계 인기 순위</span><span>🇰🇷 국내 서점 인기 순위</span><span>🏅 수상작 <small>칼데콧·가이젤·그리너웨이</small></span><span>📚 도서관 대출 순위</span></div>
+          <p class="hit">→ 그랬더니 <b>유명한 원서가 전부 모였어요</b></p></li>
+        <li><span class="sn">STEP 2</span><b>24가지 주제로 나눴어요</b>
+          <div class="emo">{_emo}</div>
+          <p class="hit">다양한 주제를 골고루 만나도록, 한 달에 한 주제</p></li>
+        <li><span class="sn">STEP 3</span><b>주제마다 5가지 유형을 한 권씩</b>
+          <p class="hit">24주제 × 5유형 = <b>120권</b></p></li>
+      </ol>
+      <p class="foot">120권 중 수상작 {_n("award")} · 국내 인기 {_n("kr_popular")} · 세계 인기 {_n("pop_rank")} · 도서관 대출 {_n("lib_loans")}권</p>
+    </section>
+    <section class="card">
+      <div class="qh"><span class="n">2</span><h2>왜 5가지 유형으로 나눴나요?</h2></div>
+      <p class="ans">5년 동안 읽어 주며 찾은 분류예요.<br>AR 지수보다 우리 아이에게 맞는 책을 찾기가 더 쉬웠어요.</p>
+      <p class="anote">AR 지수는 아이가 <b>혼자 읽을 때</b>의 지수라, 엄마가 읽어 주는 그림책에는 잘 맞지 않아요.</p>
+      <div class="scale"><span>어린 아이도 쉽게</span><i></i><span>큰 아이가 더 재미있게</span></div>
+      <div class="tgrid">
+        <div class="tg"><div class="fl"><div class="fb"><div class="cv"><img data-tier="1" alt=""></div><span class="ty" style="background:var(--t1)">조작북</span></div><div class="fb"><div class="cv"><img data-tier="3" alt=""></div><span class="ty" style="background:var(--t2)">반복</span></div></div><p>어린 연령에서도<br><b>이해하기 쉬워요</b></p></div>
+        <div class="tg"><div class="fl"><div class="fb"><div class="cv"><img data-tier="4" alt=""></div><span class="ty" style="background:var(--t4)">유머</span></div><div class="fb"><div class="cv"><img data-tier="5" alt=""></div><span class="ty" style="background:var(--t5)">스토리</span></div></div><p>좀 더 큰 아이가<br><b>재미를 더 많이 느껴요</b></p></div>
+      </div>
+      <div class="rhyme"><div class="fl"><div class="fb"><div class="cv"><img data-tier="2" alt=""></div><span class="ty" style="background:var(--t3)">라임</span></div></div><p><b>라임은 노래처럼 들려요</b>엄마는 읽기 조금 어려울 수 있어도, 아이에게는 색다른 재미를 줘요.</p></div>
+      <p class="ex" id="abEx"></p>
+      <a class="lnk" href="types.html">🧩 유형별로 더 자세히 →</a>
+    </section>
+    <section class="card" id="use120">
+      <div class="qh"><span class="n">3</span><h2>우리 집은 어떻게 하면 돼요?</h2></div>
+      <div class="sel"><p>아이 나이</p><div class="seg" data-g="age"><button type="button" data-v="0" data-ev="소개: 0~3세">0~3세</button><button type="button" data-v="1" data-ev="소개: 4~6세">4~6세</button><button type="button" data-v="2" data-ev="소개: 7~9세">7~9세</button></div></div>
+      <div class="sel"><p>집에 영어책이</p><div class="seg" data-g="own"><button type="button" data-v="0" data-ev="소개: 책 없음">🌱 아직 없어요</button><button type="button" data-v="1" data-ev="소개: 전집 한 질">📦 전집 한 질</button><button type="button" data-v="2" data-ev="소개: 이미 많아요">📚 이미 많아요</button></div></div>
+      <div class="res" id="abRes" hidden><div class="r" id="rAge" hidden></div><div class="r" id="rOwn" hidden></div></div>
+      <button type="button" class="golist" id="goList" data-ev="소개: 목록 보러 가기">📚 120권 목록 보기</button>
+    </section>
+    <p class="road"><a class="lnk" href="road.html">🌳 고른 사람 이야기 · 나이테(드니맘)가 걸어온 길 →</a></p>"""
+_about_js = r"""<script>(function(){
+var AGE=[['👶','조작북·반복 책부터','어린 아이도 이해하기 쉬워요. 라임 책은 노래처럼 들려주세요.'],['🧒','5권 골고루','조작북·반복으로 편하게 시작하고, 유머·스토리로 재미를 넓혀 가요.'],['🧑','유머·스토리가 더 재미있어요','큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요.']];
+var OWN=[['🌱','알아보지 말고, 지금 스터디 중인 달부터 그대로','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.'],['📦','전집은 하던 대로, 원서 그림책은 나이테 120으로','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 한 달에 5권씩 더해 주세요.'],['📚','읽던 책은 그대로, 이번 달 5권은 전면책장에','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.<span class="me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span>']];
+function g(k){try{var v=localStorage.getItem(k);return /^[012]$/.test(v||'')?+v:-1;}catch(e){return -1;}}
+function sv(k,v){try{localStorage.setItem(k,String(v));}catch(e){}}
+var S={age:g('naite_age120'),own:g('naite_use120')};
+function row(x){return '<i>'+x[0]+'</i><div><b>'+x[1]+'</b>'+x[2]+'</div>';}
+function paint(){var a=document.getElementById('rAge'),o=document.getElementById('rOwn');
+  a.hidden=S.age<0;o.hidden=S.own<0;if(S.age>=0)a.innerHTML=row(AGE[S.age]);if(S.own>=0)o.innerHTML=row(OWN[S.own]);
+  document.getElementById('abRes').hidden=S.age<0&&S.own<0;
+  document.querySelectorAll('#pvAbout .seg').forEach(function(gr){gr.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.v===S[gr.dataset.g]));});});}
+document.querySelectorAll('#pvAbout .seg button').forEach(function(b){b.addEventListener('click',function(){var k=b.parentNode.dataset.g;S[k]=+b.dataset.v;sv(k==='age'?'naite_age120':'naite_use120',S[k]);paint();});});
+paint();
+// 탭: ?tab=about|list. 없으면 처음 온 기기는 소개부터(한 번만), 그다음부터 목록
+var tabs=document.querySelectorAll('.pvtabs button');
+function show(v,top){tabs.forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.pv===v));});
+  document.getElementById('pvAbout').hidden=v!=='about';document.getElementById('pvList').hidden=v!=='list';
+  if(top)window.scrollTo(0,0);}
+tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.pv,false);});});
+var q=(location.search.match(/[?&]tab=(about|list)/)||[])[1],seen='1';
+try{seen=localStorage.getItem('naite_c120_about_seen');localStorage.setItem('naite_c120_about_seen','1');}catch(e){}
+show(q||(seen?'list':'about'),false);
+// 소개 2번의 표지 = 지금 스터디 중인 달 5권(못 불러오면 1개월차)
+var CUR=null;
+function fillEx(k){if(typeof themes==='undefined')return;var t=themes.filter(function(x){return x.key===k;})[0]||themes[0];
+  document.querySelectorAll('#pvAbout img[data-tier]').forEach(function(im){var b=t.books.filter(function(x){return x.tier==+im.dataset.tier;})[0];if(b&&b.cover){im.src=b.cover;im.alt=b.title;}});
+  document.getElementById('abEx').textContent='예) '+(k?'지금 스터디 중인 ':'')+t.emoji+' '+t.ko+' 5권';}
+function goCur(){var el=CUR&&document.querySelector('.theme[data-key="'+CUR+'"]');if(!el)return;var y=el.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:'smooth'});}
+document.getElementById('goList').addEventListener('click',function(){show('list',true);if(CUR)setTimeout(goCur,60);});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){fillEx(null);});else fillEx(null);
+var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi';
+fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/settings?select=current_theme&id=eq.1',{headers:{apikey:A,Authorization:'Bearer '+A},cache:'no-store'})
+ .then(function(x){return x.ok?x.json():[];}).then(function(rows){var k=rows&&rows[0]&&rows[0].current_theme;if(!k)return;
+  var el=document.querySelector('.theme[data-key="'+k+'"]');if(!el)return;CUR=k;fillEx(k);
+  var m=el.closest('.month'),mh=m&&m.querySelector('.mh'),t=themes.filter(function(x){return x.key===k;})[0];
+  var lab=(mh?mh.textContent+' ':'')+(t?t.emoji+' '+t.ko:'');
+  var a=document.getElementById('uNow');a.textContent='👉 지금 스터디는 '+lab+' · 여기서 시작 ↓';a.hidden=false;a.setAttribute('data-ev','로드맵: 지금 스터디 달로');
+  a.onclick=function(e){e.preventDefault();goCur();};
+  document.getElementById('goList').textContent='📚 목록 보기 · '+lab+'부터';
+ }).catch(function(){});
+})();</script>"""
+html_out = TEMPLATE.replace("/*DATA*/", payload).replace("__BUY_DISCLOSURE__", _disc).replace("__ABOUT__", _about).replace("__ABOUT_JS__", _about_js)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html_out)
 print(f"쿠팡 링크 연결된 책: {_buycnt}/120")
