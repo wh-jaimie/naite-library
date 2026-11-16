@@ -146,7 +146,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
   function midnight(d){var x=new Date(d);x.setHours(0,0,0,0);return x;}
   // 이벤트가 어느 앱에서 났는지: 접속 경로 기준
-  function appOf(e){var p=e.path||'';if(p.indexOf('/record/')>=0)return 'record';if(p.indexOf('/study/')>=0)return 'study';if(e.theme_key)return 'study';return 'naite';}
+  function appOf(e){var p=e.path||'';if(p.indexOf('/record/')>=0||(e.meta&&e.meta.src==='record'))return 'record'; // 2026-11-16: 앱 탭 안에서 연 페이지(src=record)도 앱 사용
+    if(p.indexOf('/study/')>=0)return 'study';if(e.theme_key)return 'study';return 'naite';}
   function isPublic(e){var a=appOf(e);return a==='naite'||a==='study';}
   function pageOf(e){var p=e.path||'';
     if(p.indexOf('/record/')>=0)return '📖 나이테 스터디';
@@ -334,13 +335,22 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     record_sheet_open:'읽은 책 기록 창 열기',other_read:'다른 책 기록',stamp_camera_open:'인증샷 카메라 열기',stamp_photo_save:'인증샷 저장',stamp_photo_share:'인증샷 공유',stamp_photo_open:'인증샷 보기',
     stamp_album:'인증샷 모아보기',today_fab:'✏️ 오늘 기록 버튼',today_cam:'✏️ → 인증샷',today_book:'✏️ → 읽은 책 기록',today_share:'✏️ → 공유',cal_day_open:'달력 날짜 열기',cal_from_card:'카드에서 달력 열기',
     month_nav:'달 넘기기',shelf_month:'기록 달 바꾸기',backup_made:'기록 백업',backup_restored:'백업 이어보기',install_click:'설치 버튼',install_offer:'설치 안내 뜸',install_bar_close:'설치 안내 닫기',
-    app_installed:'설치 완료',push_on:'🔔 알림 켜기',push_off:'🔕 알림 끄기',push_denied:'알림 허용 거절',news_open:'📢 공지 열기',welcome_open:'처음 오셨나요 안내 열기',camera_fail:'카메라 실패',photo_reload:'사진 다시 불러오기'};
-  var TABN={study:'📘 이번 달 자료',shelf:'📖 읽기 기록',stats:'📖 읽기 기록',c120:'🌳 나이테 120',shop:'🛒 국내 인기 책장'};
+    app_installed:'설치 완료',push_on:'🔔 알림 켜기',push_off:'🔕 알림 끄기',push_denied:'알림 허용 거절',news_open:'📢 공지 열기',welcome_open:'처음 오셨나요 안내 열기',camera_fail:'카메라 실패',photo_reload:'사진 다시 불러오기',
+    share_card_open:'오늘 카드 만들기',share_card_save:'오늘 카드 저장',share_card_share:'오늘 카드 공유',share_card_photo:'오늘 카드에 사진 넣기',month_card_open:'달력 이미지 만들기',month_card_save:'달력 이미지 저장',month_card_share:'달력 이미지 공유',
+    age_pick:'아이 나이 고르기',age_book_go:'나이별 추천 책 보기',use120_pick:'집에 영어책 얼마나(답)',c120_study_open:'로드맵에서 스터디 자료 열기',
+    book_note:'한 줄 메모',note_book_open:'책 메모 모아보기',chal_wb_open:'챌린지 워크북 인증 열기',chal_wb_save:'챌린지 워크북 인증 저장',chal_name:'챌린지 이름 넣기',
+    challenge_apply_click:'챌린지 신청 버튼',challenge_apply_done:'챌린지 신청 완료',file_backup:'메모·사진 파일 저장',file_restore:'메모·사진 파일 불러오기',
+    family_open:'아빠와 같이 쓰기 열기',family_share:'아빠에게 링크 보내기',backup_nudge:'달 바뀜 백업 안내 뜸',backup_first_nudge:'첫 기록 백업 안내 뜸'};
+  var EV_RAW={page_view:1,dwell:1,ui_click:1,tab_view:1,study_tab:1,cta_click:1,join_click:1}; // 이름표 없이도 따로 집계하는 이벤트
+  // 앱 메뉴·이벤트 이름표 — KPI_EVENTS.md 와 같게 유지(메뉴 이름을 바꾸면 여기와 그 문서를 같이 고치기)
+  var TABN={study:'📘 이번 달 책',shelf:'📖 읽기 기록',stats:'📖 읽기 기록',c120:'🌳 독서 로드맵',shop:'🛒 인기 책장',pick:'💛 나이테 Pick'};
+  var STABN={'s-books':'이번 달 5권','s-words':'단어·줄거리','s-how':'읽어주기 방법','s-vid':'읽어주기 영상','s-play':'놀이 활동','s-exp':'영어표현','s-next':'다음 달'};
+  var EMBN={'/naite-library/challenge.html':'🌳 독서 로드맵','/naite-library/domestic.html':'🛒 인기 책장','/naite-library/road.html':'💛 나이테 Pick'};
   var MAINCTA={hero_month:'첫 화면 · 이번 달 책 5권',hero_shop:'첫 화면 · 국내 인기 책장',month_study:'이번 달 5권 → 스터디 앱',find_shop:'책 찾기 · 국내 인기 책장',find_c120:'책 찾기 · 나이테 120',
     road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 함께하기',comm_app:'함께하기 · 스터디 앱 보러가기'};
   // 사이트 방문 = 공개 페이지 page_view. 스터디 앱 안에서 연 120·책장(src=record)은 앱 사용이라 뺌
   function isSiteView(e){return e.type==='page_view'&&isPublic(e)&&!(e.meta&&e.meta.src==='record');}
-  function isAppView(e){return e.type==='page_view'&&appOf(e)==='record';}
+  function isAppView(e){return e.type==='page_view'&&(e.path||'').indexOf('/record/')>=0;}
   function isInst(e){return e.type==='app_installed'||(e.type==='page_view'&&e.meta&&(e.meta.pwa===1||e.meta.pwa==='1'));}
   // 전체 기간 스터디 앱 기록(앱 연 것 + 설치) — 한 번만 불러옴
   async function loadAppAll(){
@@ -398,8 +408,16 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       '<p class="hint">이름 앞에 · 이 붙은 건 주요 버튼 말고 메인의 그 밖의 링크·버튼(버튼 글자 그대로)이에요.</p></div>';
     // ── 4. 스터디 앱
     var acts={};
-    X.cur.forEach(function(e){if(appOf(e)!=='record'||e.type==='page_view'||e.type==='dwell'||e.type==='ui_click')return;
-      var k=e.type==='tab_view'?('탭 · '+(TABN[e.meta&&e.meta.tab]||(e.meta&&e.meta.tab)||'?')):(EVN[e.type]||e.type);
+    var tabs={},stabs={},emb={},unk={};
+    function bump(o,k,e,init){var x=o[k]=o[k]||{s:{},n:0,i:0};x.n++;if(init)x.i++;if(e.session_id)x.s[e.session_id]=1;}
+    X.cur.forEach(function(e){if(appOf(e)!=='record')return;var m=e.meta||{};
+      if(e.type==='tab_view')bump(tabs,TABN[m.tab]||m.tab||'?',e,m.init);
+      else if(e.type==='study_tab')bump(stabs,STABN[m.tab]||m.label||m.tab||'?',e);
+      else if(e.type==='ui_click'&&m.src==='record')bump(emb,(EMBN[e.path]||m.page||e.path)+' · '+(m.label||'?'),e);
+      if(!EVN[e.type]&&!EV_RAW[e.type])unk[e.type]=(unk[e.type]||0)+1;});
+    function top(o,lim){return Object.keys(o).sort(function(x,y){return cnt(o[y].s)-cnt(o[x].s)||o[y].n-o[x].n;}).slice(0,lim||12);}
+    X.cur.forEach(function(e){if(appOf(e)!=='record'||EV_RAW[e.type])return;
+      var k=EVN[e.type]||e.type;
       var o=acts[k]=acts[k]||{s:{},n:0};o.n++;if(e.session_id)o.s[e.session_id]=1;});
     if(X.lc&&X.lc.length)acts['✅ 책 읽기 기록']={s:readersOf(X.lc),n:X.lc.length};
     var ak=Object.keys(acts).sort(function(x,y){return cnt(acts[y].s)-cnt(acts[x].s)||acts[y].n-acts[x].n;}).slice(0,15);
@@ -409,7 +427,15 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     '</div><div class="shd" style="margin-top:14px"><b style="font-size:.9rem">'+(TODAY?'오늘':'날짜별')+'</b><select class="t sm r" id="hap" style="width:auto"><option value="u">앱 연 사람</option><option value="i">새로 설치</option></select></div><div id="hachart"></div>'+
       '<h4 style="margin:16px 0 8px;font-size:.92rem">들어와서 주로 하는 것</h4>'+
       table(['한 일','사람','횟수'],ak.map(function(k){return [esc(k),cnt(acts[k].s),acts[k].n];}),1)+
-      '<p class="hint">사람 = 그 일을 한 번이라도 한 폰 수. 책 읽기 기록은 기록 데이터(폰별 익명 ID) 기준이라 다른 줄과 세는 방식이 조금 달라요.</p></div>';
+      '<p class="hint">사람 = 그 일을 한 번이라도 한 폰 수. 책 읽기 기록은 기록 데이터(폰별 익명 ID) 기준이라 다른 줄과 세는 방식이 조금 달라요.</p>'+
+      '<h4 style="margin:18px 0 8px;font-size:.92rem">어느 메뉴를 보나요 · 아래 탭</h4>'+
+      table(['탭','사람','열기','그중 앱 열 때 첫 화면'],top(tabs).map(function(k){return [esc(k),cnt(tabs[k].s),tabs[k].n,tabs[k].i];}),1)+
+      '<h4 style="margin:16px 0 8px;font-size:.92rem">📘 이번 달 책 안 메뉴</h4>'+
+      table(['메뉴','사람','누름'],top(stabs).map(function(k){return [esc(k),cnt(stabs[k].s),stabs[k].n];}),1)+
+      '<h4 style="margin:16px 0 8px;font-size:.92rem">앱 탭 안 페이지(로드맵·인기 책장·Pick)에서 누른 것</h4>'+
+      table(['페이지 · 버튼','사람','누름'],top(emb,15).map(function(k){return [esc(k),cnt(emb[k].s),emb[k].n];}),1)+
+      '<p class="hint">‘그중 앱 열 때 첫 화면’은 11/16부터 세요(그전에는 앱을 열 때 보인 첫 탭이 집계되지 않았어요). 이번 달 책 안 메뉴 이름은 11/16부터 메뉴 ID로 남겨서 이름이 바뀌어도 이어져요.</p>'+
+      (Object.keys(unk).length?'<p class="warn" style="margin-top:10px">이름표 없는 이벤트: '+Object.keys(unk).map(function(k){return esc(k)+' '+unk[k]+'번';}).join(', ')+' → KPI_EVENTS.md와 KPI 이름표(EVN)에 추가해 주세요.</p>':'')+'</div>';
     // ── 5. 참여 인원 추이(전체 기간)
     h+='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 전체 기간</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
       '<div class="shd" style="margin-top:14px"><b style="font-size:.9rem">추이</b><select class="t sm r" id="hall" style="width:auto"><option value="c">누적 사용자</option><option value="w">주별 앱 연 사람</option><option value="d">날짜별 앱 연 사람</option><option value="i">누적 설치</option></select></div><div id="hallchart"></div>'+

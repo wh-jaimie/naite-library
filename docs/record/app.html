@@ -1096,7 +1096,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261116f"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261116k"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1384,7 +1384,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   }
   function initChips(){
     var nav=document.getElementById('sdChips');if(!nav)return;
-    nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;showTab(b.dataset.sdt);logEvent('study_tab',{tab:b.textContent});});
+    nav.addEventListener('click',function(e){var b=e.target.closest('[data-sdt]');if(!b)return;showTab(b.dataset.sdt);logEvent('study_tab',{tab:b.dataset.sdt,label:b.textContent.trim().slice(0,20)});});
     applyTab();
     // 옆으로 밀어서 탭 넘기기(2026-11-08): 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭
     (function(){
@@ -1400,7 +1400,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
         if(document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))return; // 위에 창이 열려 있으면 무시
         var ids=[].slice.call(nav.querySelectorAll('[data-sdt]:not([hidden])')).map(function(c){return c.dataset.sdt;}),i=ids.indexOf(sdTab);
         var j=dx<0?i+1:i-1;if(i<0||j<0||j>=ids.length)return;
-        showTab(ids[j]);logEvent('study_tab',{tab:ids[j],via:'swipe'});
+        showTab(ids[j]);var lb=nav.querySelector('[data-sdt="'+ids[j]+'"]');logEvent('study_tab',{tab:ids[j],label:lb?lb.textContent.trim().slice(0,20):'',via:'swipe'});
         var sec=document.getElementById(ids[j]);if(sec){sec.classList.remove('sd-swin','sd-swinl');void sec.offsetWidth;sec.classList.add(dx<0?'sd-swin':'sd-swinl');}
       },{passive:true});
     })();

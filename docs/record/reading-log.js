@@ -1560,7 +1560,7 @@
     if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
   }
   var studyY=0,T_NAME={c120:'독서 로드맵(나이테 120)',shop:'국내 인기 책장',pick:'나이테 Pick'};
-  function showTab(id){
+  function showTab(id,init){
     if(id==='stats')id='shelf';
     if(TAB_IDS.indexOf(id)<0)id='study';
     if(S.tab==='study'&&id!=='study')studyY=window.scrollY;
@@ -1573,7 +1573,7 @@
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();
     if(!EMBED[id])window.scrollTo(0,id==='study'?studyY:0);
-    if(S.onEvent)S.onEvent('tab_view',{tab:id});
+    if(S.onEvent)S.onEvent('tab_view',init?{tab:id,init:1}:{tab:id});
   }
 
   /* ── 폰 뒤로가기(2026-11-07): 위에 열린 창이나 다른 탭에서는 앱을 나가지 않고 한 단계 전으로 ──
@@ -1677,7 +1677,7 @@
       if(h==='stats')h='shelf';if(last==='stats')last='shelf';
       // 주소로 바로 온 탭(메인의 나이테 120·인기 책장 버튼 등)은 그대로, 마지막 탭이 앱 안 페이지면 자료 탭으로
       if(TAB_IDS.indexOf(h)<0){h=last;if(EMBED[h])h='study';}
-      if(TAB_IDS.indexOf(h)>0)showTab(h);else{S.tab='study';paint();}
+      if(TAB_IDS.indexOf(h)>0)showTab(h,1);else{S.tab='study';paint();if(S.onEvent)S.onEvent('tab_view',{tab:'study',init:1});} // 2026-11-16: 앱을 열 때 처음 보이는 탭도 집계(init:1)
       flush();pull();pullOther();checkBackup();flushNotes();pullNotes();
       setTimeout(offerInstallOnce,1200);
     }
