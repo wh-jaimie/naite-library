@@ -256,7 +256,8 @@
     return list.slice(0,8);
   }
   /* ── 책 한 줄 메모(2026-11-13) ── 책마다·읽은 날마다 한 줄. key = dayItems id('b:<책 id>' | 'o:<제목>')
-   * 이 기기(naite_notes_v1)에 먼저 저장 → 서버(save_note/my_notes, migrate_book_notes.sql)엔 뒤에서. 서버 함수가 없으면 이 기기에만 남음 */
+   * 2026-11-16 운영자 결정: 메모 내용은 개인정보라 인증 사진처럼 이 기기(naite_notes_v1)에만 둔다.
+   * 서버(save_note)엔 '메모 남김' 표시('1')만 보내고, 서버에서 내용을 다시 받아오지 않음(my_notes 안 씀, migrate_notes_local_only.sql). */
   var NOTE_KEY='naite_notes_v1',NOTE_MAX=100;
   function loadNotes(){try{var j=JSON.parse(localStorage.getItem(NOTE_KEY)||'null');if(j&&j.n&&j.q)return j;}catch(e){}return {n:{},q:[]};}
   function saveNotes(){try{localStorage.setItem(NOTE_KEY,JSON.stringify(S.notes));}catch(e){}}
@@ -271,21 +272,13 @@
   function flushNotes(){
     if(!S.reader||S.noteBusy||!S.notes.q.length)return;
     var st=S,id=S.notes.q[0],i=id.lastIndexOf('|'),key=id.slice(0,i),day=id.slice(i+1);st.noteBusy=1;
-    rpc('save_note',{p_reader:st.reader,p_book_key:key,p_read_on:day,p_note:noteGet(key,day)}).then(function(res){
+    rpc('save_note',{p_reader:st.reader,p_book_key:key,p_read_on:day,p_note:noteGet(key,day)?'1':''}).then(function(res){
       st.noteBusy=0;if(st!==S)return;
       if(res&&res.ok===false&&res.error==='limit')toast('이날 메모가 너무 많아 더 저장할 수 없어요.');
       S.notes.q=S.notes.q.filter(function(x){return x!==id;});saveNotes();flushNotes();
     },function(){st.noteBusy=0;}); // 오프라인·함수 없음 → 남겨 두고 다음에
   }
-  function pullNotes(){
-    if(!S.reader)return;
-    rpc('my_notes',{p_reader:S.reader}).then(function(list){
-      if(!S||!list)return;var n={};
-      list.forEach(function(r){n[r.book_key+'|'+r.read_on]={v:r.note,t:Date.parse(r.updated_at)||0};});
-      S.notes.q.forEach(function(id){if(S.notes.n[id])n[id]=S.notes.n[id];else delete n[id];}); // 아직 못 보낸 변경이 우선
-      S.notes.n=n;saveNotes();paint();
-    },function(){});
-  }
+  function pullNotes(){} // 메모 내용은 서버에 없음(이 기기에만) → 받아올 것 없음
   function noteBook(key){
     if(key.indexOf('o:')===0)return {title:key.slice(2)||'다른 책',other:true};
     var b=S.byId[+key.slice(2)]||{};return {title:b.title||'(지난 달 책)',cover:b.cover};
@@ -413,7 +406,7 @@
           try{localStorage.setItem(READER_KEY,d.reader);}catch(e){}
           setBackupName(d.name||name);
           S.rows=S.rows.filter(function(r){return S.outbox.some(function(o){return o.c===r.c;});});save();
-          var nn={};S.notes.q.forEach(function(id){if(S.notes.n[id])nn[id]=S.notes.n[id];});S.notes.n=nn;saveNotes(); // 안 보낸 메모만 남기고 새 ID로 다시 받음
+          S.notes.q=Object.keys(S.notes.n);saveNotes(); // 메모는 이 기기에만 → 그대로 두고 '메모 남김' 표시만 새 ID로 다시 보냄
           location.reload();
         },function(){done();er.textContent='연결이 불안정해요. 잠시 뒤 다시 해 주세요.';});
       }
