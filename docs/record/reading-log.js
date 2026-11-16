@@ -360,7 +360,7 @@
     document.documentElement.classList.add('rl-lock');hideToast();
     return sheetEl.firstChild;
   }
-  function closeSheet(){if(!sheetEl)return;sheetEl.hidden=true;document.documentElement.classList.remove('rl-lock');try{if(sheetReturn)sheetReturn.focus();}catch(e){}}
+  function closeSheet(){if(!sheetEl)return;sheetEl.hidden=true;document.documentElement.classList.remove('rl-lock');try{if(sheetReturn)sheetReturn.focus();}catch(e){}if(S&&S.fnPending){S.fnPending=0;setTimeout(firstNudge,700);}}
   /* ── 기록 백업(닉네임 + 숫자 4자리) ── 폰을 바꾸거나 앱을 지워도 이어 보기 */
   function backupName(){try{return localStorage.getItem(BACKUP_KEY)||'';}catch(e){return '';}}
   function setBackupName(n){try{if(n)localStorage.setItem(BACKUP_KEY,n);else localStorage.removeItem(BACKUP_KEY);}catch(e){}}
@@ -374,14 +374,15 @@
     var form=function(btn){return '<form id="bkForm" autocomplete="off"><input id="bkName" class="pin" style="letter-spacing:0;font-size:1.05rem" maxlength="12" placeholder="닉네임 (예: 드니맘)" value="'+esc(mode==='make'?(cur||getDN()):'')+'">'+
       '<input id="bkPin" class="pin" style="margin-top:8px" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="숫자 4자리"><p class="err" id="bkErr"></p><button type="submit" class="pri">'+btn+'</button></form>';};
     var html=mode==='done'?'<h3>기록이 백업돼 있어요</h3><p class="sub">닉네임 <b>'+esc(cur)+'</b>. 새 폰이나 앱을 다시 깔았을 때 <b>이어보기</b>에 닉네임과 숫자 4자리를 넣으면 기록이 그대로 돌아와요.</p>'+
-        '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'
-      :mode==='make'?'<h3>기록 백업하기</h3><p class="sub">기록은 이 폰에 저장돼요. 닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 이어서 볼 수 있어요. 숫자는 꼭 기억해 주세요.</p>'+form('백업하기')+
-        '<button type="button" class="subtle" data-bk="restore">예전에 백업했어요 → 이어보기</button>'
+        '<button type="button" class="pri" data-sclose>확인</button><button type="button" class="subtle" data-bk="make">닉네임·숫자 바꾸기</button><button type="button" class="subtle" data-bk="restore">다른 백업 이어보기</button>'+fbBlock()
+      :mode==='make'?'<h3>기록 백업하기</h3><p class="sub">읽기 기록은 이 폰에 저장돼요. 닉네임과 숫자 4자리를 정해 두면 폰을 바꾸거나 앱을 지워도 이어서 볼 수 있고, 아빠 폰과 같이 쓸 수도 있어요. 숫자는 꼭 기억해 주세요.</p>'+form('백업하기')+
+        '<button type="button" class="subtle" data-bk="restore">예전에 백업했어요 → 이어보기</button>'+fbBlock()
       :'<h3>백업한 기록 이어보기</h3><p class="sub">예전에 정한 닉네임과 숫자 4자리를 넣어 주세요. 이 폰에 있던 기록도 함께 합쳐져요.</p>'+form('이어보기')+
         '<button type="button" class="subtle" data-bk="make">처음이에요 → 백업하기</button>';
     var sh=openSheet(html);
     var c=sh.querySelector('[data-sclose]');if(c)c.onclick=closeSheet;
     sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
+    fbWire(sh);
     var f=sh.querySelector('#bkForm');if(!f)return;
     var nm=sh.querySelector('#bkName'),pn=sh.querySelector('#bkPin'),er=sh.querySelector('#bkErr'),go=f.querySelector('.pri');
     nm.oninput=pn.oninput=function(){er.textContent='';};
@@ -443,7 +444,28 @@
   }
   var BAR_KEY='naite_install_bar_hide';
   // 앱 설치 띠: 처음 기록한 직후 한 번만(모든 탭 공통). 닫으면 다시 안 띄움
-  function offerBarOnce(){setTimeout(function(){try{if(localStorage.getItem('naite_instbar_shown'))return;localStorage.setItem('naite_instbar_shown','1');}catch(e){return;}installBar();},4500);}
+  // 기록 직후 한 번: 백업이 없으면 백업·아빠와 같이 쓰기·홈 화면 앱을 권함(2026-11-16 운영 리포트 제안 1 — 58%가 하루만 기록, 백업 1/72).
+  // 처음 기록한 사람 + 아직 백업 안 한 기존 사용자(다음 기록 때 한 번). 이 안내가 뜨면 설치 띠는 대신 안 띄움
+  function firstNudge(){
+    if(!S||backupName()||location.hash==='#preview')return false;
+    try{if(localStorage.getItem('naite_bk_first'))return false;}catch(e){return false;}
+    if(sheetEl&&!sheetEl.hidden){S.fnPending=1;return true;} // 기록 창이 열려 있으면 닫힌 뒤에
+    try{localStorage.setItem('naite_bk_first',logicalToday());}catch(e){}
+    var st=isStandalone();
+    var html='<h3>📚 우리 아이 책장이 쌓이기 시작했어요</h3><p class="sub">닉네임과 숫자 4자리만 정해 두면 폰을 바꾸거나 앱을 지워도 기록이 그대로예요. 아빠 폰과 같이 쓸 수도 있어요.</p>'+
+      '<button type="button" class="pri" data-bk="make">기록 백업하기</button>'+
+      '<button type="button" class="subtle" data-ffam>아빠와 같이 쓰기</button>'+
+      (st?'':'<button type="button" class="subtle" data-finst>홈 화면에 앱 두기</button><p class="bk-note" style="margin:6px 0 0">아이폰은 홈 화면 앱에서 기록해야 사파리와 기록이 갈라지지 않아요.</p>')+
+      '<button type="button" class="subtle" data-sclose>다음에 할게요</button>';
+    var sh=openSheet(html);
+    sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
+    var f=sh.querySelector('[data-ffam]');if(f)f.onclick=openFamily;
+    var i=sh.querySelector('[data-finst]');if(i)i.onclick=function(){closeSheet();install();};
+    var c=sh.querySelector('[data-sclose]');if(c)c.onclick=closeSheet;
+    if(S.onEvent)S.onEvent('backup_first_nudge',{st:st?1:0});
+    return true;
+  }
+  function offerBarOnce(){setTimeout(function(){if(firstNudge()){try{localStorage.setItem('naite_instbar_shown','1');}catch(e){}return;}try{if(localStorage.getItem('naite_instbar_shown'))return;localStorage.setItem('naite_instbar_shown','1');}catch(e){return;}installBar();},4500);}
   function installBar(){
     if(isStandalone()||document.getElementById('rlInstBar'))return;
     try{var u=+localStorage.getItem(BAR_KEY)||0;if(u>Date.now())return;}catch(e){}
@@ -566,6 +588,102 @@
     fillShare(sh.querySelector('.sc-wrap'),blobP,name,kind,meta,title);
     return sh;
   }
+  /* ── 메모·사진 파일로 백업(2026-11-16 운영자 결정, 북모리 방식 참고): 메모·인증 사진·워크북 사진을 파일 하나(.json)로 묶어
+   * 폰 공유창(구글 드라이브·카톡 나에게 등)이나 다운로드로 저장하고, '파일에서 불러오기'로 합침. 서버엔 안 올림.
+   * 읽기 기록은 닉네임 백업(서버)으로 옮겨짐. 메모·사진 자동 동기화는 나중에 유료 기능 후보 */
+  var FB_KEY_RE=/^(wb:[A-Za-z0-9_-]{1,40}:)?\d{4}-\d{2}-\d{2}(#\d{1,15})?$/;
+  function fbCounts(){var n=Object.keys((S.notes||{}).n||{}).length,p=0;Object.keys(S.photoList||{}).forEach(function(d){p+=S.photoList[d].length;});p+=(S.wbList||[]).length;return {n:n,p:p};}
+  function fbBlock(){var c=fbCounts();
+    return '<div class="fb-box"><b>📦 메모·사진 파일로 백업</b><p>메모 '+c.n+'개 · 사진 '+c.p+'장이 이 폰에만 있어요. 파일로 저장해 두면 폰을 바꾸거나 아빠 폰에서도 불러올 수 있어요. 파일은 구글 드라이브나 카톡 \'나에게 보내기\'에 두면 편해요.</p>'+
+      '<div class="fb-btns"><button type="button" class="subtle" data-fbsave'+(c.n||c.p?'':' disabled')+'>파일로 저장</button><button type="button" class="subtle" data-fbload>파일에서 불러오기</button></div></div>';}
+  function fbWire(sh){
+    var s=sh.querySelector('[data-fbsave]'),l=sh.querySelector('[data-fbload]');
+    if(s)s.onclick=function(){fileBackup(s);};
+    if(l)l.onclick=function(){fileRestore();};
+  }
+  function fileBackup(btn){
+    if(!S)return;var keys=allPhotoKeys(),label=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='파일 만드는 중…';}
+    var photos=[];
+    keys.reduce(function(pr,k){return pr.then(function(){var bl=blobOf(k);if(!bl)return;return blobB64(bl).then(function(d){photos.push({k:k,d:d});});});},Promise.resolve())
+    .then(function(){
+      var data={app:'naite-study',v:1,made:new Date().toISOString(),name:backupName()||'',notes:(S.notes||{}).n||{},photos:photos};
+      var fname='나이테_메모사진_'+logicalToday()+'.json',file=null;
+      try{file=new File([JSON.stringify(data)],fname,{type:'application/json'});}catch(e){}
+      var done=function(ok){if(btn){btn.disabled=false;btn.textContent=label;}if(ok){toast('메모·사진을 파일로 저장했어요 ✓');try{localStorage.setItem('naite_fb_last',logicalToday());}catch(e){}if(S.onEvent)S.onEvent('file_backup',{n:Object.keys(data.notes).length,p:photos.length});}};
+      if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:'나이테 메모·사진 백업'}).then(function(){done(true);},function(e){if(e&&e.name==='AbortError'){done(false);return;}fbDownload(data,fname);done(true);});
+      }else{fbDownload(data,fname);done(true);}
+    },function(){if(btn){btn.disabled=false;btn.textContent=label;}toast('파일을 만들지 못했어요. 잠시 뒤 다시 해 주세요.');});
+  }
+  function fbDownload(data,fname){
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));a.download=fname;
+    document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},2000);
+  }
+  function fileRestore(){
+    var inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
+    inp.onchange=function(){var f=inp.files&&inp.files[0];if(!f||!S)return;
+      f.text().then(function(t){var d=JSON.parse(t);if(!d||d.app!=='naite-study')throw 0;
+        var nn=0,np=0,notes=d.notes||{},pics=(d.photos||[]).filter(function(p){return p&&FB_KEY_RE.test(p.k)&&typeof p.d==='string';});
+        Object.keys(notes).forEach(function(id){var x=notes[id],i=id.lastIndexOf('|');
+          if(!x||typeof x.v!=='string'||i<0||!/^\d{4}-\d{2}-\d{2}$/.test(id.slice(i+1))||!/^(b:\d{1,18}|o:.{0,80})$/.test(id.slice(0,i)))return;
+          var cur=S.notes.n[id];if(cur&&cur.v===x.v)return;if(cur&&(cur.t||0)>=(x.t||0))return;
+          S.notes.n[id]={v:String(x.v).slice(0,NOTE_MAX),t:x.t||Date.now()};if(S.notes.q.indexOf(id)<0)S.notes.q.push(id);nn++;});
+        saveNotes();flushNotes();
+        var have={};allPhotoKeys().forEach(function(k){have[k]=1;});
+        var add=pics.filter(function(p){return !have[p.k];}).map(function(p){
+          var bin=atob(p.d),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return {k:p.k,b:new Blob([u],{type:'image/jpeg'})};});
+        add.forEach(function(p){if(p.k.indexOf('wb:')===0)addWbMem(p.k,p.b);else addPhotoMem(p.k,p.b);np++;});
+        return (add.length?ptx('readwrite',function(st){add.forEach(function(p){st.put(p.b,p.k);});}):Promise.resolve()).then(function(){
+          paint();closeSheet();toast(nn||np?'메모 '+nn+'개 · 사진 '+np+'장을 불러왔어요 ✓':'새로 불러올 메모·사진이 없어요(이미 다 있어요).');
+          if(S.onEvent)S.onEvent('file_restore',{n:nn,p:np});});
+      }).catch(function(){toast('나이테 백업 파일이 아니거나 읽을 수 없어요.');});
+    };
+    inp.click();
+  }
+  // 아빠와 같이 쓰기: 같은 닉네임 백업을 이어보기 하면 두 폰이 같은 읽기 기록을 씀(메모·사진은 각자 폰 → 파일로 옮김)
+  function openFamily(){
+    var cur=backupName();
+    var html='<h3>👨‍👩‍👧 아빠와 같이 쓰기</h3><p class="sub">엄마 폰과 아빠 폰이 <b>같은 읽기 기록</b>을 함께 써요. 아빠가 읽어 준 날도 한 달력에 쌓여요.</p>'+
+      '<ol class="fam-steps">'+
+        (cur?'<li>이 폰은 <b>'+esc(cur)+'</b> 닉네임으로 백업돼 있어요 ✓</li>':'<li>먼저 <b>이 폰에서 기록 백업</b>을 해요(닉네임 + 숫자 4자리).</li>')+
+        '<li>아빠 폰에서 나이테 스터디 앱을 열고 <b>읽기 기록 › 아빠와 같이 쓰기 › 받는 쪽이에요</b>를 눌러요.</li>'+
+        '<li>'+(cur?'닉네임 <b>'+esc(cur)+'</b>와 ':'같은 닉네임과 ')+'숫자 4자리를 넣으면 끝! 그다음부터는 어느 폰에서 기록해도 같이 보여요.</li></ol>'+
+      '<p class="bk-note">같이 보이는 것: 읽기 기록·달력·통계. 메모와 인증 사진은 각자 폰에 저장돼요. 옮기고 싶으면 아래 <b>파일로 저장</b> → 아빠 폰에서 <b>파일에서 불러오기</b>를 해 주세요.</p>'+
+      (cur?'<button type="button" class="pri" data-famshare>아빠에게 앱 링크 보내기</button>':'<button type="button" class="pri" data-bk="make">이 폰에서 백업하기</button>')+
+      '<button type="button" class="subtle" data-bk="restore">받는 쪽이에요 (엄마가 백업했어요)</button>'+fbBlock();
+    var sh=openSheet(html);
+    sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
+    var fs=sh.querySelector('[data-famshare]');
+    if(fs)fs.onclick=function(){var url=location.origin+'/naite-library/record/',txt='나이테 스터디 앱에서 우리 아이 읽기 기록을 같이 써요. 앱을 열고 읽기 기록 › 아빠와 같이 쓰기 › 받는 쪽이에요에서 닉네임 「'+cur+'」와 숫자 4자리(따로 알려 줄게요)를 넣어 주세요.';
+      if(navigator.share)navigator.share({title:'나이테 스터디 같이 쓰기',text:txt,url:url}).catch(function(){});
+      else{try{navigator.clipboard.writeText(txt+' '+url);toast('보낼 내용을 복사했어요. 카톡에 붙여 넣어 주세요.');}catch(e){}}
+      if(S.onEvent)S.onEvent('family_share',{});};
+    fbWire(sh);
+    if(S.onEvent)S.onEvent('family_open',{});
+  }
+  // 달이 바뀌면 한 번: 지난달 기록이 있는데 백업이 없으면(또는 메모·사진이 있으면) 백업 권하기
+  function monthNudge(){
+    if(!S||location.hash==='#preview')return;
+    var mon=logicalToday().slice(0,7),last='';try{last=localStorage.getItem('naite_bk_nudge')||'';}catch(e){}
+    if(last===mon)return;
+    var hadPrev=S.rows.some(function(r){return r.d<mon;}),c=fbCounts(),need=!backupName()||(c.n+c.p>0&&(function(){try{return (localStorage.getItem('naite_fb_last')||'')<mon;}catch(e){return true;}})());
+    try{localStorage.setItem('naite_bk_nudge',mon);}catch(e){}
+    if(!last&&!hadPrev)return;            // 처음 쓰는 사람·지난달 기록 없음 → 다음 달부터
+    if(!hadPrev||!need)return;
+    if(sheetEl&&!sheetEl.hidden)return;
+    var m=+mon.slice(5,7),pm=m===1?12:m-1;
+    var html='<h3>🌱 '+m+'월이 시작됐어요</h3><p class="sub">'+pm+'월에 쌓은 기록, 지금 백업해 두면 폰을 바꿔도 그대로 이어서 볼 수 있어요.</p>'+
+      (backupName()?'<p class="bk-note">읽기 기록은 <b>'+esc(backupName())+'</b> 이름으로 백업돼 있어요 ✓</p>':'<button type="button" class="pri" data-bk="make">읽기 기록 백업하기</button>')+
+      (c.n+c.p?fbBlock():'')+'<button type="button" class="subtle" data-sclose>다음에 할게요</button>';
+    var sh=openSheet(html);
+    sh.querySelectorAll('[data-bk]').forEach(function(b){b.onclick=function(){openBackup(b.getAttribute('data-bk'));};});
+    var cl=sh.querySelector('[data-sclose]');if(cl)cl.onclick=closeSheet;
+    fbWire(sh);
+    if(S.onEvent)S.onEvent('backup_nudge',{bk:backupName()?1:0});
+  }
+  function allPhotoKeys(){var o=[];Object.keys(S.photoList||{}).forEach(function(d){S.photoList[d].forEach(function(x){o.push(x.k);});});(S.wbList||[]).forEach(function(x){o.push(x.k);});return o;}
+  function blobOf(k){var L=k.indexOf('wb:')===0?S.wbList:(S.photoList[pday(k)]||[]);var x=L.filter(function(y){return y.k===k;})[0];return x&&x.b;}
+  function blobB64(bl){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(',')[1]||'');};fr.onerror=rej;fr.readAsDataURL(bl);});}
   /* ── 인증 사진: 이 폰 안(IndexedDB)에만 날짜별 최대 3장. 서버에는 올리지 않음 ── */
   var PDB=null;
   function pdb(){
@@ -589,7 +707,7 @@
     pdb().then(function(db){return new Promise(function(res){var o={},tx=db.transaction('p','readonly');
       tx.objectStore('p').openCursor().onsuccess=function(e){var c=e.target.result;if(c){o[c.key]=c.value;c.continue();}};
       tx.oncomplete=function(){res(o);};tx.onerror=function(){res(o);};});})
-    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){if(String(k).indexOf('wb:')===0)addWbMem(k,o[k]);else addPhotoMem(k,o[k]);});paint();},function(){});
+    .then(function(o){if(!S)return;Object.keys(o).forEach(function(k){if(String(k).indexOf('wb:')===0)addWbMem(k,o[k]);else addPhotoMem(k,o[k]);});paint();setTimeout(monthNudge,1800);},function(){setTimeout(monthNudge,1800);});
   }
   // 긴 변 1080px JPEG로 줄여서 저장(한 장 100~200KB). 하루 PMAX장이 넘으면 그날 가장 먼저 찍은 사진을 지움
   function savePhoto(day,im,cb){
@@ -1323,6 +1441,7 @@
       (mi?statsKpi(mi)+calendarHtml(mi,!S.rows.length&&!off):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<div id="v-statsin"></div>'+
+      '<button type="button" class="fam-cta" data-rfamily><span class="fi">👨‍👩‍👧</span><span class="ft"><b>아빠와 같이 쓰기</b><small>아빠 폰에서도 같은 읽기 기록을 함께 써요</small></span><span class="fa" aria-hidden="true">›</span></button>'+
       '<h3 class="rv-h3">최근 기록</h3>'+
       (recent.length?'<ul class="rs-list'+(S.recentOpen?' open':'')+'">'+recent.map(function(r,i){var b=r.k==='_other'?{title:'📚 '+(r.o||'다른 책')}:(S.byId[r.b]||{title:'(지난 달 책)'});
         return '<li'+(i>=5?' class="x"':'')+'><span class="dl">'+dayLabel(r.d,true).replace('/','.')+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="tt">'+esc(b.title)+'</span><button type="button" data-rdel="'+esc(r.c)+'" aria-label="'+esc(b.title)+' '+dayLabel(r.d)+' 기록 지우기">지우기</button></li>';}).join('')+'</ul>'+
@@ -1509,6 +1628,7 @@
       if((t=e.target.closest('[data-rshelf]'))){S.shelfKey=t.getAttribute('data-rshelf');S.shelfScroll=true;paintShelf();if(S.onEvent)S.onEvent('shelf_month',{theme:S.shelfKey});return;}
       if((t=e.target.closest('[data-rdel]'))){remove(t.getAttribute('data-rdel'),false);return;}
       if((t=e.target.closest('[data-rbackup]'))){openBackup();return;}
+      if((t=e.target.closest('[data-rfamily]'))){openFamily();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
       if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
