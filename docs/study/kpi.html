@@ -563,7 +563,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       function n(t){return on.filter(function(e){return e.type===t;}).length;}
       return {name:name,visitors:cnt(sessions(pv)),views:pv.length,share:sh.length,shareS:cnt(sessions(sh)),onPage:onPage.length,fromMain:fromMain,how:how,buy:n('buy_click'),copy:n('title_copy'),join:n('join_click')};}
     var BP=[bookPage('🌳 나이테 120','challenge.html','나이테 120'),bookPage('🛒 국내 인기 책장','domestic.html','국내 인기 책장')];
-    var HOW={link:'링크',image:'진행 이미지',image_save:'이미지 저장'};
+    var HOW={link:'링크',link_about:'소개 탭 링크',image:'진행 이미지',image_save:'이미지 저장'};
     h+='<div class="card"><h3>📚 나이테 120 · 국내 인기 책장 <span class="hint">많이 보고, 많이 퍼지는지</span></h3>'+
       table(['페이지','방문자','페이지 방문','공유','공유한 사람','쿠팡 클릭','제목 복사','참여 클릭'],BP.map(function(o){
         var det=Object.keys(o.how).map(function(k){return (HOW[k]||k)+' '+o.how[k];});if(o.fromMain)det.push('메인 카드 '+o.fromMain);
