@@ -133,7 +133,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     root.innerHTML='<div class="wrap"><div class="warn" style="margin-top:40px">⚙️ 먼저 <code>config.js</code> 설정이 필요해요.</div></div>';return;
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
-  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['books','📚 이번 달 책'],['people','👤 사람별']];
+  var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['people','👤 사람별']];
   var PERIODS=[['today','오늘'],['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
   try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
@@ -272,7 +272,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
           '<a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a><button id="logout">로그아웃</button></div></span></span></div>'+
       '<div class="bar2"><div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(S.tab===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
-        (S.tab==='books'||S.tab==='people'?'':'<div class="seg">'+PERIODS.map(function(p){return '<button class="'+(S.period===p[0]?'on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';}).join('')+'</div>')+
+        (S.tab==='people'?'':'<div class="seg">'+PERIODS.map(function(p){return '<button class="'+(S.period===p[0]?'on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>';}).join('')+'</div>')+
       '</div></div></div><div class="wrap" id="body"><div class="card"><p class="status">불러오는 중…</p></div></div>';
     root.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){S.tab=b.dataset.t;try{history.replaceState(null,'','#'+S.tab);}catch(e){}shell();};});
     root.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){S.period=b.dataset.p;try{localStorage.setItem('naite_kpi_period',S.period);}catch(e){}shell();};});
@@ -284,7 +284,6 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
   async function render(){
     var body=document.getElementById('body');
-    if(S.tab==='books'){await renderBooks(body);return;}
     if(S.tab==='people'){await renderPeople(body);return;}
     var R=periodRange(),D=await loadPeriod();
     var cur=D.ev.filter(function(e){return inR(e.created_at,R.start,R.end);}),prv=D.ev.filter(function(e){return inR(e.created_at,R.pstart,R.pend);});
@@ -737,50 +736,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
 
   // 이번 달 책 (기간과 무관 · 이 주제의 전체 기록)
-  async function renderBooks(body){
-    var k=S.bookKey||S.current||(S.pubs[0]&&S.pubs[0].key)||'';
-    var opts=(S.pubs.length?S.pubs:S.themes).map(function(m){var t=themeBy(m.key)||m;return '<option value="'+esc(m.key)+'"'+(m.key===k?' selected':'')+'>'+esc(((m.month_label||'').split('·')[0].trim()?(m.month_label||'').split('·')[0].trim()+' · ':'')+themeLabel(t))+(m.key===S.current?' (지금 공개)':'')+'</option>';}).join('');
-    body.innerHTML='<div class="card"><div class="shd"><h3>📚 이번 달 책</h3><select class="t sm r" id="bk">'+opts+'</select></div><div id="bbody"><p class="empty">불러오는 중…</p></div></div>';
-    document.getElementById('bk').onchange=function(){S.bookKey=this.value;renderBooks(body);};
-    if(!k){document.getElementById('bbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';return;}
-    var T=await loadTheme(k),books=T.books,ev=T.ev,logs=T.logs||[];
-    var meta=S.pubs.filter(function(m){return m.key===k;})[0]||{};
-    function c(type,title,app){return ev.filter(function(e){return e.type===type&&((e.meta&&e.meta.title)===title)&&(!app||appOf(e)===app||(app==='study'&&appOf(e)==='naite'));}).length;}
-    function cell(type,b){var p=c(type,b.title,'study'),r=c(type,b.title,'record');return (p+r)+'<small>공개 '+p+' · 회원 '+r+'</small>';}
-    var per={};books.forEach(function(b){per[b.id]={total:0,readers:{}};});
-    var allR={};logs.forEach(function(l){allR[l.reader]=1;var p=per[l.book_id];if(p){p.total++;p.readers[l.reader]=1;}});
-    var nR=cnt(allR);
-    var rows=books.map(function(b){var p=per[b.id],r=cnt(p.readers);
-      return ['<div style="display:flex;gap:8px;align-items:center">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<div><div class="bt">'+esc(b.title)+(b.buy_url?'':'<span class="tag">쿠팡 링크 없음</span>')+'</div><div class="ty">'+esc(b.tier_label||'')+'</div></div></div>',
-        cell('book_click',b),cell('buy_click',b),cell('read_aloud_click',b),cell('workbook_click',b),
-        r+(nR?'<small>'+Math.round(r/nR*100)+'%</small>':''),p.total+(r?'<small>폰당 '+(p.total/r).toFixed(1)+'번</small>':'')];});
-    function tot(type,app){return books.reduce(function(a,b){return a+c(type,b.title,app);},0);}
-    function tcell(type){var p=tot(type,'study'),r=tot(type,'record');return (p+r)+'<small>공개 '+p+' · 회원 '+r+'</small>';}
-    var h='<div class="tblw"><table><thead><tr><th>책</th><th class="num">책 클릭</th><th class="num">쿠팡</th><th class="num">영상</th><th class="num">워크지</th><th class="num">읽은 폰</th><th class="num">총 읽기</th></tr></thead><tbody>'+
-      rows.map(function(r){return '<tr>'+r.map(function(x,i){return '<td'+(i?' class="num"':'')+'>'+x+'</td>';}).join('')+'</tr>';}).join('')+
-      '<tr class="sum"><td>합계</td><td class="num">'+tcell('book_click')+'</td><td class="num">'+tcell('buy_click')+'</td><td class="num">'+tcell('read_aloud_click')+'</td><td class="num">'+tcell('workbook_click')+'</td><td class="num">'+nR+'<small>기록한 폰</small></td><td class="num">'+logs.length+'</td></tr>'+
-      '</tbody></table></div>'+
-      '<p class="hint">이 달 자료의 전체 기록이에요(위 기간 선택과 무관). 공개 = 나이테의 스터디 자료 페이지, 회원 = 나이테 스터디 앱. 책 클릭은 카드를 누른 횟수, 쿠팡은 그중 쿠팡이 열린 횟수예요(2026-10-16부터 이 기준).</p>';
-    // 메모
-    var notes=nR?readNotes(books.map(function(b){var p=per[b.id];return {title:b.title,r:cnt(p.readers),total:p.total};}),nR):[];
-    var noLink=books.filter(function(b){return !b.buy_url;});
-    if(noLink.length)notes.push('쿠팡 링크가 없는 책: '+noLink.map(function(b){return esc(b.title);}).join(', ')+' → 관리 › 🛒 쿠팡 링크에서 넣어 주세요.');
-    if(notes.length)h+='<ul class="notes">'+notes.map(function(n){return '<li>'+n+'</li>';}).join('')+'</ul>';
-    // 유형별 · 날짜별 읽기
-    if(logs.length){
-      var types=[],tc={},tr={};books.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.tier_label||'기타';if(!(t in tc)){tc[t]=0;tr[t]={};types.push(t);}});
-      var byId={};books.forEach(function(b){byId[b.id]=b;});
-      logs.forEach(function(l){var b=byId[l.book_id];if(!b)return;var t=b.tier_label||'기타';tc[t]++;tr[t][l.reader]=1;});
-      h+='<h3 style="margin:20px 0 8px;font-size:1rem">유형별 읽기</h3>'+hbars(types.map(function(t){return [t+' · '+cnt(tr[t])+'대',tc[t]];}));
-      var mm=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(meta.month_label||''),dl=[];
-      if(mm){var dim=new Date(+mm[1],+mm[2],0).getDate();for(var d=1;d<=dim;d++)dl.push(mm[1]+'-'+pad(+mm[2])+'-'+pad(d));}
-      else{dl=Object.keys(countBy(logs,function(l){return l.read_on;})).sort();}
-      var byDay=countBy(logs,function(l){return l.read_on;});
-      if(mm&&!dl.some(function(x){return byDay[x];})){dl=Object.keys(byDay).sort();mm=null;}
-      h+='<h3 style="margin:20px 0 8px;font-size:1rem">날짜별 읽기 <span class="hint">'+(mm?esc(meta.month_label.split('·')[0].trim()):'')+'</span></h3>'+barChart(dl,dl.map(function(x){return byDay[x]||0;}),'#2F6E58','번');
-    }else{h+='<p class="empty" style="margin-top:12px">아직 이 달의 읽기 기록이 없어요.</p>';}
-    document.getElementById('bbody').innerHTML=h;
-  }
+  // '📚 이번 달 책' 탭은 2026-11-16 없앰(운영자 결정) — 책별 클릭·쿠팡·영상·워크지·읽기 분석은 주간 운영 리포트(분석/)에서 봄
 
   // ---------- 로그인 ----------
   // 내려받기(CSV, 엑셀에서 바로 열림): 읽기 기록 전체 / 책 한 줄 메모 전체 (2026-11-16)
