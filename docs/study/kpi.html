@@ -755,8 +755,35 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
 
   // ---------- 로그인 ----------
+  // 내려받기(CSV, 엑셀에서 바로 열림): 읽기 기록 전체 / 책 한 줄 메모 전체 (2026-11-16)
+  function csvDown(name,head,rows){
+    function q(v){v=v==null?'':String(v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+    var txt=String.fromCharCode(0xFEFF)+[head].concat(rows).map(function(r){return r.map(q).join(',');}).join('\r\n');
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));a.download=name;
+    document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
+  }
+  function whoOf(reader){var n=S.ppl.names[reader];return [n||'',String(reader).slice(-4).toUpperCase()];}
+  function bookOf(id){var b=S.ppl.books[id];return b?[esc0(themeLabel(themeBy(b.theme_key))||b.theme_key||''),b.title]:['','(책 #'+id+')'];}
+  function esc0(s){return String(s||'').trim();}
+  function hm(t){if(!t)return '';var d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes());}
+  function exportLogs(){
+    var rows=S.ppl.logs.map(function(l){var w=whoOf(l.reader),b=l.book_id!=null?bookOf(l.book_id):['다른 책',''];
+      return [l.read_on,hm(l.created_at),w[0],w[1],b[0],b[1],l.book_id==null?(l.other_title||''):''];});
+    csvDown('나이테_읽기기록_'+dstr(new Date())+'.csv',['읽은 날','누른 시각','닉네임(백업)','기록 ID 끝','주제','스터디 책','다른 책 제목'],rows);
+  }
+  async function exportNotes(st){
+    st.textContent='메모 불러오는 중…';
+    var notes;try{notes=await pageAll(function(){return client.from('book_notes').select('reader,book_key,read_on,note,updated_at').order('read_on');});}
+    catch(e){st.textContent='메모를 읽지 못했어요: '+(e.message||e);return;}
+    if(!notes.length){st.textContent='메모가 0개예요. supabase/migrate_notes_admin_read.sql을 아직 실행 안 했다면 먼저 실행해 주세요.';return;}
+    var rows=notes.map(function(n){var w=whoOf(n.reader),k=n.book_key||'',b=k.indexOf('b:')===0?bookOf(+k.slice(2)):['다른 책',k.slice(2)];
+      return [n.read_on,w[0],w[1],b[0],b[1],n.note];});
+    csvDown('나이테_메모_'+dstr(new Date())+'.csv',['읽은 날','닉네임(백업)','기록 ID 끝','주제','책','메모'],rows);
+    st.textContent='✓ 메모 '+notes.length+'개 내려받았어요';
+  }
+
   // 사람별 기록(2026-11-16): 폰(기록 ID)마다 언제부터·얼마나·어떤 책을 기록하는지. 전체 기간.
-  // 이름은 기록 백업 닉네임이 있을 때만 보이고, 없으면 기록 ID 끝 4자리. 메모 내용은 본인만 보는 약속이라 여기서 읽지 않음.
+  // 이름은 기록 백업 닉네임이 있을 때만 보이고, 없으면 기록 ID 끝 4자리. 메모·전체 기록은 CSV 내려받기(메모는 migrate_notes_admin_read.sql 필요).
   var PKINDS=[['steady','🔥 꾸준히','최근 2주 중 7일 이상 기록'],['some','🙂 가끔','최근 2주 중 1~6일 기록'],['new','✨ 새로 시작','기록한 날이 아직 하루(최근 2주 안)'],['rest','💤 쉬는 중','최근 2주 기록 없음']];
   function hourLabel(h){if(h==null)return '–';return (h<12?'오전 ':'오후 ')+(h%12||12)+'시';}
   async function renderPeople(body){
@@ -805,7 +832,12 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         ['스터디 책 말고 다른 책도 기록',withOther],
         ['두 달(주제) 이상 이어서 기록',multi]
       ],nAll)+
-      '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모 내용은 본인만 보는 약속이라 여기 나오지 않아요.</p></div>';
+      '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모는 아래 내려받기로 볼 수 있어요.</p>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
+    var ot={},otr={};list.forEach(function(p){Object.keys(p.others).forEach(function(t){if(t==='(제목 없이)')return;var k=t.toLowerCase();if(!ot[k])ot[k]={t:t,n:0,r:0};ot[k].n+=p.others[t];ot[k].r++;});});
+    var otl=Object.keys(ot).map(function(k){return ot[k];}).sort(function(a,b){return b.r-a.r||b.n-a.n;});
+    h+='<div class="card"><h3>📚 다른 책으로 쓴 제목 <span class="hint">많은 사람이 쓴 순 · 위 15개</span></h3>'+(otl.length?table(['제목','기록','폰'],otl.slice(0,15).map(function(o){return [esc(o.t),o.n,o.r];}),1):'<p class="empty">제목을 쓴 다른 책 기록이 아직 없어요.</p>')+
+      (otl.length>15?'<p class="hint">전체 '+otl.length+'개 제목은 읽기 기록 내려받기에 있어요.</p>':'')+'</div>';
     h+='<div class="card"><div class="shd"><h3>📋 한 명씩 보기</h3><span class="r" style="display:flex;gap:6px;flex-wrap:wrap">'+
       '<select class="t sm" id="pk"><option value="">전체 '+nAll+'</option>'+PKINDS.map(function(k){return '<option value="'+k[0]+'"'+(S.pk===k[0]?' selected':'')+'>'+k[1]+' '+(kc[k[0]]||0)+'</option>';}).join('')+'</select>'+
       '<select class="t sm" id="ps"><option value="last">최근 기록순</option><option value="nd"'+(S.ps==='nd'?' selected':'')+'>기록한 날 많은순</option><option value="first"'+(S.ps==='first'?' selected':'')+'>먼저 시작한 순</option></select>'+
@@ -837,6 +869,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
           '<tr class="pd" data-pd="'+i+'" hidden><td colspan="8">'+detail(p)+'</td></tr>';}).join('')+'</tbody></table></div>';
       el.querySelectorAll('.pr').forEach(function(tr){tr.onclick=function(){var d=el.querySelector('[data-pd="'+tr.dataset.pi+'"]');d.hidden=!d.hidden;tr.classList.toggle('open',!d.hidden);};});
     }
+    document.getElementById('xlogs').onclick=exportLogs;
+    document.getElementById('xnotes').onclick=function(){exportNotes(document.getElementById('xst'));};
     document.getElementById('pk').onchange=function(){S.pk=this.value;draw();};
     document.getElementById('ps').onchange=function(){S.ps=this.value;draw();};
     draw();
