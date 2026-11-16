@@ -782,6 +782,19 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     st.textContent='✓ 메모 '+notes.length+'개 내려받았어요';
   }
 
+  // 앱·사이트 사용 이벤트(최근 90일) 내려받기(2026-11-16, 정기 분석용). 방문 ID는 기록 ID와 다른 값(joy_sid)이라 끝 4자리만.
+  async function exportEvents(st){
+    st.textContent='이벤트 불러오는 중…';
+    var since=addDays(new Date(),-90).toISOString(),ev;
+    try{ev=await pageAll(function(){return client.from('events').select('type,theme_key,session_id,path,meta,book_id,created_at').gte('created_at',since).order('created_at');});}
+    catch(e){st.textContent='이벤트를 읽지 못했어요: '+(e.message||e);return;}
+    var AP={record:'스터디 앱',study:'옛 스터디 자료',naite:'사이트'};
+    var rows=ev.map(function(e){var m=e.meta||{},d=new Date(e.created_at);
+      return [dstr(d),hm(e.created_at),e.type,AP[appOf(e)]||'',e.path||'',String(e.session_id||'').slice(-4).toUpperCase(),e.theme_key||'',m.title||m.label||'',m.from||m.src||'',m.pwa?'1':'',JSON.stringify(m)];});
+    csvDown('나이테_이벤트_'+dstr(new Date())+'.csv',['날짜','시각','종류','화면','경로','방문 ID 끝','주제','책·버튼','출처','홈 화면 앱','meta'],rows);
+    st.textContent='✓ 이벤트 '+ev.length+'개 내려받았어요(최근 90일)';
+  }
+
   // 사람별 기록(2026-11-16): 폰(기록 ID)마다 언제부터·얼마나·어떤 책을 기록하는지. 전체 기간.
   // 이름은 기록 백업 닉네임이 있을 때만 보이고, 없으면 기록 ID 끝 4자리. 메모·전체 기록은 CSV 내려받기(메모는 migrate_notes_admin_read.sql 필요).
   var PKINDS=[['steady','🔥 꾸준히','최근 2주 중 7일 이상 기록'],['some','🙂 가끔','최근 2주 중 1~6일 기록'],['new','✨ 새로 시작','기록한 날이 아직 하루(최근 2주 안)'],['rest','💤 쉬는 중','최근 2주 기록 없음']];
@@ -833,7 +846,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         ['두 달(주제) 이상 이어서 기록',multi]
       ],nAll)+
       '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모는 아래 내려받기로 볼 수 있어요.</p>'+
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><button class="btn" id="xevents">⬇️ 이벤트 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
     var ot={},otr={};list.forEach(function(p){Object.keys(p.others).forEach(function(t){if(t==='(제목 없이)')return;var k=t.toLowerCase();if(!ot[k])ot[k]={t:t,n:0,r:0};ot[k].n+=p.others[t];ot[k].r++;});});
     var otl=Object.keys(ot).map(function(k){return ot[k];}).sort(function(a,b){return b.r-a.r||b.n-a.n;});
     h+='<div class="card"><h3>📚 다른 책으로 쓴 제목 <span class="hint">많은 사람이 쓴 순 · 위 15개</span></h3>'+(otl.length?table(['제목','기록','폰'],otl.slice(0,15).map(function(o){return [esc(o.t),o.n,o.r];}),1):'<p class="empty">제목을 쓴 다른 책 기록이 아직 없어요.</p>')+
@@ -871,6 +884,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     }
     document.getElementById('xlogs').onclick=exportLogs;
     document.getElementById('xnotes').onclick=function(){exportNotes(document.getElementById('xst'));};
+    document.getElementById('xevents').onclick=function(){exportEvents(document.getElementById('xst'));};
     document.getElementById('pk').onchange=function(){S.pk=this.value;draw();};
     document.getElementById('ps').onchange=function(){S.ps=this.value;draw();};
     draw();
