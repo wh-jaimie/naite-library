@@ -159,7 +159,10 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .wuse .wu-tabs button{font:inherit;font-size:.8rem;font-weight:800;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--soft);cursor:pointer}
 .wuse .wu-tabs button[aria-selected=true]{background:var(--tealD);border-color:var(--tealD);color:#fff}
 .wuse .wu-pane{margin-top:8px;padding:10px 12px;border-radius:10px;background:#EEF3EA;font-size:.9rem;line-height:1.55}
-.wuse .wu-pane b{display:block;margin-bottom:3px}
+.wuse .wu-pane b{display:block;margin-bottom:1px}
+.wuse .wu-q{margin:10px 0 5px;font-size:.8rem;font-weight:800;color:var(--soft)}.wuse h3+.wu-q{margin-top:0}
+.wuse .wu-pane .r{display:flex;gap:8px}.wuse .wu-pane .r+.r{margin-top:8px;padding-top:8px;border-top:1px dashed #cfd8c8}
+.wuse .wu-pane .r i{font-style:normal;flex:none}.wuse .wu-pane .me{display:block;margin-top:6px;font-size:.8rem;color:var(--soft)}
 .wuse .wu-pane:empty{display:none}
 .wsec a,.wsec .wbtn{color:var(--tealD);font-weight:800}
 .wsec .wbtn{display:inline-block;margin-top:6px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;cursor:pointer;text-decoration:none}
@@ -912,6 +915,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .sd-start h4{margin:0;font-size:15.5px;font-weight:800}
 .sd-start .chg{border:0;font:inherit;font-size:12px;font-weight:800;color:#fff;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;cursor:pointer;white-space:nowrap}
 .sd-start .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.sd-start .two .mb:nth-child(3){grid-column:1/-1}
 .sd-start .mb{display:flex;gap:8px;align-items:center;text-align:left;border:0;font:inherit;color:#fff;background:rgba(255,255,255,.12);border-radius:11px;padding:7px;cursor:pointer;min-width:0;-webkit-tap-highlight-color:transparent}
 .sd-start .mb:active{background:rgba(255,255,255,.2)}
 .sd-start .mb img{width:40px;height:52px;object-fit:cover;flex:0 0 40px;border-radius:2px 5px 5px 2px;box-shadow:0 2px 6px rgba(0,0,0,.3);background:#fff}
@@ -1096,7 +1100,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261116r"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261116t"></script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1139,18 +1143,17 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
   function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 
-  /* 우리 아이 나이(한 번 고르면 이 폰에 저장) → 이번 달 책 중 시작할 2권. 수준 평가가 아니라 '어디서부터'만 — 2026-11-13 */
-  var AGE={1:['~24개월','두 돌 전'],2:['25~48개월','3~4살'],3:['49개월~','5살 이상']};
+  /* 우리 아이 나이(한 번 고르면 이 폰에 저장) → 이번 달 책 중 시작할 책. 수준 평가가 아니라 '어디서부터'만 — 2026-11-13
+     2026-11-16: 독서 로드맵(나이테 120 소개)과 같은 나이(0~3·4~6·7~9세)·같은 기준(글밥 대신 '유형')으로 통일. naite_age는 로드맵과 공유 */
+  var AGE={1:['~24개월','0~3세'],2:['25~48개월','4~6세'],3:['49개월~','7~9세']};
+  var AGE_TIERS={1:[1,3],2:[3,4],3:[4,5,2]}; // tier 1 조작북 · 2 라임 · 3 반복 · 4 유머 · 5 스토리
   function getAge(){try{var v=+localStorage.getItem('naite_age');return AGE[v]?v:0;}catch(e){return 0;}}
   function agePicks(books,g){
-    var L=function(n){return books.filter(function(b){return level(b)===n;});},o;
-    if(g===1)o=L(1).concat(books); // 두 돌 전: 글밥 적은 책(조작북·반복 먼저)
-    else if(g===2)o=L(1).filter(function(b){return b.tier!==1;}).concat(L(1),L(2),books); // 3~4살: 새싹 중 조작북 아닌 책
-    else o=books.slice().reverse(); // 5살 이상: 이야기가 긴 책
-    var out=[];o.forEach(function(b){if(out.length<2&&out.indexOf(b)<0)out.push(b);});
-    return books.filter(function(b){return out.indexOf(b)>=0;});
+    var want=AGE_TIERS[g]||[],out=books.filter(function(b){return want.indexOf(+b.tier)>=0;});
+    return out.length?out:books.slice(0,2);
   }
   function paintAge(books){
+    lastAgeBooks=books;
     var box=document.getElementById('sdAge');if(!box||books.length<3)return;
     var g=getAge();
     if(!g||box.dataset.pick==='1'){
@@ -1160,10 +1163,10 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
       return;
     }
     var pk=agePicks(books,g),rest=books.length-pk.length;
-    var HEAD={1:'두 돌 전이라면, 이 2권부터',2:'3~4살이라면, 이 2권부터',3:'5살 이상이라면, 이 2권까지 꼭'};
-    var REST={1:'나머지 '+rest+'권은 그림을 보며 짧게 이야기해 줘도 충분해요. 다 못 읽어도 괜찮아요.',2:'익숙해지면 다른 책으로 넓혀 가요. 다 못 읽어도 괜찮아요.',3:'글밥 적은 책부터 가볍게 시작해서, 이야기가 긴 이 2권까지 이어가 보세요.'};
+    var HEAD={1:'0~3세라면, 조작북·반복 책부터',2:'4~6세라면, 이 2권부터',3:'7~9세라면, 유머·스토리·라임 꼭'};
+    var REST={1:'어린 아이도 이해하기 쉬워요. 나머지 '+rest+'권은 그림을 보며 짧게 이야기해 줘도 충분해요.',2:'조작북·반복으로 편하게 시작해서 유머·스토리로 재미를 넓혀 가요. 다 못 읽어도 괜찮아요.',3:'큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요. 라임은 노래처럼 들려 색다른 재미를 줘요.'};
     box.innerHTML='<div class="sd-start"><div class="hd"><h4>'+HEAD[g]+' 💛</h4><button type="button" class="chg" data-agechg>'+AGE[g][0]+' ▾</button></div><div class="two">'+
-      pk.map(function(b){var lv=level(b);return '<button type="button" class="mb" data-agego="'+b.id+'">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="mt"><b>'+esc(b.title)+'</b><span>'+esc(b.tier_label||'')+(lv?' '+LV_EMO[lv]:'')+'</span><span class="mg">소개 보기 ›</span></span></button>';}).join('')+
+      pk.map(function(b){return '<button type="button" class="mb" data-agego="'+b.id+'">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="mt"><b>'+esc(b.title)+'</b><span>'+esc(b.tier_label||'')+'</span><span class="mg">소개 보기 ›</span></span></button>';}).join('')+
       '</div><p class="rest">'+REST[g]+'</p></div>';
     box.querySelector('[data-agechg]').onclick=function(){box.dataset.pick='1';paintAge(books);};
     box.querySelectorAll('[data-agego]').forEach(function(m){m.onclick=function(){
@@ -1481,13 +1484,26 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     return pushBoxHTML()+NEWS.map(function(n){return '<div class="nitem'+(n.id>s?' new':'')+'"><div class="nh2"><h3>'+(n.pinned?'📌 ':'')+(n.id>s?'🆕 ':'')+esc(n.title||'공지')+'</h3><span class="nd">'+esc(fmtDay(n.created_at))+'</span></div><div class="nb">'+linkify(n.body||'')+'</div></div>';}).join('');
   }
   // 🌱 집에 있는 영어책별 활용법(2026-11-14): 나이테 120의 '이렇게 활용해요'와 같은 문구·같은 기억(naite_use120)
-  var USE120=[['🌱 아직 없어요','알아보지 말고, 지금 스터디 중인 달부터 그대로 따라오세요.','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.','🌱 알아보지 말고, 이 5권만 구해서 따라오세요'],
-    ['📦 전집 한 질','전집은 하던 대로, 원서 그림책은 나이테 120으로.','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 나이테 120을 한 달에 5권씩 더해 주세요.','📦 전집은 그대로, 이 5권을 더해 주세요'],
-    ['📚 이미 많아요','읽던 책은 그대로, 이번 달 5권은 전면책장에.','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.','📚 이 5권은 전면책장에 올려 두고 한 번씩 읽어 주세요']];
+  var USE120=[['🌱 아직 없어요','알아보지 말고, 지금 스터디 중인 달부터 그대로','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.','🌱 알아보지 말고, 이 5권만 구해서 따라오세요'],
+    ['📦 전집 한 질','전집은 하던 대로, 원서 그림책은 나이테 120으로','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 한 달에 5권씩 더해 주세요.','📦 전집은 그대로, 이 5권을 더해 주세요'],
+    ['📚 이미 많아요','읽던 책은 그대로, 이번 달 5권은 전면책장에','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.','📚 이 5권은 전면책장에 올려 두고 한 번씩 읽어 주세요']];
   function useGet(){try{var v=localStorage.getItem('naite_use120');return /^[012]$/.test(v||'')?+v:-1;}catch(e){return -1;}}
   function useLineHTML(){var u=useGet();
     return '<a class="sd-use" href="../guide/12-naite-120.html?from=app" target="_blank" rel="noopener" data-ev="이번 달 5권 활용법">'+(u<0?'📚 집에 영어책이 없어도, 많아도 — 이 5권 활용법':esc(USE120[u][3]))+'<b>활용법 ›</b></a>';}
-  function usePaneHTML(u){return u<0?'':'<b>'+esc(USE120[u][1])+'</b>'+esc(USE120[u][2]);}
+  // 2026-11-16: '처음 오셨나요?'도 독서 로드맵 소개 ③과 같은 질문 두 개(아이 나이 + 집에 영어책)·같은 문구로. 나이는 이번 달 책과 같은 naite_age(1~3)
+  var AGE_TIP={1:['👶','조작북·반복 책부터','어린 아이도 이해하기 쉬워요. 라임 책은 노래처럼 들려주세요.'],2:['🧒','5권 골고루','조작북·반복으로 편하게 시작하고, 유머·스토리로 재미를 넓혀 가요.'],3:['🧑','유머·스토리, 라임까지','큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요. 라임은 노래처럼 들려 색다른 재미를 줘요.']};
+  var USE_ME='<span class="me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span>';
+  function usePaneHTML(u){var g=getAge(),h='';
+    if(g)h+='<div class="r"><i>'+AGE_TIP[g][0]+'</i><div><b>'+AGE_TIP[g][1]+'</b>'+AGE_TIP[g][2]+'</div></div>';
+    if(u>=0)h+='<div class="r"><i>'+USE120[u][0].split(' ')[0]+'</i><div><b>'+esc(USE120[u][1])+'</b>'+esc(USE120[u][2])+(u===2?USE_ME:'')+'</div></div>';
+    return h;}
+  var lastAgeBooks=null;
+  document.addEventListener('click',function(e){var t=e.target.closest('[data-wa]');if(!t)return;var k=+t.getAttribute('data-wa');
+    try{localStorage.setItem('naite_age',String(k));}catch(x){}
+    document.querySelectorAll('[data-wa]').forEach(function(b){b.setAttribute('aria-selected',String(+b.getAttribute('data-wa')===k));});
+    var p=document.getElementById('wuPane');if(p)p.innerHTML=usePaneHTML(useGet());
+    var box=document.getElementById('sdAge');if(box&&lastAgeBooks){box.dataset.pick='';paintAge(lastAgeBooks);}
+    if(typeof logEvent==='function')try{logEvent('age_pick',{age:AGE[k][0],from:'welcome'});}catch(x){}});
   document.addEventListener('click',function(e){if(e.target.closest('.sd-use')&&typeof logEvent==='function')try{logEvent('guide_click',{guide:12,from:'month_shelf'});}catch(x){}});
   document.addEventListener('click',function(e){var t=e.target.closest('[data-wu]');if(!t)return;var u=+t.getAttribute('data-wu');
     try{localStorage.setItem('naite_use120',String(u));}catch(x){}
@@ -1498,7 +1514,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   function welcomeHTML(){
     var inst=window.NaiteReading.isStandalone();
     return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
-      (function(){var u=useGet();return '<div class="wsec wuse"><h3>📚 집에 영어책이 얼마나 있나요?</h3><div class="wu-tabs" role="tablist">'+
+      (function(){var u=useGet(),g=getAge();return '<div class="wsec wuse"><h3>🏠 우리 집은 어떻게 하면 돼요?</h3>'+
+        '<p class="wu-q">아이 나이</p><div class="wu-tabs" role="tablist">'+
+        [1,2,3].map(function(k){return '<button type="button" role="tab" data-wa="'+k+'" aria-selected="'+(k===g)+'">'+AGE[k][1]+'</button>';}).join('')+
+        '</div><p class="wu-q">집에 영어책이</p><div class="wu-tabs" role="tablist">'+
         USE120.map(function(x,i){return '<button type="button" role="tab" data-wu="'+i+'" aria-selected="'+(i===u)+'">'+x[0]+'</button>';}).join('')+
         '</div><div class="wu-pane" id="wuPane">'+usePaneHTML(u)+'</div><a class="wsub" href="#c120" data-pnclose data-rtab="c120" style="display:inline-block;margin-top:8px">독서 로드맵(나이테 120)에서 보기 →</a></div>';})()+
       '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
