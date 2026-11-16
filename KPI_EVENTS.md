@@ -39,6 +39,7 @@
 | s-play | 놀이 활동 |
 | s-exp | 영어표현 |
 | s-next | 다음 달 |
+| s-extra | (옛) 부가자료 탭 — 11/12 없앰, '이번 달 5권' 탭 안으로 옮김 |
 
 ## 3. 스터디 앱 이벤트
 
@@ -66,6 +67,10 @@
 | stamp_camera_open / stamp_photo_save / stamp_photo_share / stamp_photo_open / stamp_album / camera_fail / photo_reload | 인증샷 | |
 | share_card_open / _save / _share / _photo | 오늘 카드 이미지 | day |
 | month_card_open / _save / _share | 달력 이미지 | month |
+| day_card_open / _save / _share | 하루 사진 모음 카드(사진 여러 장) | day |
+| day_photo_open / _save / _share | 하루 인증 사진 한 장 내보내기 | day |
+| chal_card_open / _save / _share | 1주 미니 챌린지 완주샷 | id |
+| tip_open | (옛) '이 책 읽어주기 팁' 펼치기 — 팁이 항상 보이게 바뀌어 지금은 안 남음 | title |
 | book_note / note_book_open | 한 줄 메모 쓰기(내용은 안 남김) / 책 메모 모아보기 | other, del, len |
 | c120_study_open | 로드맵에서 스터디 자료 열기 | |
 | chal_wb_open / chal_wb_save / chal_name / challenge_apply_click / challenge_apply_done | 1주 미니 챌린지 | id |
