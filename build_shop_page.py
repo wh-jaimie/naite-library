@@ -280,7 +280,7 @@ function card(it){
   return '<article class="card"><a class="cv cvl" href="'+esc(href)+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(it.en)+'" data-k="'+(L?'cp':'find')+'" aria-label="'+esc(it.ko)+' 쿠팡에서 보기">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
     '<span class="rk">#'+it.rank+'</span>'+(it.series?'<span class="ser">시리즈</span>':'')+'</a>'+
     '<div class="bb"><div class="bt">'+esc(it.ko)+'<button type="button" class="copy" data-copy="'+esc(it.en)+'" aria-label="제목 복사" title="제목 복사">'+CPI+'</button></div>'+(it.authors.length?'<div class="note" style="color:#23291F">'+esc(it.authors.join(' · '))+'</div>':'')+(it.age?'<div class="age">권장 '+it.age[0]+'~'+it.age[1]+'세</div>':'')+(it.note?'<div class="note">'+esc(it.note)+'</div>':'')+
-    (bd?'<div class="bd">'+bd+'</div>':'')+price+
+    (bd?'<div class="bd">'+bd+'</div>':'')+'<button type="button" data-like="'+esc(it.in120?it.in120.title:it.en)+'" hidden></button>'+price+
     '</div></article>';}
 function paint(){
   ['age','kind','price','author'].forEach(function(g){document.querySelectorAll('[data-g="'+g+'"] .chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S[g]);});});
@@ -334,6 +334,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button.cop
   ev('title_copy',{title:t,page:'국내 인기 책장',src:window.NAITE_SRC||'direct'});});
 </script>
 <script src="track.js" data-page="국내 인기 책장"></script>
+<script src="likes.js?v=20261117a" data-page="국내 인기 책장"></script>
 </body></html>"""
 
 open(os.path.join(DOCS, "domestic.html"), "w", encoding="utf-8").write(PAGE.replace("__DATA__", json.dumps({"checked": PRICE_DAY, "items": items}, ensure_ascii=False)))
