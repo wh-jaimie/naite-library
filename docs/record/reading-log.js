@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261117lx',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261117m',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1616,7 +1616,8 @@
     TAB_IDS.forEach(function(t){var v=$('v-'+t);if(v)v.hidden=t!==id;});
     if(EMBED[id]){var v=$('v-'+id),tb=$('rtabs');
       if(v){v.style.bottom=(tb?tb.offsetHeight:64)+'px';
-        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.allow='web-share; clipboard-write';f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}}}
+        if(!v.firstChild){var f=document.createElement('iframe');f.src=EMBED[id];f.title=T_NAME[id];f.allow='web-share; clipboard-write';f.loading='eager';if(id==='c120')f.addEventListener('load',function(){studyLinks(f);});v.appendChild(f);}
+        else if(id==='c120'&&!init){try{var cw=v.firstChild.contentWindow;if(cw&&cw.pvShow)cw.pvShow('about',true);}catch(e){}}}} // 독서 로드맵 메뉴를 누를 때마다 소개부터(2026-11-17)
     try{history.replaceState(history.state,'',location.pathname+location.search+(id==='study'?'':'#'+id));}catch(e){} // state 유지(뒤로가기 표시)
     try{localStorage.setItem(TAB_KEY,id);}catch(e){}
     paint();hideToast();

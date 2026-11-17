@@ -290,12 +290,12 @@ footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
     <div class="eyebrow">파닉스 전, 첫 영어 그림책 로드맵</div>
     <h1>나이테 120</h1>
 
-    <div class="pvtabs" role="tablist"><button type="button" role="tab" data-pv="list" data-ev="로드맵 탭: 120권 목록" aria-selected="true">📚 120권 목록</button><button type="button" role="tab" data-pv="about" data-ev="로드맵 탭: 나이테 120 소개" aria-selected="false">💡 나이테 120 소개</button></div>
+    <div class="pvtabs" role="tablist"><button type="button" role="tab" data-pv="list" data-ev="로드맵 탭: 120권 목록" aria-selected="false">📚 120권 목록</button><button type="button" role="tab" data-pv="about" data-ev="로드맵 탭: 나이테 120 소개" aria-selected="true">💡 나이테 120 소개</button></div>
   </section>
-  <div id="pvAbout" hidden>
+  <div id="pvAbout">
 __ABOUT__
   </div>
-  <div id="pvList">
+  <div id="pvList" hidden>
     <a class="nowbtn" id="uNow" href="#" hidden></a>
     <div class="panel">
       <div class="r1">
@@ -582,15 +582,14 @@ function paint(){var a=document.getElementById('rAge'),o=document.getElementById
   document.querySelectorAll('#pvAbout .seg').forEach(function(gr){gr.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.v===S[gr.dataset.g]));});});}
 document.querySelectorAll('#pvAbout .seg button').forEach(function(b){b.addEventListener('click',function(){var k=b.parentNode.dataset.g;S[k]=+b.dataset.v;if(k==='age')sv('naite_age',S[k]+1);else sv('naite_use120',S[k]);paint();});});
 paint();
-// 탭: ?tab=about|list. 없으면 처음 온 기기는 소개부터(한 번만), 그다음부터 목록
+// 탭: ?tab=about|list. 없으면 항상 소개부터(2026-11-17 운영자 요청). 스터디 앱은 독서 로드맵 메뉴를 누를 때마다 window.pvShow('about',true)
 var tabs=document.querySelectorAll('.pvtabs button');
 function show(v,top){tabs.forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.pv===v));});
   document.getElementById('pvAbout').hidden=v!=='about';document.getElementById('pvList').hidden=v!=='list';
   if(top)window.scrollTo(0,0);}
 tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.pv,false);});});
-var q=(location.search.match(/[?&]tab=(about|list)/)||[])[1],seen='1';
-try{seen=localStorage.getItem('naite_c120_about_seen');localStorage.setItem('naite_c120_about_seen','1');}catch(e){}
-show(q||(seen?'list':'about'),false);
+var q=(location.search.match(/[?&]tab=(about|list)/)||[])[1];
+show(q||'about',false);window.pvShow=show;
 // 소개 2번의 표지 = 지금 스터디 중인 달 5권(못 불러오면 1개월차)
 var CUR=null;
 function fillEx(k){if(typeof themes==='undefined')return;var t=themes.filter(function(x){return x.key===k;})[0]||themes[0];
