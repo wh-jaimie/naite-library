@@ -77,6 +77,7 @@
 | chal_card_open / _save / _share | 1주 미니 챌린지 완주샷 | id |
 | tip_open | (옛) '이 책 읽어주기 팁' 펼치기 — 팁이 항상 보이게 바뀌어 지금은 안 남음 | title |
 | review_save (from:'memo') | 기록 창 '💬 이 메모를 후기로도 올리기'로 올린 후기(11/17부터) — 그 밖의 review_* 는 후기 기능 세션 기준 | book_id, title, body, edit, from |
+| pick_form_open / pick_post_save / pick_post_delete / pick_vote | 나이테 Pick 엄마들 추천(11/17~): 쓰기 창 열기 / 올림 / 내 추천 지움 / 걸어온 길 활동에 👍 추천. 대박책 투표는 재밌어요(likes.js)와 같은 표 | kind(book·act), age_m |
 | memo_pop_open | 기록 창에서 '📝 메모·후기 남기기' 눌러 따로 뜨는 창 열기(11/17부터) | book(스터디 책 1), has(이미 메모 있음 1) |
 | book_note / note_book_open | 한 줄 메모 쓰기(이벤트엔 내용 안 남김, del=지우기) / 책 메모 모아보기 — KPI '📝 메모 남긴 사람'(지우기 제외)·날짜별 흐름 | other, del, len |
 | c120_study_open | 로드맵에서 스터디 자료 열기 | |

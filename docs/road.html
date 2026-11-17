@@ -84,6 +84,23 @@ a.cv:active>img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26
 .bk:has(a.cv):active{transform:translateY(2px)}
 .bk:has(a.cv)::after{content:"책 보기 ›";margin-top:auto;font-size:.76rem;font-weight:800;color:var(--pine)}
 .foot{text-align:center;font-size:.8rem;color:var(--soft);padding:22px 0 40px}
+/* 엄마들 추천(2026-11-17, pick-posts.js) */
+.pp-bar{margin:10px 0 4px}.pp-add{display:block;width:100%;border:1.5px solid #E2A877;background:#FCEBDD;color:#8A4A1F;font:inherit;font-weight:800;font-size:.95rem;padding:11px 12px;border-radius:12px;cursor:pointer}
+.pp-note{margin:6px 2px 4px;font-size:.82rem;color:var(--soft)}
+.bk .pp-by{font-size:.72rem;font-weight:800;color:#8A4A1F;background:#FBEFE3;border-radius:6px;padding:1px 6px}.bk .pp-why{font-size:.74rem;color:var(--soft);line-height:1.35}
+.pp-del{border:0;background:none;color:var(--soft);font:inherit;font-size:.72rem;text-decoration:underline;cursor:pointer;padding:0 4px}
+.pp-acts{margin:8px 0 6px;background:#FFF8F0;border:1px solid #F0DCC6;border-radius:14px;padding:10px 12px}
+.pp-acts .pp-h{margin:0 0 6px;font-size:.9rem;font-weight:800;color:#8A4A1F}.pp-acts .pp-h span{font-weight:700;color:var(--soft)}
+.pp-act{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #EBD7C0}.pp-act:first-of-type{border-top:0}
+.pp-act .tx{flex:1;min-width:0;font-size:.9rem;line-height:1.45}.pp-act .when{font-weight:800;color:var(--clay-ink)}.pp-with{display:block;font-size:.8rem;color:var(--soft)}
+.pp-vote{flex:none;border:1.5px solid #E2A877;background:#fff;color:#8A4A1F;font:inherit;font-size:.8rem;font-weight:800;border-radius:99px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.pp-vote.on{background:#B87343;border-color:#B87343;color:#fff}
+.pp-ov{position:fixed;inset:0;z-index:50;background:rgba(20,26,18,.45);display:flex;align-items:flex-start;justify-content:center;padding:16px 12px;overflow:auto}
+.pp-box{width:100%;max-width:460px;background:var(--surface);border-radius:18px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)}.pp-box h3{margin:0 0 10px;font-size:1.05rem}
+.pp-box label{display:block;font-size:.88rem;font-weight:800;margin:10px 0 0}.pp-box label span{font-weight:500;color:var(--soft)}
+.pp-box input{display:block;width:100%;margin-top:5px;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font:inherit;font-size:16px;background:#fff}
+.pp-warn{margin:10px 0 0;font-size:.78rem;color:var(--soft)}.pp-err{margin:4px 0 0;min-height:1em;font-size:.82rem;color:#a2231d}
+.pp-btns{display:flex;gap:8px;margin-top:8px}.pp-btns button{flex:1;border:0;border-radius:11px;padding:11px;font:inherit;font-weight:800;cursor:pointer}.pp-cancel{background:#ECEEE6;color:var(--ink)}.pp-ok{background:var(--pine);color:#fff}
 </style>
 </head>
 <body>
@@ -137,5 +154,6 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
 </script>
 <script src="track.js" defer></script>
 <script src="likes.js?v=20261117d" data-page="나이테 Pick"></script>
+<script src="pick-posts.js?v=20261117b"></script>
 </body>
 </html>
