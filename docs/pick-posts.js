@@ -15,15 +15,17 @@
     fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},keepalive:true,
       body:JSON.stringify({type:type,session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:Object.assign({page:'나이테 Pick',src:src},meta||{})})}).catch(function(){});}catch(x){}}
   function akey(p){return 'pickact'+p.id;}
+  function rkey(n){return ('roadit'+lkey(n)).slice(0,80);} // 나이테 걸어온 길 항목 👍 추천(2026-11-17)
   function ageTxt(m){return m==null?'':m+'개월';}
 
   function load(){
-    return rpc('list_pick_posts',{p_reader:reader(false)||null}).then(function(list){P.ok=true;P.posts=list||[];
+    return rpc('list_pick_posts',{p_reader:reader(false)||null}).then(function(l){return l;},function(){return null;}).then(function(list){P.ok=!!list;P.posts=list||[];P.vok=true; // 엄마 추천 표가 없어도 걸어온 길 👍는 보이게
       var keys=(window.BEST||[]).map(function(b){return lkey(b[0]);});
       P.posts.forEach(function(p){keys.push(p.kind==='book'?lkey(p.title):akey(p));});
+      (window.ROAD||[]).forEach(function(y){(y[1]||[]).forEach(function(i){keys.push(rkey(i.n));});});
       keys=keys.filter(function(k,i){return k&&keys.indexOf(k)===i;}).slice(0,600);
       return rpc('list_likes',{p_keys:keys,p_reader:reader(false)||null}).then(function(rows){P.cnt={};P.mine={};(rows||[]).forEach(function(r){P.cnt[r.book_key]=r.n;if(r.mine)P.mine[r.book_key]=1;});},function(){});
-    }).then(paint,function(){P.ok=false;paint();});
+    }).then(paint,function(){P.ok=false;P.vok=false;paint();});
   }
 
   // ── 대박책: 나이테 대박책 + 엄마들 추천, 재밌어요 많은 순
@@ -54,7 +56,11 @@
     var bar=document.getElementById('ppActBar');
     if(!bar||bar.parentNode!==list){bar=document.createElement('div');bar.id='ppActBar';bar.className='pp-bar';list.insertBefore(bar,list.firstChild);} // #list 안 맨 위(걸어온 길 탭에서만 보이게)
     bar.innerHTML=P.ok?'<button type="button" class="pp-add" data-ppadd="act">➕ 우리 아이 이맘때 했던 활동 추천하기</button>':'';
-    [].forEach.call(list.querySelectorAll('.pp-acts'),function(x){x.remove();});
+    [].forEach.call(list.querySelectorAll('.pp-acts,.pp-rv'),function(x){x.remove();});
+    if(!P.vok)return;
+    [].forEach.call(list.querySelectorAll('article.it'),function(a){var b=a.querySelector('.h b');if(!b)return;var n=b.textContent,k=rkey(n),c=P.cnt[k]||0,on=!!P.mine[k];
+      var bt=document.createElement('button');bt.type='button';bt.className='pp-vote pp-rv'+(on?' on':'');bt.setAttribute('data-pprv',k);bt.setAttribute('data-ppt',n);bt.setAttribute('aria-pressed',String(on));
+      bt.innerHTML='👍 추천'+(c?' <b>'+c+'</b>':'');var tx=a.querySelector('.tx');(tx||a).appendChild(bt);});
     if(!P.ok)return;
     var acts=P.posts.filter(function(p){return p.kind==='act';}),by={};
     acts.forEach(function(p){var g=Math.max(1,Math.ceil((p.age_m||1)/12));(by[g]=by[g]||[]).push(p);});
@@ -108,7 +114,10 @@
   }
   function vote(k,title,on){return rpc('set_like',{p_reader:reader(true),p_key:k,p_title:String(title||'').slice(0,120),p_page:'나이테 Pick',p_on:on});}
 
-  document.addEventListener('click',function(x){var t=x.target.closest&&x.target.closest('[data-ppadd],[data-ppvote],[data-ppdel]');if(!t)return;x.preventDefault();x.stopPropagation();
+  document.addEventListener('click',function(x){var t=x.target.closest&&x.target.closest('[data-ppadd],[data-ppvote],[data-ppdel],[data-pprv]');if(!t)return;x.preventDefault();x.stopPropagation();
+    if(t.hasAttribute('data-pprv')){var rk=t.getAttribute('data-pprv'),ron=!P.mine[rk];P.mine[rk]=ron?1:0;P.cnt[rk]=Math.max(0,(P.cnt[rk]||0)+(ron?1:-1));
+      t.classList.toggle('on',ron);t.setAttribute('aria-pressed',String(ron));t.innerHTML='👍 추천'+(P.cnt[rk]?' <b>'+P.cnt[rk]+'</b>':'');
+      vote(rk,t.getAttribute('data-ppt'),ron).then(function(r){if(r&&r.ok&&typeof r.n==='number')P.cnt[rk]=r.n;},function(){});if(ron)ev('pick_vote',{kind:'road',title:t.getAttribute('data-ppt')});return;}
     if(t.hasAttribute('data-ppadd')){openForm(t.getAttribute('data-ppadd'));return;}
     if(t.hasAttribute('data-ppdel')){if(!confirm('이 추천을 지울까요?'))return;rpc('delete_pick_post',{p_reader:reader(false),p_id:+t.getAttribute('data-ppdel')}).then(function(){ev('pick_post_delete',{});load();});return;}
     var id=+t.getAttribute('data-ppvote'),p=P.posts.filter(function(y){return y.id===id;})[0];if(!p)return;
