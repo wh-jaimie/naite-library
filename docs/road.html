@@ -64,6 +64,7 @@ h2 small{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;
 .picks li .cv{flex:0 0 46px;width:46px}
 .picks li .cv img{width:100%}
 .bk .cv{width:100%}
+.bk .nl-like{align-self:center}.picks li .nl-like{margin-top:4px}.picks li .nl-like b{display:inline;font-size:inherit}
 .disc{margin:18px 0 0;font-size:.76rem;color:var(--soft);text-align:center}
 .it:has(.row>a.cv),.picks li:has(a.cv),.bk:has(a.cv){cursor:pointer}
 .rtab2{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px -16px 0;padding:8px 16px;background:var(--bg)}
@@ -117,9 +118,9 @@ AG=AG.map(function(l,g){return l?[g,l]:null;}).filter(Boolean);
 document.getElementById('list').innerHTML=AG.map(function(y,yi){var g=y[0];
  return '<details class="ag"'+(yi===0?' open':'')+'><summary><span class="an">'+g+'살</span><span class="ar">'+((g-1)*12+1)+'~'+(g*12)+'개월 · '+y[1].length+'개</span></summary>'+y[1].map(function(i){
  return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span></div><p><span class="when">'+e(age(i.w))+'</span><br>'+e(i.d)+'</p>'+
-  (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b><span>'+e(x[2])+'</span></div></li>';}).join('')+'</ul></details>':'')+
+  (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b><span>'+e(x[2])+'</span><button type="button" data-like="'+e(x[0])+'" hidden></button></div></li>';}).join('')+'</ul></details>':'')+
   (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('')+'</details>';}).join('');
-document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span></div>';}).join('');
+document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span><button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
 document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
 paintRoad();
 document.getElementById("rtab2").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;["list","bestSec"].forEach(function(id){document.getElementById(id).hidden=id!==b.dataset.t;});[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b);});window.scrollTo(0,0);});
@@ -135,5 +136,6 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
 })();
 </script>
 <script src="track.js" defer></script>
+<script src="likes.js?v=20261117a" data-page="나이테 Pick"></script>
 </body>
 </html>

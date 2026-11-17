@@ -842,7 +842,16 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         '<tr style="text-align:left;border-bottom:1px solid #ddd"><th>날짜</th><th>책</th><th>나이</th><th>반응 · 한 줄</th><th></th></tr>'+
         L.map(function(x){var d=new Date(x.updated_at);return '<tr style="border-bottom:1px solid #eee;'+(x.hidden?'opacity:.5':'')+'"><td style="white-space:nowrap;padding:6px 4px">'+(d.getMonth()+1)+'.'+d.getDate()+'</td><td style="padding:6px 4px">'+esc(x.title)+'</td><td style="white-space:nowrap;padding:6px 4px">'+(AG[x.age]||'-')+'</td>'+
           '<td style="padding:6px 4px">'+(x.reactions||[]).map(function(k){return RXN[k]||k;}).join(' · ')+(x.body?'<br>“'+esc(x.body)+'”':'')+'</td>'+
-          '<td style="padding:6px 4px"><button class="btn" data-rvh="'+x.id+'" data-h="'+(x.hidden?'0':'1')+'">'+(x.hidden?'다시 보이기':'숨기기')+'</button></td></tr>';}).join('')+'</table></div>':'<p class="hint">아직 후기가 없어요.</p>')+'</div>';
+          '<td style="padding:6px 4px"><button class="btn" data-rvh="'+x.id+'" data-h="'+(x.hidden?'0':'1')+'">'+(x.hidden?'다시 보이기':'숨기기')+'</button></td></tr>';}).join('')+'</table></div>':'<p class="hint">아직 후기가 없어요.</p>')+'</div>'+
+      '<div class="card" id="likeRank"><h3>😆 재밌어요 많은 책</h3><p class="status">불러오는 중…</p></div>';
+    // 😆 재밌어요 투표 순위(나이테 120 · 국내 인기 책장 · 나이테 Pick, migrate_likes.sql)
+    client.rpc('admin_like_ranking').then(function(q){var el=document.getElementById('likeRank');if(!el)return;
+      if(q.error){el.innerHTML='<h3>😆 재밌어요 많은 책</h3><div class="warn">투표용 DB가 아직 없어요. <b>supabase/migrate_likes.sql</b>을 실행해 주세요.<br><small>'+esc(q.error.message)+'</small></div>';return;}
+      var R=q.data||[],tot=R.reduce(function(a,x){return a+x.n;},0);
+      el.innerHTML='<h3>😆 재밌어요 많은 책 <small style="color:#888">· '+R.length+'권 · '+tot+'표</small></h3><p class="hint">나이테 120 · 국내 인기 책장 · 나이테 Pick 대박책에서 엄마들이 ‘재밌어요’를 누른 책이에요. 같은 책은 페이지가 달라도 한 줄로 모여요. 화면에는 3명 이상부터 숫자가 보여요.</p>'+
+        (R.length?'<div style="overflow-x:auto"><table class="tbl" style="width:100%;border-collapse:collapse;font-size:.88rem"><tr style="text-align:left;border-bottom:1px solid #ddd"><th>#</th><th>책</th><th>표</th><th>누른 곳</th></tr>'+
+          R.map(function(x,i){return '<tr style="border-bottom:1px solid #eee"><td style="padding:6px 4px">'+(i+1)+'</td><td style="padding:6px 4px">'+esc(x.title)+'</td><td style="padding:6px 4px;font-weight:800">'+x.n+'</td><td style="padding:6px 4px;color:#777">'+esc(x.pages||'')+'</td></tr>';}).join('')+'</table></div>':'<p class="hint">아직 투표가 없어요.</p>');
+    });
     body.querySelectorAll('[data-rvh]').forEach(function(b){b.addEventListener('click',async function(){b.disabled=true;
       var q=await client.rpc('admin_hide_review',{p_id:+b.dataset.rvh,p_hidden:b.dataset.h==='1'});if(q.error){alert('바꾸지 못했어요: '+q.error.message);b.disabled=false;return;}renderReviews();});});
   }
