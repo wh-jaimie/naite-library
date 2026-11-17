@@ -76,6 +76,7 @@
 | day_photo_open / _save / _share | 하루 인증 사진 한 장 내보내기 | day |
 | chal_card_open / _save / _share | 1주 미니 챌린지 완주샷 | id |
 | tip_open | (옛) '이 책 읽어주기 팁' 펼치기 — 팁이 항상 보이게 바뀌어 지금은 안 남음 | title |
+| memo_pop_open | 기록 창에서 '📝 메모·후기 남기기' 눌러 따로 뜨는 창 열기(11/17부터) | book(스터디 책 1), has(이미 메모 있음 1) |
 | book_note / note_book_open | 한 줄 메모 쓰기(이벤트엔 내용 안 남김, del=지우기) / 책 메모 모아보기 — KPI '📝 메모 남긴 사람'(지우기 제외)·날짜별 흐름 | other, del, len |
 | c120_study_open | 로드맵에서 스터디 자료 열기 | |
 | chal_wb_open / chal_wb_save / chal_name / challenge_apply_click / challenge_apply_done | 1주 미니 챌린지 | id |

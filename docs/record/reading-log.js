@@ -1134,15 +1134,13 @@
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
-        (memo?'<div class="rs-memo"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
-          '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
-          '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요 · 날짜를 누르면 다시 볼 수 있어요':'')+'</p></div>':'')+
-        (memo&&memo.key.indexOf('b:')===0&&S.rvSlot?'<div class="rs-rvq" data-rvq="'+esc(memo.key.slice(2))+'"></div>':'')+
+        // 2026-11-17 운영자 요청: 메모·후기는 기록 창 아래가 아니라 따로 뜨는 창에서(아래에 붙으면 가려지고 키보드에 덮임)
+        (memo?'<button type="button" class="rs-mopen" data-smopen>📝 <b>'+esc(shortTitle(memo.title))+'</b> '+
+          (noteGet(memo.key,day)?'메모 남김 ✓ · 고치기':(memo.key.indexOf('b:')===0&&S.rvSlot?'메모·후기 남기기':'메모 남기기'))+' <span aria-hidden="true">›</span></button>':'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
         ((S.photoList[day]||[]).length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'');
-      var rq=box.querySelector('[data-rvq]');if(rq)try{S.rvSlot(rq,+rq.getAttribute('data-rvq'),day);}catch(e){}
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};
@@ -1159,6 +1157,7 @@
       if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
       if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
       if((t=e.target.closest('[data-smemo]'))){var mi2=box.querySelector('#rsMemo');clearTimeout(memoT);noteSet(memo.key,day,mi2.value);try{mi2.blur();}catch(x){}paint();var b3=box.querySelector('[data-smemo]');if(b3&&mi2.value.trim()){b3.classList.add('pop');try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}return;}
+      if((t=e.target.closest('[data-smopen]'))){if(memo)openMemoPop(memo,day,function(){render();});return;}
       if((t=e.target.closest('[data-sdone]'))){saveMemo();closeSheet();return;}
     };
     function saveMemo(){var mi3=box.querySelector('#rsMemo');if(mi3&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi3.value);}}
@@ -1168,6 +1167,29 @@
     box.addEventListener('keydown',function(e){if(e.target.id==='rsMemo'&&e.key==='Enter'){e.preventDefault();var b2=box.querySelector('[data-smemo]');if(b2)b2.click();}});
     render();
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
+  }
+  // 메모·후기 창(2026-11-17): 기록 창 위에 화면 위쪽에 따로 띄움 — 키보드가 올라와도 입력칸이 안 가려지게
+  function openMemoPop(memo,day,done){
+    var old=document.querySelector('.rs-pop');if(old)old.remove();
+    var nb=noteBook(memo.key),isBook=memo.key.indexOf('b:')===0,t=0;
+    var ov=document.createElement('div');ov.className='rs-pop';
+    ov.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-label="메모·후기"><div class="hd">'+noteCv(nb)+'<div><h3>'+esc(shortTitle(nb.title))+'</h3><span class="sub">'+esc(dayFull(day))+'</span></div><button type="button" class="x" data-mpx aria-label="닫기">✕</button></div>'+
+      '<label for="mpIn">📝 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
+      '<div class="row"><input id="mpIn" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'"><button type="button" data-mps>저장</button></div>'+
+      '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요':'')+'</p>'+
+      (isBook&&S.rvSlot?'<div class="rs-rvq" data-rvq="'+esc(memo.key.slice(2))+'"></div>':'')+
+      '<button type="button" class="rk-btn fill done" data-mpx>완료</button></div>';
+    document.body.appendChild(ov);
+    var inp=ov.querySelector('#mpIn'),ok=ov.querySelector('.ok');
+    var rq=ov.querySelector('[data-rvq]');if(rq)try{S.rvSlot(rq,+rq.getAttribute('data-rvq'),day);}catch(e){}
+    function save(){clearTimeout(t);noteSet(memo.key,day,inp.value);}
+    function close(){save();ov.remove();paint();if(done)done();}
+    inp.addEventListener('input',function(){ok.textContent='';clearTimeout(t);var v=inp.value;t=setTimeout(function(){noteSet(memo.key,day,v);if(document.body.contains(ok)&&v.trim())ok.textContent='자동으로 저장됐어요';},700);});
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();save();try{inp.blur();}catch(x){}if(inp.value.trim())ok.textContent='✓ 메모를 남겼어요';}});
+    ov.querySelector('[data-mps]').onclick=function(){save();try{inp.blur();}catch(x){}if(inp.value.trim()){ok.textContent='✓ 메모를 남겼어요';try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}};
+    ov.querySelectorAll('[data-mpx]').forEach(function(b){b.onclick=close;});
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    if(S.onEvent)S.onEvent('memo_pop_open',{book:isBook?1:0,has:noteGet(memo.key,day)?1:0});
   }
   // 기록창에서 쓰는 조용한 기록(토스트 없이). 같은 책 1.5초 안 연타는 1회
   function addRead(bid,day){
