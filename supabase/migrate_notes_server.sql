@@ -1,6 +1,6 @@
 -- 책 한 줄 메모: 모든 사용자 서버 보관 (2026-11-17 운영자 결정)
 -- 앱이 메모 내용을 서버에 올리고, 같은 기록 ID를 쓰는 다른 폰(이어보기·아빠와 같이 쓰기)이 받아 감.
--- 관리자 화면에서는 메모 내용을 직접 읽지 않고 '남겼다는 표시'만 admin_note_flags()로 봄.
+-- 운영자(관리자)도 메모 내용을 봄(2026-11-17 운영자 결정) — KPI › 👤 사람별 › '메모 내려받기(CSV)'.
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전. (migrate_notes_local_only.sql 은 실행하지 않아도 됨 — 이 파일이 대신함)
 
 -- 1) 저장: 받은 내용 그대로(빈 메모면 지움). 하루 상한 30개(오작동·장난 방지)
@@ -38,14 +38,6 @@ language sql stable security definer set search_path = public as $$
 $$;
 grant execute on function public.my_notes(text) to anon, authenticated;
 
--- 3) 관리자: 메모 내용은 직접 안 읽고 남겼다는 표시만
+-- 3) 관리자: 메모 내용까지 읽기(KPI 내려받기용). 회원끼리는 서로 못 봄(anon 정책 없음, 앱은 RPC로 내 메모만)
 drop policy if exists "admin read book_notes" on public.book_notes;
-create or replace function public.admin_note_flags()
-returns table(reader text, book_key text, read_on date, updated_at timestamptz)
-language plpgsql stable security definer set search_path = public as $$
-begin
-  if not public.is_admin() then raise exception 'admin only'; end if;
-  return query select n.reader, n.book_key, n.read_on, n.updated_at from public.book_notes n order by n.read_on;
-end $$;
-revoke all on function public.admin_note_flags() from public, anon;
-grant execute on function public.admin_note_flags() to authenticated;
+create policy "admin read book_notes" on public.book_notes for select using (public.is_admin());

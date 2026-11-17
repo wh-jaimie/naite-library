@@ -761,7 +761,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     catch(e){st.textContent='메모를 읽지 못했어요: '+(e.message||e);return;}
     if(!notes.length){st.textContent='메모가 0개예요. supabase/migrate_notes_admin_read.sql을 아직 실행 안 했다면 먼저 실행해 주세요.';return;}
     var rows=notes.map(function(n){var w=whoOf(n.reader),k=n.book_key||'',b=k.indexOf('b:')===0?bookOf(+k.slice(2)):['다른 책',k.slice(2)];
-      return [n.read_on,w[0],w[1],b[0],b[1],n.note==='1'?'(내용은 회원 폰에만 저장)':n.note];});
+      return [n.read_on,w[0],w[1],b[0],b[1],n.note==='1'?'(내용 없음 · 11/16~17엔 표시만 저장)':n.note];});
     csvDown('나이테_메모_'+dstr(new Date())+'.csv',['읽은 날','닉네임(백업)','기록 ID 끝','주제','책','메모'],rows);
     st.textContent='✓ 메모 '+notes.length+'개 내려받았어요';
   }
