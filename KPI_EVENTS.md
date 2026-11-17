@@ -52,7 +52,7 @@
 | read_aloud_click | 읽어주기 영상 | title |
 | workbook_click | 워크지 | title |
 | extra_click | 부가자료 열기 | title |
-| buy_click | 쿠팡 클릭 | title, from?, pick? |
+| buy_click | 쿠팡 클릭 | title, from?, pick?, at(이번 달 표지 카드: 'btn'=🛒 구매 버튼 · 'cover'=표지·제목, 11/17부터) |
 | title_copy | 책 제목 복사(다른 데서 사려는 행동) | title |
 | book_info_go / guide_click / blog_click / insta_click | 책 정보·가이드·블로그·인스타 | from 등 |
 | groupbuy_interest | 공동구매 관심 | theme_key, page |
