@@ -1724,7 +1724,7 @@
       var h=QT[qt]||qt||(location.hash||'').slice(1),last='';try{last=localStorage.getItem(TAB_KEY)||'';}catch(e){}
       if(h==='stats')h='shelf';if(last==='stats')last='shelf';
       // 주소로 바로 온 탭(메인의 나이테 120·인기 책장 버튼 등)은 그대로, 마지막 탭이 앱 안 페이지면 자료 탭으로
-      if(TAB_IDS.indexOf(h)<0){h=last;if(EMBED[h])h='study';}
+      if(TAB_IDS.indexOf(h)<0)h='study'; // 2026-11-17 운영자 결정: 앱을 열면 항상 이번 달 책(마지막 탭 기억 안 함). 주소에 탭이 있을 때만 그 탭
       if(TAB_IDS.indexOf(h)>0)showTab(h,1);else{S.tab='study';paint();if(S.onEvent)S.onEvent('tab_view',{tab:'study',init:1});} // 2026-11-16: 앱을 열 때 처음 보이는 탭도 집계(init:1)
       // 2026-11-17: 11/16~17 사이 서버엔 메모 '표시'만 남았던 것을 폰에 있는 내용으로 한 번 다시 올림
       try{if(!localStorage.getItem('naite_notes_up1')){localStorage.setItem('naite_notes_up1','1');S.notes.q=Object.keys(S.notes.n);saveNotes();}}catch(e){}
