@@ -759,11 +759,11 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     st.textContent='메모 불러오는 중…';
     var notes;try{notes=await pageAll(function(){return client.from('book_notes').select('reader,book_key,read_on,note,updated_at').order('read_on');});}
     catch(e){st.textContent='메모를 읽지 못했어요: '+(e.message||e);return;}
-    if(!notes.length){st.textContent='메모가 0개예요. supabase/migrate_notes_admin_read.sql을 아직 실행 안 했다면 먼저 실행해 주세요.';return;}
+    if(!notes.length){st.textContent='메모가 0개이거나 아직 읽을 수 없어요(migrate_notes_server.sql 실행 여부 확인).';return;}
     var rows=notes.map(function(n){var w=whoOf(n.reader),k=n.book_key||'',b=k.indexOf('b:')===0?bookOf(+k.slice(2)):['다른 책',k.slice(2)];
       return [n.read_on,w[0],w[1],b[0],b[1],n.note==='1'?'(내용 없음 · 11/16~17엔 표시만 저장)':n.note];});
     csvDown('나이테_메모_'+dstr(new Date())+'.csv',['읽은 날','닉네임(백업)','기록 ID 끝','주제','책','메모'],rows);
-    st.textContent='✓ 메모 '+notes.length+'개 내려받았어요';
+    var nx=notes.filter(function(n){return n.note==='1';}).length;st.textContent='✓ 메모 '+notes.length+'개 내려받았어요'+(nx?' (그중 '+nx+'개는 아직 내용이 서버에 없어요 — 회원이 앱을 열면 폰에 있는 내용이 다시 올라와요)':'');
   }
 
   // 앱·사이트 사용 이벤트(최근 90일) 내려받기(2026-11-16, 정기 분석용). 방문 ID는 기록 ID와 다른 값(joy_sid)이라 끝 4자리만.
