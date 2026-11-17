@@ -15,11 +15,11 @@
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');
   // 2026-11-17: 빈 동그라미는 누르는 건지 몰라서 → 인스타 '좋아요'처럼 하트(운영자 선택 B). 🤍 → ❤️, 누르면 '+1'이 떠오름
-  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E7B9B9!important;background:#fff!important;color:#B5484B!important;font:inherit;font-size:.78rem!important;font-weight:800!important;line-height:1;padding:6px 11px 6px 9px!important;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}'+
+  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E7B9B9!important;background:#fff!important;color:#B5484B!important;font:inherit;font-size:.66rem!important;font-weight:800!important;line-height:1;padding:5px 9px 5px 7px!important;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}'+
     '.nl-like .em{font-size:1.05em}'+
     '.nl-like b{font-weight:800;color:#B5484B!important;margin-left:1px}'+
     '.nl-like.on{background:#FCE9E9!important;border-color:#D86A6D!important;color:#B5484B!important}' /* 페이지 버튼 스타일(흰 글씨·흰 바탕)에 덮이지 않게 */+
-    '.nl-like .p1{position:absolute;right:6px;top:-4px;font-size:.78rem;font-weight:900;color:#D86A6D;pointer-events:none;opacity:0}'+
+    '.nl-like .p1{position:absolute;right:6px;top:-4px;font-size:.66rem;font-weight:900;color:#D86A6D;pointer-events:none;opacity:0}'+
     '.nl-like.pop{animation:nlPop .35s ease}.nl-like.pop .p1{animation:nlUp .8s ease}'+
     '@keyframes nlPop{40%{transform:scale(1.15)}}@keyframes nlUp{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}'+
     '.nl-like[hidden]{display:none}@media (prefers-reduced-motion:reduce){.nl-like.pop,.nl-like.pop .p1{animation:none}}';
