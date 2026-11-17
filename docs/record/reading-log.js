@@ -1140,7 +1140,8 @@
           (noteGet(memo.key,day)?'메모 남김 ✓ · 고치기':(memo.key.indexOf('b:')===0&&S.rvSlot?'메모·후기 남기기':'메모 남기기'))+' <span aria-hidden="true">›</span></button>':'')+
         (memo&&!MEMO_POP?'<div class="rs-memo rs-inl"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
           '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
-          '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요':'')+'</p></div>'+
+          '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요':'')+'</p>'+
+          (memo.key.indexOf('b:')===0&&window.NaiteRv&&NaiteRv.canPost(+memo.key.slice(2))?'<button type="button" class="rs-m2r" data-sm2r'+(noteGet(memo.key,day)?'':' hidden')+'>💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small></button>':'')+'</div>'+
           (memo.key.indexOf('b:')===0&&S.rvSlot?'<div class="rs-rvq rs-inl" data-rvq="'+esc(memo.key.slice(2))+'"></div>':''):'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
@@ -1163,12 +1164,15 @@
       if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
       if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
       if((t=e.target.closest('[data-smemo]'))){var mi2=box.querySelector('#rsMemo');clearTimeout(memoT);noteSet(memo.key,day,mi2.value);try{mi2.blur();}catch(x){}paint();var b3=box.querySelector('[data-smemo]');if(b3&&mi2.value.trim()){b3.classList.add('pop');try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}return;}
+      if((t=e.target.closest('[data-sm2r]'))){var mi4=box.querySelector('#rsMemo'),v4=String(mi4&&mi4.value||'').trim();if(!v4||!memo)return;clearTimeout(memoT);noteSet(memo.key,day,v4);
+        t.disabled=true;t.textContent='올리는 중…';var bk=t;NaiteRv.postBody(+memo.key.slice(2),v4).then(function(ok){if(!document.body.contains(bk))return;
+          if(ok){bk.textContent='✓ 후기로 올렸어요';try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}else{bk.disabled=false;bk.innerHTML='💬 이 메모를 후기로도 올리기 <small>(다시 눌러 주세요)</small>';}});return;}
       if((t=e.target.closest('[data-smopen]'))){if(memo)openMemoPop(memo,day,function(){render();});return;}
       if((t=e.target.closest('[data-sdone]'))){saveMemo();closeSheet();return;}
     };
     function saveMemo(){var mi3=box.querySelector('#rsMemo');if(mi3&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi3.value);}}
     // 쓰는 대로 잠시 뒤 저장(바깥을 눌러 창을 닫아도 남게)
-    box.addEventListener('input',function(e){if(e.target.id!=='rsMemo'||!memo)return;var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok'),sb=box.querySelector('[data-smemo]');if(ok)ok.textContent='';if(sb){sb.classList.remove('done','pop');sb.textContent='저장';}
+    box.addEventListener('input',function(e){if(e.target.id!=='rsMemo'||!memo)return;var m2r=box.querySelector('[data-sm2r]');if(m2r){m2r.hidden=!e.target.value.trim();m2r.disabled=false;m2r.innerHTML='💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small>';}var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok'),sb=box.querySelector('[data-smemo]');if(ok)ok.textContent='';if(sb){sb.classList.remove('done','pop');sb.textContent='저장';}
       clearTimeout(memoT);memoT=setTimeout(function(){noteSet(k0,day,v0);if(ok&&document.body.contains(ok)&&v0.trim())ok.textContent='자동으로 저장됐어요';},700);});
     box.addEventListener('keydown',function(e){if(e.target.id==='rsMemo'&&e.key==='Enter'){e.preventDefault();var b2=box.querySelector('[data-smemo]');if(b2)b2.click();}});
     render();
