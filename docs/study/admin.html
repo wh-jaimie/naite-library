@@ -851,7 +851,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     client.rpc('admin_like_ranking').then(function(q){var el=document.getElementById('likeRank');if(!el)return;
       if(q.error){el.innerHTML='<h3>😆 재밌어요 많은 책</h3><div class="warn">투표용 DB가 아직 없어요. <b>supabase/migrate_likes.sql</b>을 실행해 주세요.<br><small>'+esc(q.error.message)+'</small></div>';return;}
       var R=q.data||[],tot=R.reduce(function(a,x){return a+x.n;},0);
-      el.innerHTML='<h3>😆 재밌어요 많은 책 <small style="color:#888">· '+R.length+'권 · '+tot+'표</small></h3><p class="hint">나이테 120 · 국내 인기 책장 · 나이테 Pick 대박책에서 엄마들이 ‘재밌어요’를 누른 책이에요. 같은 책은 페이지가 달라도 한 줄로 모여요. 화면에는 3명 이상부터 숫자가 보여요.</p>'+
+      el.innerHTML='<h3>😆 재밌어요 많은 책 <small style="color:#888">· '+R.length+'권 · '+tot+'표</small></h3><p class="hint">나이테 120 · 국내 인기 책장 · 나이테 Pick 대박책에서 엄마들이 ‘재밌어요’를 누른 책이에요. 같은 책은 페이지가 달라도 한 줄로 모여요. 화면에는 1표부터 숫자가 보여요.</p>'+
         (R.length?'<div style="overflow-x:auto"><table class="tbl" style="width:100%;border-collapse:collapse;font-size:.88rem"><tr style="text-align:left;border-bottom:1px solid #ddd"><th>#</th><th>책</th><th>표</th><th>누른 곳</th></tr>'+
           R.map(function(x,i){return '<tr style="border-bottom:1px solid #eee"><td style="padding:6px 4px">'+(i+1)+'</td><td style="padding:6px 4px">'+esc(x.title)+'</td><td style="padding:6px 4px;font-weight:800">'+x.n+'</td><td style="padding:6px 4px;color:#777">'+esc(x.pages||'')+'</td></tr>';}).join('')+'</table></div>':'<p class="hint">아직 투표가 없어요.</p>');
     });

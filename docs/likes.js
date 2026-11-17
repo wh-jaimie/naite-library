@@ -2,10 +2,10 @@
  * 페이지에 <button type="button" data-like="책 제목"></button> 만 두면 이 스크립트가 버튼을 채우고(다시 그려져도 자동),
  * 누르면 켜기/끄기. 로그인 없이 기기 ID(naite_reader, 스터디 앱과 같은 값)로 한 책에 1표.
  * 같은 책은 페이지가 달라도 같은 칸(key) — 규칙은 migrate_likes.sql 의 set_like 검사와 맞춤.
- * 숫자는 MIN명 이상일 때만 보여 줌(처음엔 0이 많아 휑해 보여서).
+ * 숫자는 MIN명 이상일 때만 보여 줌(지금 1 = 한 표라도 있으면 보임).
  * <script src="likes.js" data-page="나이테 120"></script> */
 (function(){
-  var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',MIN=3;
+  var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',MIN=1; // 2026-11-17: 1표부터 숫자 보이기(운영자 요청)
   var cs=document.currentScript,PAGE=(cs&&cs.getAttribute('data-page'))||document.title||'';
   var C={},MINE={},ASKED={},OK=true;
   function key(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
@@ -15,10 +15,10 @@
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');
   // 2026-11-17: 빈 동그라미는 누르는 건지 몰라서 → 인스타 '좋아요'처럼 하트(운영자 선택 B). 🤍 → ❤️, 누르면 '+1'이 떠오름
-  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E7B9B9;background:#fff;color:#B5484B;font:inherit;font-size:.78rem;font-weight:800;line-height:1;padding:6px 11px 6px 9px;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;transition:background .15s,border-color .15s}'+
+  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E7B9B9!important;background:#fff!important;color:#B5484B!important;font:inherit;font-size:.78rem!important;font-weight:800!important;line-height:1;padding:6px 11px 6px 9px!important;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}'+
     '.nl-like .em{font-size:1.05em}'+
-    '.nl-like b{font-weight:800;color:#B5484B;margin-left:1px}'+
-    '.nl-like.on{background:#FCE9E9;border-color:#D86A6D}'+
+    '.nl-like b{font-weight:800;color:#B5484B!important;margin-left:1px}'+
+    '.nl-like.on{background:#FCE9E9!important;border-color:#D86A6D!important;color:#B5484B!important}' /* 페이지 버튼 스타일(흰 글씨·흰 바탕)에 덮이지 않게 */+
     '.nl-like .p1{position:absolute;right:6px;top:-4px;font-size:.78rem;font-weight:900;color:#D86A6D;pointer-events:none;opacity:0}'+
     '.nl-like.pop{animation:nlPop .35s ease}.nl-like.pop .p1{animation:nlUp .8s ease}'+
     '@keyframes nlPop{40%{transform:scale(1.15)}}@keyframes nlUp{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}'+
