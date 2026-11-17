@@ -915,6 +915,45 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .sd-start h4{margin:0;font-size:15.5px;font-weight:800}
 .sd-start .chg{border:0;font:inherit;font-size:12px;font-weight:800;color:#fff;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;cursor:pointer;white-space:nowrap}
 .sd-start .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+/* 💬 이번 달 책 후기(2026-11-17, 1단계): 카드 속 반응 요약 + 아래에서 올라오는 후기 창 */
+.rv{margin-top:10px;border-top:1px dashed var(--line);padding-top:9px}
+.rv .rv-h{font-size:12px;font-weight:800;color:var(--muted);margin:0 0 5px}
+.rv .rv-sum{display:flex;flex-wrap:wrap;gap:5px}
+.rv .rc{background:#F4F6EF;border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.rv .rq{margin:7px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.45;overflow-wrap:anywhere}
+.rv .rq small{color:var(--muted);white-space:nowrap}
+.rv .none{font-size:12.5px;color:var(--muted)}
+.rv .rbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rv .rbtns button{font:inherit;font-size:12.5px;font-weight:800;border:1px solid var(--line-2);background:#fff;color:var(--pine);border-radius:999px;padding:6px 12px;cursor:pointer}
+.rv .rbtns .w{background:var(--pine);color:#fff;border-color:var(--pine)}
+.rl-cam.rvs{background:rgba(20,24,18,.5);justify-content:flex-end;color:#23291F}
+.rvq{background:#FFF7EC;border:1px solid #F0D9BC;border-radius:12px;padding:10px 11px;margin:0 0 10px}
+.rs-rvq .rvq{margin:0 0 10px}
+.rvq .rvq-h{margin:0 0 7px;font-size:13.5px;font-weight:800;color:#7A4520;line-height:1.35}
+.rvq .rvq-h span{display:block;font-size:11.5px;font-weight:500;color:#8A917E;margin-top:1px}
+.rvq .rvq-x{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rvq .rvq-x button{font:inherit;font-size:13px;font-weight:700;border:1px solid #E3CFB4;background:#fff;color:#23291F;border-radius:10px;padding:8px 6px;cursor:pointer}
+.rvq .rvq-x button[aria-pressed="true"]{background:#B87343;border-color:#B87343;color:#fff}
+.rvq .rvq-ok{margin:8px 0 0;font-size:12.5px;font-weight:700;color:#245648;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rvq .rvq-ok button{font:inherit;font-size:12.5px;font-weight:800;border:0;background:#245648;color:#fff;border-radius:999px;padding:5px 11px;cursor:pointer}
+.rvs .bx{background:#FCFCF8;border-radius:18px 18px 0 0;max-height:88vh;overflow:auto;padding:14px 16px calc(22px + env(safe-area-inset-bottom));word-break:keep-all}
+.rvs .hd{display:flex;align-items:center;gap:10px}.rvs .hd b{font-size:16px;flex:1;line-height:1.35}
+.rvs .x{border:0;background:#EEF0E8;color:#23291F;border-radius:999px;padding:7px 13px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.rvs .me{margin-top:12px;background:#F4F6EF;border-radius:14px;padding:12px}
+.rvs .me .q{margin:14px 0 7px;font-size:13px;font-weight:800}.rvs .me .q:first-child{margin-top:0}
+.rvs .rx{display:grid;grid-template-columns:1fr 1fr;gap:6px}.rvs .ag{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rvs .rx button,.rvs .ag button{font:inherit;font-size:13px;font-weight:700;border:1px solid #D4D9C9;background:#fff;border-radius:10px;padding:9px 4px;cursor:pointer;color:#23291F}
+.rvs .rx button[aria-pressed=true],.rvs .ag button[aria-pressed=true]{background:#245648;border-color:#245648;color:#fff}
+.rvs input{width:100%;box-sizing:border-box;font:inherit;font-size:15px;border:1px solid #D4D9C9;border-radius:10px;padding:10px;background:#fff;color:#23291F}
+.rvs .nt{margin:7px 0 0;font-size:11.5px;color:#8A917E;line-height:1.45}
+.rvs .act{display:flex;gap:8px;margin-top:12px}
+.rvs .act button{font:inherit;font-weight:800;font-size:14px;border-radius:12px;padding:12px;border:0;cursor:pointer}
+.rvs .sv{flex:1;background:#245648;color:#fff}.rvs .sv:disabled{opacity:.5}.rvs .dl{background:#EEF0E8;color:#545C4B}
+.rvs .er{margin:8px 0 0;font-size:12.5px;color:#a2231d}
+.rvs .ls{margin-top:16px}.rvs .ls h4{margin:0 0 4px;font-size:14px}
+.rvs .it{border-top:1px solid #E3E6DB;padding:10px 0;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.rvs .it .m{display:block;font-size:12px;color:#8A917E;margin-bottom:2px}.rvs .it .mine{color:#245648;font-weight:800}
+.rvs .empty{font-size:13px;color:#8A917E;padding:8px 0}
 .sd-start .two .mb:nth-child(3){grid-column:1/-1}
 .sd-start .mb{display:flex;gap:8px;align-items:center;text-align:left;border:0;font:inherit;color:#fff;background:rgba(255,255,255,.12);border-radius:11px;padding:7px;cursor:pointer;min-width:0;-webkit-tap-highlight-color:transparent}
 .sd-start .mb:active{background:rgba(255,255,255,.2)}
@@ -1100,7 +1139,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261117c"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261117r"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261112a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1151,6 +1190,103 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   function agePicks(books,g){
     var want=AGE_TIERS[g]||[],out=books.filter(function(b){return want.indexOf(+b.tier)>=0;});
     return out.length?out:books.slice(0,2);
+  }
+  // 💬 이번 달 책 후기(2026-11-17, 1단계): 익명·바로 공개·포인트 없음. 공개되는 건 아이 나이대·반응·한 줄·날짜뿐(기록 ID는 안 나감)
+  var RX=[['laugh','😆','웃었어요'],['again','🔁','또 읽어 달래요'],['talk','🗣️','따라 말했어요'],['notyet','😴','아직 관심 없어요']],RXM={};RX.forEach(function(x){RXM[x[0]]=x;});
+  var RV={books:[],list:{},ok:false,fresh:{}};
+  function rvReader(make){try{var r=localStorage.getItem('naite_reader');if((!r||r.length<16)&&make){var a=new Uint8Array(16);crypto.getRandomValues(a);r='';for(var i=0;i<16;i++)r+=('0'+a[i].toString(16)).slice(-2);localStorage.setItem('naite_reader',r);}return r||'';}catch(e){return '';}}
+  function rvDate(t){var d=new Date(t);return isNaN(d)?'':(d.getMonth()+1)+'.'+d.getDate();}
+  async function loadReviews(books){
+    RV.books=books||[];if(PREVIEW)return;
+    var ids=RV.books.map(function(b){return +b.id;}).filter(Boolean);if(!ids.length)return;
+    try{var r=await client.rpc('list_reviews',{p_book_ids:ids,p_reader:rvReader(false)||null});
+      if(r.error){RV.ok=false;return;} // 아직 migrate_reviews.sql 전이면 조용히 숨김
+      RV.ok=true;RV.list={};(r.data||[]).forEach(function(x){(RV.list[x.book_id]=RV.list[x.book_id]||[]).push(x);});
+    }catch(e){RV.ok=false;return;}
+    ids.forEach(paintRv);
+  }
+  function paintRv(bid){
+    var box=document.querySelector('.rv[data-rvb="'+bid+'"]');if(!box)return;
+    if(!RV.ok){box.hidden=true;return;}box.hidden=false;
+    var L=RV.list[bid]||[],mine=L.filter(function(x){return x.mine;})[0],cnt={};
+    L.forEach(function(x){(x.reactions||[]).forEach(function(k){cnt[k]=(cnt[k]||0)+1;});});
+    var sum=RX.filter(function(x){return cnt[x[0]];}).map(function(x){return '<span class="rc">'+x[1]+' '+x[2]+' '+cnt[x[0]]+'</span>';}).join('');
+    var q=L.filter(function(x){return x.body;})[0];
+    box.innerHTML=(RV.fresh[bid]?rvqHTML(bid):'')+'<p class="rv-h">엄마들 반응</p>'+(L.length?'<div class="rv-sum">'+sum+'</div>'+(q?'<p class="rq">“'+esc(q.body)+'” <small>· '+(AGE[q.age]?AGE[q.age][1]+' ':'')+'엄마</small></p>':''):'<span class="none">아직 후기가 없어요. 아이 반응을 처음으로 남겨 주세요!</span>')+
+      '<div class="rbtns">'+(L.length?'<button type="button" data-rvopen>💬 후기 '+L.length+'개 보기</button>':'')+
+      '<button type="button" class="w" data-rvwrite>✍️ '+(mine?'내 후기 고치기':(L.length?'후기 남기기':'첫 후기 남기기'))+'</button></div>';
+  }
+  document.addEventListener('click',function(e){var t=e.target.closest('[data-rvopen],[data-rvwrite]');if(!t)return;var box=t.closest('.rv');if(!box)return;e.preventDefault();e.stopPropagation();openRv(+box.dataset.rvb,t.hasAttribute('data-rvwrite'));});
+  /* 기록할 때 후기 유도(2026-11-17): 이번 달 책을 기록하면(자료 탭 '읽었어요' · 기록창 표지) 아직 후기가 없을 때
+     '아이 반응은 어땠어요?' 칩을 보여 줌. 칩 한 번 = 바로 올라감(이름 없이 공개). 한 줄은 '✍️ 한 줄도 남기기'로 후기 창 */
+  function rvMine(bid){return (RV.list[bid]||[]).filter(function(x){return x.mine;})[0];}
+  function rvIsMonth(bid){return RV.ok&&RV.books.some(function(b){return +b.id===+bid;});}
+  function rvqHTML(bid){var m=rvMine(bid),on={};(m&&m.reactions||[]).forEach(function(k){on[k]=1;});
+    return '<div class="rvq" data-rvqb="'+bid+'"><p class="rvq-h">💬 이 책 후기를 남겨 주세요! <span>아이 반응은 어땠어요? (여러 개 골라도 돼요)</span></p><div class="rvq-x">'+
+      RX.map(function(x){return '<button type="button" data-rvqx="'+x[0]+'" aria-pressed="'+(!!on[x[0]])+'">'+x[1]+' '+x[2]+'</button>';}).join('')+'</div>'+
+      (m?'<p class="rvq-ok">✓ 반응을 남겼어요. 고마워요! <button type="button" data-rvqw>✍️ 한 줄도 남기기</button></p>':'')+'</div>';}
+  function rvOnRead(bid,src){if(src!=='card'||!rvIsMonth(bid)||rvMine(bid))return;RV.fresh[bid]=src;paintRv(bid);
+    logEvent('review_prompt',{book_id:bid,from:'card'});}
+  var rvSlotSeen={};
+  function rvSlot(el,bid,day){
+    if(!rvIsMonth(bid)||(rvMine(bid)&&!RV.fresh[bid])){el.hidden=true;return;}
+    el.hidden=false;el.innerHTML=rvqHTML(bid);RV.fresh[bid]=RV.fresh[bid]||'sheet';
+    if(!rvSlotSeen[bid]){rvSlotSeen[bid]=1;logEvent('review_prompt',{book_id:bid,from:'sheet'});}
+  }
+  var rvqBusy=0;
+  async function rvQuick(bid,k,from){
+    if(rvqBusy)return;var m=rvMine(bid),on={};(m&&m.reactions||[]).forEach(function(x){on[x]=1;});on[k]=!on[k];
+    var re=RX.map(function(x){return x[0];}).filter(function(x){return on[x];}),body=m&&m.body||'',b=RV.books.filter(function(x){return +x.id===+bid;})[0]||{};
+    rvqBusy=1;
+    try{var r=await client.rpc('save_review',{p_reader:rvReader(true),p_book_id:bid,p_age:getAge()||(m&&m.age)||null,p_reactions:re,p_body:body});
+      var d=r&&r.data;if(r.error||!d||!d.ok){rvqBusy=0;if(window.NaiteReading&&window.NaiteReading.toast)window.NaiteReading.toast(d&&d.error==='limit'?'오늘은 후기를 더 남길 수 없어요.':'반응을 올리지 못했어요. 잠시 뒤 다시 해 주세요.');return;}
+      logEvent(d.deleted?'review_delete':'review_save',{book_id:bid,title:b.title,n:re.length,body:body?1:0,edit:m?1:0,quick:1,from:from});
+    }catch(x){rvqBusy=0;if(window.NaiteReading&&window.NaiteReading.toast)window.NaiteReading.toast('반응을 올리지 못했어요. 인터넷 연결을 확인해 주세요.');return;}
+    rvqBusy=0;await loadReviews(RV.books);
+    document.querySelectorAll('.rs-rvq[data-rvq="'+bid+'"]').forEach(function(el){el.innerHTML=rvqHTML(bid);});
+    try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}
+  }
+  document.addEventListener('click',function(e){var t=e.target.closest('[data-rvqx],[data-rvqw]');if(!t)return;var q=t.closest('.rvq');if(!q)return;
+    e.preventDefault();e.stopPropagation();var bid=+q.dataset.rvqb,from=q.closest('.rs-rvq')?'sheet':'card';
+    if(t.hasAttribute('data-rvqw'))openRv(bid,true);else rvQuick(bid,t.dataset.rvqx,from);},true);
+  function openRv(bid,write){
+    var b=RV.books.filter(function(x){return +x.id===bid;})[0];if(!b)return;
+    var L=RV.list[bid]||[],mine=L.filter(function(x){return x.mine;})[0],sel={},age=getAge();
+    (mine&&mine.reactions||[]).forEach(function(k){sel[k]=1;});
+    var el=document.createElement('div');el.className='rl-cam rvs';el.setAttribute('role','dialog');
+    var others=L.filter(function(x){return x.reactions.length||x.body;});
+    el.innerHTML='<div class="bx"><div class="hd"><b>💬 '+esc(b.title)+'</b><button type="button" class="x" data-camx>닫기</button></div>'+
+      '<div class="me"><p class="q">우리 아이 반응은? <span style="font-weight:500;color:#8A917E">(여러 개 골라도 돼요)</span></p><div class="rx">'+
+        RX.map(function(x){return '<button type="button" data-rx="'+x[0]+'" aria-pressed="'+(!!sel[x[0]])+'">'+x[1]+' '+x[2]+'</button>';}).join('')+'</div>'+
+        '<p class="q">아이 나이</p><div class="ag">'+[1,2,3].map(function(k){return '<button type="button" data-rage="'+k+'" aria-pressed="'+(k===age)+'">'+AGE[k][1]+'</button>';}).join('')+'</div>'+
+        '<p class="q">한 줄 후기 <span style="font-weight:500;color:#8A917E">(선택)</span></p><input id="rvBody" maxlength="100" placeholder="예: 다 읽자마자 또 읽어 달래요" value="'+esc(mine&&mine.body||'')+'">'+
+        '<p class="nt">후기는 이름 없이 아이 나이대와 함께 모두에게 바로 보여요. 아이 이름·얼굴·연락처는 적지 말아 주세요.</p>'+
+        '<div class="act">'+(mine?'<button type="button" class="dl" data-rvdel>지우기</button>':'')+'<button type="button" class="sv" data-rvsave>'+(mine?'고친 후기 올리기':'후기 올리기')+'</button></div><p class="er" id="rvErr" hidden></p></div>'+
+      '<div class="ls"><h4>엄마들 후기 '+others.length+'개</h4>'+(others.length?others.map(function(x){
+        return '<div class="it"><span class="m">'+(x.mine?'<span class="mine">내 후기</span> · ':'')+(AGE[x.age]?AGE[x.age][1]+' 엄마 · ':'')+rvDate(x.created_at)+'</span>'+
+          (x.reactions||[]).map(function(k){return RXM[k]?RXM[k][1]+' '+RXM[k][2]:'';}).filter(Boolean).join(' · ')+(x.body?'<br>“'+esc(x.body)+'”':'')+'</div>';}).join(''):'<p class="empty">아직 후기가 없어요.</p>')+'</div></div>';
+    document.body.appendChild(el);document.documentElement.classList.add('rl-lock');
+    function close(){el.remove();if(!document.querySelector('.rl-cam'))document.documentElement.classList.remove('rl-lock');}
+    el.addEventListener('click',function(ev){if(ev.target===el)close();});
+    el.querySelector('[data-camx]').onclick=close;
+    el.querySelectorAll('[data-rx]').forEach(function(x){x.onclick=function(){var k=x.dataset.rx;sel[k]=!sel[k];x.setAttribute('aria-pressed',String(!!sel[k]));};});
+    el.querySelectorAll('[data-rage]').forEach(function(x){x.onclick=function(){age=+x.dataset.rage;el.querySelectorAll('[data-rage]').forEach(function(y){y.setAttribute('aria-pressed',String(+y.dataset.rage===age));});};});
+    async function send(del){
+      var re=del?[]:RX.map(function(x){return x[0];}).filter(function(k){return sel[k];}),body=del?'':el.querySelector('#rvBody').value.trim(),er=el.querySelector('#rvErr');
+      if(!del&&!re.length&&!body){er.textContent='반응을 하나 고르거나 한 줄을 적어 주세요.';er.hidden=false;return;}
+      var sv=el.querySelector('[data-rvsave]');sv.disabled=true;
+      if(age){try{localStorage.setItem('naite_age',String(age));}catch(x){}}
+      try{var r=await client.rpc('save_review',{p_reader:rvReader(true),p_book_id:bid,p_age:age||null,p_reactions:re,p_body:body});
+        var d=r&&r.data;if(r.error||!d||!d.ok){er.textContent=d&&d.error==='limit'?'오늘은 후기를 더 남길 수 없어요. 내일 다시 남겨 주세요.':'올리지 못했어요. 잠시 뒤 다시 해 주세요.';er.hidden=false;sv.disabled=false;return;}
+      }catch(x){er.textContent='올리지 못했어요. 인터넷 연결을 확인해 주세요.';er.hidden=false;sv.disabled=false;return;}
+      logEvent(del?'review_delete':'review_save',{book_id:bid,title:b.title,n:re.length,body:body?1:0,edit:mine?1:0});
+      close();await loadReviews(RV.books);
+      document.querySelectorAll('.rs-rvq[data-rvq="'+bid+'"]').forEach(function(el){el.innerHTML=rvqHTML(bid);});
+      if(window.NaiteReading&&window.NaiteReading.toast)window.NaiteReading.toast(del?'후기를 지웠어요':'💬 후기를 올렸어요. 고마워요!');
+    }
+    el.querySelector('[data-rvsave]').onclick=function(){send(false);};
+    var dl=el.querySelector('[data-rvdel]');if(dl)dl.onclick=function(){if(confirm('이 책에 남긴 후기를 지울까요?'))send(true);};
+    logEvent('review_open',{book_id:bid,title:b.title,write:write?1:0});
   }
   function paintAge(books){
     lastAgeBooks=books;
@@ -1209,7 +1345,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
         '<div class="bk-info"><div class="tags"><span class="type ty t'+b.tier+'">'+esc(b.tier_label)+'</span>'+(lv?'<span class="lv l'+lv+'">'+LV_EMO[lv]+' '+LV_TXT[lv]+'</span>':'')+'</div>'+
           '<h3>'+esc(b.title)+'<button type="button" class="cp-ic" data-copy="'+esc(b.title)+'" data-cpfrom="study" aria-label="제목 복사" title="제목 복사">'+ic('copy',15)+'</button></h3><div class="au">'+esc(b.author)+'</div>'+(b.reason?'<p class="desc">'+esc(b.reason)+'</p>':'')+
           (meta.length?'<div class="bdg">'+meta.map(function(x){return '<span class="'+x[0]+'">'+x[1]+'</span>';}).join('')+'</div>':'')+
-          (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+'</div></div></article>';
+          (b.workbook?'<a class="act wb" href="'+esc(b.workbook)+'" target="_blank" rel="noopener" data-wb="'+esc(b.title)+'">'+ic('doc',15)+'워크지</a>':'')+'</div></div>'+(PREVIEW?'':'<div class="rv" data-rvb="'+b.id+'" hidden></div>')+'</article>';
     }).join('');
     var vids=books.map(function(b){var id=ytid(b.read_aloud);if(!id)return '';
       return '<div class="sd-vcard"><div class="sd-vid"><div class="fr" data-yt="'+id+'" data-title="'+esc(b.title)+'"><img loading="lazy" src="https://img.youtube.com/vi/'+id+'/mqdefault.jpg" alt="'+esc(b.title)+' 읽어주기 영상" onerror="this.remove()"><span class="play"><span>'+ic('play',16)+'</span></span></div></div><div class="vt">'+esc(b.title)+'<small>'+ic('play',13)+'눌러서 영상 보기</small></div></div>';}).filter(Boolean).join('');
@@ -1290,13 +1426,13 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
       app.querySelectorAll('[data-rrow]').forEach(function(el){el.innerHTML='<span class="st">아직 안 읽었어요</span><button type="button" class="rbtn" disabled>읽었어요</button>';});
       var pg=app.querySelector('[data-rprog]');if(pg)pg.innerHTML='<div class="dots">'+books.map(function(){return '<i></i>';}).join('')+'</div><span class="pt">'+books.length+'권 중 <b>0권</b> 만났어요</span>';
     }else window.NaiteReading.mount({client:client,theme:theme,books:books,monthLabel:c.month_label,
-      onEvent:function(t,m){logEvent(t,m);}});
+      onEvent:function(t,m){logEvent(t,m);},onRead:rvOnRead,rvSlot:rvSlot});
     if(!PREVIEW)fillArchive(theme.key);
     fillNext(theme.key,c.month_label);
     if(!PREVIEW)initPanels();
     // 카드(표지·글) 어디를 눌러도 구매 링크(표지 링크)를 엶. 버튼·영상·읽었어요 줄은 각자 동작
     // KPI: 책 클릭 = 카드(표지 포함) 탭 1번당 1회, 구매 클릭 = 실제로 쿠팡이 열린 횟수
-    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,.sd-tip'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
+    app.querySelectorAll('.sd-book').forEach(function(el){el.addEventListener('click',function(ev){if(!el.contains(ev.target)||ev.target.closest('a,button,.rrow,.sd-vid,.acts,.sd-tip,.rv'))return;logEvent('book_click',{book_id:+el.dataset.bid,title:el.dataset.title});var cv=el.querySelector('.cvlink');if(cv)cv.click();});});
     // 영상 목록: 작은 줄 → 누르면 그 줄만 크게 펼쳐서 재생
     app.querySelectorAll('.sd-vcard .vt').forEach(function(t){t.addEventListener('click',function(){var fr=t.parentNode.querySelector('.fr');if(fr)fr.click();});});
     app.querySelectorAll('.sd-vid .fr').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();var id=el.dataset.yt;if(!id||el.querySelector('iframe'))return;var vc=el.closest('.sd-vcard');if(vc)vc.classList.add('playing');el.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="영상" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';el.style.cursor='default';logEvent('read_aloud_click',{title:el.dataset.title});});});
@@ -1308,6 +1444,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     initChips();
     paintAge(books);
+    loadReviews(books);
     var gg=app.querySelector('[data-guidego]');if(gg)gg.addEventListener('click',function(){logEvent('guide_click',{from:'app_top'});});
     var ig=document.getElementById('sdInfoGo');if(ig)ig.addEventListener('click',function(){var t=document.getElementById('sdInfo'),nav=document.getElementById('sdChips');if(t)window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav?nav.offsetHeight:0)-8,behavior:'smooth'});logEvent('book_info_go',{});});
     // 공동구매 관심(메인 페이지와 같은 기록 · 기기당 주제별 한 번)

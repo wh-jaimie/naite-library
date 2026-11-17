@@ -58,6 +58,8 @@
 | groupbuy_interest | 공동구매 관심 | theme_key, page |
 | age_pick / age_book_go | 아이 나이 고르기 / 나이별 추천 책 보기 | age, title |
 | use120_pick | '집에 영어책이 얼마나 있나요?' 답 | |
+| review_open / review_save / review_delete | 💬 이번 달 책 후기 창 열기 / 올리기 / 지우기 (2026-11-17) | book_id, title, write(창을 연 버튼이 '후기 남기기'면 1) · n(반응 수), body(한 줄 있음 1), edit(고침 1) · quick(기록할 때 반응 칩으로 바로 올림 1), from(card=자료 탭 '읽었어요' 뒤 / sheet=기록창) |
+| review_prompt | 💬 기록할 때 후기 유도 칩이 보임 (2026-11-17, 이번 달 책·후기 없을 때) | book_id, from(card / sheet) |
 | news_open / welcome_open | 공지 / 처음 오셨나요 열기 | |
 | push_on / push_off / push_denied | 알림 켜기 / 끄기 / 거절 | |
 | record_sheet_open | 읽은 책 기록 창 열기 | |
