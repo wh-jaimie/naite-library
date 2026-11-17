@@ -14,17 +14,21 @@
   function rpc(fn,body){return fetch(U+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');
-  css.textContent='.nl-like{display:inline-flex;align-items:center;gap:5px;align-self:flex-start;border:1px solid #D4D9C9;background:#fff;color:#545C4B;font:inherit;font-size:.74rem;font-weight:800;line-height:1;padding:5px 9px 5px 6px;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}'+
-    '.nl-like .ck{width:15px;height:15px;border-radius:50%;border:1.6px solid #B9BFAD;display:inline-grid;place-items:center;font-size:10px;color:#fff;flex:none}'+
-    '.nl-like b{font-weight:800;color:#B87343}'+
-    '.nl-like.on{background:#FFF3E6;border-color:#E3B98F;color:#7A4520}.nl-like.on .ck{background:#B87343;border-color:#B87343}'+
-    '.nl-like.pop{animation:nlPop .3s ease}@keyframes nlPop{40%{transform:scale(1.12)}}'+
-    '.nl-like[hidden]{display:none}@media (prefers-reduced-motion:reduce){.nl-like.pop{animation:none}}';
+  // 2026-11-17: 빈 동그라미는 누르는 건지 몰라서 → 안 누른 상태도 주황 테두리 버튼 + 흑백 😆, 누르면 주황으로 채워지고 😆 컬러 + ✓, '+1'이 떠오름
+  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E0B48A;background:#FFF8F0;color:#9A5A2C;font:inherit;font-size:.78rem;font-weight:800;line-height:1;padding:6px 11px 6px 8px;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;box-shadow:0 1px 0 rgba(184,115,67,.18);transition:background .15s,color .15s,border-color .15s}'+
+    '.nl-like .em{font-size:1.05em;filter:grayscale(1);opacity:.6;transition:filter .15s,opacity .15s}'+
+    '.nl-like:hover .em{filter:none;opacity:1}'+
+    '.nl-like b{font-weight:800;color:#B87343;margin-left:1px}'+
+    '.nl-like.on{background:#B87343;border-color:#B87343;color:#fff;box-shadow:none}.nl-like.on .em{filter:none;opacity:1}.nl-like.on b{color:#fff}'+
+    '.nl-like .p1{position:absolute;right:6px;top:-4px;font-size:.78rem;font-weight:900;color:#B87343;pointer-events:none;opacity:0}'+
+    '.nl-like.pop{animation:nlPop .35s ease}.nl-like.pop .p1{animation:nlUp .8s ease}'+
+    '@keyframes nlPop{40%{transform:scale(1.15)}}@keyframes nlUp{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}'+
+    '.nl-like[hidden]{display:none}@media (prefers-reduced-motion:reduce){.nl-like.pop,.nl-like.pop .p1{animation:none}}';
   document.head.appendChild(css);
   function paint(el){var k=el._nk,n=C[k]||0,on=!!MINE[k];
     el.classList.add('nl-like');el.classList.toggle('on',on);el.setAttribute('aria-pressed',String(on));
     el.setAttribute('aria-label','재밌어요'+(on?' 취소':'')+(n>=MIN?', '+n+'명':''));
-    el.innerHTML='<span class="ck" aria-hidden="true">'+(on?'✓':'')+'</span>재밌어요'+(n>=MIN?' <b>'+n+'</b>':'');
+    el.innerHTML='<span class="em" aria-hidden="true">😆</span>재밌어요'+(on?' ✓':'')+(n>=MIN?' <b>'+n+'</b>':'')+'<span class="p1" aria-hidden="true">+1</span>';
     el.hidden=!OK;el._np=n+'|'+on;}
   function paintKey(k){document.querySelectorAll('[data-like]').forEach(function(el){if(el._nk===k)paint(el);});}
   var qT=null;
