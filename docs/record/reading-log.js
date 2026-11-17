@@ -1135,12 +1135,18 @@
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
         '<p class="rk-status" aria-live="polite">'+(last?'<b>'+esc(last.t)+'</b> 기록했어요 · '+dayWord(day)+' 모두 '+sum+'권 <button type="button" data-sundo>취소</button>':(sum?dayWord(day)+' 모두 <b>'+sum+'권</b> 기록했어요':'&nbsp;'))+'</p>'+
         // 2026-11-17 운영자 요청: 메모·후기는 기록 창 아래가 아니라 따로 뜨는 창에서(아래에 붙으면 가려지고 키보드에 덮임)
-        (memo?'<button type="button" class="rs-mopen" data-smopen>📝 <b>'+esc(shortTitle(memo.title))+'</b> '+
+        // 2026-11-17 시안: 따로 창 없이 같은 창 안에(표지 작게·여백 줄여서 한 화면에). MEMO_POP=true면 버튼 → 따로 창
+        (memo&&MEMO_POP?'<button type="button" class="rs-mopen" data-smopen>📝 <b>'+esc(shortTitle(memo.title))+'</b> '+
           (noteGet(memo.key,day)?'메모 남김 ✓ · 고치기':(memo.key.indexOf('b:')===0&&S.rvSlot?'메모·후기 남기기':'메모 남기기'))+' <span aria-hidden="true">›</span></button>':'')+
+        (memo&&!MEMO_POP?'<div class="rs-memo rs-inl"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
+          '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
+          '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요':'')+'</p></div>'+
+          (memo.key.indexOf('b:')===0&&S.rvSlot?'<div class="rs-rvq rs-inl" data-rvq="'+esc(memo.key.slice(2))+'"></div>':''):'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
         ((S.photoList[day]||[]).length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'');
+      var rq=box.querySelector('[data-rvq]');if(rq)try{S.rvSlot(rq,+rq.getAttribute('data-rvq'),day);}catch(e){}
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};
@@ -1169,6 +1175,7 @@
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
   }
   // 메모·후기 창(2026-11-17): 기록 창 위에 화면 위쪽에 따로 띄움 — 키보드가 올라와도 입력칸이 안 가려지게
+  var MEMO_POP=false; // 2026-11-17: false = 메모·후기를 기록 창 안에(시안), true = 따로 뜨는 창
   function openMemoPop(memo,day,done){
     var old=document.querySelector('.rs-pop');if(old)old.remove();
     var nb=noteBook(memo.key),isBook=memo.key.indexOf('b:')===0,t=0;
