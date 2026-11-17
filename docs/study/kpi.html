@@ -775,6 +775,18 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var nx=notes.filter(function(n){return n.note==='1';}).length;st.textContent='✓ 메모 '+notes.length+'개 내려받았어요'+(nx?' (그중 '+nx+'개는 아직 내용이 서버에 없어요 — 회원이 앱을 열면 폰에 있는 내용이 다시 올라와요)':'');
   }
 
+  // 💬 후기 내려받기(2026-11-17): 화면엔 이름 없이 공개되지만, 관리자는 누가 썼는지(백업 닉네임 · 기록 ID 끝 4자리) 볼 수 있음.
+  // 가족이 '이어보기'로 같은 기록 ID를 쓰면 한 집 후기 1개로 묶임.
+  var RVN={laugh:'😆 웃었어요',again:'🔁 또 읽어 달래요',talk:'🗣️ 따라 말했어요',notyet:'😴 아직 관심 없어요'},RVA={1:'0~3세',2:'4~6세',3:'7~9세'};
+  function exportReviews(st){
+    var L=S.ppl.reviews||[];
+    if(!L.length){st.textContent='후기가 0개이거나 아직 읽을 수 없어요(migrate_reviews.sql 실행 여부 확인).';return;}
+    var rows=L.map(function(x){var w=whoOf(x.reader),b=bookOf(x.book_id);
+      return [dstr(new Date(x.created_at)),dstr(new Date(x.updated_at)),w[0],w[1],b[0],b[1],RVA[x.age]||'',(x.reactions||[]).map(function(k){return RVN[k]||k;}).join(', '),x.body||'',x.hidden?'숨김':''];});
+    csvDown('나이테_후기_'+dstr(new Date())+'.csv',['쓴 날','고친 날','닉네임(백업)','기록 ID 끝','주제','책','아이 나이','반응','한 줄','숨김'],rows);
+    st.textContent='✓ 후기 '+L.length+'개 내려받았어요';
+  }
+
   // 앱·사이트 사용 이벤트(최근 90일) 내려받기(2026-11-16, 정기 분석용). 방문 ID는 기록 ID와 다른 값(joy_sid)이라 끝 4자리만.
   async function exportEvents(st){
     st.textContent='이벤트 불러오는 중…';
@@ -798,7 +810,10 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       var logs=await pageAll(function(){return client.from('reading_logs').select('reader,book_id,theme_key,read_on,created_at,other_title').order('id');});
       var bk=await client.from('reader_backups').select('reader,name');
       var bs=[];try{bs=await pageAll(function(){return client.from('books').select('id,title,theme_key').order('id');});}catch(e){}
-      S.ppl={logs:logs,names:{},books:{}};
+      // 💬 후기(book_reviews)는 관리자만 표를 직접 읽을 수 있음(migrate_reviews.sql의 admin 정책). 표가 없으면 빈 목록
+      var rvs=[];try{rvs=await pageAll(function(){return client.from('book_reviews').select('id,reader,book_id,age,reactions,body,hidden,created_at,updated_at').order('id');});}catch(e){}
+      S.ppl={logs:logs,names:{},books:{},reviews:rvs,rvBy:{}};
+      rvs.forEach(function(x){(S.ppl.rvBy[x.reader]=S.ppl.rvBy[x.reader]||[]).push(x);});
       (bk.data||[]).forEach(function(b){S.ppl.names[b.reader]=b.name;});
       bs.forEach(function(b){S.ppl.books[b.id]=b;});
     }
@@ -838,8 +853,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         ['스터디 책 말고 다른 책도 기록',withOther],
         ['두 달(주제) 이상 이어서 기록',multi]
       ],nAll)+
-      '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모는 아래 내려받기로 볼 수 있어요.</p>'+
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><button class="btn" id="xevents">⬇️ 이벤트 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
+      '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모·후기는 아래 내려받기로 볼 수 있어요(후기는 줄을 눌러도 보여요).</p>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><button class="btn" id="xreviews">⬇️ 후기 내려받기 (CSV)</button><button class="btn" id="xevents">⬇️ 이벤트 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
     var ot={},otr={};list.forEach(function(p){Object.keys(p.others).forEach(function(t){if(t==='(제목 없이)')return;var k=t.toLowerCase();if(!ot[k])ot[k]={t:t,n:0,r:0};ot[k].n+=p.others[t];ot[k].r++;});});
     var otl=Object.keys(ot).map(function(k){return ot[k];}).sort(function(a,b){return b.r-a.r||b.n-a.n;});
     h+='<div class="card"><h3>📚 다른 책으로 쓴 제목 <span class="hint">많은 사람이 쓴 순 · 위 15개</span></h3>'+(otl.length?table(['제목','기록','폰'],otl.slice(0,15).map(function(o){return [esc(o.t),o.n,o.r];}),1):'<p class="empty">제목을 쓴 다른 책 기록이 아직 없어요.</p>')+
@@ -858,6 +873,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       var ol=Object.keys(p.others).sort(function(a,b){return p.others[b]-p.others[a];}).map(function(t){return esc(t)+' <span class="ty">×'+p.others[t]+'</span>';}).join(', ');
       return '<div class="pdw"><div><div class="hint">최근 5주 (주황 테두리 = 오늘)</div><div class="cal">'+cells+'</div></div><div class="pdl">'+
         (bl||'<div class="hint">스터디 책 기록 없음</div>')+(ol?'<div><b>📚 다른 책</b> · '+ol+'</div>':'')+
+        ((P.rvBy[p.id]||[]).length?'<div><b>💬 후기</b> · '+P.rvBy[p.id].map(function(x){return esc(bookOf(x.book_id)[1])+' <span class="ty">('+(x.reactions||[]).map(function(k){return RVN[k]||k;}).join(', ')+(x.body?' · “'+esc(x.body)+'”':'')+(x.hidden?' · 숨김':'')+')</span>';}).join(', ')+'</div>':'')+
         '<div class="hint" style="margin-top:4px">하루 평균 '+p.perDay+'번 기록 · 가장 길게 이어서 '+p.streak+'일 · 주로 '+hourLabel(p.hour)+'쯤</div></div></div>';
     }
     function draw(){
@@ -877,6 +893,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     }
     document.getElementById('xlogs').onclick=exportLogs;
     document.getElementById('xnotes').onclick=function(){exportNotes(document.getElementById('xst'));};
+    document.getElementById('xreviews').onclick=function(){exportReviews(document.getElementById('xst'));};
     document.getElementById('xevents').onclick=function(){exportEvents(document.getElementById('xst'));};
     document.getElementById('pk').onchange=function(){S.pk=this.value;draw();};
     document.getElementById('ps').onchange=function(){S.ps=this.value;draw();};

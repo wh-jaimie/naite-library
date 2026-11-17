@@ -836,11 +836,14 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     if(r.error){body.innerHTML='<div class="card"><div class="warn">후기용 DB가 아직 없어요. Supabase SQL Editor에서 <b>supabase/migrate_reviews.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(r.error.message)+'</small></div></div>';return;}
     var RXN={laugh:'😆 웃었어요',again:'🔁 또 읽어 달래요',talk:'🗣️ 따라 말했어요',notyet:'😴 아직 관심 없어요'},AG={1:'0~3세',2:'4~6세',3:'7~9세'};
     var L=r.data||[],hid=L.filter(function(x){return x.hidden;}).length;
+    // 쓴 사람(관리자만): 후기 표를 직접 읽어 기록 ID → 백업 닉네임, 없으면 '폰 끝4자리'(2026-11-17)
+    var WHO={};try{var rr=await client.from('book_reviews').select('id,reader');var nb=await client.from('reader_backups').select('reader,name');var NM={};(nb.data||[]).forEach(function(b){NM[b.reader]=b.name;});
+      (rr.data||[]).forEach(function(x){WHO[x.id]=NM[x.reader]||('폰 '+String(x.reader).slice(-4).toUpperCase());});}catch(e){}
     body.innerHTML='<div class="card"><h3>💬 후기 '+L.length+'개'+(hid?' <small style="color:#a2231d">(숨김 '+hid+')</small>':'')+'</h3>'+
-      '<p class="hint">스터디 앱 › 이번 달 책 › 5권 소개 카드에서 엄마들이 남긴 후기예요. 이름 없이 아이 나이대와 함께 바로 공개돼요. 아이 이름·연락처·광고 같은 글은 [숨기기]로 가려 주세요(쓴 사람에게는 계속 보여요).</p>'+
+      '<p class="hint">스터디 앱 › 이번 달 책 › 5권 소개 카드에서 엄마들이 남긴 후기예요. 이름 없이 아이 나이대와 함께 바로 공개돼요. 아이 이름·연락처·광고 같은 글은 [숨기기]로 가려 주세요(쓴 사람에게는 계속 보여요). ‘쓴 사람’은 관리자에게만 보여요(기록 백업 닉네임, 없으면 기록 ID 끝 4자리 · 가족이 이어보기로 같이 쓰면 한 집 후기 1개). 전체 내려받기는 KPI › 사람별 기록 › ⬇️ 후기 내려받기.</p>'+
       (L.length?'<div style="overflow-x:auto"><table class="tbl" style="width:100%;border-collapse:collapse;font-size:.88rem">'+
-        '<tr style="text-align:left;border-bottom:1px solid #ddd"><th>날짜</th><th>책</th><th>나이</th><th>반응 · 한 줄</th><th></th></tr>'+
-        L.map(function(x){var d=new Date(x.updated_at);return '<tr style="border-bottom:1px solid #eee;'+(x.hidden?'opacity:.5':'')+'"><td style="white-space:nowrap;padding:6px 4px">'+(d.getMonth()+1)+'.'+d.getDate()+'</td><td style="padding:6px 4px">'+esc(x.title)+'</td><td style="white-space:nowrap;padding:6px 4px">'+(AG[x.age]||'-')+'</td>'+
+        '<tr style="text-align:left;border-bottom:1px solid #ddd"><th>날짜</th><th>쓴 사람</th><th>책</th><th>나이</th><th>반응 · 한 줄</th><th></th></tr>'+
+        L.map(function(x){var d=new Date(x.updated_at);return '<tr style="border-bottom:1px solid #eee;'+(x.hidden?'opacity:.5':'')+'"><td style="white-space:nowrap;padding:6px 4px">'+(d.getMonth()+1)+'.'+d.getDate()+'</td><td style="white-space:nowrap;padding:6px 4px">'+esc(WHO[x.id]||'-')+'</td><td style="padding:6px 4px">'+esc(x.title)+'</td><td style="white-space:nowrap;padding:6px 4px">'+(AG[x.age]||'-')+'</td>'+
           '<td style="padding:6px 4px">'+(x.reactions||[]).map(function(k){return RXN[k]||k;}).join(' · ')+(x.body?'<br>“'+esc(x.body)+'”':'')+'</td>'+
           '<td style="padding:6px 4px"><button class="btn" data-rvh="'+x.id+'" data-h="'+(x.hidden?'0':'1')+'">'+(x.hidden?'다시 보이기':'숨기기')+'</button></td></tr>';}).join('')+'</table></div>':'<p class="hint">아직 후기가 없어요.</p>')+'</div>'+
       '<div class="card" id="likeRank"><h3>😆 재밌어요 많은 책</h3><p class="status">불러오는 중…</p></div>';
