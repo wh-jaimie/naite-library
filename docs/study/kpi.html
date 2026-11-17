@@ -829,16 +829,16 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
 
   // 앱·사이트 사용 이벤트(최근 90일) 내려받기(2026-11-16, 정기 분석용). 방문 ID는 기록 ID와 다른 값(joy_sid)이라 끝 4자리만.
-  async function exportEvents(st){
+  async function exportEvents(st,all){
     st.textContent='이벤트 불러오는 중…';
-    var since=addDays(new Date(),-90).toISOString(),ev;
+    var since=all?'2000-01-01T00:00:00Z':addDays(new Date(),-90).toISOString(),ev;
     try{ev=await pageAll(function(){return client.from('events').select('type,theme_key,session_id,path,meta,book_id,created_at').gte('created_at',since).order('created_at');});}
     catch(e){st.textContent='이벤트를 읽지 못했어요: '+(e.message||e);return;}
     var AP={record:'스터디 앱',study:'옛 스터디 자료',naite:'사이트'};
     var rows=ev.map(function(e){var m=e.meta||{},d=new Date(e.created_at);
       return [dstr(d),hm(e.created_at),e.type,AP[appOf(e)]||'',e.path||'',String(e.session_id||'').slice(-4).toUpperCase(),e.theme_key||'',m.title||m.label||'',m.from||m.src||'',m.pwa?'1':'',JSON.stringify(m)];});
     csvDown('나이테_이벤트_'+dstr(new Date())+'.csv',['날짜','시각','종류','화면','경로','방문 ID 끝','주제','책·버튼','출처','홈 화면 앱','meta'],rows);
-    st.textContent='✓ 이벤트 '+ev.length+'개 내려받았어요(최근 90일)';
+    st.textContent='✓ 이벤트 '+ev.length+'개 내려받았어요('+(all?'전체 기간':'최근 90일')+')';
   }
 
   // 사람별 기록(2026-11-16): 폰(기록 ID)마다 언제부터·얼마나·어떤 책을 기록하는지. 전체 기간.
@@ -895,7 +895,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         ['두 달(주제) 이상 이어서 기록',multi]
       ],nAll)+
       '<p class="hint">‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰을 바꾸거나 아이폰에서 사파리와 홈 화면 앱을 같이 쓰면 따로 세요. 이름은 기록 백업한 닉네임이고, 백업 안 한 폰은 기록 ID 끝 4자리로 보여요. 메모·후기는 아래 내려받기로 볼 수 있어요(후기는 줄을 눌러도 보여요).</p>'+
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><button class="btn" id="xreviews">⬇️ 후기 내려받기 (CSV)</button><button class="btn" id="xevents">⬇️ 이벤트 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn" id="xall" style="background:var(--pine,#245648);color:#fff">📦 KPI 데이터 전부 내려받기 (CSV 4개)</button><button class="btn" id="xlogs">⬇️ 읽기 기록 내려받기 (CSV)</button><button class="btn" id="xnotes">⬇️ 메모 내려받기 (CSV)</button><button class="btn" id="xreviews">⬇️ 후기 내려받기 (CSV)</button><button class="btn" id="xevents">⬇️ 이벤트 내려받기 (CSV)</button><span class="status" id="xst"></span></div></div>';
     var ot={},otr={};list.forEach(function(p){Object.keys(p.others).forEach(function(t){if(t==='(제목 없이)')return;var k=t.toLowerCase();if(!ot[k])ot[k]={t:t,n:0,r:0};ot[k].n+=p.others[t];ot[k].r++;});});
     var otl=Object.keys(ot).map(function(k){return ot[k];}).sort(function(a,b){return b.r-a.r||b.n-a.n;});
     h+='<div class="card"><h3>📚 다른 책으로 쓴 제목 <span class="hint">많은 사람이 쓴 순 · 위 15개</span></h3>'+(otl.length?table(['제목','기록','폰'],otl.slice(0,15).map(function(o){return [esc(o.t),o.n,o.r];}),1):'<p class="empty">제목을 쓴 다른 책 기록이 아직 없어요.</p>')+
@@ -933,6 +933,10 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       el.querySelectorAll('.pr').forEach(function(tr){tr.onclick=function(){var d=el.querySelector('[data-pd="'+tr.dataset.pi+'"]');d.hidden=!d.hidden;tr.classList.toggle('open',!d.hidden);};});
     }
     document.getElementById('xlogs').onclick=exportLogs;
+    // 2026-11-17: 매일 운영 분석(분석/ 세션)용 — 읽기 기록·메모·후기·이벤트(전체 기간)를 한 번에
+    document.getElementById('xall').onclick=async function(){var st=document.getElementById('xst'),b=this;b.disabled=true;
+      try{exportLogs();await new Promise(function(r){setTimeout(r,700);});await exportNotes(st);await new Promise(function(r){setTimeout(r,700);});exportReviews(st);await new Promise(function(r){setTimeout(r,700);});await exportEvents(st,true);
+        st.textContent='✓ 4개 파일(읽기 기록·메모·후기·이벤트 전체 기간)을 내려받았어요';}finally{b.disabled=false;}};
     document.getElementById('xnotes').onclick=function(){exportNotes(document.getElementById('xst'));};
     document.getElementById('xreviews').onclick=function(){exportReviews(document.getElementById('xst'));};
     document.getElementById('xevents').onclick=function(){exportEvents(document.getElementById('xst'));};
