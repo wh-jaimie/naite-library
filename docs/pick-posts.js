@@ -86,7 +86,7 @@
       (kind==='book'
         ?'<label>책 제목 *<input id="ppT" maxlength="80" placeholder="예: Brown Bear, Brown Bear, What Do You See?"></label>'+
          '<label>아이 몇 개월 때 좋아했나요? <span>(선택)</span><input id="ppA" type="number" inputmode="numeric" min="0" max="144" placeholder="예: 18"></label>'+
-         '<label>한 줄 추천 이유 <span>(선택 · 나이테 책장에 있는 책이면 그 책 후기로도 올라가요. 이미 쓴 후기가 있으면 그대로 둬요)</span><input id="ppB" maxlength="100" placeholder="예: 동물 소리 흉내 내며 매일 가져와요"></label>'
+         '<label>한 줄 추천 이유 <span>· 책 후기로도 올라가요</span><input id="ppB" maxlength="100" placeholder="예: 동물 소리 흉내 내며 매일 가져와요"></label>'
         :'<label>아이 몇 개월 때였나요? *<input id="ppA" type="number" inputmode="numeric" min="0" max="144" placeholder="예: 18"></label>'+
          '<label>어떤 활동이었나요? *<input id="ppB" maxlength="100" placeholder="예: 노부영 노래 틀어 두고 율동하며 따라 부르기"></label>'+
          '<label>함께 쓴 책·영상 <span>(선택)</span><input id="ppT" maxlength="80" placeholder="예: Dear Zoo"></label>')+
