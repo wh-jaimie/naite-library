@@ -212,6 +212,7 @@
     toast('<b>'+esc(shortTitle(b.title))+'</b> '+dayLabel(row.d)+' '+count(bid,row.d)+'번째 기록 ✓',acts);
     flush();
     offerBarOnce();
+    if(S.onRead)try{S.onRead(bid,src);}catch(e){} // 후기 유도(app.html)
   }
   function addOther(title,day){
     var row={c:hex(12),b:0,o:title||'',d:day,t:Date.now(),k:'_other'};
@@ -1136,10 +1137,12 @@
         (memo?'<div class="rs-memo"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
           '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
           '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요 · 날짜를 누르면 다시 볼 수 있어요':'')+'</p></div>':'')+
+        (memo&&memo.key.indexOf('b:')===0&&S.rvSlot?'<div class="rs-rvq" data-rvq="'+esc(memo.key.slice(2))+'"></div>':'')+
         '<div class="rk-dayacts"><button type="button" class="rk-btn out" data-sstamp>'+svg(17,IC.cam)+'인증샷 찍기'+'</button>'+
           '<button type="button" class="rk-btn fill" data-sdone>완료</button></div>'+
         '<button type="button" class="subtle" data-salbum>앨범 사진에 날짜 스탬프 넣기</button>'+
         ((S.photoList[day]||[]).length>=PMAX?'<p class="cd-max">사진은 하루 '+PMAX+'장까지예요. 더 찍으면 가장 먼저 찍은 사진이 지워져요.</p>':'');
+      var rq=box.querySelector('[data-rvq]');if(rq)try{S.rvSlot(rq,+rq.getAttribute('data-rvq'),day);}catch(e){}
       if(stampBid!=null)stampOn(box.querySelector(stampBid==='o'?'[data-so]':'[data-sb="'+stampBid+'"]'),day);
     }
     function added(row,label,id){if(!row)return;last={c:row.c,t:label};
@@ -1703,7 +1706,7 @@
     install:install,installBar:installBar,isStandalone:isStandalone,inAppName:inAppName,externalHref:externalHref,toast:toast,
     mount:function(o){
       var code=getCode(),theme=o.theme||{};
-      S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,
+      S={client:o.client,theme:theme,books:[],byId:loadMeta(),monthLabel:o.monthLabel||'',onEvent:o.onEvent||null,onRead:o.onRead||null,rvSlot:o.rvSlot||null,
          reader:readerId(),code:code,member:true,recDay:logicalToday(),lastTap:{},inflight:null,gone:{},tab:'study',rows:[],outbox:[],
          home:{key:theme.key,ko:theme.ko,emoji:theme.emoji,monthLabel:o.monthLabel||''},pubs:[],loaded:{},shelfKey:theme.key,photoBlobs:{},photoUrls:{},photoList:{},wbList:[]};
       S.books=rememberBooks(theme.key,o.books);
