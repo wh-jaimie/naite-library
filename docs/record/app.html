@@ -902,6 +902,11 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .ty.t1{background:#C4532C!important}.ty.t3{background:#2F6FA8!important}.ty.t2{background:#7D4FA3!important}.ty.t4{background:#B27D06!important}.ty.t5{background:#2E7D4F!important}
 .gcard .gtag.l2{background:#EEF0DC;color:#5B6123}.gcard .gtag.l3{background:var(--clay-soft);color:var(--clay-ink)}
 .gcard .gtag svg{flex:none}
+.gcard .apk{position:absolute;top:-7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#F2C14E;color:#3A2A05;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:99px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sd-agel{display:block;margin:12px auto 2px;border:0;background:none;font:inherit;font-size:12.5px;color:var(--ink-soft);cursor:pointer;text-align:center;line-height:1.5}.sd-agel u{color:var(--pine);font-weight:800}
+.age-ask .age-ch{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px}
+.age-ask .age-ch button{border:1px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:15px;padding:13px 0;border-radius:12px;color:var(--ink);cursor:pointer}
+.age-ask .age-ch button small{display:block;font-weight:600;font-size:11px;color:var(--muted);margin-top:2px}.age-ask .age-ch button.on{border-color:var(--pine);background:var(--pine-soft)}
 .sd-age{margin:2px 0 16px;background:var(--surface);border:1.5px solid var(--pine);border-radius:16px;padding:12px 14px}
 .sd-age h4{margin:0;font-size:15.5px;font-weight:800;color:var(--ink)}
 .sd-age p{margin:2px 0 10px;font-size:13px;color:var(--ink-soft);line-height:1.45}
@@ -1288,28 +1293,46 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     var dl=el.querySelector('[data-rvdel]');if(dl)dl.onclick=function(){if(confirm('이 책에 남긴 후기를 지울까요?'))send(true);};
     logEvent('review_open',{book_id:bid,title:b.title,write:write?1:0});
   }
+  // 2026-11-17 운영자 결정: 나이 카드가 5권 표지를 가려(표지 → 쿠팡 클릭 감소) 카드를 없앰.
+  // 나이는 처음 한 번 팝업으로 묻고(naite_age_ask), 그다음엔 표지에 '먼저 읽기' 표시만. 표지 아래 한 줄로 나이 바꾸기
   function paintAge(books){
     lastAgeBooks=books;
     var box=document.getElementById('sdAge');if(!box||books.length<3)return;
-    var g=getAge();
-    if(!g||box.dataset.pick==='1'){
-      box.innerHTML='<div class="sd-age"><h4>우리 아이는 몇 살인가요?</h4><p>고르면 이번 달 책 중 어떤 책부터 시작하면 좋을지 알려 드려요</p><div class="ach">'+
-        [1,2,3].map(function(k){return '<button type="button" data-age="'+k+'"'+(k===g?' class="on"':'')+'>'+AGE[k][0]+'<small>'+AGE[k][1]+'</small></button>';}).join('')+'</div></div>';
-      box.querySelectorAll('[data-age]').forEach(function(b){b.onclick=function(){var k=+b.dataset.age;try{localStorage.setItem('naite_age',String(k));}catch(e){}box.dataset.pick='';logEvent('age_pick',{age:AGE[k][0]});paintAge(books);};});
-      return;
-    }
-    var pk=agePicks(books,g),rest=books.length-pk.length;
-    var HEAD={1:'0~3세라면, 조작북·반복 책부터',2:'4~6세라면, 이 2권부터',3:'7~9세라면, 유머·스토리·라임 꼭'};
-    var REST={1:'어린 아이도 이해하기 쉬워요. 나머지 '+rest+'권은 그림을 보며 짧게 이야기해 줘도 충분해요.',2:'조작북·반복으로 편하게 시작해서 유머·스토리로 재미를 넓혀 가요. 다 못 읽어도 괜찮아요.',3:'큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요. 라임은 노래처럼 들려 색다른 재미를 줘요.'};
-    box.innerHTML='<div class="sd-start"><div class="hd"><h4>'+HEAD[g]+' 💛</h4><button type="button" class="chg" data-agechg>'+AGE[g][0]+' ▾</button></div><div class="two">'+
-      pk.map(function(b){return '<button type="button" class="mb" data-agego="'+b.id+'">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'')+'<span class="mt"><b>'+esc(b.title)+'</b><span>'+esc(b.tier_label||'')+'</span><span class="mg">소개 보기 ›</span></span></button>';}).join('')+
-      '</div><p class="rest">'+REST[g]+'</p></div>';
-    box.querySelector('[data-agechg]').onclick=function(){box.dataset.pick='1';paintAge(books);};
-    box.querySelectorAll('[data-agego]').forEach(function(m){m.onclick=function(){
-      var t=document.querySelector('#s-books .binfo[data-bid="'+m.dataset.agego+'"]'),nav=document.getElementById('sdChips');if(!t)return;
-      window.scrollTo({top:t.getBoundingClientRect().top+scrollY-(nav?nav.offsetHeight:0)-12,behavior:'smooth'});
-      t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');
-      logEvent('age_book_go',{age:AGE[g][0],title:t.dataset.title});};});
+    var g=getAge(),ids={};
+    if(g)agePicks(books,g).forEach(function(b){ids[b.id]=1;});
+    document.querySelectorAll('#s-books .sd-shelf .sd-book[data-bid]').forEach(function(el){
+      var on=!!ids[el.dataset.bid];el.classList.toggle('agepick',on);
+      var cv=el.querySelector('.gcv'),bd=cv&&cv.querySelector('.apk');
+      if(on&&cv&&!bd){bd=document.createElement('span');bd.className='apk';bd.textContent='💛 먼저 읽기';cv.appendChild(bd);}
+      else if(!on&&bd)bd.remove();});
+    box.innerHTML=g?'<button type="button" class="sd-agel" data-agechg>💛 표시는 <b>'+AGE[g][1]+'</b>에게 먼저 권하는 책이에요 · <u>나이 바꾸기</u></button>'
+      :'<button type="button" class="sd-agel" data-agechg>👶 우리 아이 나이를 고르면 먼저 읽을 책을 표시해 드려요 · <u>고르기</u></button>';
+    box.querySelector('[data-agechg]').onclick=function(){openAgeAsk(books,'change');};
+    if(!g)setTimeout(function(){askAgeOnce(books);},1200);
+  }
+  function askAgeOnce(books){
+    if(PREVIEW||getAge())return;
+    try{if(localStorage.getItem('naite_age_ask'))return;}catch(e){return;}
+    var v=document.getElementById('v-study');if(v&&v.hidden)return; // 이번 달 책 화면일 때만
+    if(document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden]),.age-ask'))return; // 다른 창이 떠 있으면 다음에
+    try{localStorage.setItem('naite_age_ask','1');}catch(e){}
+    openAgeAsk(books,'first');
+  }
+  function openAgeAsk(books,from){
+    var g=getAge(),ov=document.createElement('div');ov.className='rl-scrim age-ask';
+    ov.innerHTML='<div class="rl-sheet" role="dialog" aria-modal="true" aria-label="우리 아이 나이"><div class="grab" aria-hidden="true"></div>'+
+      '<h3>우리 아이는 몇 살인가요?</h3><p class="sub">한 번만 고르면 이번 달 책 중 먼저 읽으면 좋은 책에 💛 표시를 해 드려요.</p>'+
+      '<div class="age-ch">'+[1,2,3].map(function(k){return '<button type="button" data-agek="'+k+'"'+(k===g?' class="on"':'')+'>'+AGE[k][1]+'<small>'+AGE[k][0]+'</small></button>';}).join('')+'</div>'+
+      '<button type="button" class="subtle" data-agex>'+(from==='first'?'나중에 할게요':'닫기')+'</button></div>';
+    document.body.appendChild(ov);document.documentElement.classList.add('rl-lock');
+    function close(){ov.remove();if(!document.querySelector('.rl-scrim:not([hidden])'))document.documentElement.classList.remove('rl-lock');}
+    ov.addEventListener('click',function(e){if(e.target===ov){close();if(from==='first')logEvent('age_popup_skip',{});}});
+    ov.querySelector('[data-agex]').onclick=function(){close();if(from==='first')logEvent('age_popup_skip',{});};
+    ov.querySelectorAll('[data-agek]').forEach(function(b){b.onclick=function(){var k=+b.dataset.agek;
+      try{localStorage.setItem('naite_age',String(k));}catch(e){}
+      logEvent('age_pick',{age:AGE[k][0],from:from==='first'?'popup':'change'});close();paintAge(books);
+      var sh=document.querySelector('#s-books .sd-shelf');if(sh)sh.scrollIntoView({behavior:'smooth',block:'center'});};});
+    logEvent(from==='first'?'age_popup_open':'age_change_open',{});
   }
   function render(theme,books,content){
     curKey=theme.key;
@@ -1385,8 +1408,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     h+='<nav class="sd-chips" id="sdChips" role="tablist" aria-label="이번 달 자료">'+secs.map(function(s,i){return '<button type="button" role="tab" class="chip'+(i?'':' on')+'" data-sdt="'+s[0]+'"'+(s[0]==='s-next'?' hidden':'')+'>'+s[1]+'</button>';}).join('')+'</nav>';
     // 1. 이번 달 5권(표지 책장 먼저 → 공동구매 → 책 소개 → 안내)
     h+='<section id="s-books"><div class="sh">'+ic('book',20)+'<h2>이번 달 5권</h2></div>'+
-       hero+'<div id="sdAge"></div>'+
-       '<div class="sd-shelf">'+bh+'</div>'+(PREVIEW?'':useLineHTML())+
+       hero+'<div class="sd-shelf">'+bh+'</div><div id="sdAge"></div>'+(PREVIEW?'':useLineHTML())+
        '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
        '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>'+
        '<h3 class="binfo-h" id="sdInfo">5권 소개</h3><div class="sd-books">'+binfo+'</div>'+
@@ -1439,7 +1461,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     app.querySelectorAll('.sd-extra').forEach(function(el){el.addEventListener('click',function(){logEvent('extra_click',{title:el.dataset.title});});});
     app.querySelectorAll('.act.wb').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();logEvent('workbook_click',{title:el.dataset.wb});});});
     // 표지 책장(.sd-book.gcard)은 카드 자체가 쿠팡 링크라 '.sd-book .cvlink'에 안 걸려 집계가 빠졌음(2026-11-07~11-13) → 둘 다 잡기
-    app.querySelectorAll('.sd-book .cvlink, .sd-book.cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title});}logEvent('buy_click',{title:el.dataset.buy});});});
+    app.querySelectorAll('.sd-book .cvlink, .sd-book.cvlink').forEach(function(el){el.addEventListener('click',function(ev){ev.stopPropagation();if(ev.isTrusted){var bk=el.closest('.sd-book');logEvent('book_click',{book_id:+bk.dataset.bid,title:bk.dataset.title,pick:bk.classList.contains('agepick')?1:0});}logEvent('buy_click',{title:el.dataset.buy,pick:(el.closest('.sd-book')||el).classList.contains('agepick')?1:0});});});
     var more=document.getElementById('sdMore'),intro=document.getElementById('sdIntro');
     if(more&&intro){if(intro.scrollHeight<=intro.clientHeight+2)more.hidden=true;more.onclick=function(){var o=intro.classList.toggle('open');more.textContent=o?'접기':'더 보기';};}
     initChips();

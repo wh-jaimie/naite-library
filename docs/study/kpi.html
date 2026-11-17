@@ -336,7 +336,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     month_nav:'달 넘기기',shelf_month:'기록 달 바꾸기',backup_made:'기록 백업',backup_restored:'백업 이어보기',install_click:'설치 버튼',install_offer:'설치 안내 뜸',install_bar_close:'설치 안내 닫기',
     app_installed:'설치 완료',push_on:'🔔 알림 켜기',push_off:'🔕 알림 끄기',push_denied:'알림 허용 거절',news_open:'📢 공지 열기',welcome_open:'처음 오셨나요 안내 열기',camera_fail:'카메라 실패',photo_reload:'사진 다시 불러오기',
     share_card_open:'오늘 카드 만들기',share_card_save:'오늘 카드 저장',share_card_share:'오늘 카드 공유',share_card_photo:'오늘 카드에 사진 넣기',month_card_open:'달력 이미지 만들기',month_card_save:'달력 이미지 저장',month_card_share:'달력 이미지 공유',
-    age_pick:'아이 나이 고르기',age_book_go:'나이별 추천 책 보기',use120_pick:'집에 영어책 얼마나(답)',c120_study_open:'로드맵에서 스터디 자료 열기',
+    age_pick:'아이 나이 고르기',age_book_go:'(옛) 나이별 2권 카드 누름',age_popup_open:'나이 묻는 창 뜸',age_popup_skip:'나이 창 나중에',age_change_open:'나이 바꾸기 열기',use120_pick:'집에 영어책 얼마나(답)',c120_study_open:'로드맵에서 스터디 자료 열기',
     book_note:'한 줄 메모',note_book_open:'책 메모 모아보기',chal_wb_open:'챌린지 워크북 인증 열기',chal_wb_save:'챌린지 워크북 인증 저장',chal_name:'챌린지 이름 넣기',
     challenge_apply_click:'챌린지 신청 버튼',challenge_apply_done:'챌린지 신청 완료',file_backup:'메모·사진 파일 저장',file_restore:'메모·사진 파일 불러오기',
     family_open:'아빠와 같이 쓰기 열기',family_share:'아빠에게 링크 보내기',backup_nudge:'달 바뀜 백업 안내 뜸',backup_first_nudge:'첫 기록 백업 안내 뜸',
@@ -352,7 +352,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   // 사이트 방문 = 공개 페이지 page_view. 스터디 앱 안에서 연 120·책장(src=record)은 앱 사용이라 뺌
   function isSiteView(e){return e.type==='page_view'&&isPublic(e)&&!(e.meta&&e.meta.src==='record');}
   function isMemo(e){return e.type==='book_note'&&!(e.meta&&e.meta.del);} // 읽기 기록 한 줄 메모 쓰기·고치기(지우기 제외)
-  function isAgeGo(e){return e.type==='age_book_go';} // 이번 달 책 › 나이 고르면 나오는 '먼저 읽을 2권' 누름
+  function isAgeGo(e){return e.type==='age_book_go'||(e.type==='book_click'&&e.meta&&e.meta.pick===1);} // 나이별 추천 책 누름: 11/17까지 '2권 카드'(age_book_go), 그 뒤 💛 먼저 읽기 표시된 표지(book_click pick:1)
   function isAppView(e){return e.type==='page_view'&&(e.path||'').indexOf('/record/')>=0;}
   function isInst(e){return e.type==='app_installed'||(e.type==='page_view'&&e.meta&&(e.meta.pwa===1||e.meta.pwa==='1'));}
   // 전체 기간 스터디 앱 기록(앱 연 것 + 설치) — 한 번만 불러옴
@@ -428,15 +428,15 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       kpi('앱 연 사람',a.app,b.app,R,'명')+'<div id="hinst" class="kpi"><div class="l">새로 설치</div><div class="n">…</div></div>'+
       kpi('기록한 폰',X.lc?cnt(readersOf(X.lc)):'–',X.lp?cnt(readersOf(X.lp)):null,R,'대')+
       kpi('📝 메모 남긴 사람',cnt(sessions(X.cur.filter(isMemo))),cnt(sessions(X.prv.filter(isMemo))),R,'명')+
-      kpi('👶 나이별 2권 누른 사람',cnt(sessions(X.cur.filter(isAgeGo))),cnt(sessions(X.prv.filter(isAgeGo))),R,'명')+
+      kpi('💛 먼저 읽기 표지 누른 사람',cnt(sessions(X.cur.filter(isAgeGo))),cnt(sessions(X.prv.filter(isAgeGo))),R,'명')+
     '</div><div class="shd" style="margin-top:14px"><b style="font-size:.9rem">'+(TODAY?'오늘':'날짜별')+'</b><select class="t sm r" id="hap" style="width:auto"><option value="u">앱 연 사람</option><option value="i">새로 설치</option></select></div><div id="hachart"></div>'+
       '<h4 style="margin:16px 0 8px;font-size:.92rem">들어와서 주로 하는 것</h4>'+
       table(['한 일','사람','횟수'],ak.map(function(k){return [esc(k),cnt(acts[k].s),acts[k].n];}),1)+
       '<p class="hint">사람 = 그 일을 한 번이라도 한 폰 수. 책 읽기 기록은 기록 데이터(폰별 익명 ID) 기준이라 다른 줄과 세는 방식이 조금 달라요.</p>'+
-      (function(){var ag=X.cur.filter(isAgeGo),o={};ag.forEach(function(e){var m=e.meta||{};bump(o,(m.age||'?')+' · '+(m.title||'?'),e);});
+      (function(){var ag=X.cur.filter(isAgeGo),o={};ag.forEach(function(e){var m=e.meta||{};bump(o,(m.age?m.age+' · ':'')+(m.title||'?'),e);});
         var pk=cnt(sessions(X.cur.filter(function(e){return e.type==='age_pick';})));
-        return '<h4 style="margin:18px 0 8px;font-size:.92rem">👶 나이별 ‘먼저 읽을 2권’ 누른 책</h4>'+table(['나이 · 책','사람','누름'],top(o).map(function(k){return [esc(k),cnt(o[k].s),o[k].n];}),1)+
-          '<p class="hint">이번 달 책 화면에서 나이를 고르면 나오는 2권 카드를 눌러 책 소개로 내려간 것. 이 기간에 나이를 새로 고른 사람 '+pk+'명(한 번 고르면 폰에 기억돼서 다음부턴 바로 2권이 보여요).</p>';})()+
+        return '<h4 style="margin:18px 0 8px;font-size:.92rem">👶 💛 나이별 추천(먼저 읽기) 책 누름</h4>'+table(['나이 · 책','사람','누름'],top(o).map(function(k){return [esc(k),cnt(o[k].s),o[k].n];}),1)+
+          '<p class="hint">11/17부터: 나이를 고르면 이번 달 표지에 💛 먼저 읽기가 붙고, 그 표지를 누른 것(쿠팡으로 감). 그전 기록은 옛 2권 카드 누름(나이 표시). 이 기간에 나이를 고른 사람 '+pk+'명.</p>';})()+
       '<h4 style="margin:18px 0 8px;font-size:.92rem">어느 메뉴를 보나요 · 아래 탭</h4>'+
       table(['탭','사람','열기','그중 앱 열 때 첫 화면'],top(tabs).map(function(k){return [esc(k),cnt(tabs[k].s),tabs[k].n,tabs[k].i];}),1)+
       '<h4 style="margin:16px 0 8px;font-size:.92rem">📘 이번 달 책 안 메뉴</h4>'+
@@ -464,7 +464,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var SM=[['site','🌱 사이트 들어온 사람','#2F6E58',sv,true],['buy','🛒 쿠팡 누른 사람','#a2231d',ev('buy_click'),true],['buyn','🛒 쿠팡 클릭 수','#c2554f',ev('buy_click'),false],
       ['app','📲 스터디 앱 연 사람','#6A4A8A',X.cur.filter(isAppView),true],['cta','👆 메인 버튼 클릭','#8A6D2F',ev('cta_click'),false],
       ['join','💬 스터디방 참여 클릭','#B87343',ev('join_click'),false],['gb','🛍 공동구매 관심','#7A4520',ev('groupbuy_interest'),false],
-      ['memo','📝 메모 남긴 사람','#5C6FA8',X.cur.filter(isMemo),true],['agego','👶 나이별 먼저 읽을 2권 누른 사람','#B0613A',X.cur.filter(isAgeGo),true]];
+      ['memo','📝 메모 남긴 사람','#5C6FA8',X.cur.filter(isMemo),true],['agego','💛 먼저 읽기 표지 누른 사람','#B0613A',X.cur.filter(isAgeGo),true]];
     if(!TODAY&&X.lc)SM.push(['readers','📖 기록한 폰','#4F9A72',null,true],['reads','✅ 읽기 기록 수','#245648',null,false]);
     var hsm=document.getElementById('hsm');hsm.innerHTML=SM.map(function(m){return '<option value="'+m[0]+'">'+m[1]+'</option>';}).join('');
     try{var _sv=localStorage.getItem('naite_kpi_hsm');if(_sv&&SM.some(function(m){return m[0]===_sv;}))hsm.value=_sv;}catch(e){}

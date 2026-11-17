@@ -48,15 +48,17 @@
 | page_view | 스터디 앱 열기 | theme, pwa(홈 화면 앱이면 1) |
 | app_installed | 설치 완료(안드로이드만 잡힘) | |
 | dwell | 머문 시간 | seconds |
-| book_click | 책 표지 눌러 보기 | book_id, title |
+| book_click | 책 표지 눌러 보기 | book_id, title, pick(💛 먼저 읽기 표시된 표지면 1) |
 | read_aloud_click | 읽어주기 영상 | title |
 | workbook_click | 워크지 | title |
 | extra_click | 부가자료 열기 | title |
-| buy_click | 쿠팡 클릭 | title, from? |
+| buy_click | 쿠팡 클릭 | title, from?, pick? |
 | title_copy | 책 제목 복사(다른 데서 사려는 행동) | title |
 | book_info_go / guide_click / blog_click / insta_click | 책 정보·가이드·블로그·인스타 | from 등 |
 | groupbuy_interest | 공동구매 관심 | theme_key, page |
-| age_pick / age_book_go | 아이 나이 고르기 / 이번 달 책 › 나이별 '먼저 읽을 2권' 카드 누름(책 소개로 내려감) — KPI 스터디 앱 카드 '👶 나이별 2권 누른 사람'·책별 표·날짜별 흐름 | age, title |
+| age_pick | 아이 나이 고르기 | age, from(popup·change·welcome) |
+| age_popup_open / age_popup_skip / age_change_open | 처음 한 번 뜨는 나이 창 / '나중에' / 표지 아래 '나이 바꾸기' (11/17부터) | |
+| age_book_go | (옛) 나이별 '먼저 읽을 2권' 카드 누름 — 11/17 카드 없앰. 지금은 💛 먼저 읽기 표지 누름 = `book_click`·`buy_click`의 `pick:1` | age, title |
 | use120_pick | '집에 영어책이 얼마나 있나요?' 답 | |
 | review_open / review_save / review_delete | 💬 이번 달 책 후기 창 열기 / 올리기 / 지우기 (2026-11-17) | book_id, title, write(창을 연 버튼이 '후기 남기기'면 1) · n(반응 수), body(한 줄 있음 1), edit(고침 1) · quick(기록할 때 반응 칩으로 바로 올림 1), from(card=자료 탭 '읽었어요' 뒤 / sheet=기록창) |
 | review_prompt | 💬 기록할 때 후기 유도 칩이 보임 (2026-11-17, 이번 달 책·후기 없을 때) | book_id, from(card / sheet) |
