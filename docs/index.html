@@ -11,351 +11,231 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#245648">
-<meta name="description" content="엄마표영어, 혼자 꾸준히 하기 어렵다면. 파닉스 전 아이에게 엄마가 읽어주기 좋은 영어 그림책 5권을 매달 골라드려요. 고른 이유·읽어주는 법·독서 기록까지 무료.">
+<meta name="description" content="엄마표영어 하다가 스터디에 앱까지 만들어 버린 드니맘의 무료 영어 그림책 스터디. 24개월 동안 120권, 매달 5권씩 같이 읽어요. 읽어주는 법·독서 기록까지 무료.">
 <title>나이테 · 영어책육아 메이트</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
 <style>
 *{box-sizing:border-box}html,body{margin:0}
-:root{--paper:#F5F0E6;--paper2:#EDE6D6;--card:#FFFDF8;--line:#E3DBC9;--ink:#23291F;--soft:#5E6253;--pine:#245648;--pine2:#2F6E58;--honey:#D1965C;--coral:#B87343;--leaf:#4F9A72;--sh:0 1px 2px rgba(43,42,38,.06),0 10px 26px rgba(43,42,38,.09)}
-body{background:var(--paper);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.55;word-break:keep-all;padding-bottom:84px}
-h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.25;text-wrap:balance}
+/* 2026-11-18 메인 개편: 광고 같은 큰 카드·그림자·부채 표지 대신 '엄마 노트' 느낌 — 한 줄 칼럼, 얇은 선, 손글씨 포인트 */
+:root{--paper:#F7F3EA;--card:#FFFDF8;--line:#E4DCCB;--ink:#2A2E26;--soft:#6A6C60;--pine:#245648;--honey:#D1965C;--coral:#A8653A}
+body{background:var(--paper);color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;line-height:1.7;word-break:keep-all;padding-bottom:70px;font-size:16px}
+h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.35;font-weight:700}
 a{color:inherit;text-decoration:none}
 [hidden]{display:none!important}
-.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+.hand{font-family:'Gaegu',cursive;font-weight:700}
 
 /* 머리 */
-.top{display:flex;align-items:center;gap:10px;padding:14px 0}
+.top{display:flex;align-items:center;gap:10px;padding:16px 0 6px}
 .top .home{display:flex;align-items:center;gap:8px}
-.top svg{width:32px;height:32px;flex:none}
-.top b{font-family:'Gowun Batang',serif;font-size:1.2rem;color:var(--pine)}
-.top .tagl{color:var(--soft);font-size:.86rem;font-weight:500}
-.top .tagl::before{content:"·";margin:0 6px 0 0;color:#B8AF9B}
-.nav a{white-space:nowrap}
-.top .bt{display:flex;align-items:baseline;gap:6px}
-@media (max-width:480px){.top .bt{flex-direction:column;gap:0;line-height:1.15}.top .tagl{font-size:.7rem}.top .tagl::before{display:none}}
-.nav{margin-left:auto;display:flex;gap:4px}
-.nav a{font-weight:700;font-size:.86rem;color:var(--soft);padding:7px 10px;border-radius:999px}
-.nav a:hover{background:var(--paper2);color:var(--pine)}
-.nav a.app{color:#fff;background:var(--pine)}
-@media (max-width:720px){.nav a:not(.app){display:none}}
+.top svg{width:28px;height:28px;flex:none}
+.top b{font-family:'Gowun Batang',serif;font-size:1.15rem;color:var(--pine)}
+.top .tagl{color:var(--soft);font-size:.8rem;margin-left:2px}
+.top .open{margin-left:auto;font-size:.88rem;font-weight:700;color:var(--pine);border-bottom:1.5px solid var(--pine);padding-bottom:1px;white-space:nowrap}
+.top{padding-right:78px}@media (max-width:480px){.top .tagl{display:none}}
 
-/* 첫 화면 */
-.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:center;padding:26px 0 34px}
-.kick{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:800;color:var(--coral)}
-.hero h1{font-size:clamp(2rem,6.6vw,3.15rem);margin-top:14px}
-.hero h1 em{font-style:normal;color:var(--pine);background:linear-gradient(transparent 62%,rgba(209,150,92,.35) 62%)}
-.lead{color:var(--soft);font-size:1.06rem;margin:14px 0 0;max-width:36ch}
-.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.b1{display:inline-flex;align-items:center;gap:8px;background:var(--pine);color:#fff;font-weight:800;font-size:1.05rem;padding:15px 24px;border-radius:14px;box-shadow:var(--sh)}
-.b1:hover{background:var(--pine2)}
-.b2{display:inline-flex;align-items:center;gap:6px;background:var(--card);color:var(--pine);font-weight:800;font-size:1rem;padding:14px 20px;border-radius:14px;border:1.5px solid var(--pine)}
-.proof{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:.9rem;color:var(--soft)}
-.proof b{color:var(--coral);font-size:1.05rem}
-.proof .dot{width:4px;height:4px;border-radius:50%;background:#C9BFA9}
-.stage{position:relative;aspect-ratio:1/1;max-width:440px;width:100%;margin:0 auto}
-.stage .rings{position:absolute;inset:0}
-.fan{position:absolute;inset:0;display:grid;place-items:center}
-.fan img{position:absolute;width:30%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;box-shadow:0 10px 24px rgba(35,41,31,.25);border:3px solid #fff;background:#E8E0CF}
-.stage .tag{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem;color:var(--pine);white-space:nowrap;box-shadow:var(--sh)}
-@media (max-width:760px){.hero{grid-template-columns:1fr;gap:6px;padding-top:12px}.stage{max-width:340px;aspect-ratio:1/.74;order:-1}.fan img{width:27%}.stage .tag{bottom:0}}
+/* 첫 화면: 편지처럼 */
+.hero{padding:22px 0 8px}
+.hi{font-size:1.35rem;color:var(--coral)}
+.hero h1{font-size:clamp(1.65rem,6vw,2.1rem);margin-top:6px}
+.hero h1 u{text-decoration:none;background:linear-gradient(transparent 64%,rgba(209,150,92,.32) 64%)}
+.lead{color:var(--soft);margin:12px 0 0}
+.shelf{margin-top:20px}
+.shelf .row{display:flex;gap:8px;align-items:flex-end}
+.shelf img{width:calc((100% - 32px)/5);aspect-ratio:3/4;object-fit:cover;border-radius:4px;background:#E8E0CF;border:1px solid var(--line)}
+.shelf .cap{display:block;margin-top:6px;font-size:.84rem;color:var(--soft)}
+.go1{display:inline-block;margin-top:18px;background:var(--pine);color:#fff;font-weight:700;padding:12px 18px;border-radius:10px}
+.go2{display:inline-block;margin:18px 0 0 10px;font-weight:700;color:var(--pine);border-bottom:1.5px solid currentColor}
+.quiet{margin:14px 0 0;font-size:.86rem;color:var(--soft)}
+.quiet b{color:var(--pine)}
 
-/* 신뢰 숫자 줄 */
-.stats{display:grid;grid-template-columns:repeat(var(--n,4),1fr);background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh)}
-.stats div{padding:16px 10px;text-align:center;border-left:1px solid var(--line)}
-.stats div:first-child{border-left:0}
-.stats b{display:block;font-family:'Gowun Batang',serif;font-size:1.6rem;color:var(--pine);line-height:1.1}
-.stats span{font-size:.8rem;color:var(--soft)}
-@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.stats div:nth-child(odd){border-left:0}.stats div:nth-child(n+3){border-top:1px solid var(--line)}}
+/* 구간 공통: 노트 한 장씩 */
+.sec{padding:34px 0 4px;border-top:1px dashed var(--line);margin-top:30px}
+.eyebrow{font-size:.8rem;font-weight:700;color:var(--coral);letter-spacing:.02em}
+.sec h2{font-size:1.35rem;margin-top:4px}
+.sec p{margin:10px 0 0}
+.sub{color:var(--soft)}
+.more-link{display:inline-block;margin-top:12px;font-weight:700;color:var(--pine);border-bottom:1.5px solid currentColor}
 
-/* 구간 공통 */
-.sec{padding:52px 0 8px}
-.eyebrow{font-size:.82rem;font-weight:800;color:var(--coral)}
-.sec h2{font-size:clamp(1.5rem,4.8vw,2rem);margin-top:6px}
-.sub{color:var(--soft);margin:8px 0 0;max-width:52ch}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh)}
+/* 만든 사람 이야기 */
+.story p{margin:10px 0 0}
+.story blockquote{margin:14px 0 0;padding:2px 0 2px 14px;border-left:3px solid var(--honey);font-family:'Gowun Batang',serif;color:var(--pine)}
+.story .sign{display:block;margin-top:10px;font-size:1.25rem;color:var(--coral)}
 
 /* 이번 달 5권 */
-.mhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
-.mtheme{display:inline-flex;gap:8px;align-items:center;font-weight:800;background:var(--pine);color:#fff;border-radius:999px;padding:7px 14px;font-size:.9rem}
-.five{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:20px}
-.bk{display:flex;flex-direction:column;padding:12px;gap:8px}
-.bk .cv{aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#E8E0CF;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.mtheme{display:inline-block;margin-left:6px;font-size:.9rem;font-family:'Noto Sans KR',sans-serif;color:var(--pine)}
+.five{display:grid;gap:0;margin-top:14px;border-top:1px solid var(--line)}
+.bk{display:grid;grid-template-columns:64px 1fr;gap:4px 14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:start}
+.bk .cv{grid-row:span 4;aspect-ratio:3/4;border-radius:4px;overflow:hidden;background:#E8E0CF;border:1px solid var(--line)}
 .bk .cv img{width:100%;height:100%;object-fit:cover;display:block}
-.bk .ty{align-self:flex-start;font-size:.72rem;font-weight:800;color:var(--pine);background:#E4EEE6;border-radius:999px;padding:2px 9px}
-.bk h3{font-size:.98rem;font-family:'Noto Sans KR',sans-serif;font-weight:800;line-height:1.3}
-.bk p{margin:0;font-size:.82rem;color:var(--soft);flex:1}
-.bk .buy{font-size:.8rem;font-weight:800;color:var(--coral)}
-@media (max-width:860px){.five{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:62%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.bk{scroll-snap-align:start}}
-.mfoot{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin-top:16px}
-.note{padding:18px 20px;display:flex;gap:14px;align-items:center}
-.note .ic{font-size:1.8rem}
-.note b{display:block}
-.note small{color:var(--soft)}
-.note .go{margin-left:auto;font-weight:800;color:var(--pine);white-space:nowrap}
-.gb{padding:18px 20px;background:#FBEFE3;border-color:#EBCFAF}
-.gb b{display:block}
-.gb small{color:var(--soft)}
-.gb button{margin-top:10px;width:100%;border:0;background:var(--coral);color:#fff;font:inherit;font-weight:800;padding:11px;border-radius:12px;cursor:pointer}
-.gb button.on{background:var(--pine);cursor:default}
-@media (max-width:760px){.mfoot{grid-template-columns:1fr}}
-.nextm{margin-top:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;overflow-x:auto}
-.nextm b{white-space:nowrap;font-size:.9rem;color:var(--pine)}
-.nextm img{width:44px;aspect-ratio:3/4;object-fit:cover;border-radius:5px;flex:none;background:#E8E0CF}
+.bk .ty{font-size:.75rem;font-weight:700;color:var(--coral)}
+.bk h3{font-size:.98rem;font-family:'Noto Sans KR',sans-serif;font-weight:700;line-height:1.35}
+.bk p{margin:0;font-size:.86rem;color:var(--soft);line-height:1.55}
+.bk .buy{font-size:.8rem;font-weight:700;color:var(--pine)}
+.mlinks{display:grid;gap:10px;margin-top:16px}
+.note,.gb,.igline{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:.92rem}
+.note .ic,.igline .igi{font-size:1.3rem;flex:none}
+.note b{display:block}.note small{color:var(--soft)}
+.note .go,.igline .go{margin-left:auto;font-weight:700;color:var(--pine);white-space:nowrap}
+.gb{flex-wrap:wrap}
+.gb .t{flex:1 1 220px}.gb b{display:block}.gb small{color:var(--soft)}
+.gb button{border:1.5px solid var(--coral);background:#fff;color:var(--coral);font:inherit;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer}
+.gb button.on{border-color:var(--pine);color:var(--pine);cursor:default}
+.igline .go{color:#B0306A}
+.nextm{margin-top:12px;display:flex;align-items:center;gap:10px;overflow-x:auto;font-size:.88rem}
+.nextm b{white-space:nowrap;color:var(--pine)}
+.nextm img{width:38px;aspect-ratio:3/4;object-fit:cover;border-radius:3px;flex:none;background:#E8E0CF}
 .nextm small{color:var(--soft);white-space:nowrap}
-.disc{margin:10px 0 0;color:var(--soft);font-size:.75rem}
+.disc{margin:12px 0 0;color:var(--soft);font-size:.74rem}
 
-/* 책 찾기 */
-.finder{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-.fcard{padding:22px;display:flex;flex-direction:column;gap:10px;transition:transform .16s}
-.fcard:hover{transform:translateY(-3px)}
-.fpick{grid-column:1/-1}
-.fcard .big{font-family:'Gowun Batang',serif;font-size:2.4rem;color:var(--coral);line-height:1}
-.fcard h3{font-size:1.3rem}
-.fcard p{margin:0;color:var(--soft);font-size:.92rem}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips span{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 11px;font-size:.82rem;font-weight:700}
-.fcard .go{font-weight:800;color:var(--pine);margin-top:auto}
-.covers{display:flex;gap:6px}
-.covers img{width:19%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;background:#E8E0CF}
-@media (max-width:760px){.finder{grid-template-columns:1fr}}
+/* 24개월 120권 */
+.fun{font-family:'Gowun Batang',serif;font-weight:700;font-size:1.08rem;color:var(--pine)}
+.fun u{text-decoration:none;background:linear-gradient(transparent 62%,rgba(209,150,92,.35) 62%)}
+.types{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.9rem;color:var(--soft)}
 
-/* 나이테 120 */
-.road{display:grid;grid-template-columns:1fr 1.1fr;gap:26px;align-items:center;margin-top:18px;padding:26px}
-.ringmap{position:relative;aspect-ratio:1/1;max-width:380px;width:100%;margin:0 auto}
-.ringmap span{position:absolute;width:12%;aspect-ratio:1/1;display:grid;place-items:center;font-size:1.15rem;background:var(--card);border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.1);transform:translate(-50%,-50%)}
-.ringmap span.now{background:var(--pine);box-shadow:0 0 0 4px rgba(209,150,92,.5)}
-.ringmap .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
-.ringmap .core b{display:block;font-family:'Gowun Batang',serif;font-size:2.4rem;color:var(--pine);line-height:1}
-.ringmap .core small{color:var(--soft);font-size:.8rem}
-.types{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
-.types span{background:var(--paper);border-radius:8px;padding:6px 10px;font-size:.85rem;font-weight:700}
-.tlink{display:inline-block;margin:-4px 0 14px;font-size:.88rem;font-weight:800;color:var(--pine);text-decoration:underline;text-underline-offset:3px}
-.road ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
-.road li{display:flex;gap:10px;font-size:.93rem}
-.road li i{font-style:normal;color:var(--leaf);font-weight:800}
-@media (max-width:760px){.road{grid-template-columns:1fr;padding:20px}}
+/* 목록형 링크(책 찾기·함께하기) */
+.list{margin-top:14px;border-top:1px solid var(--line)}
+.li{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line)}
+.li .ci{font-size:1.25rem;width:28px;text-align:center;flex:none}
+.li .ci .igi{width:1.1em}
+.li .tx{flex:1;min-width:0}
+.li b{display:block;font-size:.98rem}
+.li small{display:block;color:var(--soft);font-size:.84rem;line-height:1.5}
+.li .ar{color:var(--pine);font-weight:700}
 
-/* 기록 앱 */
-.app{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center}
-.phone{width:260px;margin:0 auto;background:#23291F;border-radius:34px;padding:10px;box-shadow:0 20px 40px rgba(35,41,31,.25)}
-.screen{background:var(--paper);border-radius:26px;padding:16px 14px;min-height:400px}
-.screen.shot{padding:0;min-height:0;overflow:hidden}.screen.shot img{display:block;width:100%;height:auto}
-.shotcap{display:block;text-align:center;color:#C9CDBF;font-size:.72rem;margin:8px 0 2px}
-.screen .h{font-weight:800;color:var(--pine);font-size:.92rem}
-.screen .cnt{font-family:'Gowun Batang',serif;font-size:2.1rem;color:var(--coral);margin:4px 0 2px}
-.screen small{color:var(--soft);font-size:.75rem}
-.pts{display:grid;gap:12px;margin-top:14px}
-.pt{display:flex;gap:12px}
-.pt em{font-style:normal;font-size:1.4rem}
-.pt b{display:block}
-.pt small{color:var(--soft)}
-@media (max-width:760px){.app{grid-template-columns:1fr}}
+/* 앱 */
+.appshot{display:grid;grid-template-columns:1fr 150px;gap:18px;align-items:start;margin-top:12px}
+.appshot ul{margin:0;padding-left:18px}
+.appshot li{margin:4px 0}
+.appshot img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);display:block}
+.appshot small{display:block;text-align:center;color:var(--soft);font-size:.72rem;margin-top:4px}
+@media (max-width:420px){.appshot{grid-template-columns:1fr 112px}}
 
 /* 원칙 */
-.creed{margin-top:18px;padding:30px 26px;background:var(--pine);color:#F5F0E6;border:0;position:relative;overflow:hidden}
-.creed q{display:block;font-family:'Gowun Batang',serif;font-size:clamp(1.1rem,3.4vw,1.4rem);line-height:1.6;quotes:none;max-width:40ch;position:relative}
-.creed small{display:block;margin-top:12px;opacity:.75}
-.creed svg{position:absolute;right:-60px;top:-60px;width:280px;opacity:.12}
-.promise{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
-.pm{padding:16px 18px}
-.pm b{display:block;font-family:'Gowun Batang',serif;font-size:1.05rem}
-.pm small{color:var(--soft)}
-@media (max-width:760px){.promise{grid-template-columns:1fr 1fr}}
+.creed{margin:12px 0 0;padding:2px 0 2px 14px;border-left:3px solid var(--honey);font-family:'Gowun Batang',serif;color:var(--pine)}
+.pm{margin:12px 0 0;padding-left:18px;color:var(--soft)}
+.pm li{margin:3px 0}
 
 /* 후기 */
-.rvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:18px}
-.rv{padding:18px;font-size:.92rem}
-.rv small{display:block;color:var(--soft);margin-top:6px}
+.rvs{display:grid;gap:10px;margin-top:14px}
+.rv{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:.92rem}
+.rv small{display:block;color:var(--soft);margin-top:4px}
 
 /* FAQ */
-.faq{margin-top:18px;padding:4px 20px}
-.faq details{border-bottom:1px solid var(--line);padding:14px 0}
-.faq details:last-child{border:0}
-.faq summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq{margin-top:10px}
+.faq details{border-bottom:1px solid var(--line);padding:12px 0}
+.faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";color:var(--pine)}
 .faq details[open] summary::after{content:"–"}
-.faq p{margin:8px 0 0;color:var(--soft);font-size:.92rem}
+.faq p{margin:6px 0 0;color:var(--soft);font-size:.92rem}
 
-/* 커뮤니티(선택) */
-.comm{margin:52px 0 0;padding:28px 24px;background:#FFF8E8;border-color:#EBDDB9}
-.comm h2{font-size:1.45rem;margin-top:4px}
-.comm p{margin:6px 0 0;color:var(--soft)}
-.chans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-.chan{display:flex;flex-direction:column;gap:4px;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px 16px 14px;transition:transform .15s}
-.chan:hover{transform:translateY(-2px)}
-.chan .ci{font-size:1.6rem;line-height:1}
-.chan b{font-size:1.05rem;margin-top:6px}
-.chan small{color:var(--soft);font-size:.85rem;flex:1}
-.chan small em{font-style:normal;font-weight:800;color:#B0306A}
-.chan .cgo{margin-top:10px;font-weight:800;font-size:.88rem}
-/* 함께하기 안 '스터디 앱 보러가기' — 자료는 앱으로 배포(2026-11-08) */
-.capp{display:flex;align-items:center;gap:12px;margin-top:14px;padding:15px 18px;background:var(--pine);color:#fff;border-radius:16px;text-decoration:none;transition:transform .15s}
-.capp:hover{transform:translateY(-2px)}
-.capp .ic{font-size:1.6rem;line-height:1}
-.capp .tx{flex:1 1 0;min-width:0}
-.capp b{display:block;font-size:1rem}
-.capp small{display:block;color:rgba(255,255,255,.8);font-size:.84rem;margin-top:2px}
-.capp .go{margin-left:auto;font-weight:800;white-space:nowrap;background:#fff;color:var(--pine);padding:8px 13px;border-radius:999px;font-size:.88rem}
-@media(max-width:520px){.capp{flex-wrap:wrap}.capp .go{margin-left:0;width:100%;text-align:center}}
-.ch-kakao{border-color:#F2DA4A}.ch-kakao .cgo{color:#7A6400}
-.ch-ig{border-color:#E7A9C6}.ch-ig .cgo{color:#B0306A}
-.ch-dg{border-color:#F4B183}.ch-dg .cgo{color:#C2560E}
-@media (max-width:760px){.chans{grid-template-columns:1fr}.chan{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:start}.chan .ci{grid-row:span 3;margin-top:4px}.chan b{margin-top:0}}
-.igline{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 16px;border-radius:14px;background:#FCEFF5;border:1px solid #F0C8DA;font-size:.9rem}
-.igline b{color:#B0306A}
-.igline{word-break:keep-all}
-.igline .igi{font-size:1.35rem}
-.chan .ci .igi{width:1.25em}
-.igline .go{margin-left:auto;font-weight:800;color:#B0306A;white-space:nowrap}
-
-/* 더 알아보기 */
-.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.more a,.more button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;font:inherit;font-size:.88rem;font-weight:700;color:var(--pine);cursor:pointer}
-.foot{margin-top:40px;padding:24px 0;border-top:1px solid var(--line);color:var(--soft);font-size:.82rem;text-align:center}
+/* 더 알아보기 · 꼬리 */
+.more{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:.9rem}
+.more a,.more button{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--pine);cursor:pointer;border-bottom:1px solid currentColor}
+.foot{margin-top:36px;padding:22px 0;border-top:1px solid var(--line);color:var(--soft);font-size:.8rem;text-align:center}
 .foot a{color:var(--pine);font-weight:700}
 
-/* 모바일 하단 고정 버튼 */
-.dock{position:fixed;left:0;right:0;bottom:0;background:rgba(245,240,230,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:9}
-.dock a{flex:1;text-align:center;font-weight:800;padding:13px;border-radius:12px;font-size:.95rem}
+/* 모바일 아래 고정 줄(얇게) */
+.dock{position:fixed;left:0;right:0;bottom:0;background:rgba(247,243,234,.97);border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:9}
+.dock a{flex:1;text-align:center;font-weight:700;padding:10px;border-radius:10px;font-size:.92rem}
 .dock .d1{background:var(--pine);color:#fff;flex:1.6}
-.dock .d2{border:1.5px solid var(--pine);color:var(--pine);background:var(--card)}
+.dock .d2{color:var(--pine);border:1px solid var(--line);background:var(--card)}
 @media (min-width:761px){.dock{display:none}body{padding-bottom:0}}
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="top">
-    <a class="home" href="./" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><span class="bt"><b>나이테</b><span class="tagl">영어책육아 메이트</span></span></a>
-    <nav class="nav" aria-label="바로가기">
-      <a data-app="month" href="record/">이번 달 5권</a><a data-app="shop" href="domestic.html">인기 책장 100</a><a data-app="c120" href="challenge.html">나이테 120</a><a data-app="pick" href="road.html">나이테 Pick</a><a data-app="log" href="record/">기록</a><a class="app" data-app="month" href="record/">📲 앱 열기</a>
-    </nav>
+    <a class="home" href="./" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b><span class="tagl">드니맘의 엄마표영어 스터디</span></a>
+    <a class="open" data-app="month" href="record/">📲 앱 열기</a>
   </header>
 
   <!-- 1. 첫 화면 -->
   <section class="hero">
-    <div>
-      <span class="kick">🌱 파닉스 전 · 엄마가 읽어주는 영어 그림책</span>
-      <h1>엄마표영어,<br><em>혼자 꾸준히</em> 하기<br>어렵다면</h1>
-      <p class="lead">매달 좋은 영어 그림책 5권. 읽어주는 방법부터 독서 기록까지, 나이테가 함께해요.</p>
-      <div class="ctas">
-        <a class="b1" data-app="month" data-cta="hero_month" href="record/">📚 이번 달 책 5권 만나기</a>
-        <a class="b2" data-app="shop" data-cta="hero_shop" href="domestic.html">우리 아이 책 찾기</a>
-      </div>
-      <div class="proof"><span id="pMem" hidden></span><span>무료</span><span class="dot"></span><span>도서관 책도 OK</span><span class="dot"></span><span>1권만 있어도 시작</span></div>
-    </div>
-    <div class="stage" id="stage" hidden>
-      <svg class="rings" viewBox="0 0 400 400" fill="none" aria-hidden="true">
-        <circle cx="200" cy="200" r="190" stroke="#245648" stroke-opacity=".10" stroke-width="18"/>
-        <circle cx="200" cy="200" r="148" stroke="#245648" stroke-opacity=".13" stroke-width="14"/>
-        <circle cx="200" cy="200" r="106" stroke="#245648" stroke-opacity=".17" stroke-width="12"/>
-        <circle cx="200" cy="200" r="64" stroke="#D1965C" stroke-opacity=".35" stroke-width="10"/>
-      </svg>
-      <div class="fan" id="fan"></div>
-      <span class="tag" id="fanTag"></span>
-    </div>
+    <p class="hi hand" style="margin:0">안녕하세요, 드니맘이에요 :)</p>
+    <h1>엄마표영어 하다가<br><u>스터디에 앱까지</u> 만들어 버렸어요</h1>
+    <p class="lead">보통 유료인 엄마표영어 스터디, 저는 무료로 같이 하고 싶었어요. 24개월 동안 120권, 매달 5권씩 같이 읽어요.</p>
+    <div class="shelf" id="stage" hidden><div class="row" id="fan"></div><span class="cap" id="fanTag"></span></div>
+    <a class="go1" data-app="month" data-cta="hero_month" href="record/">이번 달 5권 보러 가기 →</a><a class="go2" data-app="shop" data-cta="hero_shop" href="domestic.html">책 고르기 고민될 때</a>
+    <p class="quiet"><span id="pMem" hidden></span>무료 · 1권만 있어도 시작해요</p>
   </section>
 
-  <div class="stats" id="stats"></div>
+  <!-- 2. 만든 사람 이야기(짧게, 긴 건 블로그) -->
+  <section class="sec story" id="story">
+    <span class="eyebrow">왜 만들었냐면요</span>
+    <h2>제가 하면서 힘들었던 거, 하나씩 채우는 중이에요</h2>
+    <p>무슨 책 살지, 어떻게 읽어줄지, 꾸준히 하는 것까지 쉽지 않더라고요. 본업이 개발자라 스터디 엄마들이 필요하다는 걸 앱으로 하나씩 만들고 있어요.</p>
+    <blockquote>인플루언서 추천보다, 같이 하는 엄마들 다수가 재밌다는 책이 찐 대박책 아닐까? 싶어서 😆 재밌어요랑 후기도 넣었어요.</blockquote>
+    <span class="sign hand">— 드니맘</span>
+    <a class="more-link" data-cta="story_blog" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그에 더 길게 썼어요 →</a>
+  </section>
 
-  <!-- 2. 이번 달 5권 -->
+  <!-- 3. 이번 달 5권 -->
   <section class="sec" id="month" hidden>
-    <div class="mhead">
-      <div><span class="eyebrow" id="mLabel"></span><h2>이번 달, 나이테가 고른 그림책</h2>
-      <p class="sub">조작북·반복·라임·유머·스토리, 다섯 가지 재미를 한 권씩 골랐어요. 1권만 있어도 시작할 수 있어요.</p></div>
-      <span class="mtheme" id="mTheme"></span>
-    </div>
+    <span class="eyebrow" id="mLabel"></span>
+    <h2>이번 달은 이 5권 읽어요<span class="mtheme" id="mTheme"></span></h2>
+    <p class="sub">다 못 구해도 1권만 있으면 시작할 수 있어요.</p>
     <div class="five" id="five"></div>
-    <div class="mfoot">
-      <a class="panel note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 스터디 자료</b><small id="noteS">재밌게 읽는 팁 · 음원영상 · 워크지 · 회화표현까지</small></span><span class="go">보기 →</span></a>
-      <div class="panel gb"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>공동구매를 준비하고 있어요. 관심을 눌러 주시면 서점과 이야기할 때 큰 힘이 돼요.</small><button type="button" id="gbBtn">관심 있어요</button></div>
+    <div class="mlinks">
+      <a class="note" id="noteLink" data-app="month" data-cta="month_study" href="record/"><span class="ic">📝</span><span><b id="noteT">이번 달 스터디 자료</b><small id="noteS">읽어주는 팁 · 음원영상 · 워크지 · 회화표현</small></span><span class="go">보기 →</span></a>
+      <div class="gb"><span class="t"><b>🙋 이 5권, 같이 사면 좋겠어요</b><small>서점이랑 공동구매 얘기하고 있어요. 관심 눌러 주시면 진짜 힘이 돼요.</small></span><button type="button" id="gbBtn">관심 있어요</button></div>
+      <a class="igline" data-insta="month" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg><span>팔로우하고 같이 소통해요~ 스터디 공지와 자료를 나눠요</span><span class="go">인스타 →</span></a>
     </div>
-    <a class="igline" data-insta="month" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><span><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg></span><span>팔로우하고 같이 소통해요~ 스터디 공지와 자료를 나눠요</span><span class="go">인스타 →</span></a>
-    <div class="panel nextm" id="nextm" hidden></div>
+    <div class="nextm" id="nextm" hidden></div>
     <p class="disc">※ 책을 누르면 열리는 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   </section>
 
-  <!-- 3. 우리 아이 책 찾기 -->
-  <section class="sec" id="find">
-    <span class="eyebrow">책 고르기가 고민이라면</span>
-    <h2>우리 아이에게 맞는 책 찾기</h2>
-    <p class="sub">스터디에 참여하지 않아도 누구나 볼 수 있어요. 주변 엄마들에게도 알려주세요.</p>
-    <div class="finder">
-      <a class="panel fcard" data-app="shop" data-cta="find_shop" href="domestic.html">
-        <span class="big">100</span><h3>국내 인기 책장</h3>
-        <p>국내에서 많이 읽힌 영어 그림책 100권. 나이·종류·가격으로 골라 보고, 나이테 추천 책은 따로 표시돼요.</p>
-        <div class="chips"><span>나이별</span><span>조작북</span><span>노래</span><span>보드북</span><span>가격대</span></div>
-        <span class="go">100권 둘러보기 →</span>
-      </a>
-      <a class="panel fcard" data-app="c120" data-cta="find_c120" href="challenge.html">
-        <span class="big">120</span><h3>나이테 120</h3>
-        <p>24가지 주제 × 5가지 재미. 나이테가 어떤 기준으로 책을 고르는지 한눈에 보여요.</p>
-        <div class="covers" id="c120"></div>
-        <span class="go">120권 둘러보기 →</span>
-      </a>
-      <a class="panel fcard fpick" data-app="pick" data-cta="find_pick" href="road.html">
-        <h3>나이테 Pick</h3>
-        <p>드니맘이 실제로 써 본 책·세트와, 드니가 가장 좋아한 대박책을 모았어요.</p>
-        <span class="go">나이테 Pick 보기 →</span>
-      </a>
-    </div>
-  </section>
-
-  <!-- 4. 나이테 120 = 장기 독서 로드맵 -->
+  <!-- 4. 24개월 120권 -->
   <section class="sec" id="road">
-    <span class="eyebrow">나이테가 제안하는 장기 독서 로드맵</span>
-    <h2>한 달에 한 주제, 나이테처럼 쌓여요</h2>
-    <div class="panel road">
-      <div class="ringmap" id="ringmap"><div class="core"><b>120</b><small>24주제 × 5권</small></div></div>
-      <div>
-        <p class="sub">순서대로 다 끝내야 하는 진도표가 아니에요. 아이가 좋아하는 주제부터 열어도 돼요. 한 주제마다 다섯 가지 재미를 한 권씩 담았어요.</p>
-        <div class="types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
-        <a class="tlink" href="types.html" data-cta="road_types">🧩 왜 이 5가지일까요? 유형별 재미 알아보기 →</a>
-        <ul>
-          <li><i>✓</i>세계에서 사랑받는 책 · 국내 인기 · 도서관 대출 · 수상작을 함께 살펴 골랐어요</li>
-          <li><i>✓</i>조작북은 국내에서 새 책으로 쉽게 살 수 있는 것만</li>
-          <li><i>✓</i>엄마가 읽어주는 그림책 — 아이 혼자 읽는 리더스북이 아니에요</li>
-        </ul>
-        <div class="ctas"><a class="b2" data-app="c120" data-cta="road_c120" href="challenge.html">🎯 나이테 120 알아보기</a></div>
-      </div>
-    </div>
+    <span class="eyebrow">24개월 동안 120권<span id="mNth"></span></span>
+    <h2>책 따로 안 고르셔도 돼요</h2>
+    <p>저 영알못 엄마예요 ㅎㅎ 근데 5년 동안 영어책만 팠더니 남들보다는 좀 더 알게 됐어요. 그래서 고심해서 골랐어요. 따로 알아보지 않고 120권만 따라와도 충분하게, 주제도 유형도 다양하게 넣었어요.</p>
+    <p class="fun">그리고 제일 중요한 거, <u>재밌는 책만</u> 골랐어요.</p>
+    <div class="types"><span>🧸 조작북</span><span>🔁 반복·패턴</span><span>🎵 라임·운율</span><span>😆 유머·반전</span><span>📖 스토리</span></div>
+    <a class="more-link" data-app="c120" data-cta="road_c120" href="challenge.html">120권 다 보기 →</a>
+    <a class="more-link" style="margin-left:14px" href="types.html" data-cta="road_types">왜 이 5가지예요?</a>
+    <div id="ringmap" hidden></div>
   </section>
 
-  <!-- 5. 독서 기록 앱 -->
+  <!-- 5. 책 고르기 -->
+  <section class="sec" id="find">
+    <span class="eyebrow">스터디 안 해도 누구나</span>
+    <h2>뭐 살지 고민될 때</h2>
+    <div class="list">
+      <a class="li" data-app="shop" data-cta="find_shop" href="domestic.html"><span class="ci">📚</span><span class="tx"><b>국내 인기 책장 100</b><small>많이 읽힌 100권, 나이·종류·가격으로 골라 봐요</small></span><span class="ar">→</span></a>
+      <a class="li" data-app="c120" data-cta="find_c120" href="challenge.html"><span class="ci">🎯</span><span class="tx"><b>나이테 120</b><small>24주제 × 5가지 재미로 고른 120권</small></span><span class="ar">→</span></a>
+      <a class="li" data-app="pick" data-cta="find_pick" href="road.html"><span class="ci">💛</span><span class="tx"><b>나이테 Pick</b><small>드니가 제일 좋아한 대박책 + 엄마들 추천</small></span><span class="ar">→</span></a>
+    </div>
+    <div id="c120" hidden></div>
+  </section>
+
+  <!-- 6. 앱 -->
   <section class="sec" id="app">
-    <div class="app">
-      <div>
-        <span class="eyebrow">나이테 앱 · 무료</span>
-        <h2>읽어준 책이<br>아이만의 영어책장이 돼요</h2>
-        <div class="pts">
-          <div class="pt"><em>👆</em><span><b>표지 한 번 누르면 기록 끝</b><small>몇 번 읽었는지 자동으로 세어져요</small></span></div>
-          <div class="pt"><em>📚</em><span><b>한 권씩 쌓이는 우리 집 책장</b><small>함께 읽은 책이 한눈에 보여요</small></span></div>
-          <div class="pt"><em>📲</em><span><b>앱스토어 없이 홈 화면에 설치</b><small>이번 달 자료와 공지도 앱에서 봐요</small></span></div>
-        </div>
-        <div class="ctas"><a class="b1" data-app="log" data-cta="app_log" href="record/">📲 스터디 앱 열기</a><a class="b2" href="install.html">설치 방법</a></div>
-      </div>
-      <div class="phone"><div class="screen shot"><img src="app-calendar.jpg" width="520" height="986" loading="lazy" alt="나이테 스터디 앱 기록하기 화면: 날짜마다 읽은 책 표지가 쌓이는 달력"></div><small class="shotcap">실제 앱 화면 (예시 기록)</small></div>
+    <span class="eyebrow">제가 만든 앱 · 무료</span>
+    <h2>읽어준 책은 앱에 쌓아요</h2>
+    <div class="appshot">
+      <ul>
+        <li>표지 한 번 누르면 기록 끝</li>
+        <li>우리 애 영어책장이 쌓여요</li>
+        <li>다른 집 아이들 반응(후기·재밌어요)도 보여요</li>
+        <li>앱스토어 없이 홈 화면에 설치</li>
+      </ul>
+      <div><img src="app-calendar.jpg" width="520" height="986" loading="lazy" alt="나이테 스터디 앱 기록하기 화면: 날짜마다 읽은 책 표지가 쌓이는 달력"><small>실제 앱 화면(예시)</small></div>
     </div>
+    <a class="more-link" data-app="log" data-cta="app_log" href="record/">스터디 앱 열기 →</a>
+    <a class="more-link" style="margin-left:14px" href="install.html">설치 방법</a>
   </section>
 
-  <!-- 6. 원칙 -->
+  <!-- 7. 원칙 -->
   <section class="sec">
-    <span class="eyebrow">나이테가 지키는 것</span>
-    <h2>쉬운 책보다, 좋은 책을 골라요</h2>
-    <div class="panel creed">
-      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" stroke="#fff" stroke-width="3"/><circle cx="32" cy="32" r="19" stroke="#fff" stroke-width="3"/><circle cx="32" cy="32" r="10" stroke="#fff" stroke-width="3"/></svg>
-      <q>어떤 책은 쉽게 웃으며 읽고, 어떤 책은 그림을 오래 들여다보며 읽고, 어떤 책은 여러 번 읽어야 비로소 재미를 발견해요. 나이테는 수준에 맞춰 줄 세우기보다, 다양한 이야기를 만날 수 있는 좋은 책을 골라요.</q>
-      <small>— 나이테 큐레이션 원칙</small>
-    </div>
-    <div class="promise">
-      <div class="panel pm"><b>🌿 고르지 않아도</b><small>매달 5권, 저희가 골라둘게요</small></div>
-      <div class="panel pm"><b>🌱 레벨 없이 재미로</b><small>한글 그림책 읽어주듯이</small></div>
-      <div class="panel pm"><b>🗣️ 엄마 목소리로</b><small>발음보다 함께 웃는 시간</small></div>
-      <div class="panel pm"><b>🤝 혼자 하지 않게</b><small>스터디방에서 엄마들과 함께해요</small></div>
-    </div>
+    <span class="eyebrow">제가 책 고를 때</span>
+    <h2>쉬운 책보다 좋은 책이요</h2>
+    <p class="creed">수준 맞춰 줄 세우기보다, 다양한 이야기를 만날 수 있는 책을 골라요.</p>
+    <ul class="pm"><li>레벨 없이, 한글 그림책 읽어주듯이</li><li>발음보다 엄마 목소리로 같이 웃는 시간</li><li>혼자 말고 스터디방 엄마들이랑 같이</li></ul>
   </section>
 
-  <!-- 7. 후기 — 공개 동의를 받은 실제 회원의 말만. 비어 있으면 숨김 -->
+  <!-- 후기 — 공개 동의를 받은 실제 회원의 말만. 비어 있으면 숨김 -->
   <section class="sec" id="rvSec" hidden>
     <span class="eyebrow">함께 읽는 엄마들</span>
     <h2>이렇게 읽고 있어요</h2>
@@ -364,40 +244,38 @@ a{color:inherit;text-decoration:none}
 
   <section class="sec">
     <h2>자주 묻는 질문</h2>
-    <div class="panel faq">
-      <details><summary>정말 무료예요?</summary><p>네. 매달 5권 큐레이션, 스터디 자료, 기록 앱 모두 무료예요. 책은 도서관에서 빌려도 되고, 갖고 싶은 책만 구매하셔도 돼요.</p></details>
-      <details><summary>영어를 못해도 읽어줄 수 있어요?</summary><p>그럼요. 나이테를 운영하는 엄마도 영어를 잘하는 엄마가 아니에요. 읽어주는 법과 Read Aloud 영상이 있어서, 엄마가 먼저 들어보고 읽어줄 수 있어요.</p></details>
-      <details><summary>몇 살 아이에게 맞아요?</summary><p>파닉스를 떼기 전 아이들이에요. 0세부터 초등 저학년까지, 엄마가 읽어주는 그림책으로 함께해요.</p></details>
-      <details><summary>책을 다 사야 하나요?</summary><p>아니요. 도서관에서 빌려도 되고, 5권을 다 못 구해도 괜찮아요. 1권만 있어도 시작할 수 있어요.</p></details>
-      <details><summary>꼭 채팅방에 들어가야 해요?</summary><p>아니요. 이번 달 책과 스터디 자료, 기록 앱은 누구나 쓸 수 있어요. 다른 엄마들과 함께 인증하고 질문하고 싶을 때 무료 스터디방에 들어오시면 돼요.</p></details>
-      <details><summary>중간에 시작해도 돼요?</summary><p>매달 새로운 주제로 시작하니까 언제 시작해도 괜찮아요. 이번 달 책 중 1권부터 읽어 보세요.</p></details>
+    <div class="faq">
+      <details><summary>정말 무료예요?</summary><p>네, 다 무료예요. 5권 고르는 것도, 스터디 자료도, 기록 앱도요. 책은 도서관에서 빌려도 되고 갖고 싶은 것만 사셔도 돼요.</p></details>
+      <details><summary>왜 무료로 해요?</summary><p>보통 엄마표영어 스터디는 유료더라고요. 저는 최대한 많은 엄마들이 같이 했으면 해서 무료로 하고 있어요.</p></details>
+      <details><summary>영어를 못해도 읽어줄 수 있어요?</summary><p>그럼요. 저도 영알못 엄마예요 ㅎㅎ 읽어주는 법이랑 Read Aloud 영상이 있어서 먼저 들어 보고 읽어 주면 돼요.</p></details>
+      <details><summary>몇 살 아이에게 맞아요?</summary><p>파닉스 떼기 전 아이들이요. 0세부터 초등 저학년까지, 엄마가 읽어주는 그림책이에요.</p></details>
+      <details><summary>책을 다 사야 하나요?</summary><p>아니요. 도서관에서 빌려도 되고, 5권 다 못 구해도 괜찮아요. 1권만 있어도 시작할 수 있어요.</p></details>
+      <details><summary>꼭 채팅방에 들어가야 해요?</summary><p>아니요. 이번 달 책, 스터디 자료, 기록 앱은 누구나 쓸 수 있어요. 다른 엄마들이랑 같이 인증하고 물어보고 싶을 때 스터디방 들어오시면 돼요.</p></details>
+      <details><summary>중간에 시작해도 돼요?</summary><p>매달 새 주제로 시작해서 언제 들어와도 괜찮아요. 이번 달 책 1권부터 읽어 보세요.</p></details>
     </div>
   </section>
 
-  <!-- 8. 커뮤니티는 선택 -->
-  <section class="panel comm" id="comm">
-    <span class="eyebrow">함께하면 더 오래가요</span>
-    <h2>엄마들과 이야기 나누는 세 곳</h2>
-    <p id="commSub">편한 곳 하나만 골라도 괜찮아요. 읽은 날 나누고, 궁금한 건 물어보세요.</p>
-    <div class="chans">
-      <a class="chan ch-kakao" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener">
-        <span class="ci">💬</span><b>카톡 스터디방</b><small>인증하고 고민을 나눠요</small><span class="cgo">스터디방 참여하기 →</span></a>
-      <a class="chan ch-ig" data-insta="comm" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">
-        <span class="ci"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg></span><b>인스타그램</b><small>스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~</small><span class="cgo">@naite_library 보러 가기 →</span></a>
-      <a class="chan ch-dg" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">
-        <span class="ci">🥕</span><b>당근모임</b><small>근처에 사는 엄마들을 만나요</small><span class="cgo">당근모임 구경하기 →</span></a>
+  <!-- 8. 같이 하는 곳(선택) -->
+  <section class="sec" id="comm">
+    <span class="eyebrow">같이 하면 더 오래가요</span>
+    <h2>엄마들이랑 이야기 나누는 곳</h2>
+    <p class="sub" id="commSub">편한 곳 하나만 골라도 괜찮아요.</p>
+    <div class="list">
+      <a class="li" data-join data-study-room-link href="https://open.kakao.com/o/p8qXEfUi" target="_blank" rel="noopener"><span class="ci">💬</span><span class="tx"><b>카톡 스터디방</b><small>인증하고 고민을 나눠요</small></span><span class="ar">→</span></a>
+      <a class="li" data-insta="comm" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener"><span class="ci"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg></span><span class="tx"><b>인스타그램 @naite_library</b><small>스터디 공지와 자료를 나눠요. 팔로우하고 같이 소통해요~</small></span><span class="ar">→</span></a>
+      <a class="li" data-daangn href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener"><span class="ci">🥕</span><span class="tx"><b>당근모임</b><small>근처에 사는 엄마들을 만나요</small></span><span class="ar">→</span></a>
+      <a class="li" data-cta="comm_blog" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener"><span class="ci">📝</span><span class="tx"><b>네이버 블로그</b><small>책 고른 이유랑 엄마표영어 이야기를 길게 써요</small></span><span class="ar">→</span></a>
+      <a class="li" data-app="month" data-cta="comm_app" href="record/"><span class="ci">📲</span><span class="tx"><b>스터디 자료는 스터디 앱에서</b><small>이번 달 5권 · 읽어주기 팁 · 영상 · 워크지 · 읽기 기록</small></span><span class="ar">→</span></a>
     </div>
-    <a class="capp" data-app="month" data-cta="comm_app" href="record/"><span class="ic">📚</span><span class="tx"><b>스터디 자료는 스터디 앱에서 받아요</b><small>이번 달 5권 · 읽어주기 팁 · 영상 · 워크지 · 읽기 기록</small></span><span class="go">스터디 앱 보러가기 →</span></a>
   </section>
 
-  <section class="sec" style="padding-top:36px">
+  <section class="sec" style="padding-top:26px">
     <span class="eyebrow">더 알아보기</span>
-    <div class="more"><a href="types.html">🧩 5가지 유형</a><a href="guide.html">📚 엄마표영어 가이드</a><a href="install.html">📲 앱 설치 방법</a><button type="button" data-install hidden>📲 홈 화면에 추가</button></div>
+    <div class="more"><a href="types.html">🧩 5가지 유형</a><a href="guide.html">📚 엄마표영어 가이드</a><a data-cta="more_blog" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그</a><a href="install.html">📲 앱 설치 방법</a><button type="button" data-install hidden>📲 홈 화면에 추가</button></div>
   </section>
 </main>
-<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><a data-insta="foot" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px"><svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg> Instagram @naite_library</a> · <a href="study/admin.html">🛠️ 관리자</a></div></div>
-<div class="dock"><a class="d1" data-app="month" data-cta="dock_month" href="record/">📚 이번 달 5권</a><a class="d2" data-cta="dock_comm" href="#comm">🤝 함께하기</a></div>
-
+<div class="foot"><div class="wrap">나이테 · 한 권씩, 아이의 영어에 나이테를 만들어요.<br><span style="display:inline-block;margin-top:8px"><a data-insta="foot" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">Instagram @naite_library</a> · <a data-cta="foot_blog" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그</a> · <a href="study/admin.html">🛠️ 관리자</a></span></div></div>
+<div class="dock"><a class="d1" data-app="month" data-cta="dock_month" href="record/">📚 이번 달 5권</a><a class="d2" data-cta="dock_comm" href="#comm">🤝 같이 하기</a></div>
 <script src="track.js" data-page="랜딩"></script>
 <script src="study-room.js" defer></script>
 <script>
@@ -426,13 +304,7 @@ a{color:inherit;text-decoration:none}
   var S={members:0,reads:0,month:null};
 
   function renderStats(){
-    var cells=['<div><b>5권</b><span>매달 큐레이션</span></div>'];
-    if(S.members>=MIN_MEMBERS)cells.push('<div><b>'+S.members.toLocaleString('ko-KR')+'</b><span>함께하는 엄마</span></div>');
-    cells.push('<div><b>120</b><span>나이테 추천 그림책</span></div>');
-    if(S.reads>=MIN_READS)cells.push('<div><b>'+S.reads.toLocaleString('ko-KR')+'</b><span>이번 달 읽어준 횟수</span></div>');
-    else cells.push('<div><b>0원</b><span>모두 무료</span></div>');
-    $('stats').innerHTML=cells.join('');$('stats').style.setProperty('--n',cells.length);
-    if(S.members>=MIN_MEMBERS){$('pMem').innerHTML='🌳 <b>'+S.members.toLocaleString('ko-KR')+'</b>명의 엄마가 함께';$('pMem').hidden=false;
+    if(S.members>=MIN_MEMBERS){$('pMem').innerHTML='지금 <b>'+S.members.toLocaleString('ko-KR')+'명</b>의 엄마랑 같이 하고 있어요 · ';$('pMem').hidden=false;
       $('commSub').textContent='지금 '+S.members.toLocaleString('ko-KR')+'명의 엄마가 함께하고 있어요. 편한 곳 하나만 골라도 괜찮아요.';}
   }
   renderStats();
@@ -449,10 +321,9 @@ a{color:inherit;text-decoration:none}
     $('mLabel').textContent=(d.month_label||'')+' · 이번 달의 5권';
     $('mTheme').textContent=theme;
     // 첫 화면 표지 부채
-    var pos=[[-60,-8,-14],[-30,-16,-7],[0,-20,0],[30,-16,7],[60,-8,14]];
-    $('fan').innerHTML=B.slice(0,5).map(function(b,i){var p=pos[i];return b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" style="transform:translate('+p[0]*1.75+'%,'+p[1]+'%) rotate('+p[2]+'deg);z-index:'+(i===2?5:3-Math.abs(2-i))+'">':'';}).join('');
+    $('fan').innerHTML=B.slice(0,5).map(function(b){return b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'';}).join('');
     var mon=(d.month_label||'').match(/(\d+)월/);
-    $('fanTag').textContent=(mon?mon[1]+'월 · ':'')+theme+' 5권';
+    $('fanTag').textContent=(mon?mon[1]+'월 ':'이번 달 ')+theme+' 5권 · 지금 같이 읽는 중';
     $('stage').hidden=false;
     // 5권 카드: 표지·유형·고른 이유 → 쿠팡
     $('five').innerHTML=B.map(function(b){var L=LINKS[b.title]||b.buy_url,r=reasonOf(b.title);
@@ -525,5 +396,6 @@ a{color:inherit;text-decoration:none}
 <script src="/naite-library/pwa-install.js"></script>
 <script>if('serviceWorker' in navigator){try{navigator.serviceWorker.register('/naite-library/sw.js',{scope:'/naite-library/',updateViaCache:'none'});}catch(e){}}</script>
 <script src="share.js" defer></script>
+<script>(function(){try{var d=new Date(),n=(d.getFullYear()-2026)*12+d.getMonth()-9+1;if(n>=1&&n<=24){var el=document.getElementById('mNth');if(el)el.textContent=' · 지금 '+n+'개월차';}}catch(e){}})();</script>
 </body>
 </html>
