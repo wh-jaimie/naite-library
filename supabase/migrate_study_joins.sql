@@ -1,5 +1,5 @@
 -- 이번 달 스터디 참여 신청 (2026-11-18 운영자 결정)
--- 채팅방·당근모임엔 들어와도 '내가 스터디를 하고 있는지' 분명하지 않음 → 스터디 앱 '이번 달 책' 맨 위에서 매달 [참여하기].
+-- 채팅방·당근모임엔 들어와도 '내가 스터디를 하고 있는지' 분명하지 않음 → 매달 [참여하기](잠긴 스터디 자료 · 다음 달 미리보기에서 미리 신청).
 -- 받는 것: 닉네임(채팅방·당근 이름, 필수) · 아이 나이대(선택) · 어디서 알게 됐는지(선택). 운영자(관리자)만 목록을 봄.
 -- 기록 주인 = 기기별 기록 ID(naite_reader). 참여는 '그 달 주제(settings.current_theme)' 단위, 지난 달 수료자는 다음 달에 버튼 한 번으로 이어서 참여.
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전.
@@ -46,26 +46,37 @@ $$;
 revoke execute on function public.rec_days(text, date, date) from public, anon, authenticated;
 revoke execute on function public.theme_month(text) from public, anon, authenticated;
 
+-- 다음 달 주제(themes.sort 순서로 이번 달 다음) — 다음 달 미리보기에서 미리 신청
+create or replace function public.next_theme(p_theme text)
+returns text language sql stable security definer set search_path = public as $$
+  select t.key from public.themes t where t.sort > (select sort from public.themes where key = p_theme) order by t.sort limit 1;
+$$;
+
 create or replace function public.study_join_state(p_reader text)
 returns jsonb
 language plpgsql stable security definer set search_path = public as $$
-declare v_cur text; v_n int; v_me public.study_joins%rowtype; v_last public.study_joins%rowtype;
+declare v_cur text; v_n int; v_me public.study_joins%rowtype; v_last public.study_joins%rowtype; v_next text; v_jn boolean := false;
 begin
   select current_theme into v_cur from public.settings where id = 1;
   select count(*) into v_n from public.study_joins where theme_key = v_cur;
+  v_next := public.next_theme(v_cur);
   if coalesce(length(p_reader),0) between 16 and 64 then
     select * into v_me from public.study_joins where reader = p_reader and theme_key = v_cur;
+    v_jn := exists(select 1 from public.study_joins where reader = p_reader and theme_key = v_next);
     select * into v_last from public.study_joins where reader = p_reader order by updated_at desc limit 1;
   end if;
   return jsonb_build_object(
     'cur', v_cur, 'count', v_n, 'month', public.theme_month(v_cur),
     'joined', v_me.reader is not null,
     'nickname', v_last.nickname, 'kid_age', v_last.kid_age, 'came_from', v_last.came_from,
-    'before', v_last.reader is not null and v_last.theme_key is distinct from v_cur);
+    'before', v_last.reader is not null and v_last.theme_key is distinct from v_cur,
+    'next', v_next, 'joined_next', v_jn);
 end $$;
 grant execute on function public.study_join_state(text) to anon, authenticated;
 
-create or replace function public.join_study(p_reader text, p_nickname text, p_kid_age int, p_came_from text)
+-- p_theme: 비우면 이번 달, 다음 달 주제를 주면 미리 신청(그 밖의 달은 안 됨)
+drop function if exists public.join_study(text, text, int, text);
+create or replace function public.join_study(p_reader text, p_nickname text, p_kid_age int, p_came_from text, p_theme text default null)
 returns jsonb
 language plpgsql volatile security definer set search_path = public as $$
 declare v_cur text; v_nick text; v_n int;
@@ -75,6 +86,10 @@ begin
   if v_nick = '' then return jsonb_build_object('ok',false,'error','name'); end if;
   select current_theme into v_cur from public.settings where id = 1;
   if v_cur is null then return jsonb_build_object('ok',false,'error','theme'); end if;
+  if p_theme is not null and p_theme <> v_cur then
+    if p_theme is distinct from public.next_theme(v_cur) then return jsonb_build_object('ok',false,'error','theme'); end if;
+    v_cur := p_theme;
+  end if;
   insert into public.study_joins(reader, theme_key, nickname, kid_age, came_from)
   values (p_reader, v_cur, v_nick,
           case when p_kid_age between 1 and 3 then p_kid_age end,
@@ -84,7 +99,7 @@ begin
   select count(*) into v_n from public.study_joins where theme_key = v_cur;
   return jsonb_build_object('ok',true,'cur',v_cur,'count',v_n);
 end $$;
-grant execute on function public.join_study(text, text, int, text) to anon, authenticated;
+grant execute on function public.join_study(text, text, int, text, text) to anon, authenticated;
 
 drop function if exists public.admin_study_progress(text);
 -- 관리자: 달별 참여자 기록 현황(그 달 기록한 날 · 이번 주 · 지난 주) — 주말 독려·월말 수료 확인용
