@@ -465,7 +465,7 @@ function updateProgress(){
   document.getElementById('prBig').textContent=`${done} / ${total}`;
   document.getElementById('prBar').style.width=pct+'%';
   document.getElementById('prSub').textContent = done===0
-    ? '스터디 앱 읽기 기록에 남긴 책이 여기에 쌓여요'
+    ? '스터디 앱 읽기 인증에 남긴 책이 여기에 쌓여요'
     : `${total}권 중 ${done}권 읽어줬어요 · ${pct}%` + (done>=total?' 🎉 120권 완주!':'');
 }
 async function copyTitle(btn){

@@ -22,8 +22,8 @@
 | tab ID | 화면 이름 | 비고 |
 |---|---|---|
 | study | 📘 이번 달 책 | |
-| shelf | 📖 읽기 기록 | 옛 `stats`(읽기 통계)도 여기로 합침(11/7) |
-| c120 | 🌳 독서 로드맵 | 안은 `challenge.html` iframe |
+| shelf | 📖 읽기 인증 | 옛 `stats`(읽기 통계)도 여기로 합침(11/7). 11/19 메뉴 이름 읽기 기록 → 읽기 인증 |
+| c120 | 🌳 스터디 과정 | 안은 `challenge.html` iframe. 11/19 독서 로드맵 → 스터디 과정 |
 | shop | 🛒 인기 책장 | 안은 `domestic.html` iframe |
 | pick | 💛 나이테 Pick | 안은 `road.html` iframe |
 

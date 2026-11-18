@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261118k',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261119a',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -664,7 +664,7 @@
     var html='<h3>👨‍👩‍👧 아빠와 같이 쓰기</h3><p class="sub">엄마 폰과 아빠 폰이 <b>같은 읽기 기록·메모·사진</b>을 함께 써요. 아빠가 읽어 준 날도 한 달력에 쌓여요.</p>'+
       '<ol class="fam-steps">'+
         (cur?'<li>이 폰은 <b>'+esc(cur)+'</b> 닉네임으로 백업돼 있어요 ✓</li>':'<li>먼저 <b>이 폰에서 기록 백업</b>을 해요(닉네임 + 숫자 4자리).</li>')+
-        '<li>아빠 폰에서 나이테 스터디 앱을 열고 <b>읽기 기록 › 아빠와 같이 쓰기 › 받는 쪽이에요</b>를 눌러요.</li>'+
+        '<li>아빠 폰에서 나이테 스터디 앱을 열고 <b>읽기 인증 › 아빠와 같이 쓰기 › 받는 쪽이에요</b>를 눌러요.</li>'+
         '<li>'+(cur?'닉네임 <b>'+esc(cur)+'</b>와 ':'같은 닉네임과 ')+'숫자 4자리를 넣으면 끝! 그다음부터는 어느 폰에서 기록해도 같이 보여요.</li></ol>'+
       '<p class="bk-note">같이 보이는 것: 읽기 기록·달력·통계·메모·인증 사진. 어느 폰에서 남겨도 다른 폰에서 앱을 열면 같이 보여요.</p>'+
       (cur?'<button type="button" class="pri" data-famshare>아빠에게 앱 링크 보내기</button>':'<button type="button" class="pri" data-bk="make">이 폰에서 백업하기</button>')+
@@ -1356,7 +1356,7 @@
   var RING='<svg class="rk-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="20" stroke="#245648" stroke-width="2.4"/><circle cx="24" cy="24" r="13.5" stroke="#245648" stroke-width="2.4" opacity=".75"/><circle cx="24" cy="24" r="7" stroke="#245648" stroke-width="2.4" opacity=".5"/><circle cx="24" cy="5" r="2.6" fill="#B87343"/></svg>';
   function paintTabs(anim){
     var el=$('rtabs');if(!el)return;
-    var T={study:[svg(22,IC.study,1.9),'이번 달 책'],shelf:[svg(22,IC.stats,1.9),'읽기 기록'],c120:[svg(22,IC.c120,1.9),'독서 로드맵'],shop:[svg(22,IC.shop,1.9),'인기 책장'],pick:[svg(22,IC.pick,1.9),'나이테 Pick']};
+    var T={study:[svg(22,IC.study,1.9),'이번 달 책'],shelf:[svg(22,IC.stats,1.9),'읽기 인증'],c120:[svg(22,IC.c120,1.9),'스터디 과정'],shop:[svg(22,IC.shop,1.9),'인기 책장'],pick:[svg(22,IC.pick,1.9),'나이테 Pick']};
     el.innerHTML='<div class="in" role="tablist">'+TAB_IDS.map(function(id){
       return '<button type="button" role="tab" class="rtab'+(EMBED[id]?' go':'')+'" data-rtab="'+id+'" aria-selected="'+(S.tab===id)+'"><span class="ic" aria-hidden="true">'+T[id][0]+'</span>'+T[id][1]+'</button>';}).join('')+'</div>';
     if(anim){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
@@ -1704,7 +1704,7 @@
     try{new f.contentWindow.MutationObserver(function(){apply();}).observe(body,{childList:true,subtree:true});}catch(e){}
     if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
   }
-  var studyY=0,T_NAME={c120:'독서 로드맵(나이테 120)',shop:'국내 인기 책장',pick:'나이테 Pick'};
+  var studyY=0,T_NAME={c120:'스터디 과정(나이테 120)',shop:'국내 인기 책장',pick:'나이테 Pick'};
   function showTab(id,init){
     if(id==='stats')id='shelf';
     if(TAB_IDS.indexOf(id)<0)id='study';
