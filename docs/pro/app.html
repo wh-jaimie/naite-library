@@ -1162,7 +1162,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     if(vids)h+='<section id="s-vid"><div class="sh">'+ic('play',20)+'<h2>Read Aloud 영상</h2></div>'+
        '<p class="note">직접 읽어주기 어렵거나 책 내용을 미리 보고 싶을 때 아래 영상을 눌러보세요.</p><div class="sd-vids">'+vids+'</div></section>';
     // 4. 책 활용 아이디어
-    if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 아이디어</h2></div><div class="card"><ul class="ideas">'+acts.map(function(a){
+    if(acts.length)h+='<section id="s-play"><div class="sh">'+ic('play2',20)+'<h2>책 활용 아이디어</h2></div><div class="card"><ul class="ideas">'+acts.map(function(a){a=a.split(/\s*\|\s*/)[0];
        var m=/^(.{2,24}?)\s*[:：]\s*(.+)$/.exec(a);return '<li>'+(m?'<b>'+esc(m[1])+'</b> '+esc(m[2]):esc(a))+'</li>';}).join('')+'</ul></div></section>';
     // 5. 관련 영어표현(전부)
     if(exprs.length)h+='<section id="s-exp"><div class="sh">'+ic('chat',20)+'<h2>관련 영어표현</h2></div><div class="card"><ul class="exp all">'+
