@@ -348,7 +348,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   var STABN={'s-books':'이번 달 5권','s-words':'단어·줄거리','s-how':'읽어주기 방법','s-vid':'읽어주기 영상','s-play':'놀이 활동','s-exp':'영어표현','s-next':'다음 달','s-extra':'(옛) 부가자료 탭'};
   var EMBN={'/naite-library/challenge.html':'🌳 독서 로드맵','/naite-library/domestic.html':'🛒 인기 책장','/naite-library/road.html':'💛 나이테 Pick'};
   var MAINCTA={hero_month:'첫 화면 · 이번 달 책 5권',hero_shop:'첫 화면 · 국내 인기 책장',month_study:'이번 달 5권 → 스터디 앱',find_shop:'책 찾기 · 국내 인기 책장',find_c120:'책 찾기 · 나이테 120',
-    road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 함께하기',comm_app:'함께하기 · 스터디 앱 보러가기'};
+    road_c120:'나이테 120 로드맵',road_types:'5가지 유형',app_log:'기록 앱',dock_month:'아래 메뉴 · 이번 달',dock_comm:'아래 메뉴 · 함께하기',comm_app:'함께하기 · 스터디 앱 보러가기',story_blog:'만든 사람 이야기 · 블로그',story_pick:'만든 사람 이야기 · 대박책',comm_blog:'함께하기 · 블로그',more_blog:'더 알아보기 · 블로그',foot_blog:'맨 아래 · 블로그'};
   // 사이트 방문 = 공개 페이지 page_view. 스터디 앱 안에서 연 120·책장(src=record)은 앱 사용이라 뺌
   function isSiteView(e){return e.type==='page_view'&&isPublic(e)&&!(e.meta&&e.meta.src==='record');}
   function isMemo(e){return e.type==='book_note'&&!(e.meta&&e.meta.del);} // 읽기 기록 한 줄 메모 쓰기·고치기(지우기 제외)
