@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261118g',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261118h',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -420,6 +420,7 @@
           if(!d||!d.ok){done();er.textContent=BK_ERR[d&&d.error]||'이어보지 못했어요. 잠시 뒤 다시 해 주세요.';return;}
           if(S.onEvent)S.onEvent('backup_restored',{});
           // 기기 ID를 백업 쪽으로 바꾸고 다시 열면 모든 달 기록을 서버에서 다시 받아옴(안 보낸 기록은 outbox에 남아 새 ID로 전송)
+          try{var vo=localStorage.getItem('naite_voice');if(!vo||vo.length<16)localStorage.setItem('naite_voice',S.reader);}catch(e){} // 후기·재밌어요는 이 폰 사람 것 그대로(기록만 공유)
           try{localStorage.setItem(READER_KEY,d.reader);}catch(e){}
           setBackupName(d.name||name);
           S.rows=S.rows.filter(function(r){return S.outbox.some(function(o){return o.c===r.c;});});save();

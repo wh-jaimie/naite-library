@@ -1,6 +1,6 @@
 /* 😆 재밌어요 투표(2026-11-17) — 나이테 120 · 국내 인기 책장 · 나이테 Pick 대박책 공통.
  * 페이지에 <button type="button" data-like="책 제목"></button> 만 두면 이 스크립트가 버튼을 채우고(다시 그려져도 자동),
- * 누르면 켜기/끄기. 로그인 없이 기기 ID(naite_reader, 스터디 앱과 같은 값)로 한 책에 1표.
+ * 누르면 켜기/끄기. 로그인 없이 기기 ID(naite_voice — 이어보기로 기록을 같이 써도 사람마다 따로)로 한 책에 1표.
  * 같은 책은 페이지가 달라도 같은 칸(key) — 규칙은 migrate_likes.sql 의 set_like 검사와 맞춤.
  * 숫자는 MIN명 이상일 때만 보여 줌(지금 1 = 한 표라도 있으면 보임).
  * <script src="likes.js" data-page="나이테 120"></script> */
@@ -10,7 +10,8 @@
   var C={},MINE={},ASKED={},OK=true;
   function key(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
   function hex(n){var a=new Uint8Array(n);crypto.getRandomValues(a);var s='';for(var i=0;i<n;i++)s+=('0'+a[i].toString(16)).slice(-2);return s;}
-  function reader(make){try{var r=localStorage.getItem('naite_reader');if((!r||r.length<16)&&make){r=hex(16);localStorage.setItem('naite_reader',r);}return r&&r.length>=16?r:'';}catch(e){return '';}}
+  // 2026-11-18: 재밌어요는 기록 공유(이어보기)와 별개 → 기기별 naite_voice(처음엔 이 기기 기록 ID로 시작)
+  function reader(make){try{var r=localStorage.getItem('naite_voice');if(!r||r.length<16){var o=localStorage.getItem('naite_reader');r=(o&&o.length>=16)?o:'';if(!r&&make)r=hex(16);if(r)localStorage.setItem('naite_voice',r);}return r&&r.length>=16?r:'';}catch(e){return '';}}
   function rpc(fn,body){return fetch(U+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');

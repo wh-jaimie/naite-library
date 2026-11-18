@@ -9,7 +9,8 @@
   function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function lkey(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);} // likes.js key()와 같게
   function hex(n){var a=new Uint8Array(n);crypto.getRandomValues(a);var s='';for(var i=0;i<n;i++)s+=('0'+a[i].toString(16)).slice(-2);return s;}
-  function reader(make){try{var r=localStorage.getItem('naite_reader');if((!r||r.length<16)&&make){r=hex(16);localStorage.setItem('naite_reader',r);}return r&&r.length>=16?r:'';}catch(x){return '';}}
+  // 2026-11-18: 추천·👍는 기록 공유(이어보기)와 별개 → naite_voice
+  function reader(make){try{var r=localStorage.getItem('naite_voice');if(!r||r.length<16){var o=localStorage.getItem('naite_reader');r=(o&&o.length>=16)?o:'';if(!r&&make)r=hex(16);if(r)localStorage.setItem('naite_voice',r);}return r&&r.length>=16?r:'';}catch(e){return '';}}
   function rpc(n,a){return fetch(U+'/rest/v1/rpc/'+n,{method:'POST',headers:H,body:JSON.stringify(a)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw j;return j;});});}
   function ev(type,meta){try{if(localStorage.getItem('naite_notrack')==='1')return;var src=/[?&]embed=record/.test(location.search)?'record':'';
     fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},keepalive:true,
