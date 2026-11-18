@@ -1,7 +1,7 @@
 -- 이번 달 스터디 참여 신청 (2026-11-18 운영자 결정)
 -- 채팅방·당근모임엔 들어와도 '내가 스터디를 하고 있는지' 분명하지 않음 → 스터디 앱 '이번 달 책' 맨 위에서 매달 [참여하기].
 -- 받는 것: 닉네임(채팅방·당근 이름, 필수) · 아이 나이대(선택) · 어디서 알게 됐는지(선택). 운영자(관리자)만 목록을 봄.
--- 기록 주인 = 기기별 기록 ID(naite_reader). 참여는 '그 달 주제(settings.current_theme)' 단위, 지난 달 참여자는 다음 달에 버튼 한 번으로 이어서 참여.
+-- 기록 주인 = 기기별 기록 ID(naite_reader). 참여는 '그 달 주제(settings.current_theme)' 단위, 지난 달 수료자는 다음 달에 버튼 한 번으로 이어서 참여.
 -- Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전.
 
 create table if not exists public.study_joins (
@@ -22,7 +22,30 @@ create policy "admin read study_joins" on public.study_joins for select using (p
 drop policy if exists "admin delete study_joins" on public.study_joins;
 create policy "admin delete study_joins" on public.study_joins for delete using (public.is_admin());
 
--- 1) 지금 상태: 이번 달 주제·내가 참여했는지·참여 인원·지난번에 넣은 이름/나이/경로(다음 달 한 번에 이어서 참여용)
+-- ───────── 수료·독려 규칙 (2026-11-18 운영자 결정) ─────────
+-- 인증: 카톡·당근 채팅방 공유는 자유(선택). 기준은 앱 '읽기 기록'.
+-- 매주(월~일) 기록한 날이 2번 미만이면 주말에 독려. 그 달 기록한 날 8번 이상 = 수료.
+-- 수료하면 앱에서 수료증 이미지를 받음. 미수료라고 다음 달 참여를 막지는 않음(2026-11-18 운영자 결정).
+-- '기록 1번' = 책을 기록한 날 하루(하루에 여러 권 기록해도 1번). 인증샷만 찍은 날은 안 셈.
+
+-- 주제의 달(content.month_label '2026년 11월 …' → 2026-11-01)
+create or replace function public.theme_month(p_theme text)
+returns date language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select make_date(m[1]::int, m[2]::int, 1)
+       from (select regexp_match(c.month_label, '(\d{4})\s*년\s*(\d{1,2})\s*월') m from public.content c where c.theme_key = p_theme) x
+      where m is not null limit 1),
+    date_trunc('month', (now() at time zone 'Asia/Seoul'))::date);
+$$;
+
+-- 기록한 날 수(기간)
+create or replace function public.rec_days(p_reader text, p_from date, p_to date)
+returns int language sql stable security definer set search_path = public as $$
+  select count(distinct read_on)::int from public.reading_logs where reader = p_reader and read_on >= p_from and read_on < p_to;
+$$;
+revoke execute on function public.rec_days(text, date, date) from public, anon, authenticated;
+revoke execute on function public.theme_month(text) from public, anon, authenticated;
+
 create or replace function public.study_join_state(p_reader text)
 returns jsonb
 language plpgsql stable security definer set search_path = public as $$
@@ -35,14 +58,13 @@ begin
     select * into v_last from public.study_joins where reader = p_reader order by updated_at desc limit 1;
   end if;
   return jsonb_build_object(
-    'cur', v_cur, 'count', v_n,
+    'cur', v_cur, 'count', v_n, 'month', public.theme_month(v_cur),
     'joined', v_me.reader is not null,
     'nickname', v_last.nickname, 'kid_age', v_last.kid_age, 'came_from', v_last.came_from,
     'before', v_last.reader is not null and v_last.theme_key is distinct from v_cur);
 end $$;
 grant execute on function public.study_join_state(text) to anon, authenticated;
 
--- 2) 이번 달 참여하기(또는 이름·나이 고치기). 주제는 서버가 정함(이번 달만)
 create or replace function public.join_study(p_reader text, p_nickname text, p_kid_age int, p_came_from text)
 returns jsonb
 language plpgsql volatile security definer set search_path = public as $$
@@ -63,3 +85,23 @@ begin
   return jsonb_build_object('ok',true,'cur',v_cur,'count',v_n);
 end $$;
 grant execute on function public.join_study(text, text, int, text) to anon, authenticated;
+
+drop function if exists public.admin_study_progress(text);
+-- 관리자: 달별 참여자 기록 현황(그 달 기록한 날 · 이번 주 · 지난 주) — 주말 독려·월말 수료 확인용
+create or replace function public.admin_study_progress(p_theme text)
+returns table(reader text, nickname text, kid_age smallint, came_from text, created_at timestamptz,
+              month_days int, week_days int, last_week_days int)
+language plpgsql stable security definer set search_path = public as $$
+declare v_m date := public.theme_month(p_theme);
+        v_today date := (now() at time zone 'Asia/Seoul')::date;
+        v_wk date := v_today - (extract(isodow from v_today)::int - 1);
+begin
+  if not public.is_admin() then return; end if;
+  return query
+  select j.reader, j.nickname, j.kid_age, j.came_from, j.created_at,
+         public.rec_days(j.reader, v_m, (v_m + interval '1 month')::date),
+         public.rec_days(j.reader, v_wk, v_wk + 7),
+         public.rec_days(j.reader, v_wk - 7, v_wk)
+    from public.study_joins j where j.theme_key = p_theme order by j.created_at;
+end $$;
+grant execute on function public.admin_study_progress(text) to authenticated;
