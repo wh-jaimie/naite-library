@@ -315,13 +315,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     // ③-0 스터디 참여 신청(2026-11-18) — 스터디 앱 '이번 달 책' 맨 위 [참여하기]
     h+='<div class="card" id="joinCard"><h2>🌱 이번 달 스터디 참여</h2><p class="sub">스터디 앱 <b>이번 달 책</b> 맨 위에서 [참여하기]를 누른 엄마들이에요. 달마다 따로 받아요. 주말엔 이번 주 2번 안 된 엄마를 독려하고, 8번 기록하면 수료(앱에서 수료증을 받아요). 12월 자료부터 신청자만 자료가 열려요.</p><div id="joinBox" class="hint">불러오는 중…</div></div>';
     // ③-1 미니 챌린지(2026-11-12) — 스터디 앱 읽기 기록 맨 위 카드·완주 보고 이미지
-    h+='<div class="card" id="chalCard"><h2>🏁 미니 챌린지</h2><p class="sub">정한 기간 동안 스터디 앱 <b>읽기 기록</b> 맨 위에 챌린지 카드가 떠요(시작 3일 전부터 끝나고 7일까지). 읽어주기 인증 = 그 기간에 책을 기록했거나 인증샷을 남긴 날, 워크북 = 카드의 워크북 인증 사진.</p><div id="chalBox" class="hint">불러오는 중…</div></div>';
+    h+='<div class="card" id="chalCard"><h2>🏁 미니 챌린지</h2><p class="sub">정한 기간 동안 스터디 앱 <b>읽기 인증</b> 맨 위에 챌린지 카드가 떠요(시작 3일 전부터 끝나고 7일까지). 읽어주기 인증 = 그 기간에 책을 기록했거나 인증샷을 남긴 날, 워크북 = 카드의 워크북 인증 사진.</p><div id="chalBox" class="hint">불러오는 중…</div></div>';
     // ③-2 푸시 알림 보내기(2026-11-08) — 스터디 앱에서 '알림 받기'를 켠 폰에만 감
     h+='<div class="card" id="pushCard"><h2>🔔 앱 푸시 알림 보내기</h2><p class="sub">스터디 앱에서 <b>알림 받기</b>를 켠 폰에 알림이 가요. 새 달 자료가 열릴 때·중요한 공지 때만 보내요(자주 보내면 알림을 꺼요).</p>'+
       '<div id="pushStat" class="hint" style="margin:0 0 8px">받는 폰 확인 중…</div>'+
       '<label class="f" style="margin-top:0">제목 <span class="hint">(짧게, 40자 안쪽)</span></label><input class="t" id="pTitle" maxlength="80" placeholder="예: 📚 12월 크리스마스 5권이 열렸어요">'+
       '<label class="f">내용</label><textarea class="t" id="pBody" maxlength="300" style="min-height:70px" placeholder="예: 이번 달 책과 읽어주기 팁을 확인해 보세요"></textarea>'+
-      '<label class="f">누르면 열릴 화면</label><select class="t" id="pUrl"><option value="/naite-library/record/app.html?tab=month">📘 이번 달 자료</option><option value="/naite-library/record/app.html#news">📢 공지</option><option value="/naite-library/record/app.html?tab=log">📖 읽기 기록</option></select>'+
+      '<label class="f">누르면 열릴 화면</label><select class="t" id="pUrl"><option value="/naite-library/record/app.html?tab=month">📘 이번 달 자료</option><option value="/naite-library/record/app.html#news">📢 공지</option><option value="/naite-library/record/app.html?tab=log">📖 읽기 인증</option></select>'+
       '<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn" id="pTest">📱 내 폰으로 테스트</button><button class="btn cor" id="pSend">🔔 모두에게 보내기</button><span class="hint" id="pMsg" style="margin:0"></span></div>'+
       '<div class="hint">테스트는 이 폰(같은 브라우저)에서 스터디 앱 알림을 켜 둔 경우에만 돼요.</div><div id="pLog"></div></div>';
     // ④ 최근 공지 + 올림 체크
