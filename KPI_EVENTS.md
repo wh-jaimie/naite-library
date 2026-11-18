@@ -83,6 +83,7 @@
 | book_note / note_book_open | 한 줄 메모 쓰기(이벤트엔 내용 안 남김, del=지우기) / 책 메모 모아보기 — KPI '📝 메모 남긴 사람'(지우기 제외)·날짜별 흐름 | other, del, len |
 | c120_study_open | 로드맵에서 스터디 자료 열기 | |
 | chal_wb_open / chal_wb_save / chal_name / challenge_apply_click / challenge_apply_done | 1주 미니 챌린지 | id |
+| join_open / join_done / join_again / join_edit | 이번 달 책 맨 위 🌱 스터디 참여하기(11/18~): 참여 창 열기 / 처음 참여 / 지난 달 참여자가 버튼 한 번으로 이번 달도 참여 / 참여 정보 고치기. 명단은 관리 › 운영 › 🌱 이번 달 스터디 참여(study_joins) | how / theme_key, age, from |
 | backup_made / backup_restored | 기록 백업 / 이어보기(아빠와 같이 쓰기 포함) | |
 | family_open / family_share | 아빠와 같이 쓰기 열기 / 아빠에게 링크 보내기 | |
 | file_backup / file_restore | 메모·사진 파일 저장 / 불러오기 | n, p(개수만) |

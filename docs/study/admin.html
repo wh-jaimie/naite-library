@@ -312,6 +312,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
           (OPS.rooms!==null?'<span class="hint" style="margin:0">📱 앱 공지는 <b>migrate_app_notices.sql</b> 실행 후 쓸 수 있어요</span>':''))+'</div>'+
       '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+(OPS.rooms===null?' disabled':'')+'>공지 저장 (올림 체크 시작)</button><span class="status" id="nSt"></span></div>'+
       '<div class="hint">당근·인스타 칸은 고쳐 써도 돼요. 위 원문을 고치면 다시 자동으로 만들어져요.</div></div>';
+    // ③-0 스터디 참여 신청(2026-11-18) — 스터디 앱 '이번 달 책' 맨 위 [참여하기]
+    h+='<div class="card" id="joinCard"><h2>🌱 이번 달 스터디 참여</h2><p class="sub">스터디 앱 <b>이번 달 책</b> 맨 위에서 [참여하기]를 누른 엄마들이에요. 달마다 따로 받아요(지난 달 참여자는 버튼 한 번으로 이어서 참여).</p><div id="joinBox" class="hint">불러오는 중…</div></div>';
     // ③-1 미니 챌린지(2026-11-12) — 스터디 앱 읽기 기록 맨 위 카드·완주 보고 이미지
     h+='<div class="card" id="chalCard"><h2>🏁 미니 챌린지</h2><p class="sub">정한 기간 동안 스터디 앱 <b>읽기 기록</b> 맨 위에 챌린지 카드가 떠요(시작 3일 전부터 끝나고 7일까지). 읽어주기 인증 = 그 기간에 책을 기록했거나 인증샷을 남긴 날, 워크북 = 카드의 워크북 인증 사진.</p><div id="chalBox" class="hint">불러오는 중…</div></div>';
     // ③-2 푸시 알림 보내기(2026-11-08) — 스터디 앱에서 '알림 받기'를 켠 폰에만 감
@@ -343,7 +345,31 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<a class="btn" href="kpi.html">📊 KPI 자세히</a></div></div>';
     h+='</div>';
     body.innerHTML=h;
-    wireOps();wirePush();wireChal();
+    wireOps();wirePush();wireChal();wireJoins();
+  }
+  // 스터디 참여 목록(달별 인원 + 이번 달 명단 + CSV)
+  async function wireJoins(){
+    var box=document.getElementById('joinBox');if(!box)return;
+    var r=await client.from('study_joins').select('*').order('created_at',{ascending:true});
+    if(r.error){box.innerHTML='⚙️ Supabase에서 <b>supabase/migrate_study_joins.sql</b>을 먼저 실행해 주세요.<br><small>'+esc(r.error.message||'')+'</small>';return;}
+    var L=r.data||[],st=await client.from('settings').select('current_theme').eq('id',1).maybeSingle(),cur=st.data&&st.data.current_theme;
+    var AG={1:'0~3세',2:'4~6세',3:'7~9세'},FR={kakao:'카톡 스터디방',daangn:'당근모임',insta:'인스타',blog:'블로그',friend:'지인 소개',etc:'기타'};
+    var by={};L.forEach(function(x){(by[x.theme_key]=by[x.theme_key]||[]).push(x);});
+    var keys=Object.keys(by).sort(function(a,b){return a===cur?-1:b===cur?1:0;});
+    var sel=cur&&by[cur]?cur:keys[0];
+    function draw(){
+      var rows=by[sel]||[],prev={};L.forEach(function(x){if(x.theme_key!==sel)prev[x.reader]=1;});
+      box.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+(keys.length?keys.map(function(k){return '<button class="btn" data-jk="'+esc(k)+'" style="padding:4px 10px;font-size:.8rem'+(k===sel?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+esc(k)+(k===cur?' (이번 달)':'')+' · '+by[k].length+'명</button>';}).join(''):'<span>아직 참여한 엄마가 없어요.</span>')+'</div>'+
+        (rows.length?'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr style="text-align:left;color:var(--soft)"><th style="padding:4px">닉네임</th><th>아이 나이</th><th>어디서</th><th>참여한 날</th><th></th></tr>'+
+          rows.map(function(x){return '<tr style="border-top:1px solid #E2E5DA"><td style="padding:5px 4px;font-weight:800">'+esc(x.nickname)+'</td><td>'+(AG[x.kid_age]||'')+'</td><td>'+(FR[x.came_from]||'')+'</td><td>'+new Date(x.created_at).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})+'</td><td>'+(prev[x.reader]?'<span style="color:var(--tealD);font-size:.76rem">이어서</span>':'<span style="color:#B87343;font-size:.76rem">처음</span>')+'</td></tr>';}).join('')+'</table></div>'+
+          '<button class="btn" id="joinCsv" style="margin-top:10px">⬇️ CSV 내려받기</button>':'');
+      box.querySelectorAll('[data-jk]').forEach(function(b){b.onclick=function(){sel=b.dataset.jk;draw();};});
+      var cv=document.getElementById('joinCsv');if(cv)cv.onclick=function(){
+        var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';};
+        var csv='\ufeff'+['주제,닉네임,아이 나이,어디서,참여한 날,처음/이어서'].concat(rows.map(function(x){return [x.theme_key,x.nickname,AG[x.kid_age]||'',FR[x.came_from]||'',x.created_at.slice(0,10),prev[x.reader]?'이어서':'처음'].map(q).join(',');})).join('\n');
+        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='스터디참여_'+sel+'.csv';a.click();};
+    }
+    draw();
   }
   // 미니 챌린지: 목록 + 새로 만들기/고치기
   async function wireChal(){
