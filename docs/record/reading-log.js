@@ -1427,7 +1427,7 @@
     var started=logicalToday()>=ch.start;
     return '<div class="ch-card"><div class="top"><h3>🏁 '+esc(ch.title)+'</h3><span class="dt">'+(+ch.start.slice(5,7))+'/'+(+ch.start.slice(8))+' ~ '+(+ch.end.slice(5,7))+'/'+(+ch.end.slice(8))+'</span></div>'+
       (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일('+WD[dateOf(ch.start).getDay()]+')에 시작해요. '+I.days.length+'일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
-      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
+      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'"'+(x.future?'':' data-rcal="'+x.d+'" role="button" tabindex="0" aria-label="'+(+x.d.slice(5,7))+'월 '+(+x.d.slice(8))+'일 '+(x.read?'기록 보기':'기록하기')+'"')+'>'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
       '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
         '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
       '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+chalApplyHtml(ch,started)+
