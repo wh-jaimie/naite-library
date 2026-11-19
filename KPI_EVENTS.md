@@ -77,6 +77,7 @@
 | day_card_open / _save / _share | 하루 사진 모음 카드(사진 여러 장) | day |
 | day_photo_open / _save / _share | 하루 인증 사진 한 장 내보내기 | day |
 | chal_card_open / _save / _share | 1주 미니 챌린지 완주샷 | id |
+| chal_card_locked | 완주 전에 '완주하면 완주샷' 버튼 누름(2026-11-19 이름표 보충) | id, read, wb |
 | tip_open | (옛) '이 책 읽어주기 팁' 펼치기 — 팁이 항상 보이게 바뀌어 지금은 안 남음 | title |
 | review_save (from:'memo') | 기록 창 '💬 이 메모를 후기로도 올리기'로 올린 후기(11/17부터) — 그 밖의 review_* 는 후기 기능 세션 기준 | book_id, title, body, edit, from |
 | pick_form_open / pick_post_save / pick_post_delete / pick_vote | 나이테 Pick 엄마들 추천(11/17~): 쓰기 창 열기 / 올림 / 내 추천 지움 / 👍 추천(kind act = 엄마들 활동, road = 나이테 걸어온 길 항목, 키 roadit<제목>). 대박책 투표는 재밌어요(likes.js)와 같은 표 | kind(book·act), age_m |
@@ -111,3 +112,8 @@
 3. 메뉴·탭을 추가하거나 이름을 바꾸면 2절 표와 KPI `TABN`·`STABN`·`EMBN`을 고쳐요. ID는 되도록 그대로 둬요.
 4. 로컬에서 Playwright로 `/rest/v1/events` POST를 가로채 이벤트가 실제로 나가는지 확인해요(예: 첫 화면 `tab_view init:1`).
 5. KPI 화면에서 새 이벤트가 이름표대로 보이는지 확인해요(가짜 이벤트로 `kpi.html` 렌더링).
+
+## 사이트 이벤트 보충(2026-11-19 점검)
+| type | 뜻 | meta |
+|---|---|---|
+| daangn_click | 메인 당근모임 링크 | |
