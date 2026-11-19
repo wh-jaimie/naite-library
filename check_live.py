@@ -10,7 +10,7 @@ from playwright.async_api import async_playwright
 BASE = "http://localhost:8765" if "local" in sys.argv[1:] else "https://wh-jaimie.github.io/naite-library"
 # (경로, 정상일 때 화면에 보여야 하는 글자) — 로그인·입장 화면도 '정상 로드'로 봄
 PAGES = [
-    ("/", "나이테"), ("/challenge.html", "나이테 120"), ("/domestic.html", "국내 인기 책장"),
+    ("/", "나이테"), ("/challenge.html", "나이테 120"), ("/domestic.html", "인기 그림책 100권"),
     ("/guide.html", "가이드"), ("/types.html", "유형"), ("/join.html", "스터디 참여"), ("/install.html", "설치 방법"),
     # 공개 자료·미션은 스터디 앱(record/app.html)으로 이동(2026-11-03 비밀번호 없이 공개)
     ("/study/", "나이테"), ("/study/missions.html", "나이테"),
