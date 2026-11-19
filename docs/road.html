@@ -24,6 +24,7 @@ h2{font-family:'Gowun Batang',serif;font-size:20px;margin:22px 0 8px;color:var(-
 .it .k{font-size:.74rem;font-weight:700;color:var(--pine);background:var(--pine-soft);border-radius:6px;padding:1px 7px}
 .it p{margin:4px 0 0;font-size:.93rem;color:var(--soft)}
 .it .when{font-weight:800;color:var(--clay-ink)}
+.rp{font-weight:900;color:#23291F;font-size:.9rem}.it .h .rp{flex-basis:100%}.picks li .rp{display:block;margin:1px 0 2px}.bk .rp{display:block;font-size:.8rem;margin-top:2px}
 .it .date{font-size:.82rem}
 details.ag{margin-top:10px}
 details.ag>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:11px 14px;-webkit-tap-highlight-color:transparent}
@@ -127,6 +128,7 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 function age(w){var m=/(\d{4})년 (\d{1,2})월/.exec(w);return m?((+m[1]-2021)*12+(+m[2])-1)+'개월':'';}
 var LINKS={};
 function lk(t,i){return LINKS[roadKey(t)]||(i&&i.buy)||"";}
+var LP={};function pr(u){return u&&LP[u]>0?'<span class="rp">'+Math.round(LP[u]).toLocaleString('ko-KR')+'원</span>':'';}
 function wrap(u,h,t){return u?'<a class="cv" href="'+u.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+String(t).replace(/"/g,"&quot;")+'">'+h+"</a>":h;}
 function _ie(x){var o=document.createElement('span');o.className='ph';o.textContent='📚';x.replaceWith(o);}
 function img(c){return '<img loading="lazy" src="'+(c.indexOf('road/')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg')+'" alt="" onerror="_ie(this)">';}
@@ -137,15 +139,17 @@ var AG=[];ROAD.forEach(function(y){y[1].forEach(function(i){var m=parseInt(age(i
 AG=AG.map(function(l,g){return l?[g,l]:null;}).filter(Boolean);
 document.getElementById('list').innerHTML=AG.map(function(y,yi){var g=y[0];
  return '<details class="ag"'+(yi===0?' open':'')+'><summary><span class="an">'+g+'살</span><span class="ar">'+((g-1)*12+1)+'~'+(g*12)+'개월 · '+y[1].length+'개</span></summary>'+y[1].map(function(i){
- return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span></div><p><span class="when">'+e(age(i.w))+'</span><br>'+e(i.d)+'</p>'+
-  (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b><span>'+e(x[2])+'</span><button type="button" data-like="'+e(x[0])+'" hidden></button></div></li>';}).join('')+'</ul></details>':'')+
+ return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span>'+pr(lk(i.n,i))+'</div><p><span class="when">'+e(age(i.w))+'</span><br>'+e(i.d)+'</p>'+
+  (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b>'+pr(lk(x[0]))+'<span>'+e(x[2])+'</span><button type="button" data-like="'+e(x[0])+'" hidden></button></div></li>';}).join('')+'</ul></details>':'')+
   (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('')+'</details>';}).join('');
-document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span><button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
+document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span>'+pr(lk(b[0]))+'<button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
 document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
 paintRoad();
 document.getElementById("rtab2").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;["list","bestSec"].forEach(function(id){document.getElementById(id).hidden=id!==b.dataset.t;});[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b);});window.scrollTo(0,0);});
 (function(){var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',H={apikey:K,Authorization:'Bearer '+K};
   fetch(U+'/rest/v1/road_links?select=key,buy_url',{headers:H}).then(function(r){return r.ok?r.json():[];}).then(function(rows){var n=0;(rows||[]).forEach(function(r){if(r.buy_url){LINKS[r.key]=r.buy_url;n++;}});if(n)paintRoad();}).catch(function(){});
+  // 쿠팡 가격(관리자 입력, link_prices)
+  fetch(U+'/rest/v1/link_prices?select=url,price',{headers:H}).then(function(r){return r.ok?r.json():[];}).then(function(rows){var n=0;(rows||[]).forEach(function(r){if(r.price>0){LP[r.url]=r.price;n++;}});if(n)paintRoad();}).catch(function(){});
   document.addEventListener('click',function(ev){var t=ev.target;
     // 카드·대박책 어디를 눌러도 책정보(표지 링크)로. 다른 링크·대박책 펼치기는 그대로
     if(t.closest&&!t.closest('a,summary')){var one=t.closest('.picks li,.bk'),cv=null;

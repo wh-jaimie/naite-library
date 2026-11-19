@@ -109,7 +109,7 @@ json.dump({"checked": PRICE_DAY, "items": items}, open(os.path.join(DOCS, "shop_
 
 PAGE = r"""<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>국내 인기 책장 — 책 살 때 참고하세요 · 나이테</title>
+<title>인기 그림책 100권 — 책 살 때 참고하세요 · 나이테</title>
 <meta name="description" content="국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격과 시리즈·유형 필터로 처음 살 책을 골라 보세요.">
 <link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml"><link rel="icon" href="/naite-library/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png"><link rel="manifest" href="/naite-library/manifest.webmanifest">
@@ -203,8 +203,8 @@ a{color:var(--tealD)}
 @media (max-width:520px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{border-radius:11px}.bb{padding:7px 7px 9px;gap:4px}.bt{font-size:.78rem}.age{font-size:.7rem}.note{font-size:.68rem}.bd{gap:3px}.bd span{font-size:.6rem;padding:1px 4px}.price{font-size:.72rem}.price b{font-size:.84rem}.price small{font-size:.62rem}.buy{font-size:.72rem;padding:6px 3px;border-radius:8px}.copy{font-size:.7rem;padding:3px}.cv .rk{font-size:.62rem;padding:1px 5px;top:4px;left:4px}.cv .ser{font-size:.6rem;padding:1px 4px;top:4px;right:4px}}
 </style></head><body>
 <div class="wrap">
-  <div class="top"><span class="brand"><span class="mark">100</span><span class="t">국내 인기 책장</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top .back{display:none}.top .sharebtn{margin-left:auto}</style>')</script>
-  <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>국내 인기 책장</h1>
+  <div class="top"><span class="brand"><span class="mark">100</span><span class="t">인기 그림책 100권</span></span><a class="back" href="./">← 나이테</a><button class="sharebtn" id="shareBtn" title="이 페이지 공유하기">📤 공유</button></div><script>if(/[?&]embed=/.test(location.search))document.write('<style>.top .back{display:none}.top .sharebtn{margin-left:auto}</style>')</script>
+  <div class="hero"><div class="eyebrow">책 살 때 참고하세요</div><h1>인기 그림책 100권</h1>
     <p>국내 서점에서 많이 팔린 영어 그림책 100권. 나이·가격·종류로 골라 보세요.</p>
     <details class="more"><summary>ⓘ 자세히</summary><div class="mbody">교보·예스24·알라딘 등 국내 서점에서 많이 팔린 영어 그림책 100권이에요. 다들 많이 사는 "기본템"을 나이·가격·종류로 골라 볼 수 있어요. 웬디북·동방북스 같은 다른 서점에서 살 땐 <b>📋 제목 복사</b>로 바로 검색하세요. (🎯 표시는 나이테 스터디에서 매달 같이 읽는 책이에요.)</div></details></div>
 </div>
@@ -235,7 +235,9 @@ var AGES=[['all','전체'],['0-2','0~2세'],['3-4','3~4세'],['5-7','5~7세'],['
 var KINDS=[['all','전체'],['single','단권'],['series','시리즈·세트'],['touch','만지고 노는 책'],['song','노래책'],['board','보드북'],['reader','리더스·얼리리더'],['nonfic','논픽션']];
 var PRICES=[['all','전체'],['p1','1만원 이하'],['p2','1~1.5만원'],['p3','1.5만원 이상']];
 var MORE=[['n120','🎯 나이테 120에 있는 책'],['award','🏅 수상작'],['world','🌍 세계에서도 인기']];
-var S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:'rank'},LINKS={};
+var S={age:'all',kind:'all',price:'all',author:'all',more:{},q:'',sort:'rank'},LINKS={},LP={};
+// 가격 = 그 책 쿠팡 링크에 관리자가 넣은 가격(link_prices, 2026-11-20). 링크·가격 없으면 표시 안 함
+function cpPrice(it){var L=link(it);return L&&LP[L]>0?LP[L]:0;}
 // 같은 묶음(data-g)이 여러 곳에 있어도(모바일 빠른 나이 줄 + 필터) 상태는 하나
 function chip(g,arr,multi){document.querySelectorAll('[data-g="'+g+'"]').forEach(function(el){arr.forEach(function(a){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=a[1];b.dataset.v=a[0];
   b.onclick=function(){if(multi)S.more[a[0]]=!S.more[a[0]];else S[g]=a[0];paint();};el.appendChild(b);});});}
@@ -263,7 +265,7 @@ function ok(it){
   if(S.author!=='all'&&it.authors.indexOf(S.author)<0)return false;
   if(S.kind==='single'&&it.series)return false;if(S.kind==='series'&&!it.series)return false;
   if(['touch','song','board','reader','nonfic'].indexOf(S.kind)>=0&&it.tags.indexOf(S.kind)<0)return false;
-  var m=S.more,pr=it.price&&!it.series&&it.price.price;
+  var m=S.more,pr=cpPrice(it);
   if(m.n120&&!it.in120)return false;if(m.award&&!it.award)return false;if(m.world&&!it.world)return false;
   if(S.price==='p1'&&!(pr&&pr<=10000))return false;if(S.price==='p2'&&!(pr&&pr>10000&&pr<=15000))return false;if(S.price==='p3'&&!(pr&&pr>15000))return false;
   return true;}
@@ -273,8 +275,7 @@ function card(it){
   var L=link(it),pr=it.price,cq=encodeURIComponent(it.en);
   var bd='';if(it.in120)bd+='<span class="n120">🎯 나이테 120 · '+esc(it.in120.month+'개월차 '+it.in120.theme)+'</span>';
   if(it.award)bd+='<span class="aw">'+esc(it.award)+'</span>';if(it.world)bd+='<span class="w">🌍 세계 인기</span>';
-  var price=it.series?'<div class="price"><small>시리즈·세트라 권마다 가격이 달라요</small></div>':
-    (pr?'<div class="price">최저 <b>'+won(pr.price)+'</b><small>'+esc(pr.store)+(pr.fmt?' · '+esc(pr.fmt):'')+' · '+md(DATA.checked)+' 기준'+(it.tags.indexOf('touch')>=0&&pr.fmt==='페이퍼백'?'<br>⚠️ 페이퍼백이라 플랩·팝업이 없을 수 있어요':'')+'</small></div>':'<div class="price"><small>교보·동방북스 국내 재고 없음</small></div>');
+  var cp=cpPrice(it),price=cp?'<div class="price"><b>'+won(cp)+'</b></div>':'';
   var href=L||('https://www.coupang.com/np/search?q='+cq);
   // 표지를 누르면 쿠팡(링크 있으면 상품, 없으면 검색) — 나이테 120·스터디 앱과 같은 동작
   return '<article class="card"><a class="cv cvl" href="'+esc(href)+'" target="_blank" rel="noopener'+(L?' sponsored nofollow':'')+'" data-t="'+esc(it.en)+'" data-k="'+(L?'cp':'find')+'" aria-label="'+esc(it.ko)+'">'+(it.cover?'<img loading="lazy" src="'+esc(it.cover)+'" alt="'+esc(it.ko)+'" onerror="this.remove()">':'')+'<div class="ph">'+esc(it.ko)+'</div>'+
@@ -290,7 +291,7 @@ function paint(){
   var n=(S.kind!=='all')+(S.price!=='all')+(S.author!=='all')+Object.keys(S.more).filter(function(k){return S.more[k];}).length;
   var fc=document.getElementById('fcnt');fc.hidden=!n;fc.textContent=n;
   var list=DATA.items.filter(ok);
-  if(S.sort==='price')list.sort(function(a,b){var x=a.price&&!a.series?a.price.price:1e9,y=b.price&&!b.series?b.price.price:1e9;return x-y||a.rank-b.rank;});
+  if(S.sort==='price')list.sort(function(a,b){var x=cpPrice(a)||1e9,y=cpPrice(b)||1e9;return x-y||a.rank-b.rank;});
   else if(S.sort==='age')list.sort(function(a,b){return ((a.age||[99])[0]-(b.age||[99])[0])||a.rank-b.rank;});
   else list.sort(function(a,b){return a.rank-b.rank;});
   var filtered=S.q||S.age!=='all'||S.kind!=='all'||S.price!=='all'||S.author!=='all'||Object.keys(S.more).some(function(k){return S.more[k];});
@@ -301,18 +302,20 @@ function paint(){
   document.getElementById('grid').innerHTML=list.length?cards.join(''):'<div class="empty">조건에 맞는 책이 없어요. 필터를 줄여 보세요.</div>';}
 document.getElementById('q').addEventListener('input',function(){S.q=this.value.trim();paint();});
 document.getElementById('sort').addEventListener('change',function(){S.sort=this.value;paint();});
-document.getElementById('foot').innerHTML='가격은 교보문고·동방북스에서 국내 재고가 있는 판본 중 가장 싼 값이에요('+md(DATA.checked)+' 기준, 판본·형태에 따라 달라요). 쿠팡·웬디북 가격은 포함하지 않았어요. 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
+
+document.getElementById('foot').innerHTML='🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.';
 paint();
 // 📤 페이지 공유 — 모바일은 공유시트, 아니면 링크 복사
 document.getElementById('shareBtn').addEventListener('click',function(){var btn=this,url=location.origin+location.pathname;
   ev('share_click',{page:'국내 인기 책장',how:'link'});
-  if(navigator.share){navigator.share({title:'국내 인기 책장 — 나이테',text:'국내에서 많이 팔린 영어 그림책 100권 · 나이·가격·종류로 골라 보기',url:url}).catch(function(){});return;}
+  if(navigator.share){navigator.share({title:'인기 그림책 100권 — 나이테',text:'국내에서 많이 팔린 영어 그림책 100권 · 나이·가격·종류로 골라 보기',url:url}).catch(function(){});return;}
   function done(){btn.textContent='✓ 링크 복사됨';clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent='📤 공유';},1600);}
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,done);else done();});
 // 쿠팡 링크: 나이테 120 책(list_buy_urls) + 그 밖(shop_links)
 (async function(){var h={apikey:ANON,Authorization:'Bearer '+ANON,'Content-Type':'application/json'};
   try{var a=await fetch(URL_+'/rest/v1/rpc/list_buy_urls',{method:'POST',headers:h,body:'{}'});if(a.ok)(await a.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.title)]=r.buy_url;});}catch(e){}
   try{var b=await fetch(URL_+'/rest/v1/shop_links?select=en,buy_url',{headers:h});if(b.ok)(await b.json()).forEach(function(r){if(r.buy_url)LINKS[norm(r.en)]=r.buy_url;});}catch(e){}
+  try{var c=await fetch(URL_+'/rest/v1/link_prices?select=url,price',{headers:h});if(c.ok)(await c.json()).forEach(function(r){if(r.price>0)LP[r.url]=r.price;});}catch(e){}
   paint();})();
 // 쿠팡 클릭 집계(관리자·notrack 기기 제외)
 // 카드 어디를 눌러도 쿠팡(표지 링크). 제목 복사 버튼은 그대로

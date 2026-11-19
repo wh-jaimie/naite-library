@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/naite-library/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
+<meta name="theme-color" content="#245648">
+<title>나이테가 쓰고 고른 것 — 나이테 영어책육아 메이트</title>
+<meta name="description" content="나이테 이번 달 스터디 책 5권과 나이테(드니맘)가 걸어온 길 속 영어책·세트.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+:root{--ink:#23291F;--soft:#6A6C60;--line:#E7E9E0;--pine:#245648;--red:#E0482E;--bg:#F3F4EF}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:30px}
+.top{display:flex;align-items:center;gap:10px;padding:16px 18px 10px}
+.top svg{width:32px;height:32px}.top b{font-family:'Gowun Batang',serif;font-size:1.2rem;color:var(--pine)}
+.top .go{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--pine);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+.disc{margin:0 18px;padding:8px 10px;background:#F6F7F2;border-radius:8px;font-size:.72rem;color:var(--soft);line-height:1.5}
+.sec{margin-top:22px}
+.sec h2{margin:0 0 4px;text-align:center;font-size:1.02rem;font-weight:900}
+.sec p.sub{margin:0 0 6px;text-align:center;font-size:.8rem;color:var(--soft)}
+.row{display:flex;align-items:center;gap:14px;padding:12px 18px;text-decoration:none;color:inherit;border-bottom:1px solid #F1F2EC}
+.row:active{background:#FAFAF6}
+.im{flex:none;width:72px;height:72px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:28px}
+.im img{max-width:100%;max-height:100%;display:block}
+.tx{flex:1;min-width:0}
+.nm{font-size:.92rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mt{font-size:.74rem;color:var(--soft);margin-top:2px}
+.pr{font-size:.95rem;font-weight:900;margin-top:4px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 18px 0}
+.pc{display:flex;align-items:center;gap:6px;padding:14px 10px;border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);background:#FBFBF7}
+.pc .pi{font-size:1.2rem}.pc b{flex:1;font-size:.88rem;font-weight:900;white-space:nowrap;letter-spacing:-.02em}.pc .pa{color:var(--pine);font-weight:900}
+.empty{text-align:center;color:var(--soft);font-size:.85rem;padding:20px}
+.foot{text-align:center;font-size:.75rem;color:var(--soft);margin-top:26px;padding:0 18px;line-height:1.6}
+.foot a{color:var(--pine);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><svg viewBox="0 0 64 64" fill="none" aria-label="나이테"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b>
+    <a class="go" href="./?from=shop">나이테 스터디 ›</a></div>
+  <p class="disc">이 페이지의 상품 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+  <section class="sec"><h2 id="mH">이번 달 스터디 책 5권</h2><div id="month"><p class="empty">불러오는 중…</p></div></section>
+  <div class="cards"><a class="pc" href="challenge.html?from=shop" data-pc="나이테 120"><span class="pi">🎯</span><b>스터디 전체 과정</b><span class="pa">›</span></a><a class="pc" href="domestic.html?from=shop" data-pc="국내 인기 책장"><span class="pi">🛒</span><b>인기 원서 100</b><span class="pa">›</span></a></div>
+  <section class="sec"><h2>나이테가 걸어온 길</h2><div id="road"></div></section>
+  <section class="sec"><h2>걸어온 길 속 대박책</h2><div id="best"></div></section>
+  <p class="foot"><a href="./?from=shop">나이테 둘러보기 ›</a></p>
+</div>
+<script src="road-data.js"></script>
+<script>
+(function(){
+var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',H={apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function norm(t){return String(t||'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'');}
+function img(c){if(!c)return '';var u=c.indexOf('road/')===0||c.indexOf('http')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg';return '<img loading="lazy" src="'+esc(u)+'" alt="" onerror="this.replaceWith(\'📚\')">';}
+var LP={};
+function mon(w){var m=/(\d{4})년 (\d{1,2})월/.exec(w||'');return m?((+m[1]-2021)*12+(+m[2])-1)+'개월':'';}
+function won(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
+function row(it,from){return '<a class="row" href="'+esc(it.url)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.name)+'" data-from="'+from+'"><span class="im">'+(it.img||'📚')+'</span><span class="tx"><span class="nm">'+esc(it.name)+'</span>'+(it.meta?'<span class="mt">'+esc(it.meta)+'</span>':'')+(LP[it.url]>0?'<div class="pr">'+won(LP[it.url])+'</div>':'')+'</span></a>';}
+function get(path){return fetch(U+'/rest/v1/'+path,{headers:H}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];});}
+Promise.all([
+  get('link_prices?select=url,price'),
+  fetch(U+'/rest/v1/rpc/list_buy_urls',{method:'POST',headers:H,body:'{}'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+  get('settings?select=current_theme&id=eq.1'),
+  fetch('c120_data.json?v='+new Date().toISOString().slice(0,10)).then(function(r){return r.json();}).catch(function(){return {themes:[]};}),
+  get('road_links?select=key,buy_url')
+]).then(function(R){
+  (R[0]||[]).forEach(function(r){if(r.price>0)LP[r.url]=r.price;});
+  var BU={};(R[1]||[]).forEach(function(r){if(r.buy_url)BU[norm(r.title)]=r.buy_url;});
+  var cur=R[2]&&R[2][0]&&R[2][0].current_theme,th=(R[3].themes||[]).filter(function(t){return t.key===cur;})[0];
+  var m=document.getElementById('month');
+  if(th){
+    var rows=th.books.filter(function(b){return BU[norm(b.title)];}).map(function(b){return row({name:b.title,meta:b.tier_label,img:img(b.cover),url:BU[norm(b.title)]},'month');});
+    m.innerHTML=rows.join('')||'<p class="empty">곧 올라와요</p>';}else m.innerHTML='<p class="empty">곧 올라와요</p>';
+  var RL={};(R[4]||[]).forEach(function(r){if(r.buy_url)RL[r.key]=r.buy_url;});
+  var road=[],best=[],seen={};
+  ROAD.forEach(function(y){y[1].forEach(function(i){var k=roadKey(i.n);if(!/영상|노래|구매/.test(i.k)&&RL[k]&&!seen[k]){seen[k]=1;road.push(row({name:i.n,img:i.photo?'<img loading="lazy" src="'+esc(i.photo)+'" alt="">':img(i.c),url:RL[k]},'road'));}
+    (i.picks||[]).forEach(function(x){var k2=roadKey(x[0]);if(RL[k2]&&!seen[k2]){seen[k2]=1;best.push(row({name:x[0],img:img(x[1]),url:RL[k2]},'best'));}});});});
+  BEST.forEach(function(b){var k=roadKey(b[0]);if(RL[k]&&!seen[k]){seen[k]=1;best.push(row({name:b[0],img:img(b[1]),url:RL[k]},'best'));}});
+  document.getElementById('road').innerHTML=road.join('');document.getElementById('best').innerHTML=best.join('');
+});
+document.addEventListener('click',function(e){var c=e.target.closest('a.pc');if(c){try{if(localStorage.getItem('naite_notrack')!=='1')fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'cta_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{page:'인스타 상품',to:c.dataset.pc}}),keepalive:true}).catch(function(){});}catch(x){}return;}var a=e.target.closest('a.row');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+  fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'buy_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'인스타 상품',from:a.dataset.from}}),keepalive:true}).catch(function(){});}catch(x){}});
+})();
+</script>
+<script src="track.js" data-page="인스타 상품"></script>
+</body>
+</html>
