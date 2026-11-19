@@ -110,7 +110,7 @@ a.brand{text-decoration:none;color:inherit}
   if(!window.SUPA_ANON||window.SUPA_ANON.indexOf('PASTE')===0){list.innerHTML='<p class="empty">⚙️ 아직 연결 전이에요.</p>';return;}
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   function sid(){var s;try{s=localStorage.getItem('joy_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('joy_sid',s);}}catch(e){s='anon';}return s;}
-  function log(type,extra){try{if(localStorage.getItem('naite_notrack')==='1')return;client.from('events').insert({type:type,session_id:sid(),path:location.pathname,meta:extra||null});}catch(e){}}
+  function log(type,extra){try{if(localStorage.getItem('naite_notrack')==='1')return;client.from('events').insert({type:type,session_id:sid(),path:location.pathname,meta:extra||null}).then(function(){},function(){});}catch(e){}} // .then 없으면 요청이 안 나감(2026-11-19 고침)
   client.from('guides').select('id,title,url').order('sort').order('id').then(function(r){
     var rows=(r&&r.data)||[];
     if(!rows.length){list.innerHTML='<p class="empty">가이드가 곧 추가될 예정이에요.</p>';return;}
