@@ -91,17 +91,12 @@
     var b=monthInfo();if(!b)return null;
     var d=new Date(b.year,b.month-1+(S.viewOff||0),1);return mkMonth(d.getFullYear(),d.getMonth()+1);
   }
-  // 가장 이른 달: 기록이 있는 달 또는 공개된 스터디 달 중 가장 이른 달까지
-  function minOff(){
-    var b=monthInfo();if(!b)return 0;var base=b.year*12+b.month,lo=base;
-    S.rows.forEach(function(r){var p=r.d.split('-');lo=Math.min(lo,+p[0]*12+(+p[1]));});
-    (S.pubs||[]).forEach(function(t){var m=monthOf(t.month_label);if(m)lo=Math.min(lo,m.y*12+m.m);});
-    return lo-base;
-  }
+  // 2026-11-20 운영자 요청: 스터디 달과 상관없이 앞뒤로 넘김(지난 날은 언제든 기록, 앞으로 올 날은 보기만). 한도는 안전장치로 넉넉하게(10년 전 ~ 1년 뒤)
+  var MIN_OFF=-120,MAX_OFF=12;
   function monthNav(label){
     var off=S.viewOff||0;
-    return '<span class="mnav"><button type="button" data-mprev aria-label="이전 달"'+(off>minOff()?'':' disabled')+'>‹</button><span class="ml">'+label+'</span>'+
-      '<button type="button" data-mnext aria-label="다음 달"'+(off<0?'':' disabled')+'>›</button></span>';
+    return '<span class="mnav"><button type="button" data-mprev aria-label="이전 달"'+(off>MIN_OFF?'':' disabled')+'>‹</button><span class="ml">'+label+'</span>'+
+      '<button type="button" data-mnext aria-label="다음 달"'+(off<MAX_OFF?'':' disabled')+'>›</button></span>';
   }
   // 그 달의 스터디 주제와 책(지난 달 책은 처음 볼 때 불러옴)
   function monthTheme(mi){
@@ -1836,8 +1831,8 @@
       if((t=e.target.closest('[data-tcam]'))){fabToggle(false);openStampCamera(logicalToday());if(S.onEvent)S.onEvent('today_cam',{});return;}
       if((t=e.target.closest('[data-tbook]'))){fabToggle(false);openRecordSheet(logicalToday());if(S.onEvent)S.onEvent('today_book',{});return;}
       if((t=e.target.closest('[data-tshare]'))){fabToggle(false);shareDay(logicalToday());if(S.onEvent)S.onEvent('today_share',{});return;}
-      if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=(S.viewOff||0)-1;paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
-      if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(0,(S.viewOff||0)+1);paint();}return;}
+      if((t=e.target.closest('[data-mprev]'))){if(!t.disabled){S.viewOff=Math.max(MIN_OFF,(S.viewOff||0)-1);paint();if(S.onEvent)S.onEvent('month_nav',{off:S.viewOff,tab:S.tab});}return;}
+      if((t=e.target.closest('[data-mnext]'))){if(!t.disabled){S.viewOff=Math.min(MAX_OFF,(S.viewOff||0)+1);paint();}return;}
       if((t=e.target.closest('[data-rmore]'))){S.recentOpen=!S.recentOpen;paintShelf();return;}
       if((t=e.target.closest('[data-chfold]'))){var ch0=curChal();if(ch0){var f0=!chalFolded(ch0);try{if(f0)localStorage.setItem(CHFOLD_KEY,String(ch0.id));else localStorage.removeItem(CHFOLD_KEY);}catch(x){}paintShelf();if(S.onEvent)S.onEvent('chal_fold',{id:ch0.id,fold:f0?1:0});}return;}
       if((t=e.target.closest('[data-chwb]'))){openWbSheet();return;}
