@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261119t',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261119v',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1465,7 +1465,7 @@
     var started=logicalToday()>=ch.start,fold=chalFolded(ch);
     // 2026-11-19 운영자: 챌린지 안 하는 사람도 있으니 접을 수 있게(챌린지마다 기억)
     var top='<div class="top"><h3>🏁 '+esc(ch.title)+'</h3><span class="dt">'+(+ch.start.slice(5,7))+'/'+(+ch.start.slice(8))+' ~ '+(+ch.end.slice(5,7))+'/'+(+ch.end.slice(8))+'</span>'+
-      '<button type="button" class="ch-fold" data-chfold aria-expanded="'+(!fold)+'">'+(fold?'펼치기 ▾':'접기 ▴')+'</button></div>';
+      '<button type="button" class="ch-fold" data-chfold aria-expanded="'+(!fold)+'" aria-label="'+(fold?'챌린지 펼치기':'챌린지 접기')+'">'+(fold?'▾':'▴')+'</button></div>';
     if(fold)return '<div class="ch-card folded">'+top+'<p class="ch-mini">📖 읽어주기 '+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+' · ✏️ 워크북 '+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</p></div>';
     return '<div class="ch-card">'+top+
       (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일('+WD[dateOf(ch.start).getDay()]+')에 시작해요. '+I.days.length+'일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
