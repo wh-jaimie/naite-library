@@ -373,12 +373,12 @@ if(document.getElementById('legend'))document.getElementById('legend').innerHTML
 function stepHTML(b){
   return `<div class="step" data-id="${b.id}">
     <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
-    ${b.buy_url?`<a class="cover${b.cover?'':' noimg'}" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기">`:`<div class="cover${b.cover?'':' noimg'}">`}
+    ${b.buy_url?`<a class="cover${b.cover?'':' noimg'}" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow">`:`<div class="cover${b.cover?'':' noimg'}">`}
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
       ${(b.pop_rank||b.kr_popular)?`<div class="cbg">${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}</div>`:''}
     ${b.buy_url?'</a>':'</div>'}
-    ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" title="쿠팡에서 보기"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
+    ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
     <button type="button" data-like="${esc(b.title)}" hidden></button>
     ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.series||[]).map(x=>`<span class="ser" title="노래 CD·세이펜이 있는 ${x} 시리즈">🎵 ${x}</span>`).join('')}
     <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
