@@ -56,7 +56,7 @@
   /* ── 단어·줄거리 데이터 ── */
   // books.words: 한 줄에 하나 "word - 뜻" (구분: 띄어 쓴 ' - ', '|', '–'. fire-engine처럼 붙은 하이픈은 안 나눔)
   function parseWords(t){return String(t||'').split(/\n/).map(function(l){return l.trim().replace(/^[•·\-*]\s+/,'');}).filter(Boolean).map(function(l){
-    var m=l.split(/\s*[|–]\s*|\s+-\s+/);return {en:(m[0]||'').trim(),ko:m.slice(1).join(' - ').trim()};}).filter(function(w){return w.en;}).slice(0,10);}
+    var m=l.split(/\s*[|–]\s*|\s+-\s+/);return {en:(m[0]||'').trim(),ko:m.slice(1).join(' - ').trim()};}).filter(function(w){return w.en;});} // 2026-11-19 운영자: 단어 개수 제한 없음
   function hasWords(books){return (books||[]).some(function(b){return (b.words&&String(b.words).trim())||(b.plot&&String(b.plot).trim());});}
 
   function wordsHtml(ctx){
