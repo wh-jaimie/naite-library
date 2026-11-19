@@ -14,6 +14,7 @@ create table if not exists public.study_joins (
   updated_at timestamptz not null default now(),
   primary key (reader, theme_key)
 );
+alter table public.study_joins add column if not exists gb_interest boolean not null default false; -- 이 5권 공동구매 관심(신청 창 체크, 2026-11-19)
 alter table public.study_joins enable row level security;
 grant select, insert, update, delete on public.study_joins to anon, authenticated, service_role;
 -- 회원은 표를 직접 못 읽고 아래 함수로만. 관리자만 목록 읽기·지우기
@@ -74,9 +75,10 @@ begin
 end $$;
 grant execute on function public.study_join_state(text) to anon, authenticated;
 
--- p_theme: 비우면 이번 달, 다음 달 주제를 주면 미리 신청(그 밖의 달은 안 됨)
+-- p_theme: 비우면 이번 달, 다음 달 주제를 주면 미리 신청(그 밖의 달은 안 됨) · p_gb: 공동구매 관심(비우면 그대로)
 drop function if exists public.join_study(text, text, int, text);
-create or replace function public.join_study(p_reader text, p_nickname text, p_kid_age int, p_came_from text, p_theme text default null)
+drop function if exists public.join_study(text, text, int, text, text);
+create or replace function public.join_study(p_reader text, p_nickname text, p_kid_age int, p_came_from text, p_theme text default null, p_gb boolean default null)
 returns jsonb
 language plpgsql volatile security definer set search_path = public as $$
 declare v_cur text; v_nick text; v_n int;
@@ -90,21 +92,22 @@ begin
     if p_theme is distinct from public.next_theme(v_cur) then return jsonb_build_object('ok',false,'error','theme'); end if;
     v_cur := p_theme;
   end if;
-  insert into public.study_joins(reader, theme_key, nickname, kid_age, came_from)
+  insert into public.study_joins(reader, theme_key, nickname, kid_age, came_from, gb_interest)
   values (p_reader, v_cur, v_nick,
           case when p_kid_age between 1 and 3 then p_kid_age end,
-          case when p_came_from in ('kakao','daangn','insta','blog','friend','etc') then p_came_from end)
+          case when p_came_from in ('kakao','daangn','insta','blog','friend','etc') then p_came_from end,
+          coalesce(p_gb, false))
   on conflict (reader, theme_key) do update set nickname = excluded.nickname, kid_age = excluded.kid_age,
-     came_from = excluded.came_from, updated_at = now();
+     came_from = excluded.came_from, gb_interest = coalesce(p_gb, public.study_joins.gb_interest), updated_at = now();
   select count(*) into v_n from public.study_joins where theme_key = v_cur;
   return jsonb_build_object('ok',true,'cur',v_cur,'count',v_n);
 end $$;
-grant execute on function public.join_study(text, text, int, text, text) to anon, authenticated;
+grant execute on function public.join_study(text, text, int, text, text, boolean) to anon, authenticated;
 
 drop function if exists public.admin_study_progress(text);
 -- 관리자: 달별 참여자 기록 현황(그 달 기록한 날 · 이번 주 · 지난 주) — 주말 독려·월말 수료 확인용
 create or replace function public.admin_study_progress(p_theme text)
-returns table(reader text, nickname text, kid_age smallint, came_from text, created_at timestamptz,
+returns table(reader text, nickname text, kid_age smallint, came_from text, created_at timestamptz, gb_interest boolean,
               month_days int, week_days int, last_week_days int)
 language plpgsql stable security definer set search_path = public as $$
 declare v_m date := public.theme_month(p_theme);
@@ -113,7 +116,7 @@ declare v_m date := public.theme_month(p_theme);
 begin
   if not public.is_admin() then return; end if;
   return query
-  select j.reader, j.nickname, j.kid_age, j.came_from, j.created_at,
+  select j.reader, j.nickname, j.kid_age, j.came_from, j.created_at, j.gb_interest,
          public.rec_days(j.reader, v_m, (v_m + interval '1 month')::date),
          public.rec_days(j.reader, v_wk, v_wk + 7),
          public.rec_days(j.reader, v_wk - 7, v_wk)
