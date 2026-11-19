@@ -70,6 +70,7 @@
 | today_fab / today_cam / today_book / today_share | ✏️ 오늘 기록 버튼과 그다음 행동 | |
 | cal_day_open / cal_from_card / month_nav / shelf_month | 달력 날짜 열기 / 카드에서 달력 / 달 넘기기 / 기록 달 바꾸기 | |
 | cal_mode | 읽기 인증 달력 보기 바꾸기(2026-11-19) | mode: month / 5w |
+| chal_fold | 읽기 인증 챌린지 카드 접기/펼치기(2026-11-19) | id, fold: 1 접음 / 0 펼침 |
 | stamp_camera_open / stamp_photo_save / stamp_photo_share / stamp_photo_open / stamp_album / camera_fail / photo_reload | 인증샷 | |
 | share_card_open / _save / _share / _photo | 오늘 카드 이미지 | day |
 | month_card_open / _save / _share | 달력 이미지 | month, ver: month(그 달 달력) / 5w(최근 5주, 2026-11-19) |
