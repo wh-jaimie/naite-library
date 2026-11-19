@@ -577,13 +577,16 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       document.getElementById('hall').onchange=drawAll;drawAll();
     }).catch(function(e){var el=document.getElementById('hfun');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
   }
+  // 가이드(2026-11-19): 사이트 가이드 목록의 글 클릭(meta.title)과 스터디 앱의 가이드 버튼(meta.from)을 나눠 셈
+  var GUIDE_FROM={app_top:'앱 맨 위 📚 가이드',month_shelf:'이번 달 책 › 5권 활용법(가이드 12)',welcome:'처음 안내 › 엄마표영어 가이드'};
+  function isGuideArticle(e){return e.type==='guide_click'&&!!(e.meta&&e.meta.title);}
   // 나이테 (유입)
   function renderNaite(body,X){
     var R=X.R;
     function m(list){var pub=list.filter(isPublic),pv=pub.filter(function(e){return e.type==='page_view';}),vs=sessions(pv),js=sessions(list.filter(function(e){return e.type==='join_click';}));
       function inV(t,f){var o={};list.forEach(function(e){if(e.type===t&&(!f||f(e))&&e.session_id&&vs[e.session_id])o[e.session_id]=1;});return cnt(o);}
       return {pv:pv,visitors:cnt(vs),views:pv.length,appS:inV('page_view',function(e){return appOf(e)==='record';}),buyS:inV('buy_click'),join:list.filter(function(e){return e.type==='join_click';}).length,joinS:cnt(js),
-        guide:list.filter(function(e){return e.type==='guide_click';}).length,install:list.filter(function(e){return e.type==='install_click';}).length};}
+        guide:list.filter(isGuideArticle).length,install:list.filter(function(e){return e.type==='install_click';}).length};}
     var a=m(X.cur),b=m(X.prv);
     var rate=a.visitors?Math.round(a.joinS/a.visitors*1000)/10:0,prate=b.visitors?Math.round(b.joinS/b.visitors*1000)/10:0;
     var h='<div class="kgrid">'+kpi('방문자',a.visitors,b.visitors,R)+kpi('페이지 방문',a.views,b.views,R)+kpi('스터디 참여 클릭',a.join,b.join,R)+
@@ -644,7 +647,10 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         var det=Object.keys(o.how).map(function(k){return (HOW[k]||k)+' '+o.how[k];});if(o.fromMain)det.push('메인 카드 '+o.fromMain);
         return [esc(o.name),o.visitors,o.views,'<b>'+o.share+'</b>'+(det.length?'<small>'+esc(det.join(' · '))+'</small>':''),o.shareS,o.buy,o.copy,o.join];}),1)+
       '<p class="hint">공유 = 그 페이지의 📤 공유 버튼 + 메인 ‘책 고르기가 고민이라면’ 카드의 공유하기를 누른 횟수예요(2026-10-31부터 기록). 공유 창을 연 뒤 실제로 보냈는지는 알 수 없어요. 나이테 120의 쿠팡·제목 복사는 아직 따로 세지 않아요.</p></div>';
-    h+='<div class="card"><h3>📚 많이 누른 가이드 글</h3>'+table(['글','클릭'],sortedRows(countBy(X.cur.filter(function(e){return e.type==='guide_click';}),function(e){return (e.meta&&e.meta.title)||'?';})),1)+'</div>';
+    var gArt=X.cur.filter(isGuideArticle),gApp=X.cur.filter(function(e){return e.type==='guide_click'&&!isGuideArticle(e);});
+    h+='<div class="card"><h3>📚 많이 누른 가이드 글 <span class="hint">사이트 가이드 목록에서 글 클릭</span></h3>'+(gArt.length?table(['글','클릭'],sortedRows(countBy(gArt,function(e){return e.meta.title;})),1):'<p class="status">이 기간엔 글 클릭이 없어요.</p>')+
+      '<h4 style="margin:16px 0 8px;font-size:.92rem">📲 스터디 앱에서 가이드로 가는 버튼</h4>'+(gApp.length?table(['어디서','클릭'],sortedRows(countBy(gApp,function(e){var f=e.meta&&e.meta.from;return GUIDE_FROM[f]||f||'(어디서인지 모름)';})),1):'<p class="status">이 기간엔 없어요.</p>')+
+      '<p class="hint">위 ‘가이드 글 클릭’ 숫자는 사이트의 글 클릭만 세요(앱 버튼은 아래 표).</p></div>';
     h+='<div class="card"><h3>📄 화면별 방문</h3>'+table(['화면','방문','방문자'],Object.keys(pages).sort(function(x,y){return pages[y]-pages[x];}).map(function(p){return [esc(p),pages[p],cnt(pageV[p])];}),1)+'</div>';
     h+='<div class="card"><div class="shd"><h3>📈 날짜별 방문자 · 참여 클릭</h3><select class="t sm r" id="nm"><option value="v">방문자</option><option value="j">참여 클릭</option></select></div><div id="nchart"></div></div>';
     body.innerHTML=h;
