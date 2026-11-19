@@ -9,19 +9,25 @@
 <title>나이테 - 영어책육아 메이트</title>
 <meta name="description" content="나이테 이번 달 스터디 책 5권과 나이테(드니맘)가 걸어온 길 속 영어책·세트.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&display=swap">
 <style>
 *{box-sizing:border-box}html,body{margin:0}
 :root{--ink:#23291F;--soft:#6A6C60;--line:#E7E9E0;--pine:#245648;--red:#E0482E;--bg:#F3F4EF}
 body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
 .wrap{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:30px}
 .band{background:#245648;color:#F7F3EA;font-size:.82rem;padding:9px 16px;text-align:center;line-height:1.45}
-.head{position:relative;text-align:center;padding:26px 18px 6px}
-.head .lg{display:inline-block;width:112px;height:112px;border-radius:28px;background:#fff;padding:8px;border:1px solid #E7E0D0}
-.head .lg img{width:100%;height:100%;border-radius:22px;display:block}
+.top{display:flex;align-items:center;gap:10px;padding:14px 16px 0}
+.top .brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.top svg{width:30px;height:30px}.top b{font-family:'Gowun Batang',serif;font-size:1.15rem;color:#245648}
+.top .go{margin-left:auto;font-size:.82rem;font-weight:700;color:#fff;background:#245648;text-decoration:none;border-radius:999px;padding:8px 14px}
+.head{position:relative;text-align:center;padding:14px 18px 6px}
+.disc2{margin:14px 18px 0;text-align:center;font-size:.72rem;color:#8A8C80;line-height:1.5}
+.head .lg{display:inline-block;width:124px;height:124px;border-radius:50%;background:#fff;padding:0;overflow:hidden;border:1px solid #E7E0D0}
+.head .lg img{width:100%;height:100%;border-radius:50%;display:block}
 .head h1{margin:16px 0 0;font-size:1.35rem;font-weight:700;color:#245648}
 .head .intro a{color:#245648;font-weight:700}
 .head .intro{margin:10px 0 0;font-size:.86rem;line-height:1.6;color:#5C6152}
-.head .sh{position:absolute;left:18px;top:24px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(31,61,42,.08)}
+.head .sh{position:absolute;left:18px;top:14px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(31,61,42,.08)}
 .panel{background:#fff;border:1px solid #E7E0D0;border-radius:22px;margin:16px 14px 0;padding:6px 0 4px;overflow:hidden}
 .sec{margin-top:0}
 .sec h2{margin:14px 0 6px;text-align:center;font-size:1.08rem;font-weight:700}
@@ -44,14 +50,16 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
 </head>
 <body>
 <div class="wrap">
-  <p class="band">이 페이지의 상품 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+  <div class="top"><a class="brand" href="./?from=shop"><svg viewBox="0 0 64 64" fill="none" aria-label="나이테"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b></a>
+    <a class="go" href="./?from=shop">나이테 스터디 ›</a></div>
   <div class="head"><button type="button" class="sh" id="shareBtn" aria-label="공유"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B1E19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
-    <a class="lg" href="./?from=shop"><img src="naite-ig-logo.png" alt="나이테"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.<br>문의 : <a href="mailto:naite_library@naver.com">naite_library@naver.com</a></p></div>
+    <a class="lg" href="./?from=shop"><img src="naite-profile.jpg" alt="나이테(드니맘)"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.<br>문의 : <a href="mailto:naite_library@naver.com">naite_library@naver.com</a></p></div>
   <section class="sec panel"><h2 id="mH">이번 달 스터디 책 5권</h2><div id="month"><p class="empty">불러오는 중…</p></div></section>
   <div class="cards"><a class="pc" href="challenge.html?from=shop" data-pc="나이테 120"><span class="pi">🎯</span><b>스터디 전체 과정</b><span class="pa">›</span></a><a class="pc" href="domestic.html?from=shop" data-pc="국내 인기 책장"><span class="pi">🛒</span><b>인기 원서 100</b><span class="pa">›</span></a></div>
   <section class="sec panel"><h2>나이테가 걸어온 길</h2><div id="road"></div></section>
   <section class="sec panel"><h2>나이테 대박책</h2><div id="best"></div></section>
   <p class="foot"><a href="./?from=shop">나이테 둘러보기 ›</a></p>
+  <p class="disc2">이 페이지의 상품 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </div>
 <script src="road-data.js"></script>
 <script>
