@@ -1427,11 +1427,11 @@
     var started=logicalToday()>=ch.start;
     return '<div class="ch-card"><div class="top"><h3>🏁 '+esc(ch.title)+'</h3><span class="dt">'+(+ch.start.slice(5,7))+'/'+(+ch.start.slice(8))+' ~ '+(+ch.end.slice(5,7))+'/'+(+ch.end.slice(8))+'</span></div>'+
       (started?'':'<p class="pre">'+(+ch.start.slice(5,7))+'월 '+(+ch.start.slice(8))+'일('+WD[dateOf(ch.start).getDay()]+')에 시작해요. '+I.days.length+'일 동안 읽어주기 인증 '+ch.read+'일 + 워크북 활용 '+ch.wb+'번이면 완주!</p>')+
-      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'">'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
+      '<div class="days"'+(I.days.length!==7?' style="grid-template-columns:repeat('+Math.min(7,I.days.length)+',1fr)"':'')+'>'+I.days.map(function(x,i){return '<div class="d'+(x.read?' ok':'')+(x.today?' today':'')+'"'+(x.future?'':' data-rcal="'+x.d+'" role="button" tabindex="0" aria-label="'+(+x.d.slice(5,7))+'월 '+(+x.d.slice(8))+'일 '+(x.read?'기록 보기':'기록하기')+'"')+'>'+WDS[dateOf(x.d).getDay()]+'<i>'+(x.read?'📖':'')+(x.wb?'<em>✏️</em>':'')+'</i></div>';}).join('')+'</div>'+
       '<div class="ms"><div class="m'+(I.read>=ch.read?' done':'')+'">📖 읽어주기 인증'+bar(I.read,ch.read)+'<span class="n">'+I.read+'/'+ch.read+'일'+(I.read>=ch.read?' ✓':'')+'</span></div>'+
         '<div class="m'+(I.wb>=ch.wb?' done':'')+'">✏️ 워크북 활용'+bar(I.wb,ch.wb)+'<span class="n">'+I.wb+'/'+ch.wb+'번'+(I.wb>=ch.wb?' ✓':'')+'</span></div></div>'+
       '<p class="hint">읽어주기 인증은 달력에 책을 기록하거나 인증샷을 남긴 날이에요.</p>'+chalApplyHtml(ch,started)+
-      '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button><button type="button" class="fill" data-chshare>📸 완주샷 만들기</button></div></div>';
+      '<div class="acts"><button type="button" data-chwb>✏️ 워크북 인증</button>'+(I.done?'<button type="button" class="fill" data-chshare>📸 완주샷 만들기</button>':'<button type="button" class="lock" data-chshare>🔒 완주하면 완주샷</button>')+'</div></div>';
   }
   // 워크북 인증: 찍거나 앨범에서 골라 날짜 스탬프를 넣어 저장(달력 인증샷과 따로)
   function openWbSheet(){
@@ -1563,8 +1563,11 @@
     shareSheet('🎓 '+mon+'월 스터디 수료증','수료를 축하해요! 저장해서 간직하거나 채팅방에 자랑해 주세요 :)',drawCert(o),'naite-certificate-'+(S.home.key||'')+'.jpg','cert',{theme_key:S.home.key,days:recDays().month});}
   function shareChal(){
     var ch=curChal();if(!ch)return;var I=chalInfo(ch);
+    // 2026-11-19 운영자 요청: 완주 조건(읽어주기 인증 일수 + 워크북 활용 횟수)을 채워야 완주샷을 만들 수 있음
+    if(!I.done){var need=[];if(I.read<ch.read)need.push('읽어주기 인증 '+(ch.read-I.read)+'일');if(I.wb<ch.wb)need.push('워크북 활용 '+(ch.wb-I.wb)+'번');
+      toast('완주하면 완주샷을 만들 수 있어요 · '+need.join(', ')+' 남았어요');if(S.onEvent)S.onEvent('chal_card_locked',{id:ch.id,read:I.read,wb:I.wb});return;}
     var meta={id:ch.id,done:I.done,read:I.read,wb:I.wb},fname='naite-'+ch.id+'.jpg';
-    var sh=shareSheet(esc(ch.title)+' 완주샷',I.done?'완주를 축하해요! 이미지를 저장해서 완주를 보고해 주세요.':'아직 진행 중이어도 지금까지 함께한 기록을 완주샷으로 만들 수 있어요.',drawChalCard(ch),fname,'chal_card',meta,
+    var sh=shareSheet(esc(ch.title)+' 완주샷','완주를 축하해요! 이미지를 저장해서 완주를 보고해 주세요.',drawChalCard(ch),fname,'chal_card',meta,
       '<div class="ch-name"><input id="chName" maxlength="12" placeholder="완주샷에 넣을 이름 (예: 드니맘)" value="'+esc(getDN())+'"><button type="button" id="chNameGo">넣기</button>'+
       '<p>밖에 공유될 수 있으니 아이 실명보다 닉네임을 권해요. 비워도 괜찮아요.</p></div>');
     var inp=sh.querySelector('#chName'),go=sh.querySelector('#chNameGo'),last=getDN();
