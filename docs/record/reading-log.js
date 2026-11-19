@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261120a',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261120c',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1757,7 +1757,7 @@
     try{new f.contentWindow.MutationObserver(function(){apply();}).observe(body,{childList:true,subtree:true});}catch(e){}
     if(!(S&&S.pubs&&S.pubs.length))rpc('list_published').then(function(list){if(S){S.pubs=list||S.pubs;apply();}},function(){});
   }
-  var studyY=0,T_NAME={c120:'스터디 과정(나이테 120)',shop:'국내 인기 책장',pick:'나이테 Pick'};
+  var studyY=0,T_NAME={c120:'스터디 과정(나이테 120)',shop:'인기 그림책 100권',pick:'나이테 Pick'};
   function showTab(id,init){
     if(id==='stats')id='shelf';
     if(TAB_IDS.indexOf(id)<0)id='study';

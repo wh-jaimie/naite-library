@@ -576,7 +576,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   }
 
   // ---------- 쿠팡 링크 화면(전체 120권) ----------
-  function renderBuyUrls(){
+  async function renderBuyUrls(){
     var body=document.getElementById('body');
     var html='<div class="card"><label class="f" style="margin-top:0">🛒 책별 쿠팡 링크 <span class="hint">(나이테 120에서 제목 클릭 시 열림)</span></label>'+
       '<div class="hint" style="margin-bottom:10px">파트너스 단축링크(https://link.coupang.com/a/…)를 넣으세요. 넣은 책만 제목이 클릭돼요. 스터디 5권에 넣은 링크도 여기 함께 보여요. 저장하면 나이테 120에 바로 반영됩니다.</div>';
@@ -594,7 +594,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     html+='<div style="display:flex;gap:10px;align-items:center;margin-top:18px;position:sticky;bottom:0;background:var(--surface);padding:10px 0"><button class="btn cor" id="saveBuy">저장</button><span class="status" id="buySt"></span></div></div>';
     body.innerHTML=html;
     document.getElementById('saveBuy').addEventListener('click',saveBuyUrls);
-    loadShopLinks();
+    await loadLinkPrices();addPriceInputs('.buyurl');
+    await loadShopLinks();addPriceInputs('.shopurl');
   }
   // 국내 인기 책장(구매 참고 페이지) 중 나이테 120에 없는 책의 쿠팡 링크 → shop_links (120에 있는 책은 위 칸 링크를 같이 씀)
   async function loadShopLinks(){
@@ -620,9 +621,21 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var sh=document.querySelectorAll('.shopurl'),have=STATE.shopLinks||{};
     for(var j=0;j<sh.length;j++){var en=sh[j].dataset.en,v=(sh[j].value||'').trim();
       if((have[en]||'')!==v){var r2=await client.from('shop_links').upsert({en:en,buy_url:v,updated_at:new Date().toISOString()});if(r2.error)errs++;else{have[en]=v;n++;}}}
+    var pr=await savePrices('.buyurl, .shopurl');n+=pr.n;errs+=pr.e;
     st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
   }
 
+  // ---------- 쿠팡 링크 가격(link_prices, 2026-11-20): 링크 칸 옆 가격 칸. 저장하면 링크 주소 기준으로 가격 저장 ----------
+  var LP=null,LP_OK=true;
+  async function loadLinkPrices(){if(LP)return LP;var q=await client.from('link_prices').select('url,price');if(q.error){LP_OK=false;LP={};return LP;}LP={};(q.data||[]).forEach(function(r){LP[r.url]=r.price;});return LP;}
+  function addPriceInputs(sel){if(!LP_OK){var f=document.querySelector(sel);if(f){var w=document.createElement('div');w.className='warn';w.innerHTML='가격 칸을 쓰려면 Supabase에서 <b>supabase/migrate_link_prices.sql</b>을 먼저 실행해 주세요.';f.closest('.card').insertBefore(w,f.closest('.card').firstChild);}return;}
+    document.querySelectorAll(sel).forEach(function(inp){if(inp.nextElementSibling&&inp.nextElementSibling.classList.contains('lprice'))return;var v=LP[(inp.value||'').trim()];
+      var pi=document.createElement('input');pi.className='t lprice';pi.type='number';pi.inputMode='numeric';pi.min='0';pi.placeholder='가격(원)';pi.style.cssText='flex:0 0 92px;font-size:.78rem;padding:7px 8px';pi.value=v!=null?v:'';inp.after(pi);});}
+  async function savePrices(sel){if(!LP_OK)return {n:0,e:0};var n=0,e=0;var ins=document.querySelectorAll(sel);
+    for(var i=0;i<ins.length;i++){var u=(ins[i].value||'').trim(),pe=ins[i].nextElementSibling;if(!u||!pe||!pe.classList.contains('lprice'))continue;
+      var raw=(pe.value||'').trim(),pv=raw===''?null:Math.round(+raw);if(raw!==''&&!(pv>=0))continue;
+      if((LP[u]==null?null:LP[u])!==pv){var r=await client.from('link_prices').upsert({url:u,price:pv,updated_at:new Date().toISOString()});if(r.error)e++;else{LP[u]=pv;n++;}}}
+    return {n:n,e:e};}
   // ---------- 🌱 걸어온 길: 쿠팡 파트너스 링크 입력 (road_links) ----------
   async function renderRoadLinks(){
     var body=document.getElementById('body');
@@ -647,11 +660,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     body.innerHTML=h;
     document.getElementById('roadEmpty').addEventListener('change',function(e){var on=e.target.checked;document.querySelectorAll('.roadrow').forEach(function(r){r.style.display=(on&&r.dataset.has==='1')?'none':'flex';});});
     document.getElementById('saveRoad').addEventListener('click',saveRoadLinks);
+    await loadLinkPrices();addPriceInputs('.roadurl');
   }
   async function saveRoadLinks(){
     var st=document.getElementById('roadSt'),have=STATE.roadLinks||{},ins=document.querySelectorAll('.roadurl'),n=0,errs=0;st.textContent='저장 중…';
     for(var i=0;i<ins.length;i++){var k=ins[i].dataset.key,v=(ins[i].value||'').trim();
       if((have[k]||'')!==v){var r=await client.from('road_links').upsert({key:k,title:ins[i].dataset.title,buy_url:v,updated_at:new Date().toISOString()});if(r.error)errs++;else{have[k]=v;n++;ins[i].closest('.roadrow').dataset.has=v?'1':'0';}}}
+    var pr=await savePrices('.roadurl');n+=pr.n;errs+=pr.e;
     var f=0;ins.forEach(function(x){if((have[x.dataset.key]||''))f++;});
     document.getElementById('roadCnt').textContent=f+' / '+ins.length;
     st.textContent=errs?('저장 '+n+'건, 실패 '+errs+'건'):(n?('✓ 저장 완료 '+n+'건'):'변경 없음');
