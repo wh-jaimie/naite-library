@@ -226,7 +226,7 @@ NEWBERY={'last stop on market street':2016}
 GEISEL={'the watermelon seed':2014}  # 가이젤 메달
 GEISEL_HONOR={'i want my hat back':2012,'not a box':2007}  # 가이젤 아너 (ALA 명단·웬디북 수상작 자료로 확인 2026-10-23)
 # 영국 케이트 그리너웨이 메달(그림책 일러스트 최고상)
-GREENAWAY={'mr gumpys outing':1970,'this is not my hat':2014}
+GREENAWAY={'mr gumpys outing':1970,'this is not my hat':2014,'i will not ever never eat a tomato':2000}  # 토마토: 2000년 메달(2026-11-19 확인)
 # 노래(CD·세이펜) 전집 시리즈: 노부영(제이와이북스)·픽토리 — 알라딘 상품명으로 같은 책(제목·작가·판본) 확인 2026-11-04
 # 제외: Rain!(노부영 Rain은 다른 작가), Opposites(노부영은 Outdoor Opposites), Mrs. Wishy-Washy(노부영 그림책이 아닌 리더스 라인)
 NOBU={'theres a wocket in my pocket','dear zoo','giraffes cant dance','brown bear brown bear what do you see','mr gumpys outing','today is monday','where is the green sheep','mouse paint','ten fat sausages','ten apples up on top','the doorbell rang','are you my mother','goodnight moon','here are my hands','the very busy spider','the very hungry caterpillar','the grouchy ladybug','the very quiet cricket','dinosaur roar','the carrot seed','the snail and the whale','the snowy day','go dog go','bark george','hooray for fish','swimmy','go away big green monster','the gruffalo','room on the broom','the wheels on the bus','walking through the jungle','polar bear polar bear what do you hear','were going on a bear hunt','do you want to be my friend','the napping house','not a box'}
