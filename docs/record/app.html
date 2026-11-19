@@ -1264,7 +1264,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261119g"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261119h"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261119a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1960,6 +1960,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<li><b>매일 인증</b><span class="wsub">오른쪽 아래 [오늘 기록] 버튼으로 인증샷이나 읽은 책을 남기세요. 지난 날은 <a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a> 달력에서 남길 수 있어요. 채팅방 공유는 자유입니다.</span></li>'+
         '<li><b>한 달 8번 인증하면 수료 🎓</b><span class="wsub">귀여운 수료증을 드려요.</span></li>'+
       '</ol></div>'+
+      '<div class="wsec wguide"><h3>📖 엄마표영어가 처음이라면</h3><p style="margin:0;font-size:.9rem">어디서부터 시작할지, 어떻게 읽어 주면 되는지 가이드에 정리해 두었습니다. 스터디 시작 전에 한 번 읽어 보세요.</p><a class="wbtn" data-guidewel href="../guide.html" target="_blank" rel="noopener">📚 엄마표영어 가이드 보기</a></div>'+
       '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
         '<li><b>매달 1일</b> — 새 주제 5권으로 시작해요</li>'+
         '<li><b>한 달 동안</b> — 읽어준 날 인증합니다</li>'+
@@ -1987,6 +1988,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 팔로우</a> '+
         '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';
   }
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-guidewel]'))logEvent('guide_click',{from:'welcome'});});
   function openPanel(kind){
     var pn=document.getElementById('pn');
     if(!pn){pn=document.createElement('div');pn.id='pn';pn.className='pn';pn.setAttribute('role','dialog');
