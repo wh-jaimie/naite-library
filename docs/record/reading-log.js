@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261119h',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261119r',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1220,9 +1220,44 @@
     var now=Date.now(),k='so'+title+day;if(S.lastTap[k]&&now-S.lastTap[k]<DOUBLE_TAP_MS)return null;S.lastTap[k]=now;
     var row=addOther(title,day);save();paint();flush();offerBarOnce();if(S.onEvent)S.onEvent('other_read',{titled:!!title});return row;
   }
-  function drawMonthCard(mi){
+  // 최근 5주 날짜 칸(일요일 시작, 마지막 줄 = 이번 주, 오늘 뒤는 빈칸)
+  function wk5Grid(){var td=logicalToday(),p=td.split('-'),dw=new Date(+p[0],+p[1]-1,+p[2]).getDay(),st=addDays(td,-dw-28),g=[];
+    for(var w=0;w<5;w++){var r=[];for(var i=0;i<7;i++){var d=addDays(st,w*7+i);r.push(d>td?null:d);}g.push(r);}return g;}
+  // 최근 5주 공유 이미지(2026-11-19): 앱·KPI와 같은 색 밀도 격자(숫자·표지 없이)
+  function drawWk5Card(){
+    var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d'),D=wk5Data();
+    var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif';
+    return (document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 76px "Gowun Batang"','최근 5주 읽기 나이테 동안 일 읽었어요'),document.fonts.load('700 30px "Noto Sans KR"','적게 많이@naite_library')]).catch(function(){}):Promise.resolve()).then(function(){
+      var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#F4F3EC');g.addColorStop(1,'#E8E7DC');c.fillStyle=g;c.fillRect(0,0,W,H);
+      c.save();c.strokeStyle='rgba(36,86,72,.22)';c.lineWidth=1.6;
+      for(var k=1;k<=8;k++){var R=19*k;c.beginPath();for(var t=0;t<=64;t++){var a=t/64*Math.PI*2,rr=R*(1+.09*Math.sin(3*a+k*.7)+.05*Math.sin(5*a+k*1.3));var x=1010+rr*Math.cos(a)*1.12,y=96+rr*Math.sin(a);t?c.lineTo(x,y):c.moveTo(x,y);}c.closePath();c.stroke();}
+      c.restore();
+      var mx=90,my=92;c.lineWidth=3.4;c.strokeStyle='#245648';
+      [[28,1],[19,.75],[10,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(mx,my,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
+      c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
+      c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';c.fillText('나이테',136,my+2);
+      c.textBaseline='alphabetic';c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText('최근 5주 읽기 나이테',58,212);
+      var parts=[['5주 동안 ','#545C4B'],[D.nd+'일','#B87343'],['을 함께 읽었어요','#545C4B']],x0=60;
+      c.font='700 42px '+serif;parts.forEach(function(q){c.fillStyle=q[1];c.fillText(q[0],x0,276);x0+=c.measureText(q[0]).width;});
+      var COL=['#FBFAF5','#B9D8C6','#6FAE8C','#2F6E58'],gap=18,cs=(962-gap*6)/7,GX=59,top=400;
+      D.cells.forEach(function(x,i){var cx=GX+(i%7)*(cs+gap),cy=top+Math.floor(i/7)*(cs+gap);
+        rrect(c,cx,cy,cs,cs,22);c.fillStyle=COL[x.lv];c.fill();if(!x.lv){c.strokeStyle='rgba(35,41,31,.08)';c.lineWidth=2;c.stroke();}
+        if(x.td){rrect(c,cx-6,cy-6,cs+12,cs+12,26);c.strokeStyle='#B87343';c.lineWidth=5;c.stroke();}});
+      var ly=top+5*(cs+gap)+40;c.font='700 28px '+sans;c.fillStyle='#8A917E';c.textAlign='right';
+      var lx=W-59;c.fillText('많이',lx,ly+24);lx-=c.measureText('많이').width+14;
+      for(var L=3;L>=1;L--){rrect(c,lx-34,ly,34,34,8);c.fillStyle=COL[L];c.fill();lx-=44;}
+      c.fillStyle='#8A917E';c.fillText('적게',lx-2,ly+24);c.textAlign='left';
+      c.font='700 36px '+sans;var hs='@naite_library',hw=c.measureText(hs).width,ix=(W-(hw+50))/2,iy=1282;
+      c.strokeStyle='#245648';c.lineWidth=3;rrect(c,ix,iy-17,34,34,9);c.stroke();c.beginPath();c.arc(ix+17,iy,8,0,Math.PI*2);c.stroke();c.fillStyle='#245648';c.beginPath();c.arc(ix+26.5,iy-8.5,2.2,0,Math.PI*2);c.fill();
+      c.textBaseline='middle';c.fillText(hs,ix+50,iy+1);
+      return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/png');}catch(e){r2(null);}});
+    });
+  }
+  function drawMonthCard(mi,w5){ // w5: 최근 5주 버전(2026-11-19)
+    if(w5)return drawWk5Card();
     var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
-    var grid=monthGrid(mi),rows=monthRows(mi),days={},info={},srcs={},today=logicalToday();
+    var grid=w5?wk5Grid():monthGrid(mi),today=logicalToday(),g0=grid[0][0],days={},info={},srcs={};
+    var rows=w5?S.rows.filter(function(r){return r.d>=g0&&r.d<=today;}):monthRows(mi);
     rows.forEach(function(r){days[r.d]=1;});
     grid.forEach(function(w){w.forEach(function(ds){if(!ds)return;var D=dayInfo(ds);info[ds]=D;
       D.tiles=D.pl.slice().reverse().map(function(x){return {src:x.u,ph:1};}).concat(D.it.map(function(x){return {src:x.cover,other:x.other,n:x.n};}));
@@ -1243,8 +1278,8 @@
       c.fillStyle='#B87343';c.beginPath();c.arc(mx,my-27,4,0,Math.PI*2);c.fill();
       c.fillStyle='#245648';c.font='700 34px '+serif;c.textBaseline='middle';try{c.letterSpacing='-0.34px';}catch(e){}c.fillText('나이테',136,my+2);try{c.letterSpacing='0px';}catch(e){}
       // 제목·요약
-      c.textBaseline='alphabetic';c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText(mi.month+'월 읽기 나이테',58,212);
-      var parts=[['한 달 동안 ','#545C4B'],[rows.length+'권','#B87343'],[', ','#545C4B'],[cntKeys(days)+'일','#B87343'],['을 함께 읽었어요','#545C4B']],x0=60;
+      c.textBaseline='alphabetic';c.fillStyle='#23291F';c.font='700 76px '+serif;c.fillText(w5?'최근 5주 읽기 나이테':mi.month+'월 읽기 나이테',58,212);
+      var parts=[[w5?'5주 동안 ':'한 달 동안 ','#545C4B'],[rows.length+'권','#B87343'],[', ','#545C4B'],[cntKeys(days)+'일','#B87343'],['을 함께 읽었어요','#545C4B']],x0=60;
       c.font='700 42px '+serif;parts.forEach(function(q){c.fillStyle=q[1];c.fillText(q[0],x0,276);x0+=c.measureText(q[0]).width;});
       // 요일
       var GX=59,GW=962,gap=10,cw=(GW-gap*6)/7,top=356,bottom=1228,nr=grid.length,ch=(bottom-top-gap*(nr-1))/nr;
@@ -1256,7 +1291,7 @@
         else{rrect(c,x,y,cw,ch,16);c.fillStyle='rgba(255,255,255,.18)';c.fill();c.save();c.setLineDash([5,5]);c.strokeStyle='rgba(35,41,31,.10)';c.lineWidth=1.5;c.stroke();c.restore();}
         if(ds&&ds===today){rrect(c,x+1.5,y+1.5,cw-3,ch-3,15);c.strokeStyle='#B87343';c.lineWidth=3.5;c.stroke();}
         if(!ds)return;
-        c.textAlign='left';c.font='700 26px '+sans;c.fillStyle=ci===0?(has?'#B87343':'rgba(184,115,67,.6)'):(has?'#3A4034':'#A8AD9E');c.fillText(String(+ds.slice(8)),x+14,y+38);
+        c.textAlign='left';c.font='700 26px '+sans;c.fillStyle=ci===0?(has?'#B87343':'rgba(184,115,67,.6)'):(has?'#3A4034':'#A8AD9E');c.fillText(w5&&(+ds.slice(8)===1||ds===g0)?(+ds.slice(5,7))+'/'+(+ds.slice(8)):String(+ds.slice(8)),x+14,y+38);
         if(!has)return;
         var ay=y+52,ah=ch-62;
         function cover(src,bx,by,bw,bh,other){c.save();c.shadowColor='rgba(0,0,0,.22)';c.shadowBlur=6;c.shadowOffsetY=2;rrect(c,bx,by,bw,bh,7);c.fillStyle='#EBEDE3';c.fill();c.restore();
@@ -1282,9 +1317,10 @@
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/png');}catch(e){r2(null);}});
     });
   }
-  function openMonthCard(){
+  function openMonthCard(w5){
     var mi=viewMonth();if(!mi)return;
-    shareSheet(mi.month+'월 읽기 달력','인스타·카카오톡에 올려 이번 달을 자랑해 보세요.',drawMonthCard(mi),'naite-'+mi.year+'-'+pad(mi.month)+'.png','month_card',{month:mi.year+'-'+pad(mi.month)});
+    if(w5){shareSheet('최근 5주 읽기 나이테','그동안 쌓은 기록을 한 장에 담아 자랑해 보세요.',drawMonthCard(mi,true),'naite-5w-'+logicalToday()+'.png','month_card',{month:mi.year+'-'+pad(mi.month),ver:'5w'});return;}
+    shareSheet(mi.month+'월 읽기 달력','인스타·카카오톡에 올려 이번 달을 자랑해 보세요.',drawMonthCard(mi),'naite-'+mi.year+'-'+pad(mi.month)+'.png','month_card',{month:mi.year+'-'+pad(mi.month),ver:'month'});
   }
 
   /* ── 그리기 ── */
@@ -1586,7 +1622,7 @@
     el.innerHTML='<div class="rv rk">'+
       '<div class="rk-calhead rk-onehead"><h2>'+(mi?monthNav((mi.year!==monthInfo().year?mi.year+'년 ':'')+mi.month+'월 읽기 기록'):'읽기 기록')+'</h2></div>'+
       (off?'':(S.studyBadge?S.studyBadge(met(S.books),S.books.length,recDays()):'')+chalCard())+
-      (mi?statsKpi(mi)+calendarHtml(mi,!S.rows.length&&!off):'')+
+      (mi?'<div class="rk-kpigap"></div>'+(off?'':calToggle())+(!off&&calMode()==='w'?wk5Html():calendarHtml(mi,!S.rows.length&&!off)):'')+
       '<div class="rk-hint">'+svg(15,IC.hand,2.2)+'<span>날짜를 누르면 그날 읽은 책을 <b>표지로</b> 기록하거나 <b>사진으로</b> 남겨요</span></div>'+
       '<div id="v-statsin"></div>'+
       '<button type="button" class="fam-cta" data-rfamily><span class="fi">👨‍👩‍👧</span><span class="ft"><b>아빠와 같이 쓰기</b><small>아빠 폰에서도 같은 기록·메모·사진을 함께 써요</small></span><span class="fa" aria-hidden="true">›</span></button>'+
@@ -1615,22 +1651,38 @@
         '<div class="k"><div class="lb">읽은 날</div><div class="v">'+cntKeys(days)+'<s>'+(mi.elapsed?' / '+mi.elapsed+'일':' 일')+'</s></div></div>'+
       '</div>'+
       (others?'<p class="st-line">스터디 책 <b>'+study+'번</b> · 다른 책 <b>'+others+'번</b></p>':'')+
-      (past&&vb.length?'<p class="st-line">스터디 책 중 <b>다른 달 책 다시 읽기 '+past+'번</b>이 들어 있어요.</p>':'')+
       '<div class="rk-kpigap"></div>';
   }
   // 통계 탭 공유 카드 썸네일: 기록·사진이 바뀌었을 때만 다시 그림
-  function monthThumb(mi){
-    var last=S.rows.reduce(function(a,r){return Math.max(a,r.t||0);},0);
-    var sig=mi.year+'-'+mi.month+'|'+S.rows.length+'|'+last+'|'+Object.keys(S.photoUrls).sort().join(',');
-    if(S.thumb&&(S.thumb.sig===sig))return;
-    S.thumb={sig:sig,url:S.thumb&&S.thumb.url};
-    drawMonthCard(mi).then(function(bl){
-      if(!bl||!S||!S.thumb||S.thumb.sig!==sig)return;
-      if(S.thumb.url)URL.revokeObjectURL(S.thumb.url);
-      S.thumb.url=URL.createObjectURL(bl);
-      var b=document.querySelector('.st-sharecard .thumb');if(b)b.innerHTML='<img src="'+S.thumb.url+'" alt="">';
+  function monthThumb(mi,w5){
+    var key=w5?'thumb5':'thumb',last=S.rows.reduce(function(a,r){return Math.max(a,r.t||0);},0);
+    var sig=(w5?'5w'+logicalToday():mi.year+'-'+mi.month)+'|'+S.rows.length+'|'+last+'|'+Object.keys(S.photoUrls).sort().join(',');
+    var T=S[key];if(T&&T.sig===sig)return;
+    S[key]={sig:sig,url:T&&T.url};
+    drawMonthCard(mi,w5).then(function(bl){
+      if(!bl||!S||!S[key]||S[key].sig!==sig)return;
+      if(S[key].url)URL.revokeObjectURL(S[key].url);
+      S[key].url=URL.createObjectURL(bl);
+      var b=document.querySelector('.st-sharecard [data-rmonth="'+(w5?'5w':'m')+'"] .thumb');if(b)b.innerHTML='<img src="'+S[key].url+'" alt="">';
     },function(){});
   }
+  // 최근 5주 기록(2026-11-19 운영자: KPI 사람별 5주 달력을 회원에게도 — 달 단위로만 보면 월초엔 늘 비어 보여서)
+  // 읽기 인증 맨 위 달력 자리에서 '이번 달 / 최근 5주' 토글로 바꿔 봄. 칸 누르면 달력처럼 그날 기록 열기
+  var CALMODE_KEY='naite_cal_mode';
+  function calMode(){try{return localStorage.getItem(CALMODE_KEY)==='w'?'w':'m';}catch(e){return 'm';}}
+  function calToggle(){var w=calMode()==='w';
+    return '<div class="cal-tg" role="tablist"><button type="button" role="tab" data-calmode="m" aria-selected="'+(!w)+'"'+(w?'':' class="on"')+'>📅 이번 달</button><button type="button" role="tab" data-calmode="w" aria-selected="'+w+'"'+(w?' class="on"':'')+'>🌿 최근 5주</button></div>';}
+  function wk5Data(){ // KPI 사람별 5주 달력과 같은 방식: 오늘로 끝나는 35일, 하루 기록 수 1·2·3+ → 색 진하기
+    var td=logicalToday(),cnt={},out=[],nd=0,nr=0;S.rows.forEach(function(r){cnt[r.d]=(cnt[r.d]||0)+1;});
+    for(var i=0;i<35;i++){var d=addDays(td,i-34),v=cnt[d]||((S.photoList[d]||[]).length?1:0);if(v){nd++;nr+=cnt[d]||0;}out.push({d:d,v:v,lv:v>=3?3:v,td:d===td});}
+    return {cells:out,nd:nd,nr:nr};}
+  function wk5Html(){
+    var W=wk5Data();
+    return '<div class="rk-wk5"><div class="wk-g">'+W.cells.map(function(x){var q=x.d.split('-');
+      return '<i class="'+(x.lv?'l'+x.lv:'')+(x.td?' td':'')+'" data-rcal="'+x.d+'" role="button" tabindex="0" aria-label="'+(+q[1])+'월 '+(+q[2])+'일 '+(x.v?x.v+'번 기록':'기록하기')+'"></i>';}).join('')+'</div>'+
+      '<div class="wk-f"><span>'+(W.nd?'5주 동안 <b>'+W.nd+'일</b> 읽었어요':'최근 5주는 아직 기록이 없어요')+'</span><span class="wk-lg">적게<i class="l1"></i><i class="l2"></i><i class="l3"></i>많이</span></div></div>';
+  }
+
   function paintStats(){
     // 읽기 기록 화면 안의 통계 카드(제목·숫자 3개는 위 statsKpi, 날짜별 흐름은 달력과 같은 정보라 뺌)
     var el=$('v-statsin');if(!el||!S.member||S.tab!=='shelf')return;
@@ -1638,11 +1690,13 @@
     function cnt(bid){var n=0;rows.forEach(function(r){if(r.b===bid)n++;});return n;}
     var h='<div class="st">';
     var mPre=mi?mi.year+'-'+pad(mi.month)+'-':'',hasP=!!mi&&Object.keys(S.photoUrls).some(function(d){return d.indexOf(mPre)===0;});
-    if(mi&&(total||hasP)){
-      h+='<div class="st-card st-sharecard"><h2>'+(off?mi.month+'월':'이번 달')+' 나이테 공유</h2><div class="row"><button type="button" class="thumb" data-rmonth aria-label="달력 이미지 크게 보기">'+(S.thumb&&S.thumb.url?'<img src="'+S.thumb.url+'" alt="">':'')+'</button>'+
-        '<p>표지와 인증 사진이 담긴 한 달 달력이에요</p></div>'+
-        '<button type="button" class="st-share" data-rmonth>'+svg(18,IC.share)+'달력 이미지로 저장·공유</button></div>';
-      monthThumb(mi);
+    var has5=!off&&S.rows.some(function(r){return r.d>=wk5Grid()[0][0];});
+    if(mi&&(total||hasP||has5)){
+      // 공유 이미지: 이번 달 달력 / 최근 5주 중에서 골라 저장·공유(2026-11-19). 지난 달을 볼 땐 그 달 달력만
+      function tile(k,lb,T){return '<button type="button" class="sc-tile" data-rmonth="'+k+'"><span class="thumb">'+(T&&T.url?'<img src="'+T.url+'" alt="">':'')+'</span><span class="lb">'+lb+'<small>저장·공유</small></span>'+svg(17,IC.share)+'</button>';}
+      h+='<div class="st-card st-sharecard"><h2>나이테 공유</h2><div class="sc-tiles">'+
+        ((total||hasP)?tile('m',mi.month+'월 달력',S.thumb):'')+(off||!has5?'':tile('5w','최근 5주',S.thumb5))+'</div></div>';
+      if(total||hasP)monthThumb(mi);if(has5&&!off)monthThumb(mi,true);
     }
     if(!total){el.innerHTML=h+'</div>';return;} // 기록이 없으면 통계 카드는 숨김(아래 최근 기록에 안내가 있음)
     // 이번 달에 읽은 책들(지난 달 책 포함)
@@ -1659,23 +1713,13 @@
     else h+='<div class="st-favs">'+favs.map(function(b){return '<span class="cv"><span class="fb">'+esc(shortTitle(b.title))+'</span>'+(b.cover?'<img src="'+esc(b.cover)+'" alt="'+esc(b.title)+'" onerror="this.remove()">':'')+'</span>';}).join('')+'</div>'+
       '<div class="st-say">'+favs.length+'권을 똑같이 <b>'+fmax+'번</b>씩 읽었어요.</div>';
     h+='</div>';
-    // 유형별 횟수(최다=클레이, 나머지=세이지). 동점 1위는 모두 강조
-    var types=[],tc={};
-    vb.slice().sort(function(a,b){return (a.tier||9)-(b.tier||9);}).forEach(function(b){var t=b.type||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}});
-    rows.forEach(function(r){if(r.k==='_other')return;var b=S.byId[r.b];var t=(b&&b.type)||'기타';if(!(t in tc)){tc[t]=0;types.push(t);}tc[t]++;});
-    types=types.map(function(t,i){return [t,i];}).sort(function(a,b){return tc[b[0]]-tc[a[0]]||a[1]-b[1];}).map(function(x){return x[0];}); // 많이 읽은 순(같으면 원래 순서)
-    var tmax=Math.max.apply(null,types.map(function(t){return tc[t];}))||0;
-    var tops=tmax?types.filter(function(t){return tc[t]===tmax;}):[],zeroT=types.filter(function(t){return !tc[t];});
-    var msg=tops.length===1?'우리 아이는 <b>'+esc(tops[0])+'</b> 책을 가장 자주 골랐어요.'
-      :(tops.length===types.length?'여러 유형을 골고루 읽었어요.':'우리 아이는 <b>'+tops.map(esc).join(', ')+'</b> 책을 가장 자주 골랐어요.');
     var nm={},pre2=(mi?mi.year+'-'+pad(mi.month)+'-':'');
     Object.keys(S.notes.n).forEach(function(id){var i=id.lastIndexOf('|'),d=id.slice(i+1),k=id.slice(0,i);if(pre2&&d.indexOf(pre2)!==0)return;
       if(!nm[k])nm[k]={k:k,n:0,d:'',v:''};nm[k].n++;if(d>nm[k].d){nm[k].d=d;nm[k].v=S.notes.n[id].v;}});
     var nks=Object.keys(nm).map(function(k){return nm[k];}).sort(function(a,b){return a.d<b.d?1:-1;});
     if(nks.length)h+='<div class="st-card st-notes"><h2>📝 '+(mi&&off?mi.month+'월':'이번 달')+' 메모</h2>'+nks.map(function(x){var nb=noteBook(x.k);
       return '<button type="button" class="nt-row" data-nbook="'+esc(x.k)+'">'+noteCv(nb)+'<span class="tx"><b>'+esc(shortTitle(nb.title))+'</b><span class="v">'+esc(x.v)+'</span></span><span class="m">'+esc(md(x.d))+(x.n>1?'<br>메모 '+x.n+'개':'')+'</span></button>';}).join('')+'</div>';
-    h+='<div class="st-card st-types"><h2>유형별 읽기 횟수</h2>'+types.map(function(t){return '<div class="row'+(tops.indexOf(t)>=0&&tops.length<types.length?' max':'')+'"><span class="tl">'+esc(t)+'</span><span class="track"><i style="width:'+(tmax?tc[t]/tmax*100:0)+'%"></i></span><span class="tv">'+tc[t]+'</span></div>';}).join('')+
-      '<div class="typebox">'+msg+(zeroT.length?' 아직 안 읽은 유형: <b>'+zeroT.map(esc).join(', ')+'</b>. Read Aloud 영상으로 먼저 보여주면 시작이 쉬워요.':'')+'</div></div>';
+    // 유형별 읽기 횟수 카드는 뺌(2026-11-19 운영자: 스터디 책 아닌 책을 주로 기록해서 의미 없음)
     el.innerHTML=h+'</div>';
   }
   function cntKeys(o){return Object.keys(o).length;}
@@ -1779,7 +1823,7 @@
       if((t=e.target.closest('[data-rbackup]'))){openBackup();return;}
       if((t=e.target.closest('[data-rfamily]'))){openFamily();return;}
       if((t=e.target.closest('[data-rshare]'))){openShareCard(t.getAttribute('data-rshare'));return;}
-      if((t=e.target.closest('[data-rmonth]'))){openMonthCard();return;}
+      if((t=e.target.closest('[data-rmonth]'))){openMonthCard(t.getAttribute('data-rmonth')==='5w');return;}
       if((t=e.target.closest('[data-rstamp]'))){openStampCamera();return;}
       if((t=e.target.closest('[data-rtoday]'))){openRecordSheet(logicalToday());return;}
       if((t=e.target.closest('[data-tfab]'))){var fo=!$('tdFab').classList.contains('open');fabToggle(fo);if(fo&&S.onEvent)S.onEvent('today_fab',{});return;}
@@ -1793,6 +1837,7 @@
       if((t=e.target.closest('[data-chshare]'))){shareChal();return;}
       if((t=e.target.closest('[data-chapply]'))){var c0=curChal();if(c0){if(S.onEvent)S.onEvent('challenge_apply_click',{id:c0.id,again:!!t.getAttribute('data-again')});if(!chalApplyState(c0)){setChalApply(c0,'clicked');setTimeout(paintShelf,400);}}return;} // 링크는 그대로 새 창으로 열림
       if((t=e.target.closest('[data-chapdone]'))){var c1=curChal();if(c1){setChalApply(c1,'done');paintShelf();if(S.onEvent)S.onEvent('challenge_apply_done',{id:c1.id});}return;}
+      if((t=e.target.closest('[data-calmode]'))){var cm=t.getAttribute('data-calmode');if(cm!==calMode()){try{localStorage.setItem(CALMODE_KEY,cm);}catch(x){}paintShelf();if(S.onEvent)S.onEvent('cal_mode',{mode:cm==='w'?'5w':'month'});}return;}
       if((t=e.target.closest('[data-rcal]'))){openDay(t.getAttribute('data-rcal'));return;}
       if((t=e.target.closest('[data-rother]'))){recordOther(t.getAttribute('data-rother'));return;}
       if((t=e.target.closest('[data-rinstall]'))){install();if(S.onEvent)S.onEvent('install_click',{from:t.getAttribute('data-rinstall')||'shelf'});return;}
