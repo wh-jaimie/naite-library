@@ -19,6 +19,7 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
 .head .lg{display:inline-block;width:112px;height:112px;border-radius:28px;background:#fff;padding:8px;border:1px solid #E7E0D0}
 .head .lg img{width:100%;height:100%;border-radius:22px;display:block}
 .head h1{margin:16px 0 0;font-size:1.35rem;font-weight:700;color:#245648}
+.head .intro a{color:#245648;font-weight:700}
 .head .intro{margin:10px 0 0;font-size:.86rem;line-height:1.6;color:#5C6152}
 .head .sh{position:absolute;left:18px;top:24px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(31,61,42,.08)}
 .panel{background:#fff;border:1px solid #E7E0D0;border-radius:22px;margin:16px 14px 0;padding:6px 0 4px;overflow:hidden}
@@ -45,11 +46,11 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
 <div class="wrap">
   <p class="band">이 페이지의 상품 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   <div class="head"><button type="button" class="sh" id="shareBtn" aria-label="공유"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B1E19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
-    <a class="lg" href="./?from=shop"><img src="naite-ig-logo.png" alt="나이테"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.</p></div>
+    <a class="lg" href="./?from=shop"><img src="naite-ig-logo.png" alt="나이테"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.<br>문의 : <a href="mailto:naite_library@naver.com">naite_library@naver.com</a></p></div>
   <section class="sec panel"><h2 id="mH">이번 달 스터디 책 5권</h2><div id="month"><p class="empty">불러오는 중…</p></div></section>
   <div class="cards"><a class="pc" href="challenge.html?from=shop" data-pc="나이테 120"><span class="pi">🎯</span><b>스터디 전체 과정</b><span class="pa">›</span></a><a class="pc" href="domestic.html?from=shop" data-pc="국내 인기 책장"><span class="pi">🛒</span><b>인기 원서 100</b><span class="pa">›</span></a></div>
   <section class="sec panel"><h2>나이테가 걸어온 길</h2><div id="road"></div></section>
-  <section class="sec panel"><h2>걸어온 길 속 대박책</h2><div id="best"></div></section>
+  <section class="sec panel"><h2>나이테 대박책</h2><div id="best"></div></section>
   <p class="foot"><a href="./?from=shop">나이테 둘러보기 ›</a></p>
 </div>
 <script src="road-data.js"></script>
@@ -69,8 +70,10 @@ Promise.all([
   fetch(U+'/rest/v1/rpc/list_buy_urls',{method:'POST',headers:H,body:'{}'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
   get('settings?select=current_theme&id=eq.1'),
   fetch('c120_data.json?v='+new Date().toISOString().slice(0,10)).then(function(r){return r.json();}).catch(function(){return {themes:[]};}),
-  get('road_links?select=key,buy_url')
+  get('road_links?select=key,buy_url'),
+  fetch('shop_images.json?v='+new Date().toISOString().slice(0,10)).then(function(r){return r.ok?r.json():{};}).catch(function(){return {};})
 ]).then(function(R){
+  var PIMG=R[5]||{};
   (R[0]||[]).forEach(function(r){if(r.price>0)LP[r.url]=r.price;});
   var BU={};(R[1]||[]).forEach(function(r){if(r.buy_url)BU[norm(r.title)]=r.buy_url;});
   var cur=R[2]&&R[2][0]&&R[2][0].current_theme,th=(R[3].themes||[]).filter(function(t){return t.key===cur;})[0];
@@ -80,10 +83,17 @@ Promise.all([
     m.innerHTML=rows.join('')||'<p class="empty">곧 올라와요</p>';}else m.innerHTML='<p class="empty">곧 올라와요</p>';
   var RL={};(R[4]||[]).forEach(function(r){if(r.buy_url)RL[r.key]=r.buy_url;});
   var road=[],best=[],seen={};
-  ROAD.forEach(function(y){y[1].forEach(function(i){var k=roadKey(i.n);if(!/영상|노래|구매/.test(i.k)&&RL[k]&&!seen[k]){seen[k]=1;road.push(row({name:i.n,img:i.photo?'<img loading="lazy" src="'+esc(i.photo)+'" alt="">':img(i.c),url:RL[k]},'road'));}
-    (i.picks||[]).forEach(function(x){var k2=roadKey(x[0]);if(RL[k2]&&!seen[k2]){seen[k2]=1;best.push(row({name:x[0],img:img(x[1]),url:RL[k2]},'best'));}});});});
-  BEST.forEach(function(b){var k=roadKey(b[0]);if(RL[k]&&!seen[k]){seen[k]=1;best.push(row({name:b[0],img:img(b[1]),url:RL[k]},'best'));}});
-  document.getElementById('road').innerHTML=road.join('');document.getElementById('best').innerHTML=best.join('');
+  ROAD.forEach(function(y){y[1].forEach(function(i){var k=roadKey(i.n);if(!/영상|노래|구매/.test(i.k)&&RL[k]&&!seen[k]){seen[k]=1;road.push(row({name:i.n,img:PIMG[i.n]?'<img loading="lazy" src="'+esc(PIMG[i.n])+'" alt="">':(i.photo?'<img loading="lazy" src="'+esc(i.photo)+'" alt="">':img(i.c)),url:RL[k]},'road'));}
+    (i.picks||[]).forEach(function(x){var k2=roadKey(x[0]);if(RL[k2]&&!seen[k2]){seen[k2]=1;best.push({name:x[0],img:img(x[1]),url:RL[k2]});}});});});
+  BEST.forEach(function(b){var k=roadKey(b[0]);if(RL[k]&&!seen[k]){seen[k]=1;best.push({name:b[0],img:img(b[1]),url:RL[k]});}});
+  document.getElementById('road').innerHTML=road.join('');
+  // 재밌어요 키(likes.js와 같은 규칙)
+  function lkey(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
+  fetch(U+'/rest/v1/rpc/list_likes',{method:'POST',headers:H,body:JSON.stringify({p_keys:best.map(function(b){return lkey(b.name);})})}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}).then(function(rows){
+    var N={};(rows||[]).forEach(function(r){N[r.book_key]=r.n;});
+    best.forEach(function(b,i){b.n=N[lkey(b.name)]||0;b.i=i;});
+    best.sort(function(a,b){return b.n-a.n||a.i-b.i;});
+    document.getElementById('best').innerHTML=best.slice(0,10).map(function(b){return row(b,'best');}).join('');});
 });
 document.getElementById('shareBtn').onclick=function(){var u=location.origin+location.pathname;if(navigator.share)navigator.share({title:'나이테 - 영어책육아 메이트',url:u}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){alert('링크를 복사했어요');});};
 document.addEventListener('click',function(e){var c=e.target.closest('a.pc');if(c){try{if(localStorage.getItem('naite_notrack')!=='1')fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'cta_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{page:'인스타 상품',to:c.dataset.pc}}),keepalive:true}).catch(function(){});}catch(x){}return;}var a=e.target.closest('a.row');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
