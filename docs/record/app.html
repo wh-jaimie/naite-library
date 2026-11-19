@@ -165,6 +165,7 @@ body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
 .wuse .wu-pane .r i{font-style:normal;flex:none}.wuse .wu-pane .me{display:block;margin-top:6px;font-size:.8rem;color:var(--soft)}
 .wuse .wu-pane:empty{display:none}
 .wsec a,.wsec .wbtn{color:var(--tealD);font-weight:800}
+.wsec .wbtn.wroom{background:#FEE500;border-color:#E6CF00;color:#3A1D1D}
 .wsec .wbtn{display:inline-block;margin-top:6px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.82rem;padding:6px 12px;border-radius:999px;cursor:pointer;text-decoration:none}
 .whero{text-align:center;padding:12px 4px 4px}
 .whero h2{font-size:1.4rem}
@@ -1850,6 +1851,11 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   var IG_SVG='<svg class="igi" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.15em"><defs><linearGradient id="IGG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="1" y="1" width="22" height="22" rx="6.5" fill="url(#IGG)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1.05" fill="#fff"/></svg>';
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-ig]');if(a)logEvent('insta_click',{at:a.getAttribute('data-ig')});});
   var GUIDE_POST_URL='https://blog.naver.com/naite_library/224453531592';
+  // 오픈채팅방(2026-11-19): join.html을 거치지 않고 바로 입장. 주소는 관리 › 운영의 가장 최근 기수 방(settings.study_room_url)
+  var ROOM_URL='https://open.kakao.com/o/p8qXEfUi';
+  function loadRoom(){try{client.from('settings').select('study_room_url').eq('id',1).maybeSingle().then(function(r){var v=r&&r.data&&r.data.study_room_url;
+    try{var u=new URL(v);if(u.protocol==='https:'&&u.hostname==='open.kakao.com'){ROOM_URL=u.href;document.querySelectorAll('[data-room]').forEach(function(a){a.href=ROOM_URL;});}}catch(e){}},function(){});}catch(e){}}
+  document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-room]');if(a)logEvent('room_click',{at:a.getAttribute('data-room')});});
   function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
   function linkify(s){return esc(s).replace(/https?:\/\/[^\s<]+/g,function(u){return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';});}
@@ -1943,43 +1949,37 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     if(typeof logEvent==='function')try{logEvent('use120_pick',{u:u,from:'welcome'});}catch(x){}});
   function welcomeHTML(){
     var inst=window.NaiteReading.isStandalone();
-    return '<div class="whero"><h2>🌳 나이테 스터디에 오신 걸 환영해요!</h2><p>엄마표영어에서 가장 중요한 건 지속성이에요.<br>엄마가 힘들면 오래 못 가니까, 서로 버팀목이 되어주기로 해요 💛</p></div>'+
+    return '<div class="wsec wjoin"><h3>✅ 스터디 참여 방법</h3><ol>'+
+        '<li><b>무료 신청</b><span class="wsub">스터디 자료(읽어주기 방법·영상 등)에서 [무료로 참여하기]를 누르세요.</span></li>'+
+        '<li><b>채팅방 들어오기</b><span class="wsub">오픈채팅방이나 당근모임 중 편한 곳으로 오시면 돼요.</span><a class="wbtn wroom" data-room="welcome" href="'+esc(ROOM_URL)+'" target="_blank" rel="noopener">💬 오픈채팅방</a> <a class="wbtn" data-room="welcome_daangn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임</a></li>'+
+        '<li><b>매일 인증</b><span class="wsub">오른쪽 아래 [오늘 기록] 버튼으로 인증샷이나 읽은 책을 남기세요. 지난 날은 <a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a> 달력에서 남길 수 있어요. 채팅방 공유는 자유입니다.</span></li>'+
+        '<li><b>한 달 8번 인증하면 수료 🎓</b><span class="wsub">귀여운 수료증을 드려요.</span></li>'+
+      '</ol></div>'+
+      '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
+        '<li><b>매달 1일</b> — 새 주제 5권으로 시작해요</li>'+
+        '<li><b>한 달 동안</b> — 읽어준 날 인증합니다</li>'+
+        '<li><b>마지막 주</b> — 다음 달 책 공개, 미리 신청 받아요<span class="wsub">📢 공지로 알려드립니다</span></li>'+
+        '<li><b>한 달 끝</b> — <a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a>에서 한 달 기록 보며 뿌듯해하기 🌳</li>'+
+      '</ul></div>'+
       (function(){var u=useGet(),g=getAge();return '<div class="wsec wuse"><h3>🏠 우리 집은 어떻게 하면 돼요?</h3>'+
         '<p class="wu-q">아이 나이</p><div class="wu-tabs" role="tablist">'+
         [1,2,3].map(function(k){return '<button type="button" role="tab" data-wa="'+k+'" aria-selected="'+(k===g)+'">'+AGE[k][1]+'</button>';}).join('')+
         '</div><p class="wu-q">집에 영어책이</p><div class="wu-tabs" role="tablist">'+
         USE120.map(function(x,i){return '<button type="button" role="tab" data-wu="'+i+'" aria-selected="'+(i===u)+'">'+x[0]+'</button>';}).join('')+
-        '</div><div class="wu-pane" id="wuPane">'+usePaneHTML(u)+'</div><a class="wsub" href="#c120" data-pnclose data-rtab="c120" style="display:inline-block;margin-top:8px">스터디 과정(나이테 120)에서 보기 →</a></div>';})()+
-      '<div class="wsec"><h3>✅ 시작하기</h3><ol>'+
-        '<li><b>이 앱을 홈 화면에 추가</b><span class="wsub">홈 화면에 두면 이번 달 책·기록·공지를 매일 바로 열 수 있어요.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button><a class="wsub" href="../install.html" style="font-weight:800;color:var(--tealD)">아이폰·안드로이드 설치 방법 자세히 보기 ›</a>')+'</li>'+
-        '<li data-pushli><b>새 자료·공지 알림 받기 (선택)</b>'+pushBoxHTML()+'</li>'+
-        '<li><b>함께하면 더 좋아요 (선택)</b><span class="wsub">카톡 스터디방에서는 인증하고 고민을 나눠요. 인스타에서는 스터디 공지와 자료를 나눠요. 팔로우하고 스토리·댓글로 같이 소통해요~ 당근모임에서는 근처에 사는 엄마들을 만날 수 있어요 😊</span><a class="wbtn" href="../join.html?from=app">💬 스터디방 둘러보기</a> <a class="wbtn" data-ig="welcome" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 @naite_library</a> <a class="wbtn" href="'+DAANGN_URL+'" target="_blank" rel="noopener">🥕 당근모임 구경하기</a></li>'+
+        '</div><div class="wu-pane" id="wuPane">'+usePaneHTML(u)+'</div></div>';})()+
+      '<div class="wsec"><h3>📲 매일 편하게 쓰려면</h3><ol>'+
+        '<li><b>홈 화면에 추가</b><span class="wsub">이번 달 책·인증·공지를 바로 열 수 있습니다.</span>'+(inst?'<span class="wsub">✓ 이미 홈 화면에서 열었어요</span>':'<button type="button" class="wbtn" data-rinstall="welcome">📲 홈 화면에 추가</button> <a class="wsub" href="../install.html" style="display:inline;font-weight:800;color:var(--tealD)">방법 보기 ›</a>')+'</li>'+
+        '<li data-pushli><b>새 자료·공지 알림 (선택)</b>'+pushBoxHTML()+'</li>'+
       '</ol></div>'+
-      '<div class="wsec"><h3>📅 한 달은 이렇게 흘러가요</h3><ul>'+
-        '<li><b>매달 1일</b> — 새 주제 5권으로 시작</li>'+
-        '<li><b>한 달 동안</b> — 읽어준 날 인증 (나이테 앱·카톡 채팅방·당근모임·인스타 스토리 중 편한 곳에)</li>'+
-        '<li><b>마지막 주</b> — 다음 달 책 공개<span class="wsub">📢 공지로 알려드려요</span></li>'+
-        '<li><b>한 달 끝</b> — <a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a>에서 우리 아이 한 달 기록 보며 뿌듯해하기 🌳</li>'+
-      '</ul></div>'+
-      '<div class="wsec"><h3>🎯 스터디 미션</h3><ol>'+
-        '<li><b>책 준비 인증</b> (사진 or 말)<span class="wsub">5권 전부 아니어도 돼요. 준비되는 대로!</span></li>'+
-        '<li><b>읽어준 날 인증</b> (사진 or 말)<span class="wsub">이번 달 주제 책이 아니어도 괜찮아요. 빠진 날이 있어도 괜찮아요, 다시 이어가면 돼요</span><span class="wsub">💡 <a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a>에서 날짜 스탬프 사진을 찍어 올려보세요</span></li>'+
-        '<li><b>아이와 도서관 가기</b> (선택)<span class="wsub">한 달에 한 번, 아이가 직접 영어책을 골라보는 경험을 해주세요</span></li>'+
-      '</ol></div>'+
-      '<div class="wsec"><h3>📸 인증은 이렇게 해요</h3><p style="margin:0 0 8px;font-size:.92rem">아래 네 가지 중 편한 방법으로 하면 돼요.</p><ol>'+
-        '<li><b>나이테 앱</b><span class="wsub"><a href="#shelf" data-pnclose data-rtab="shelf">읽기 인증</a>의 달력에서 표지를 눌러 기록하거나 인증샷을 찍어요</span></li>'+
-        '<li><b>카톡 채팅방</b><span class="wsub">사진이나 말로 올려요</span></li>'+
-        '<li><b>당근모임</b><span class="wsub"><b>챌린지 게시판</b>에 올려 주세요</span></li>'+
-        '<li><b>인스타 스토리</b><span class="wsub"><b>@naite_library</b>를 태그해 주세요</span></li>'+
-      '</ol></div>'+
-      '<div class="wsec"><h3>📚 더 알고 싶다면 (선택)</h3><ul>'+
+      '<div class="wsec"><h3>📚 더 알고 싶다면</h3><ul>'+
+        '<li>나이테 블로그 <a href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">blog.naver.com/naite_library ↗</a></li>'+
         '<li><a href="'+GUIDE_POST_URL+'" target="_blank" rel="noopener">스터디 자세한 운영 방법 (블로그) ↗</a></li>'+
-        '<li><a href="#c120" data-pnclose data-rtab="c120">스터디 과정(나이테 120) 전체 목록 보기 →</a></li>'+
+        '<li><a href="#c120" data-pnclose data-rtab="c120">스터디 과정(나이테 120) 전체 목록 →</a></li>'+
         '<li><a href="../types.html" target="_blank" rel="noopener">왜 5가지 유형으로 골랐을까요? ↗</a></li>'+
       '</ul></div>'+
-      '<div class="wsec"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
-        '<p style="margin:8px 0 0;font-size:.88rem;color:var(--soft)">인스타 팔로우, 블로그 이웃추가 부탁드려요 🙏<br>이달의 5권이 인스타·블로그에도 올라가서 지난 달 책 다시 찾을 때 편해요</p>'+
-        '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타그램 팔로우</a> '+
+      '<div class="wsec wowner"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
+        '<p style="margin:8px 0 0;font-size:.9rem">스터디는 앞으로도 무료로 운영하려고 해요. 대신 계속 이어가려면 응원이 많이 필요해요 🙏<br>스터디 자료의 책 링크는 쿠팡 파트너스 링크라, 링크로 구매해 주시면 운영에 큰 힘이 돼요.</p>'+
+        '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 팔로우</a> '+
         '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';
   }
   function openPanel(kind){
@@ -2003,6 +2003,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         if(e.target.closest('[data-pnclose]'))closePanel();},true);
       document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});}
     var h=(location.hash||'').slice(1);
+    loadRoom();
     loadNews().then(function(){if(h==='news')openPanel('news');});
     // 처음 들어온 폰(기록도 없고 안내도 안 본 경우)이면 안내를 한 번 자동으로
     var fresh=!lsGet(WELCOME_KEY)&&!lsGet('naite_reads_v2');
