@@ -1282,7 +1282,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261119y"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261119z"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261119a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1731,7 +1731,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     h+='<div id="nextPrev"></div>';
     h+='<div id="arch"></div>';
     h+='<div class="sd-foot"><a class="ig" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+ic('ig',17)+'@naite_library</a><br>'+
-       '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a data-site="month_foot" href="../?from=app#story" target="_blank" rel="noopener" style="font-weight:800;color:var(--pine)">🌳 나이테를 만든 이야기 보기 ›</a><br>'+
+       '나이테 엄마표영어 스터디 · 매달 새로운 5권으로 함께해요<br><a data-site="month_foot" href="../?from=app" target="_blank" rel="noopener" style="font-weight:800;color:var(--pine)">🌳 나이테를 만든 이야기 보기 ›</a><br>'+
        '© 2026 나이테 영어책육아 메이트. 이 페이지의 큐레이션·소개글·활동 등 모든 콘텐츠의 무단 전재·복제·배포를 금합니다. 공유할 때는 출처(나이테)를 함께 밝혀 주세요.'+
        '<br><a class="adm" href="../study/admin.html">관리자</a></div></div></div>';
     h+='<div id="v-shelf" hidden></div><div id="v-c120" class="v-embed" hidden></div><div id="v-shop" class="v-embed" hidden></div><div id="v-pick" class="v-embed" hidden></div><nav class="rtabs" id="rtabs" aria-label="스터디 메뉴"></nav>';
@@ -2002,7 +2002,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
         '<li><a href="../types.html" target="_blank" rel="noopener">왜 5가지 유형으로 골랐을까요? ↗</a></li>'+
       '</ul></div>'+
       '<div class="wsec wowner"><h3>👋 운영자</h3><p style="margin:0;font-size:.92rem">나이테(드니맘) · 6살 아이와 5년째 엄마표영어 중</p>'+
-        '<a class="wsub" data-site="welcome_owner" href="../?from=app#story" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;font-weight:800;color:var(--tealD)">🌳 나이테를 만든 이야기 보기 ›</a>'+
+        '<a class="wsub" data-site="welcome_owner" href="../?from=app" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;font-weight:800;color:var(--tealD)">🌳 나이테를 만든 이야기 보기 ›</a>'+
         '<p style="margin:8px 0 0;font-size:.9rem">스터디는 앞으로도 무료로 운영하려고 해요. 대신 계속 이어가려면 응원이 많이 필요해요 🙏<br>스터디 자료의 책 링크는 쿠팡 파트너스 링크라, 링크로 구매해 주시면 운영에 큰 힘이 돼요.</p>'+
         '<a class="wbtn" data-ig="welcome_owner" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">'+IG_SVG+' 인스타 팔로우</a> '+
         '<a class="wbtn" href="https://m.blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그 이웃추가</a></div>';

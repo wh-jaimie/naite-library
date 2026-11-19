@@ -87,7 +87,7 @@
 | chal_wb_open / chal_wb_save / chal_name / challenge_apply_click / challenge_apply_done | 1주 미니 챌린지 | id |
 | study_graduate / cert_open / cert_save / cert_share | 이번 달 기록한 날 8번 = 수료(주제당 기기 한 번) / 읽기 기록 수료 표시의 🎓 수료증 열기·저장·공유(11/18~) | theme_key, days |
 | next_preview_open / next_join_click | 맨 위 띠(from=top)·주제 줄 다음 달 ›(from=hero) → 미리보기 창 열기(자료 탭 '다음 달'은 11/18 없앰) / 창 안 다음 달 스터디 미리 신청 버튼. 신청은 join_done(next=1, theme_key=다음 달) | theme_key, from |
-| site_click | 앱에서 나이테 사이트(🌳 나이테를 만든 이야기 보기 → #story)로: 처음 오셨나요? 운영자 칸(welcome_owner) · 이번 달 책 맨 아래(month_foot), 11/19~ | from |
+| site_click | 앱에서 나이테 사이트(🌳 나이테를 만든 이야기 보기 → 사이트 맨 위)로: 처음 오셨나요? 운영자 칸(welcome_owner) · 이번 달 책 맨 아래(month_foot), 11/19~ | from |
 | room_click | '처음 오셨나요?'의 💬 오픈채팅방 참여하기(오픈채팅방으로 바로, 11/19~) | at |
 | join_lock_click / study_complete | 잠긴 스터디 자료(신청 전)에서 [참여하기] / 신청한 엄마가 이번 달 5권 다 만남(주제당 기기 한 번, 11/18~) | sec / theme_key |
 | join_open / join_done / join_again / join_edit | 스터디 참여 신청(잠긴 스터디 자료의 [참여하기], 신청자 전용 자료는 12월부터): 참여 창 열기 / 처음 참여 / 지난 달 참여자가 버튼 한 번으로 이번 달도 참여 / 참여 정보 고치기. 명단은 관리 › 운영 › 🌱 이번 달 스터디 참여(study_joins) | how / theme_key, age, from |
