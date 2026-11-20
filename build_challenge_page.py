@@ -586,8 +586,8 @@ renderBody();updateProgress();
   var lastLog='',tm=null;
   function logQ(v,n){if(!v||v===lastLog||v.length<2)return;lastLog=v;try{if(localStorage.getItem('naite_notrack')==='1')return;var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',sid=localStorage.getItem('joy_sid')||'anon';
     fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'c120_search',session_id:sid,path:location.pathname,meta:{q:v.slice(0,30),hits:n,src:window.NAITE_SRC||''}})}).catch(function(){});}catch(e){}}
-  function run(){var raw=q.value.trim(),k=nz(raw),n=0;x.hidden=!raw;
-    document.querySelectorAll('#course-body .step').forEach(function(st){var t=st.querySelector('.tt'),hit=!k||nz(t&&t.textContent).indexOf(k)>=0;st.hidden=!hit;if(hit&&k)n++;});
+  function run(){var raw=q.value.trim(),k=nz(raw),n=0,ws=raw.split(/\s+/).map(nz).filter(Boolean);x.hidden=!raw; // 띄어 쓴 낱말이 모두 들어 있어도 찾음
+    document.querySelectorAll('#course-body .step').forEach(function(st){var t=st.querySelector('.tt'),tt=nz(t&&t.textContent),hit=!k||tt.indexOf(k)>=0||ws.every(function(w){return tt.indexOf(w)>=0;});st.hidden=!hit;if(hit&&k)n++;});
     document.querySelectorAll('#course-body .theme').forEach(function(th){th.hidden=!!k&&!th.querySelector('.step:not([hidden])');});
     document.querySelectorAll('#course-body .month').forEach(function(m){m.hidden=!!k&&!m.querySelector('.theme:not([hidden])');});
     r.textContent=k?(n?n+'권 찾았어요':'찾는 책이 없어요'):'';
@@ -663,14 +663,20 @@ function paint(){var a=document.getElementById('rAge'),o=document.getElementById
   document.querySelectorAll('#pvAbout .seg').forEach(function(gr){gr.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.v===S[gr.dataset.g]));});});}
 document.querySelectorAll('#pvAbout .seg button').forEach(function(b){b.addEventListener('click',function(){var k=b.parentNode.dataset.g;S[k]=+b.dataset.v;if(k==='age')sv('naite_age',S[k]+1);else sv('naite_use120',S[k]);paint();});});
 paint();
-// 탭: ?tab=about|list. 없으면 항상 소개부터(2026-11-17 운영자 요청). 스터디 앱은 독서 로드맵 메뉴를 누를 때마다 window.pvShow('about',true)
+// 탭: ?tab=about|list. 없으면 처음 한 번만 소개, 그다음부터 목록(2026-11-20). 스터디 앱은 메뉴를 누를 때마다 window.pvShow('about',true)
 var tabs=document.querySelectorAll('.pvtabs button');
 function show(v,top){tabs.forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.pv===v));});
   document.getElementById('pvAbout').hidden=v!=='about';document.getElementById('pvList').hidden=v!=='list';
   if(top)window.scrollTo(0,0);}
 tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.pv,false);});});
 var q=(location.search.match(/[?&]tab=(about|list)/)||[])[1];
-show(q||'about',false);window.pvShow=show;
+// 2026-11-20 운영자 요청: 소개는 처음 들어온 사람에게만 먼저, 그다음부터는 목록이 먼저(이 기기 기준)
+var INTRO_KEY='naite_c120_intro_seen';
+function introSeen(){try{return localStorage.getItem(INTRO_KEY)==='1';}catch(e){return false;}}
+var first=q||(introSeen()?'list':'about');show(first,false);
+if(first==='about'){try{localStorage.setItem(INTRO_KEY,'1');}catch(e){}}
+// 스터디 앱이 메뉴를 누를 때 부르는 함수: 소개를 이미 봤으면 목록부터
+window.pvShow=function(v,top){if(v==='about'&&introSeen()&&!q)v='list';show(v,top);};
 // 소개 2번의 표지 = 지금 스터디 중인 달 5권(못 불러오면 1개월차)
 var CUR=null;
 function fillEx(k){if(typeof themes==='undefined')return;var t=themes.filter(function(x){return x.key===k;})[0]||themes[0];

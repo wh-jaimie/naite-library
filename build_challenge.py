@@ -37,7 +37,7 @@ CURRICULUM = [
  (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
  (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
  (4,"Olivia Helps with Christmas","Ian Falconer","산타를 기다리다 못해 크리스마스 준비를 \"돕겠다고\" 나서는 돼지 올리비아"),
- (5,"Bear Stays Up for Christmas","Karma Wilson","잠 많은 곰이 친구들과 크리스마스를 준비하는 따뜻한 이야기"),
+ (5,"Pip and Posy: The Christmas Tree","Axel Scheffler","트리에 단 과자 장식을 몰래 먹다 배탈 난 핍, 정직과 용서를 담은 크리스마스 이야기"),  # 2026-11-20 운영자: Bear Stays Up for Christmas → 더 수월한 책
 ]),
 ("🍎","Food","음식",[
  (1,"Ketchup on Your Cornflakes?","Nick Sharratt","위아래 플랩을 뒤섞어 엉뚱한 조합을 만드는 플랩북"),

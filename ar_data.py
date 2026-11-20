@@ -73,7 +73,7 @@ _AR = {
  "Pick a Pine Tree": 2.4,
  "Little Blue Truck's Christmas": 1.7, "Little Blue Trucks Christmas": 1.7,
  "Olivia Helps with Christmas": 2.4,  # AR BL 2.4 (도서관 목록, Quiz 114748)
- "Bear Stays Up for Christmas": 2.9,
+ "Pip and Posy: The Christmas Tree": 2.3,  # 2026-11-20 운영자 확인
  "Walking Through the Jungle": 1.5, "Polar Bear, Polar Bear, What Do You Hear?": 1.5,
  "There's a Wocket in My Pocket!": 1.9, "We're Going on a Bear Hunt": 1.9,
  "Llama Llama Misses Mama": 2.4, "Do You Want to Be My Friend?": 0.9,
@@ -100,7 +100,6 @@ WENDY_AR = {
  "Goodnight, Goodnight, Construction Site": 3.8,
  "Pick a Pine Tree": 2.6,
  "Little Blue Truck's Christmas": 1.1,
- "Bear Stays Up for Christmas": 2.7,
  "The Watermelon Seed": 1.0,
  "I Will Not Ever Never Eat a Tomato": 2.7,
  "Pete the Cat: I Love My White Shoes": 1.5,
