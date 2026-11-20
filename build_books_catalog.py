@@ -1,5 +1,5 @@
 # 나이테 책 목록(책 DB) 만들기 → docs/books.json
-# 나이테 120권(c120_data.json) · 대박책(road-data.js BEST) · 국내 인기 책장(shop_data.json)을 한 목록으로 합침.
+# 나이테 120권(c120_data.json) · 대박책(road-data.js BEST) · 국내 인기 책장(shop_data.json) · 우리 집 기록 책(my_books.json, 북모리·ORT 뺌)을 한 목록으로 합침.
 # 같은 책은 '책 키'(likes.js key()와 같은 규칙: 소문자, &→and, 맨 앞 the 빼고, 영문·숫자·한글만 — 부제도 포함, 부제가 다르면 다른 책)로 한 줄.
 # 기록·메모·후기·재밌어요는 이 책 키로 모임(스터디 달과 상관없이). 스터디 책(DB)은 앱에서 같은 키로 합쳐 씀.
 # 목록을 바꾸면(120권·대박책·인기 책장) 이 스크립트를 다시 돌리면 됨:  python build_books_catalog.py
@@ -68,6 +68,11 @@ for it in shop["items"]:
     t = (it.get("in120") or {}).get("title") or it.get("en") or it.get("ko")
     add(t, it.get("cover"), "shop", ", ".join(it.get("authors") or []), "", bool(it.get("series")))
 
+# 4) 우리 집 기록 책(2026-11-20 운영자: 북모리 기록, ORT 뺌) — 기록할 때 제목 검색용
+mine = json.load(open(os.path.join(HERE, "my_books.json"), encoding="utf-8"))
+for b in mine["books"]:
+    add(b["t"], b.get("c"), "mine", b.get("a", ""))
+
 out = [books[k] for k in order]
 json.dump({"v": 1, "n": len(out), "books": out}, open(os.path.join(DOCS, "books.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-print("books.json:", len(out), "권 (120:", sum("120" in b["s"] for b in out), "· 대박책:", sum("best" in b["s"] for b in out), "· 인기 책장:", sum("shop" in b["s"] for b in out), ")")
+print("books.json:", len(out), "권 (120:", sum("120" in b["s"] for b in out), "· 대박책:", sum("best" in b["s"] for b in out), "· 인기 책장:", sum("shop" in b["s"] for b in out), "· 기록 책:", sum("mine" in b["s"] for b in out), ")")

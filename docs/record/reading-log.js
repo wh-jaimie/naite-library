@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261120zc',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261120zd',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1233,7 +1233,7 @@
   function loadShared(){if(S.shared||S.sharedLoading)return;S.sharedLoading=1;
     rpc('shared_other_titles',{}).then(function(d){S.shared=(d||[]).filter(function(x){return x&&x.title;});S.sharedLoading=0;if(S.recSheet)S.recSheet.render();},function(){S.sharedLoading=0;S.shared=[];});}
   // 나이테 120권 목록(기록 페이지 검색용): 스터디 책(DB id가 있는 책)은 책 기록, 나머지는 '다른 책'에 제목으로 — 독서 로드맵 ✓도 그대로 맞춰짐
-  // 나이테 책 목록(2026-11-20 운영자 요청: 스터디 달과 끊고 '책 DB'처럼) = docs/books.json(120권·대박책·인기 책장, build_books_catalog.py)
+  // 나이테 책 목록(2026-11-20 운영자 요청: 스터디 달과 끊고 '책 DB'처럼) = docs/books.json(120권·대박책·인기 책장·우리 집 기록 책, build_books_catalog.py)
   // 같은 책 = 같은 책 키(likes.js key()와 같은 규칙: 대소문자·띄어쓰기·기호 무시, 부제가 다르면 다른 책). 기록·메모·후기·재밌어요는 책 키로 모임
   var CAT=null,CATK={};
   function bkey(t){t=String(t||'').toLowerCase().replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
@@ -1243,7 +1243,7 @@
   function catOf(t){return CATK[bkey(t)]||null;}
   function catCover(t){var b=catOf(t);return b&&b.c||'';}
   var SRC_NM={'120':'120권',best:'대박책',shop:'인기 책장'};
-  function catSub(b){var x=[];if(b.g)x.push(b.g);b.s.forEach(function(k){if(k!=='120'||!b.g)x.push(SRC_NM[k]||k);});if(b.ser)x.push('시리즈');return x.join(' · ');}
+  function catSub(b){var x=[];if(b.g)x.push(b.g);b.s.forEach(function(k){if((k!=='120'||!b.g)&&SRC_NM[k])x.push(SRC_NM[k]);});if(b.ser)x.push('시리즈');return x.join(' · ');}
   // 메모·후기 창(2026-11-17): 기록 창 위에 화면 위쪽에 따로 띄움 — 키보드가 올라와도 입력칸이 안 가려지게
   var MEMO_POP=false; // 2026-11-17: false = 메모·후기를 기록 창 안에(시안), true = 따로 뜨는 창
   function openMemoPop(memo,day,done){

@@ -72,6 +72,13 @@ h2 small{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;
 .rtab2 button{border:1px solid var(--line);background:var(--surface);color:var(--soft);font:inherit;font-weight:800;font-size:.95rem;padding:9px 0;border-radius:11px;cursor:pointer}
 .rtab2 button.on{background:var(--pine);border-color:var(--pine);color:#fff}
 #bestSec{margin-top:12px}
+/* 대박책 제목 검색(2026-11-20) */
+.bsrch{margin:0 0 12px}
+.bsrch .in{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 6px 0 12px}
+.bsrch input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;padding:10px 0;color:var(--ink);outline:none}
+.bsrch .x{border:0;background:none;font-size:16px;color:var(--soft);padding:6px 8px;cursor:pointer}
+.bsrch .res{margin:6px 2px 0;font-size:.82rem;color:var(--soft)}.bsrch .res:empty{display:none}
+#best .bk[hidden]{display:none!important}
 a.cv>img{box-shadow:0 1px 3px rgba(35,41,31,.24),0 6px 14px rgba(35,41,31,.28);transition:transform .1s,box-shadow .1s}
 a.cv:active>img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26)}
 /* 누를 수 있는 카드(쿠팡 링크 있음)는 버튼처럼 */
@@ -139,7 +146,7 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
   </header>
   <nav class="rtab2" id="rtab2"><button type="button" class="on" data-t="list">연령별 추천템</button><button type="button" data-t="bestSec">대박책</button></nav>
   <main id="list"></main>
-  <section id="bestSec" hidden><p class="bsub">우리 집에서 드니가 가장 좋아한 책들이에요.</p><div class="bgrid" id="best"></div></section>
+  <section id="bestSec" hidden><p class="bsub">우리 집에서 드니가 가장 좋아한 책들이에요.</p><div class="bsrch"><div class="in"><span aria-hidden="true">🔍</span><input id="bq" type="text" placeholder="책 제목으로 찾기" autocomplete="off" enterkeyhint="search" aria-label="책 제목으로 찾기"><button type="button" class="x" id="bqx" aria-label="지우기" hidden>✕</button></div><p class="res" id="bqr" aria-live="polite"></p></div><div class="bgrid" id="best"></div></section>
   <p class="disc" id="disc" hidden>※ 이 페이지의 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   <p class="foot">© 2026 나이테 영어책육아 메이트</p>
 </div>
@@ -147,7 +154,7 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 <script>/* 나이테 120 소개에서 왔으면(?back=c120) 맨 위에 '← 나이테 120' — 앱 안(embed)에서도 돌아갈 수 있게(2026-11-20) */
 (function(){var q;try{q=new URLSearchParams(location.search);}catch(e){return;}if(q.get('back')!=='c120')return;var e=q.get('embed'),t=document.querySelector('.top');if(!t)return;
   t.innerHTML='<a href="challenge.html?tab=about'+(e?'&embed='+encodeURIComponent(e):'')+'">← 나이테 120</a>';t.style.justifyContent='flex-start';if(e){t.style.setProperty('display','flex','important');}})();</script>
-<script src="road-data.js?v=20261110a"></script>
+<script src="road-data.js?v=20261120b"></script>
 <script>
 /* 드니 나이: 2021년 1월생 기준. 카드 = 개월, 연도 제목 = 연 나이 */
 function age(w){var m=/(\d{4})년 (\d{1,2})월/.exec(w);return m?((+m[1]-2021)*12+(+m[2])-1)+'개월':'';}
@@ -156,7 +163,7 @@ function lk(t,i){return LINKS[roadKey(t)]||(i&&i.buy)||"";}
 var LP={};function pr(u){return u&&LP[u]>0?'<span class="rp">'+Math.round(LP[u]).toLocaleString('ko-KR')+'원</span>':'';}
 function wrap(u,h,t){return u?'<a class="cv" href="'+u.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener sponsored nofollow" data-buy="'+String(t).replace(/"/g,"&quot;")+'">'+h+"</a>":h;}
 function _ie(x){var o=document.createElement('span');o.className='ph';o.textContent='📚';x.replaceWith(o);}
-function img(c){return '<img loading="lazy" src="'+(c.indexOf('road/')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg')+'" alt="" onerror="_ie(this)">';}
+function img(c){return '<img loading="lazy" src="'+(c.indexOf('road/')===0||c.indexOf('http')===0?c:'https://covers.openlibrary.org/b/'+c+'-M.jpg')+'" alt="" onerror="_ie(this)">';}
 function cov(i){if(i.photo)return '<img loading="lazy" src="'+i.photo+'" alt="">';if(i.c)return img(i.c);var m={'영상':'🎬','노래':'🎵','노래책':'🎵','구매':'📦'};return '<span class="ph">'+(m[i.k]||'📚')+'</span>';}
 function paintRoad(){function e(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 /* 개월 수로 다시 묶기: 1~12개월=1살, 13~24개월=2살 … (연도 대신 아이 나이 기준) */
@@ -184,6 +191,21 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
     fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},keepalive:true,body:JSON.stringify({type:'buy_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{title:a.dataset.buy,page:'걸어온 길'}})}).catch(function(){});}catch(e){}});
 })();
 </script>
+<script>/* 대박책 제목 검색(2026-11-20): 띄어쓰기·대소문자·기호 무시. 엄마들 추천 책도 같이. 검색어는 best_search 로 집계 */
+(function(){var q=document.getElementById('bq'),x=document.getElementById('bqx'),r=document.getElementById('bqr'),box=document.getElementById('best');if(!q||!box)return;
+  function nz(t){return String(t||'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'');}
+  var lastLog='',tm=null;
+  function logQ(v,n){if(!v||v===lastLog||v.length<2)return;lastLog=v;try{if(localStorage.getItem('naite_notrack')==='1')return;var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',sid=localStorage.getItem('joy_sid')||'anon',src=/[?&]embed=record/.test(location.search)?'record':'';
+    fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'best_search',session_id:sid,path:location.pathname,meta:{q:v.slice(0,30),hits:n,page:'나이테 Pick',src:src}})}).catch(function(){});}catch(e){}}
+  function run(){var raw=q.value.trim(),k=nz(raw),n=0,ws=raw.split(/\s+/).map(nz).filter(Boolean);x.hidden=!raw;
+    [].forEach.call(box.querySelectorAll('.bk'),function(b){var t=b.querySelector('.bt'),tt=nz(t&&t.textContent),hit=!k||tt.indexOf(k)>=0||ws.every(function(w){return tt.indexOf(w)>=0;});b.hidden=!hit;if(hit&&k)n++;});
+    r.textContent=k?(n?n+'권 찾았어요':'찾는 책이 없어요'):'';
+    clearTimeout(tm);if(k)tm=setTimeout(function(){logQ(raw,n);},1200);}
+  q.addEventListener('input',run);
+  q.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();try{q.blur();}catch(x){}}});
+  x.addEventListener('click',function(){q.value='';run();q.focus();});
+  new MutationObserver(function(){if(q.value.trim())run();}).observe(box,{childList:true});
+})();</script>
 <script src="track.js" defer></script>
 <script src="likes.js?v=20261120a" data-page="나이테 Pick"></script>
 <script src="reviews.js?v=20261120a" data-page="나이테 Pick"></script>
