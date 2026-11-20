@@ -1,5 +1,5 @@
 -- 스터디 책이 아닌 책도 후기(2026-11-20 운영자 요청): 나이테 120권·다른 엄마들이 읽은 책·직접 적은 책은 '제목'으로 후기를 남김
--- 같은 제목(대소문자·띄어쓰기·기호 무시)이면 같은 책으로 모임. 공개 범위·익명은 기존 후기(migrate_reviews.sql)와 같음.
+-- 같은 책 키(대소문자·띄어쓰기·기호·부제 무시)면 같은 책으로 모임. 공개 범위·익명은 기존 후기(migrate_reviews.sql)와 같음.
 -- 관리자 › 💬 후기 목록에도 같이 보임(숨기기 그대로). Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전.
 
 alter table public.book_reviews alter column book_id drop not null;
@@ -8,8 +8,11 @@ alter table public.book_reviews add column if not exists title text;
 create unique index if not exists book_reviews_title_reader on public.book_reviews(title_key, reader) where title_key is not null;
 create index if not exists book_reviews_title_idx on public.book_reviews(title_key) where title_key is not null and not hidden;
 
+-- 책 키 = 앱(reading-log.js bkey)·재밌어요(likes.js key)와 같은 규칙: 소문자 → ':'·'(' 앞까지 → &는 and → 맨 앞 the 빼기 → 영문·숫자·한글만, 80자
 create or replace function public._title_key(p text) returns text
-language sql immutable as $$ select regexp_replace(lower(coalesce(p,'')), '[^a-z0-9가-힣]', '', 'g') $$;
+language sql immutable as $$
+  select left(regexp_replace(regexp_replace(replace(regexp_replace(lower(coalesce(p,'')), '[:(].*$', ''), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80)
+$$;
 
 -- 1) 제목 후기 저장(같은 제목엔 한 사람 1개, 다시 쓰면 고침). 반응도 한 줄도 없으면 지움. 하루 상한은 기존 후기와 합쳐 20개
 create or replace function public.save_title_review(p_reader text, p_title text, p_age int, p_reactions text[], p_body text)
@@ -60,3 +63,8 @@ begin
 end $$;
 revoke all on function public.admin_list_reviews() from public, anon;
 grant execute on function public.admin_list_reviews() to authenticated;
+
+-- 예전 규칙으로 저장된 제목 후기의 키를 새 규칙으로 맞춤(같은 사람이 같은 책에 두 개가 되면 건드리지 않음). 여러 번 실행해도 안전
+update public.book_reviews r set title_key = public._title_key(r.title)
+ where r.title_key is not null and r.title_key <> public._title_key(r.title)
+   and not exists (select 1 from public.book_reviews x where x.reader = r.reader and x.title_key = public._title_key(r.title) and x.id <> r.id);

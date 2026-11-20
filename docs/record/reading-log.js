@@ -980,7 +980,7 @@
     var list=[],at={};
     S.rows.filter(function(r){return r.d===day;}).sort(function(a,b){return a.t-b.t;}).forEach(function(r){
       var id=r.k==='_other'?'o:'+(r.o||''):'b:'+r.b;
-      if(!(id in at)){var b=r.k==='_other'?null:S.byId[r.b];at[id]=list.length;list.push({id:id,n:0,other:r.k==='_other',title:r.k==='_other'?(r.o||'다른 책'):((b&&b.title)||''),cover:b&&b.cover});}
+      if(!(id in at)){var b=r.k==='_other'?null:S.byId[r.b];at[id]=list.length;list.push({id:id,n:0,other:r.k==='_other',title:r.k==='_other'?(r.o||'다른 책'):((b&&b.title)||''),cover:r.k==='_other'?catCover(r.o):(b&&b.cover)});}
       list[at[id]].n++;
     });
     return list;
@@ -1124,11 +1124,11 @@
     if(sheetEl)sheetEl.classList.add('rs-page');
     var root=sh.querySelector('.rp'),box=sh.querySelector('[data-rsbody]');
     S.recSheet={day:day,render:render};
-    load120().then(function(){render();},function(){});
+    loadCat().then(function(){render();},function(){});
     loadShared();
     function n(bid){var k=0;S.rows.forEach(function(r){if(r.b===bid&&r.d===day&&r.k!=='_other')k++;});return k;}
-    function no(t){var x=norm120(t),k=0;S.rows.forEach(function(r){if(r.d===day&&r.k==='_other'&&norm120(r.o)===x)k++;});return k;}
-    function idByTitle(t){var x=norm120(t),hit=null;Object.keys(S.byId).forEach(function(k){if(!hit&&norm120(S.byId[k].title)===x)hit=+k;});return hit;}
+    function no(t){var x=bkey(t),k=0;S.rows.forEach(function(r){if(r.d===day&&r.k==='_other'&&bkey(r.o)===x)k++;});return k;}
+    function idByTitle(t){var x=bkey(t),hit=null;Object.keys(S.byId).forEach(function(k){if(!hit&&bkey(S.byId[k].title)===x)hit=+k;});return hit;}
     function cvHtml(src,t){return '<span class="cv">'+(src?'<img loading="lazy" src="'+esc(src)+'" alt="" onerror="this.remove()">':'')+'<i>'+esc(String(t||'?').replace(/^(the|a|an)\s+/i,'').charAt(0).toUpperCase())+'</i></span>';}
     function row(attr,title,sub,cover,k){
       return '<button type="button" class="rp-row'+(k?' read':'')+'" '+attr+'>'+cvHtml(cover,title)+'<span class="tt"><b>'+esc(title)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span>'+(k?'<span class="cn">'+k+'번</span>':'')+'<span class="pl">+1</span></button>';}
@@ -1137,15 +1137,15 @@
       var themes=shelfThemes(),books=shelfBooks(key),sum=0;
       S.rows.forEach(function(r){if(r.d===day)sum++;});
       var mi0=box.querySelector('#rsMemo');if(mi0&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi0.value);} // 다른 책을 누르기 전 쓰던 메모 저장
-      var kt=themes.filter(function(t){return t.key===key;})[0],qq=norm120(q),seen={},exact=false,secs=[];
-      function ok(t){var x=norm120(t);if(!x||seen[x])return false;if(qq&&x.indexOf(qq)<0)return false;seen[x]=1;if(qq&&x===qq)exact=true;return true;}
+      var kt=themes.filter(function(t){return t.key===key;})[0],qq=bkey(q),seen={},exact=false,secs=[];
+      function ok(t){var x=bkey(t);if(!x||seen[x])return false;if(qq&&x.indexOf(qq)<0)return false;seen[x]=1;if(qq&&x===qq)exact=true;return true;}
       var a1=[];(books||[]).forEach(function(b){if(ok(b.title))a1.push(row('data-sb="'+b.id+'"',b.title,b.type||'',b.cover,n(b.id)));});
       secs.push([(kt?themeName(kt):'이번 달')+' 스터디 책',a1,books?'':'<p class="rv-empty">책을 불러오는 중…</p>']);
-      var a2=[],mine={};S.rows.slice().sort(function(x,y){return y.t-x.t;}).forEach(function(r){if(r.k==='_other'&&r.o&&!mine[r.o]){mine[r.o]=1;if(ok(r.o))a2.push(row('data-sot="'+esc(r.o)+'"',r.o,'내가 적은 책',cv120(r.o),no(r.o)));}});
+      var a2=[],mine={};S.rows.slice().sort(function(x,y){return y.t-x.t;}).forEach(function(r){if(r.k==='_other'&&r.o&&!mine[r.o]){mine[r.o]=1;if(ok(r.o))a2.push(row('data-sot="'+esc(r.o)+'"',r.o,'내가 적은 책',catCover(r.o),no(r.o)));}});
       secs.push(['내가 적은 다른 책',a2]);
-      var a3=[];(C120||[]).forEach(function(t){t.books.forEach(function(b){if(!ok(b.title))return;var id=idByTitle(b.title);
-        a3.push(row(id?'data-sb="'+id+'"':'data-sot="'+esc(b.title)+'"',b.title,(t.emoji?t.emoji+' ':'')+t.ko,b.cover,id?n(id):no(b.title)));});});
-      secs.push(['나이테 120권',a3,C120?'':'<p class="rv-empty">불러오는 중…</p>']);
+      var a3=[];(CAT||[]).forEach(function(b){if(!ok(b.t))return;var id=idByTitle(b.t);
+        a3.push(row(id?'data-sb="'+id+'"':'data-sot="'+esc(b.t)+'"',b.t,catSub(b),b.c,id?n(id):no(b.t)));});
+      secs.push(['나이테 책 목록',a3,CAT?'':'<p class="rv-empty">불러오는 중…</p>']);
       var a4=[];(S.shared||[]).forEach(function(x){if(ok(x.title))a4.push(row('data-sot="'+esc(x.title)+'"',x.title,'다른 엄마 '+x.readers+'명','',no(x.title)));});
       secs.push(['다른 엄마들이 읽은 책',a4]);
       var qraw=String(q||'').trim().slice(0,80);
@@ -1233,11 +1233,17 @@
   function loadShared(){if(S.shared||S.sharedLoading)return;S.sharedLoading=1;
     rpc('shared_other_titles',{}).then(function(d){S.shared=(d||[]).filter(function(x){return x&&x.title;});S.sharedLoading=0;if(S.recSheet)S.recSheet.render();},function(){S.sharedLoading=0;S.shared=[];});}
   // 나이테 120권 목록(기록 페이지 검색용): 스터디 책(DB id가 있는 책)은 책 기록, 나머지는 '다른 책'에 제목으로 — 독서 로드맵 ✓도 그대로 맞춰짐
-  var C120=null;
-  function load120(){if(C120)return Promise.resolve(C120);
-    return fetch('../c120_data.json?v='+EV).then(function(r){return r.json();}).then(function(d){C120=(d&&d.themes)||[];return C120;});}
-  function cv120(t){var x=norm120(t),c='';(C120||[]).forEach(function(th){th.books.forEach(function(b){if(!c&&norm120(b.title)===x)c=b.cover||'';});});return c;}
-  function norm120(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+  // 나이테 책 목록(2026-11-20 운영자 요청: 스터디 달과 끊고 '책 DB'처럼) = docs/books.json(120권·대박책·인기 책장, build_books_catalog.py)
+  // 같은 책 = 같은 책 키(likes.js key()와 같은 규칙). 기록·메모·후기·재밌어요는 책 키로 모임
+  var CAT=null,CATK={};
+  function bkey(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
+  function loadCat(){if(CAT)return Promise.resolve(CAT);if(S&&S.catP)return S.catP;
+    var pr=fetch('../books.json?v='+EV).then(function(r){return r.json();}).then(function(d){CAT=(d&&d.books)||[];CATK={};CAT.forEach(function(b){CATK[b.k]=b;});if(S)S.catP=null;return CAT;});
+    if(S)S.catP=pr;return pr;}
+  function catOf(t){return CATK[bkey(t)]||null;}
+  function catCover(t){var b=catOf(t);return b&&b.c||'';}
+  var SRC_NM={'120':'120권',best:'대박책',shop:'인기 책장'};
+  function catSub(b){var x=[];if(b.g)x.push(b.g);b.s.forEach(function(k){if(k!=='120'||!b.g)x.push(SRC_NM[k]||k);});if(b.ser)x.push('시리즈');return x.join(' · ');}
   // 메모·후기 창(2026-11-17): 기록 창 위에 화면 위쪽에 따로 띄움 — 키보드가 올라와도 입력칸이 안 가려지게
   var MEMO_POP=false; // 2026-11-17: false = 메모·후기를 기록 창 안에(시안), true = 따로 뜨는 창
   function openMemoPop(memo,day,done){
@@ -1934,7 +1940,7 @@
       if(TAB_IDS.indexOf(h)>0)showTab(h,1);else{S.tab='study';paint();if(S.onEvent)S.onEvent('tab_view',{tab:'study',init:1});} // 2026-11-16: 앱을 열 때 처음 보이는 탭도 집계(init:1)
       // 2026-11-17: 11/16~17 사이 서버엔 메모 '표시'만 남았던 것을 폰에 있는 내용으로 한 번 다시 올림
       try{if(!localStorage.getItem('naite_notes_up1')){localStorage.setItem('naite_notes_up1','1');S.notes.q=Object.keys(S.notes.n);saveNotes();}}catch(e){}
-      flush();pull();pullOther();checkBackup();flushNotes();pullNotes();
+      flush();pull();pullOther();checkBackup();flushNotes();pullNotes();loadCat().then(function(){if(S)paint();},function(){});
       setTimeout(offerInstallOnce,1200);
     }
   };
