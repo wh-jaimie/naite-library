@@ -1198,6 +1198,10 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 .next-sheet #s-next .sh{display:flex}
 .next-sheet .nsd{background:none;min-height:0;padding:0}
 .next-sheet .nb .ty{color:var(--pine)!important;background:none!important;padding:0!important}
+/* 다음 달 5권: 표지만, 한 줄에 3권(2026-11-20) */
+.next-sheet .shelf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;overflow:visible;margin:10px 0 0;padding:2px 0 4px}
+.next-sheet .nb{min-width:0}
+.next-sheet .nb .ty,.next-sheet .nb .tt,.next-sheet .nb .lv{display:none!important}
 .gbck{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:10px 12px;border:1px solid #EBCFAF;background:#FBEFE3;border-radius:12px;font-size:.9rem;color:#7A4520;cursor:pointer}.gbck input{width:18px;height:18px;accent-color:#B87343;flex:none}.gbck small{color:#A0785A}
 .join-sheet .nt{font-size:.78rem;color:var(--soft);margin:12px 0 0}
 /* 자료 잠금(참여 신청 전) · 읽기 기록 완주 표시(2026-11-18) */
