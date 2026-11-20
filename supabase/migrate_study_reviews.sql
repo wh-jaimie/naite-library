@@ -1,5 +1,6 @@
 -- 🎓 수료 조건에 '책 후기 3건' 추가 (2026-11-20 운영자 결정)
 -- 수료 = 그 달 기록한 날 8번 이상 + 그 달에 쓴 책 후기 3건 이상. 후기는 스터디 책이 아니어도 됨(어떤 책이든).
+-- 후기 조건은 12월 스터디(2026-12-01)부터. 그 전 달은 후기 수를 null로 돌려줘서 예전 규칙(8번)대로.
 -- 후기 1건 = 책 1권에 남긴 후기(반응이나 한 줄이 있는 것). 숨긴 후기는 안 셈. 그 달 = 주제의 달(theme_month), 처음 쓴 날 기준.
 -- 후기 주인(naite_voice)과 기록 주인(naite_reader)이 다른 기기가 있어서, 참여 정보에 후기 ID(voice)도 같이 저장해 둘 다 셈.
 -- migrate_study_joins.sql 다음에 실행. 여러 번 실행해도 안전.
@@ -37,7 +38,7 @@ begin
     select * into v_me from public.study_joins where reader = p_reader and theme_key = v_cur;
     v_jn := exists(select 1 from public.study_joins where reader = p_reader and theme_key = v_next);
     select * into v_last from public.study_joins where reader = p_reader order by updated_at desc limit 1;
-    v_rv := public.rev_count(array_remove(array[p_reader, v_voice], null), v_m, (v_m + interval '1 month')::date);
+    if v_m >= date '2026-12-01' then v_rv := public.rev_count(array_remove(array[p_reader, v_voice], null), v_m, (v_m + interval '1 month')::date); else v_rv := null; end if;
   end if;
   return jsonb_build_object(
     'cur', v_cur, 'count', v_n, 'month', v_m,
@@ -65,7 +66,7 @@ begin
          public.rec_days(j.reader, v_m, (v_m + interval '1 month')::date),
          public.rec_days(j.reader, v_wk, v_wk + 7),
          public.rec_days(j.reader, v_wk - 7, v_wk),
-         public.rev_count(array_remove(array[j.reader, j.voice], null), v_m, (v_m + interval '1 month')::date)
+         case when v_m >= date '2026-12-01' then public.rev_count(array_remove(array[j.reader, j.voice], null), v_m, (v_m + interval '1 month')::date) end
     from public.study_joins j where j.theme_key = p_theme order by j.created_at;
 end $$;
 grant execute on function public.admin_study_progress(text) to authenticated;

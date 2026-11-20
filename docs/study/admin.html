@@ -362,8 +362,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var pr=sel?await client.rpc('admin_study_progress',{p_theme:sel}):{data:[]},rows=pr.data||[],old=!!pr.error;
       var isCur=sel===cur,nudge=rows.filter(function(x){return x.week_days<2;});
       box.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+(keys.length?keys.map(function(k){return '<button class="btn" data-jk="'+esc(k)+'" style="padding:4px 10px;font-size:.8rem'+(k===sel?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+esc(k)+(k===cur?' (이번 달)':'')+' · '+cnt[k]+'명</button>';}).join(''):'<span>아직 참여한 엄마가 없어요.</span>')+'</div>'+
-        (old?'<p class="hint">⚙️ 기록 현황을 보려면 <b>migrate_study_joins.sql</b>을 다시 실행해 주세요(수료 규칙 추가분).</p>':'')+(rows.length&&rows[0].month_reviews==null?'<p class="hint">⚙️ 후기 수를 보려면 <b>migrate_study_reviews.sql</b>을 실행해 주세요.</p>':'')+
-        (rows.length?'<p class="hint" style="margin:0 0 8px">수료 = 그 달 기록한 날 <b>8번</b> 이상 + 책 후기 <b>3건</b> 이상(어떤 책이든) · 주 목표 <b>2번</b>(월~일) · 기록 = 책을 기록한 날(하루 여러 권은 1번)</p>'+
+        (old?'<p class="hint">⚙️ 기록 현황을 보려면 <b>migrate_study_joins.sql</b>을 다시 실행해 주세요(수료 규칙 추가분).</p>':'')+
+        (rows.length?'<p class="hint" style="margin:0 0 8px">수료 = 그 달 기록한 날 <b>8번</b> 이상 + 책 후기 <b>3건</b> 이상(12월부터 · 어떤 책이든) · 주 목표 <b>2번</b>(월~일) · 기록 = 책을 기록한 날(하루 여러 권은 1번)</p>'+
           (isCur&&nudge.length?'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;font-size:.84rem"><b style="color:#B87343">이번 주 2번 안 된 엄마 '+nudge.length+'명</b><button class="btn" id="joinNudge" style="padding:4px 10px;font-size:.78rem">📋 닉네임 복사</button></div>':'')+
           '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr style="text-align:left;color:var(--soft)"><th style="padding:4px">닉네임</th><th>그 달 기록·후기</th>'+(isCur?'<th>이번 주</th><th>지난 주</th>':'')+'<th>아이</th><th>어디서</th><th>공구</th><th>참여</th></tr>'+
           rows.map(function(x){var hasRv=x.month_reviews!=null,ok=x.month_days>=8&&(!hasRv||x.month_reviews>=3);
