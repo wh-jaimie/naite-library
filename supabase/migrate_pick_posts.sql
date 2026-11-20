@@ -43,7 +43,7 @@ begin
      order by b.id limit 1;
     if v_book is not null then
       insert into public.book_reviews(book_id, reader, age, reactions, body)
-      values (v_book, p_reader, case when p_age_m is null then null when p_age_m <= 24 then 1 when p_age_m <= 48 then 2 else 3 end, '{}', v_b)
+      values (v_book, p_reader, case when p_age_m is null then null when p_age_m < 48 then 1 when p_age_m < 84 then 2 else 3 end, '{}', v_b)
       on conflict (book_id, reader) do nothing; -- 같은 사람이 이미 그 책 후기를 남겼으면 그 후기가 우선(건드리지 않음)
     end if;
   end if;
