@@ -375,14 +375,20 @@ function paint(){var a=document.getElementById('rAge'),o=document.getElementById
   document.querySelectorAll('#pvAbout .seg').forEach(function(gr){gr.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.v===S[gr.dataset.g]));});});}
 document.querySelectorAll('#pvAbout .seg button').forEach(function(b){b.addEventListener('click',function(){var k=b.parentNode.dataset.g;S[k]=+b.dataset.v;if(k==='age')sv('naite_age',S[k]+1);else sv('naite_use120',S[k]);paint();});});
 paint();
-// 탭: ?tab=about|list. 없으면 항상 소개부터(2026-11-17 운영자 요청). 스터디 앱은 독서 로드맵 메뉴를 누를 때마다 window.pvShow('about',true)
+// 탭: ?tab=about|list. 없으면 처음 한 번만 소개, 그다음부터 목록(2026-11-20). 스터디 앱은 메뉴를 누를 때마다 window.pvShow('about',true)
 var tabs=document.querySelectorAll('.pvtabs button');
 function show(v,top){tabs.forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.pv===v));});
   document.getElementById('pvAbout').hidden=v!=='about';document.getElementById('pvList').hidden=v!=='list';
   if(top)window.scrollTo(0,0);}
 tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.pv,false);});});
 var q=(location.search.match(/[?&]tab=(about|list)/)||[])[1];
-show(q||'about',false);window.pvShow=show;
+// 2026-11-20 운영자 요청: 소개는 처음 들어온 사람에게만 먼저, 그다음부터는 목록이 먼저(이 기기 기준)
+var INTRO_KEY='naite_c120_intro_seen';
+function introSeen(){try{return localStorage.getItem(INTRO_KEY)==='1';}catch(e){return false;}}
+var first=q||(introSeen()?'list':'about');show(first,false);
+if(first==='about'){try{localStorage.setItem(INTRO_KEY,'1');}catch(e){}}
+// 스터디 앱이 메뉴를 누를 때 부르는 함수: 소개를 이미 봤으면 목록부터
+window.pvShow=function(v,top){if(v==='about'&&introSeen()&&!q)v='list';show(v,top);};
 // 소개 2번의 표지 = 지금 스터디 중인 달 5권(못 불러오면 1개월차)
 var CUR=null;
 function fillEx(k){if(typeof themes==='undefined')return;var t=themes.filter(function(x){return x.key===k;})[0]||themes[0];
