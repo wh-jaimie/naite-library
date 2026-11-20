@@ -1111,7 +1111,9 @@
   }
   // 날짜 기록창: 그 날짜를 고른 뒤 읽은 책을 표지로 누르기 + 다른 책 + 날짜 스탬프 사진
   function openRecordSheet(day){
-    var key=S.home.key,last=null,showOther=false,memo=null,memoT=0;
+    // 2026-11-20 운영자 요청: 달 버튼(달마다 늘어남) 대신 → 누른 날짜의 스터디 달 책 + '나이테 120권에서 고르기'
+    var dt0=monthTheme(mkMonth(+day.slice(0,4),+day.slice(5,7)));
+    var key=dt0&&dt0.key||S.home.key,last=null,showOther=false,memo=null,memoT=0;
     var sh=openSheet('<div class="rk-rs"><h3>'+esc(dayWord(day))+(dayWord(day)===dayFull(day)?'':' <small>'+esc(dayFull(day))+'</small>')+' 기록</h3>'+
       '<p class="sub">읽은 책 표지를 누르면 기록돼요. 여러 번 읽었으면 여러 번 눌러요.</p><div data-rsbody></div></div>');
     var box=sh.querySelector('[data-rsbody]');
@@ -1123,15 +1125,16 @@
       S.rows.forEach(function(r){if(r.d===day){sum++;if(r.k==='_other')od++;}});
       var keepTitle=(box.querySelector('#rsTitle')||{}).value||'';
       var mi0=box.querySelector('#rsMemo');if(mi0&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi0.value);} // 다른 책을 누르기 전 쓰던 메모 저장
-      box.innerHTML=(themes.length>1?'<div class="rs-months rk-months" role="group" aria-label="어느 달 책">'+themes.map(function(t){
-          return '<button type="button" class="rk-mpill" data-rsk="'+esc(t.key)+'" aria-pressed="'+(t.key===key)+'"><span class="mi"></span>'+esc(themeName(t).replace(' ',' · '))+'</button>';}).join('')+'</div>':'')+
+      var kt=themes.filter(function(t){return t.key===key;})[0];
+      box.innerHTML=(kt?'<p class="rs-mname">'+esc(themeName(kt))+' 스터디 책</p>':'')+
         (books?'<div class="rk-grid3">'+books.map(function(b){var k=n(b.id);
           return '<button type="button" class="rk-book'+(k?' read':' unread')+'" data-sb="'+b.id+'" aria-label="'+esc(b.title)+' 읽음 기록, 이날 '+k+'번">'+
             '<span class="rk-cover">'+(b.cover?'<img src="'+esc(b.cover)+'" alt="">':'<span class="ttl">'+esc(shortTitle(b.title))+'</span>')+(k?'<span class="rk-chip">'+k+'번</span>':'')+'<span class="rk-tap">+1</span></span>'+
             '<span class="rk-meta"><span class="bt">'+esc(shortTitle(b.title.split(',')[0]))+'</span></span></button>';}).join('')+
           '<button type="button" class="rk-book rk-other'+(od?' read':'')+'" data-so aria-label="다른 책 읽음 기록, 이날 '+od+'번">'+
             '<span class="rk-cover">'+svg(26,IC.map,1.9)+'<span class="ot">다른 책</span>'+(od?'<span class="rk-chip">'+od+'번</span>':'')+'</span>'+
-            '<span class="rk-meta"><span class="bt">스터디 외 책</span></span></button></div>'
+            '<span class="rk-meta"><span class="bt">스터디 외 책</span></span></button></div>'+
+          '<button type="button" class="rs-c120" data-s120>📚 <b>나이테 120권</b>에서 고르기<span aria-hidden="true">›</span><small>지난 달 책·다른 주제 책도 표지로</small></button>'
           :'<p class="rv-empty">책을 불러오는 중…</p>')+
         '<div class="rk-oform"'+(showOther?'':' hidden')+'><div class="row"><input id="rsTitle" maxlength="80" placeholder="책 제목(안 적어도 돼요)" value="'+esc(keepTitle)+'"><button type="button" data-sotitle>기록</button></div>'+
           (otherTitles().length?'<div class="rs-otitles"><span>최근 읽은 다른 책</span>'+otherTitles().map(function(t){return '<button type="button" data-sot="'+esc(t)+'">'+esc(shortTitle(t))+'</button>';}).join('')+'</div>':'')+'</div>'+
@@ -1162,6 +1165,7 @@
       if((t=e.target.closest('[data-sotitle]'))){var v=String(box.querySelector('#rsTitle').value||'').trim().slice(0,80);box.querySelector('#rsTitle').value='';added(addOtherRead(v,day),'📚 '+(v?shortTitle(v):'다른 책'),'o');return;}
       if((t=e.target.closest('[data-sot]'))){var o=t.getAttribute('data-sot');added(addOtherRead(o,day),'📚 '+shortTitle(o),'o');return;}
       if((t=e.target.closest('[data-rsk]'))){key=t.getAttribute('data-rsk');render();return;}
+      if((t=e.target.closest('[data-s120]'))){openPick120(day,function(row,label,id){added(row,label,id);},function(){render();});return;}
       if((t=e.target.closest('[data-sundo]'))){if(last){dropRow(last.c);save();paint();flush();last=null;render();}return;}
       if((t=e.target.closest('[data-sstamp]'))){closeSheet();openStampCamera(day);return;}
       if((t=e.target.closest('[data-salbum]'))){closeSheet();openStampAlbum(day);return;}
@@ -1179,6 +1183,39 @@
     box.addEventListener('keydown',function(e){if(e.target.id==='rsMemo'&&e.key==='Enter'){e.preventDefault();var b2=box.querySelector('[data-smemo]');if(b2)b2.click();}});
     render();
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
+  }
+  // 나이테 120권 표지에서 고르기(2026-11-20): 스터디 책(DB id가 있는 책)은 책 기록, 나머지는 '다른 책'에 제목으로 — 독서 로드맵 ✓도 그대로 맞춰짐
+  var C120=null;
+  function load120(){if(C120)return Promise.resolve(C120);
+    return fetch('../c120_data.json?v='+EV).then(function(r){return r.json();}).then(function(d){C120=(d&&d.themes)||[];return C120;});}
+  function norm120(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+  function openPick120(day,onAdd,onClose){
+    var old=document.querySelector('.p120');if(old)old.remove();
+    (S.pubs||[]).forEach(function(t){shelfBooks(t.key);}); // 공개된 스터디 달 책(id) 미리 불러오기
+    var ov=document.createElement('div');ov.className='p120';
+    ov.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-label="나이테 120권에서 고르기"><div class="hd"><div><h3>나이테 120권</h3><span class="sub">'+esc(dayFull(day))+' · 읽은 책 표지를 누르세요</span></div><button type="button" class="x" data-px aria-label="닫기">✕</button></div>'+
+      '<input class="q" type="search" placeholder="책 제목으로 찾기" data-pq><div class="bd" data-pb><p class="rv-empty">불러오는 중…</p></div>'+
+      '<div class="ft"><span data-pst aria-live="polite"></span><button type="button" class="rk-btn fill" data-px>완료</button></div></div>';
+    document.body.appendChild(ov);
+    var bd=ov.querySelector('[data-pb]'),st=ov.querySelector('[data-pst]'),q='';
+    function idOf(b){var n=norm120(b.title),hit=null;Object.keys(S.byId).forEach(function(k){if(!hit&&norm120(S.byId[k].title)===n)hit=+k;});return hit;}
+    function cnt(b){var n=norm120(b.title),id=idOf(b),k=0;S.rows.forEach(function(r){if(r.d!==day)return;if(r.k==='_other'){if(norm120(r.o)===n)k++;}else if(id&&r.b===id)k++;});return k;}
+    function draw(){if(!C120)return;var qq=norm120(q),h='';
+      C120.forEach(function(t,ti){var bs=t.books.filter(function(b){return !qq||norm120(b.title).indexOf(qq)>=0||norm120(b.author).indexOf(qq)>=0;});if(!bs.length)return;
+        h+='<h4>'+esc((t.emoji||'')+' '+t.ko)+'</h4><div class="rk-grid3">'+bs.map(function(b){var k=cnt(b),bi=t.books.indexOf(b);
+          return '<button type="button" class="rk-book'+(k?' read':' unread')+'" data-pk="'+ti+':'+bi+'"><span class="rk-cover">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="">':'<span class="ttl">'+esc(shortTitle(b.title))+'</span>')+(k?'<span class="rk-chip">'+k+'번</span>':'')+'<span class="rk-tap">+1</span></span><span class="rk-meta"><span class="bt">'+esc(shortTitle(b.title.split(',')[0]))+'</span></span></button>';}).join('')+'</div>';});
+      bd.innerHTML=h||'<p class="rv-empty">찾는 책이 없어요. 기록창의 &#39;다른 책&#39;에 제목을 적어 주세요.</p>';}
+    load120().then(draw,function(){bd.innerHTML='<p class="rv-empty">목록을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.</p>';});
+    ov.addEventListener('input',function(e){if(e.target.hasAttribute('data-pq')){q=e.target.value;draw();}});
+    function close(){ov.remove();if(onClose)onClose();}
+    ov.addEventListener('click',function(e){var t;
+      if(e.target===ov||e.target.closest('[data-px]')){close();return;}
+      if((t=e.target.closest('[data-pk]'))){var a=t.getAttribute('data-pk').split(':'),b=C120[+a[0]].books[+a[1]],id=idOf(b),row,lb=shortTitle(b.title.split(',')[0]);
+        if(id){row=addRead(id,day);onAdd(row,lb,id);}else{row=addOtherRead(b.title,day);onAdd(row,'📚 '+lb,'o');}
+        st.innerHTML='<b>'+esc(lb)+'</b> 기록했어요';draw();try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}
+        if(S.onEvent)S.onEvent('pick120',{title:b.title,study:!!id});return;}
+    });
+    if(S.onEvent)S.onEvent('pick120_open',{day:day});
   }
   // 메모·후기 창(2026-11-17): 기록 창 위에 화면 위쪽에 따로 띄움 — 키보드가 올라와도 입력칸이 안 가려지게
   var MEMO_POP=false; // 2026-11-17: false = 메모·후기를 기록 창 안에(시안), true = 따로 뜨는 창
