@@ -8,7 +8,7 @@
   var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',MIN=1; // 2026-11-17: 1표부터 숫자 보이기(운영자 요청)
   var cs=document.currentScript,PAGE=(cs&&cs.getAttribute('data-page'))||document.title||'';
   var C={},MINE={},ASKED={},OK=true;
-  function key(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
+  function key(t){t=String(t||'').toLowerCase().replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
   function hex(n){var a=new Uint8Array(n);crypto.getRandomValues(a);var s='';for(var i=0;i<n;i++)s+=('0'+a[i].toString(16)).slice(-2);return s;}
   // 2026-11-18: 재밌어요는 기록 공유(이어보기)와 별개 → 기기별 naite_voice(처음엔 이 기기 기록 ID로 시작)
   function reader(make){try{var r=localStorage.getItem('naite_voice');if(!r||r.length<16){var o=localStorage.getItem('naite_reader');r=(o&&o.length>=16)?o:'';if(!r&&make)r=hex(16);if(r)localStorage.setItem('naite_voice',r);}return r&&r.length>=16?r:'';}catch(e){return '';}}
