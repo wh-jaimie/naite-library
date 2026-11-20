@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>나이테 연령별 추천템</title>
+<title>나이테 Pick</title>
 <meta name="description" content="드니 5개월부터 지금까지, 우리 집에서 써 본 영어책과 영상.">
 <link rel="icon" href="favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -101,15 +101,17 @@ a.cv:active>img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26
 .pp-acts .pp-h{margin:0 0 6px;font-size:.9rem;font-weight:800;color:#8A4A1F}.pp-acts .pp-h span{font-weight:700;color:var(--soft)}
 .pp-act{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #EBD7C0}.pp-act:first-of-type{border-top:0}
 .pp-act .tx{flex:1;min-width:0;font-size:.9rem;line-height:1.45}.pp-act .when{font-weight:800;color:var(--clay-ink)}.pp-with{display:block;font-size:.8rem;color:var(--soft)}
-.pp-vote{flex:none;border:1.5px solid #E2A877;background:#fff;color:#8A4A1F;font:inherit;font-size:.8rem;font-weight:800;border-radius:99px;padding:5px 10px;cursor:pointer;white-space:nowrap}
-.pp-vote.on{background:#B87343;border-color:#B87343;color:#fff}
+.pp-vote{flex:none;display:inline-flex;align-items:center;gap:4px;border:0!important;background:none!important;box-shadow:none!important;color:#23291F!important;font:inherit;font-size:.82rem!important;font-weight:700!important;line-height:1;padding:3px 0!important;border-radius:0;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-width:0}
+.pp-vote::before{content:"";display:block;width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pp-vote.on::before{content:"";display:block;width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z'/%3E%3C/svg%3E") center/contain no-repeat;color:#ED4956}
+.pp-vote:active::before{transform:scale(.85)}
 .pp-ov{position:fixed;inset:0;z-index:50;background:rgba(20,26,18,.45);display:flex;align-items:flex-start;justify-content:center;padding:16px 12px;overflow:auto}
 .pp-box{width:100%;max-width:460px;background:var(--surface);border-radius:18px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)}.pp-box h3{margin:0 0 10px;font-size:1.05rem}
 .pp-box label{display:block;font-size:.88rem;font-weight:800;margin:10px 0 0}.pp-box label span{font-weight:500;color:var(--soft)}
 .pp-box input{display:block;width:100%;margin-top:5px;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font:inherit;font-size:16px;background:#fff}
 .pp-warn{margin:10px 0 0;font-size:.78rem;color:var(--soft)}.pp-err{margin:4px 0 0;min-height:1em;font-size:.82rem;color:#a2231d}
 .pp-btns{display:flex;gap:8px;margin-top:8px}.pp-btns button{flex:1;border:0;border-radius:11px;padding:11px;font:inherit;font-weight:800;cursor:pointer}.pp-cancel{background:#ECEEE6;color:var(--ink)}.pp-ok{background:var(--pine);color:#fff}
-.pp-rv{display:inline-block;margin-top:8px}
+.pp-rv{display:inline-flex!important;margin-top:8px}
 /* 2026-11-18 운영자 요청: 맨 위 설명 글씨 줄임 */
 h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 /* 2026-11-20 운영자: 걸어온 길 카드 작게 */
@@ -118,7 +120,7 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 .it p{margin:2px 0 0;font-size:.82rem;line-height:1.45}.it .date{font-size:.76rem}
 .row{gap:10px}.row>img,.row>.ph,.row>.cv{flex:0 0 50px!important;width:50px!important}.it img{max-height:70px}.row>.ph{height:50px;font-size:1.2rem}
 .row:has(>a.cv)::after{top:16px;width:20px;height:20px;font-size:13px}
-.it .pp-rv{margin-top:5px;font-size:.7rem;padding:2px 8px;border-width:1px}
+.it .pp-rv{margin-top:5px}
 .picks{margin-top:6px;padding-top:5px}.picks summary{font-size:.8rem}
 /* 2026-11-20 운영자: 대박책은 표지만, 한 줄에 5권(제목·추천 글은 빼고 재밌어요는 하트+숫자만) */
 .bgrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 6px}
@@ -126,7 +128,6 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 .bgrid .bk img{max-height:none}.bgrid .bk .ph{height:76px;font-size:1.2rem}
 .bgrid .bk .rp{font-size:.66rem;margin-top:0}
 .bgrid .bk .pp-by{font-size:.56rem;padding:1px 4px;white-space:nowrap}
-.bgrid .nl-like{font-size:0!important;padding:2px 6px!important;gap:2px!important}.bgrid .nl-like .em{font-size:.72rem}.bgrid .nl-like b{font-size:.64rem}
 .bgrid .pp-del{font-size:.56rem;padding:1px 4px}
 /* 표지 칸 높이를 맞춰 재밌어요 줄이 나란히(카드) */
 .bgrid{align-items:stretch}
@@ -135,18 +136,25 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
 .bgrid .bk .cv img{width:auto;height:auto;max-width:100%;max-height:100%}
 .bgrid .bk .cv .ph{width:100%;height:100%}
 .bgrid .bk .nl-like{margin-top:auto}
+/* 2026-11-20 운영자: 대박책 한 줄 3권, 재밌어요·후기는 인스타 좋아요·댓글처럼 테두리 없이 아이콘+숫자로 표지 아래 왼쪽에 */
+.bgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}
+.bgrid .bk{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-content:flex-start;gap:4px 12px}
+.bgrid .bk,.bgrid .bk:has(a.cv){padding:8px 8px 7px}
+.bgrid .bk .cv,.bgrid .bk>.ph,.bgrid .bk .pp-by,.bgrid .bk .rp{flex:0 0 100%;text-align:center}
+.bgrid .bk .cv{height:132px}
+.bgrid .bk .nl-like,.bgrid .bk .nl-rv{margin:0!important;align-self:center}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top"><a href="./">← 나이테</a></div>
   <header class="hero">
-    <h1>연령별 추천템</h1>
+    <h1>나이테 Pick</h1>
     <p>드니 5개월부터 우리 집에서 써 본 영어책·영상입니다.</p>
   </header>
-  <nav class="rtab2" id="rtab2"><button type="button" class="on" data-t="list">연령별 추천템</button><button type="button" data-t="bestSec">대박책</button></nav>
+  <nav class="rtab2" id="rtab2"><button type="button" class="on" data-t="list">시기별 추천템</button><button type="button" data-t="bestSec">단권 대박책</button></nav>
   <main id="list"></main>
-  <section id="bestSec" hidden><p class="bsub">우리 집에서 드니가 가장 좋아한 책들이에요.</p><div class="bsrch"><div class="in"><span aria-hidden="true">🔍</span><input id="bq" type="text" placeholder="책 제목으로 찾기" autocomplete="off" enterkeyhint="search" aria-label="책 제목으로 찾기"><button type="button" class="x" id="bqx" aria-label="지우기" hidden>✕</button></div><p class="res" id="bqr" aria-live="polite"></p></div><div class="bgrid" id="best"></div></section>
+  <section id="bestSec" hidden><p class="bsub">드니가 가장 좋아한 책과 엄마들 추천 책입니다. 😆 재밌어요 많은 순.</p><div class="bsrch"><div class="in"><span aria-hidden="true">🔍</span><input id="bq" type="text" placeholder="책 제목으로 찾기" autocomplete="off" enterkeyhint="search" aria-label="책 제목으로 찾기"><button type="button" class="x" id="bqx" aria-label="지우기" hidden>✕</button></div><p class="res" id="bqr" aria-live="polite"></p></div><div class="bgrid" id="best"></div></section>
   <p class="disc" id="disc" hidden>※ 이 페이지의 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   <p class="foot">© 2026 나이테 영어책육아 메이트</p>
 </div>
@@ -207,8 +215,8 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
   new MutationObserver(function(){if(q.value.trim())run();}).observe(box,{childList:true});
 })();</script>
 <script src="track.js" defer></script>
-<script src="likes.js?v=20261120a" data-page="나이테 Pick"></script>
-<script src="reviews.js?v=20261120a" data-page="나이테 Pick"></script>
-<script src="pick-posts.js?v=20261120b"></script>
+<script src="likes.js?v=20261120b" data-page="나이테 Pick"></script>
+<script src="reviews.js?v=20261120b" data-page="나이테 Pick"></script>
+<script src="pick-posts.js?v=20261120d"></script>
 </body>
 </html>

@@ -598,7 +598,8 @@ renderBody();updateProgress();
   new MutationObserver(function(){if(q.value.trim())run();}).observe(document.getElementById('course-body'),{childList:true});
 })();</script>
 <script src="track.js" data-page="나이테 120"></script>
-<script src="likes.js?v=20261118a" data-page="나이테 120"></script>
+<script src="likes.js?v=20261120b" data-page="나이테 120"></script>
+<script src="reviews.js?v=20261120b" data-page="나이테 120"></script>
 <script src="study-room.js" defer></script>
 <script src="c120-study.js" defer></script>
 """
@@ -647,7 +648,7 @@ _about = f"""    <p class="lead">알아보는 수고는 나이테가 할게요.<
       <div class="res" id="abRes" hidden><div class="r" id="rAge" hidden></div><div class="r" id="rOwn" hidden></div></div>
       <button type="button" class="golist" id="goList" data-ev="소개: 목록 보러 가기">📚 120권 목록 보기</button>
     </section>
-    <p class="road"><a class="lnk" href="road.html?back=c120">🌳 고른 사람 이야기 · 나이테(드니맘)의 연령별 추천템 →</a></p>"""
+    <p class="road"><a class="lnk" href="road.html?back=c120">🌳 고른 사람 이야기 · 나이테(드니맘)의 시기별 추천템 →</a></p>"""
 _about_js = r"""<script>(function(){
 var AGE=[['👶','조작북·반복 책부터','어린 아이도 이해하기 쉬워요. 라임 책은 노래처럼 들려주세요.'],['🧒','5권 골고루','조작북·반복으로 편하게 시작하고, 유머·스토리로 재미를 넓혀 가요.'],['🧑','유머·스토리, 라임까지','큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요. 라임은 노래처럼 들려 색다른 재미를 줘요.']];
 var OWN=[['🌱','알아보지 말고, 지금 스터디 중인 달부터 그대로','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.'],['📦','전집은 하던 대로, 원서 그림책은 나이테 120으로','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 한 달에 5권씩 더해 주세요.'],['📚','읽던 책은 그대로, 이번 달 5권은 전면책장에','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.<span class="me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span>']];

@@ -13,8 +13,9 @@
   function rpc(fn,body){return fetch(U+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');
-  css.textContent='.nl-rv{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E3CFB4!important;background:#FFF8EF!important;color:#8A5A2B!important;border-radius:999px;padding:4px 10px;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer;margin-left:6px;line-height:1.2}'+
-    '.nl-rv b{font-weight:800}'+
+  css.textContent='.nl-rv{align-self:flex-start;margin-left:12px;display:inline-flex;align-items:center;gap:4px;border:0!important;background:none!important;box-shadow:none!important;color:#23291F!important;font:inherit;font-size:.82rem!important;font-weight:700!important;line-height:1;padding:3px 0!important;border-radius:0;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-width:0}'+
+    '.nl-rv::before{content:"";display:block;width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M20.7 16.4A9 9 0 1 0 17 20l4 1z%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M20.7 16.4A9 9 0 1 0 17 20l4 1z%27/%3E%3C/svg%3E") center/contain no-repeat}'+
+    '.nl-rv b{font-weight:700}'+
     '.nl-rvm{position:fixed;inset:0;z-index:9999;background:rgba(20,26,18,.5);display:flex;align-items:flex-end;justify-content:center}'+
     '.nl-rvm .bx{width:100%;max-width:480px;max-height:82vh;overflow:auto;background:#FBFBF8;border-radius:18px 18px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));color:#23291F;font-family:inherit}'+
     '.nl-rvm .hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.nl-rvm h3{margin:0;font-size:1.05rem;line-height:1.35}'+
@@ -27,7 +28,7 @@
     if(!OK||!L.length){if(c)c.remove();return;}
     if(!c){c=document.createElement('button');c.type='button';c.className='nl-rv';c.setAttribute('data-rvk',k);c.setAttribute('data-ev','후기 보기');el.insertAdjacentElement('afterend',c);}
     c.setAttribute('data-title',el.getAttribute('data-like')||'');c.setAttribute('aria-label','엄마들 후기 '+L.length+'개 보기');
-    c.innerHTML='💬 후기 <b>'+L.length+'</b>';}
+    c.innerHTML='<b>'+L.length+'</b>';}
   function paintKey(k){document.querySelectorAll('[data-like]').forEach(function(el){if(el._rk===k)chip(el);});}
   var qT=null;
   function scan(){

@@ -16,19 +16,21 @@
     .then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
   var css=document.createElement('style');
   // 2026-11-17: 빈 동그라미는 누르는 건지 몰라서 → 인스타 '좋아요'처럼 하트(운영자 선택 B). 🤍 → ❤️, 누르면 '+1'이 떠오름
-  css.textContent='.nl-like{position:relative;display:inline-flex;align-items:center;gap:4px;align-self:flex-start;border:1.5px solid #E7B9B9!important;background:#fff!important;color:#B5484B!important;font:inherit;font-size:.66rem!important;font-weight:800!important;line-height:1;padding:5px 9px 5px 7px!important;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}'+
-    '.nl-like .em{font-size:1.05em}'+
-    '.nl-like b{font-weight:800;color:#B5484B!important;margin-left:1px}'+
-    '.nl-like.on{background:#FCE9E9!important;border-color:#D86A6D!important;color:#B5484B!important}' /* 페이지 버튼 스타일(흰 글씨·흰 바탕)에 덮이지 않게 */+
-    '.nl-like .p1{position:absolute;right:6px;top:-4px;font-size:.66rem;font-weight:900;color:#D86A6D;pointer-events:none;opacity:0}'+
-    '.nl-like.pop{animation:nlPop .35s ease}.nl-like.pop .p1{animation:nlUp .8s ease}'+
-    '@keyframes nlPop{40%{transform:scale(1.15)}}@keyframes nlUp{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}'+
-    '.nl-like[hidden]{display:none}@media (prefers-reduced-motion:reduce){.nl-like.pop,.nl-like.pop .p1{animation:none}}';
+  // 2026-11-20 운영자: 모든 페이지 하트 통일 — 인스타 좋아요처럼 테두리 없는 선 하트 + 숫자, 누르면 빨간 하트와 '+1'
+  css.textContent='.nl-like{position:relative;align-self:flex-start;display:inline-flex;align-items:center;gap:4px;border:0!important;background:none!important;box-shadow:none!important;color:#23291F!important;font:inherit;font-size:.82rem!important;font-weight:700!important;line-height:1;padding:3px 0!important;border-radius:0;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;min-width:0}'+
+    '.nl-like::before{content:"";display:block;width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z%27/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .15s}'+
+    '.nl-like.on::before{content:"";display:block;width:20px;height:20px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27black%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27black%27 stroke=%27black%27 stroke-width=%272%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.6 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z%27/%3E%3C/svg%3E") center/contain no-repeat;color:#ED4956}'+
+    '.nl-like:active::before{transform:scale(.85)}'+
+    '.nl-like b{font-weight:700;color:#23291F!important}'+
+    '.nl-like .p1{position:absolute;left:12px;top:-6px;font-size:.66rem;font-weight:900;color:#ED4956;pointer-events:none;opacity:0}'+
+    '.nl-like.pop::before{animation:nlPop .35s ease}.nl-like.pop .p1{animation:nlUp .8s ease}'+
+    '@keyframes nlPop{40%{transform:scale(1.25)}}@keyframes nlUp{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}'+
+    '.nl-like[hidden]{display:none}@media (prefers-reduced-motion:reduce){.nl-like.pop::before,.nl-like.pop .p1{animation:none}}';
   document.head.appendChild(css);
   function paint(el){var k=el._nk,n=C[k]||0,on=!!MINE[k];
     el.classList.add('nl-like');el.classList.toggle('on',on);el.setAttribute('aria-pressed',String(on));
     el.setAttribute('aria-label','재밌어요'+(on?' 취소':'')+(n>=MIN?', '+n+'명':''));
-    el.innerHTML='<span class="em" aria-hidden="true">'+(on?'❤️':'🤍')+'</span>재밌어요'+(n>=MIN?' <b>'+n+'</b>':'')+'<span class="p1" aria-hidden="true">+1</span>';
+    el.innerHTML=(n>=MIN?'<b>'+n+'</b>':'')+'<span class="p1" aria-hidden="true">+1</span>';
     el.hidden=!OK;el._np=n+'|'+on;}
   function paintKey(k){document.querySelectorAll('[data-like]').forEach(function(el){if(el._nk===k)paint(el);});}
   var qT=null;

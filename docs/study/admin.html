@@ -200,7 +200,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   // ---------- SHELL ----------
   function renderApp(){
     var v=STATE.view||'ops';
-    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['road','🌱 연령별 추천템'],['guides','📚 가이드'],['reviews','💬 후기'],['members','🔑 회원 비밀번호']];
+    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['road','🌱 시기별 추천템'],['guides','📚 가이드'],['reviews','💬 후기'],['members','🔑 회원 비밀번호']];
     var h='<div class="top"><div class="wrap" style="display:block;padding:0 18px">'+
       '<div class="bar1"><span class="brand">🛠️ 나이테 관리</span><span class="sp"><a class="btn" href="kpi.html">📊 KPI</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
@@ -645,7 +645,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var have={};(q.data||[]).forEach(function(r){have[r.key]=r.buy_url||'';});STATE.roadLinks=have;
     var items=roadLinkItems(),groups=['세트·시리즈','대박책'];
     var filled=items.filter(function(it){return have[it.key];}).length;
-    var h='<div class="card"><div style="font-weight:800;color:var(--tealD)">🌱 연령별 추천템 쿠팡 링크</div>'+
+    var h='<div class="card"><div style="font-weight:800;color:var(--tealD)">🌱 시기별 추천템 쿠팡 링크</div>'+
       '<p class="hint">https://link.coupang.com/a/... 형태의 파트너스 링크를 넣고 저장하세요. 비우면 그 책은 링크 없이 보여요. <b id="roadCnt">'+filled+' / '+items.length+'</b> 입력됨</p>'+
       '<label style="display:flex;gap:6px;align-items:center;font-size:.85rem;margin:6px 0"><input type="checkbox" id="roadEmpty"> 아직 안 넣은 것만 보기</label>';
     groups.forEach(function(g){

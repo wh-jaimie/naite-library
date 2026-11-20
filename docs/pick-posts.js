@@ -34,7 +34,7 @@
     var box=document.getElementById('best');if(!box)return;
     var sec=document.getElementById('bestSec'),bar=document.getElementById('ppBestBar');
     if(!bar){bar=document.createElement('div');bar.id='ppBestBar';bar.className='pp-bar';sec.insertBefore(bar,box);}
-    bar.innerHTML=P.ok?'<button type="button" class="pp-add" data-ppadd="book">➕ 우리 집 대박책 추천하기</button><p class="pp-note">나이테 대박책과 엄마들이 추천한 책을 <b>😆 재밌어요</b> 많은 순으로 보여요.</p>':'';
+    bar.innerHTML=P.ok?'<button type="button" class="pp-add" data-ppadd="book">➕ 대박책 추천하기</button>':'';
     if(!P.ok)return;
     var items=[],seen={};
     (window.BEST||[]).forEach(function(b,i){var k=lkey(b[0]);if(seen[k])return;seen[k]=1;items.push({k:k,t:b[0],c:b[1],o:i,mine:0});});
@@ -61,7 +61,7 @@
     if(!P.vok)return;
     [].forEach.call(list.querySelectorAll('article.it'),function(a){var b=a.querySelector('.h b');if(!b)return;var n=b.textContent,k=rkey(n),c=P.cnt[k]||0,on=!!P.mine[k];
       var bt=document.createElement('button');bt.type='button';bt.className='pp-vote pp-rv'+(on?' on':'');bt.setAttribute('data-pprv',k);bt.setAttribute('data-ppt',n);bt.setAttribute('aria-pressed',String(on));
-      bt.innerHTML='👍 추천'+(c?' <b>'+c+'</b>':'');var tx=a.querySelector('.tx');(tx||a).appendChild(bt);});
+      bt.innerHTML=(c?'<b>'+c+'</b>':'');bt.setAttribute('aria-label','추천');bt.setAttribute('data-ev','추천');var tx=a.querySelector('.tx');(tx||a).appendChild(bt);});
     if(!P.ok)return;
     var acts=P.posts.filter(function(p){return p.kind==='act';}),by={};
     acts.forEach(function(p){var g=Math.max(1,Math.ceil((p.age_m||1)/12));(by[g]=by[g]||[]).push(p);});
@@ -73,7 +73,7 @@
       w.innerHTML='<p class="pp-h">💛 엄마들이 이맘때 한 활동 <span>'+L.length+'</span></p>'+L.map(function(p){var k=akey(p),n=P.cnt[k]||0,on=!!P.mine[k];
         return '<div class="pp-act"><div class="tx"><span class="when">'+e(ageTxt(p.age_m))+'</span> '+e(p.body)+(p.title?'<span class="pp-with">📚 '+e(p.title)+'</span>':'')+
           (p.mine?' <button type="button" class="pp-del" data-ppdel="'+p.id+'">지우기</button>':'')+'</div>'+
-          '<button type="button" class="pp-vote'+(on?' on':'')+'" data-ppvote="'+p.id+'" aria-pressed="'+on+'">👍 추천'+(n?' <b>'+n+'</b>':'')+'</button></div>';}).join('');
+          '<button type="button" class="pp-vote'+(on?' on':'')+'" data-ppvote="'+p.id+'" aria-pressed="'+on+'" aria-label="추천" data-ev="추천">'+(n?'<b>'+n+'</b>':'')+'</button></div>';}).join('');
       det.appendChild(w);
     });
   }
@@ -117,13 +117,13 @@
 
   document.addEventListener('click',function(x){var t=x.target.closest&&x.target.closest('[data-ppadd],[data-ppvote],[data-ppdel],[data-pprv]');if(!t)return;x.preventDefault();x.stopPropagation();
     if(t.hasAttribute('data-pprv')){var rk=t.getAttribute('data-pprv'),ron=!P.mine[rk];P.mine[rk]=ron?1:0;P.cnt[rk]=Math.max(0,(P.cnt[rk]||0)+(ron?1:-1));
-      t.classList.toggle('on',ron);t.setAttribute('aria-pressed',String(ron));t.innerHTML='👍 추천'+(P.cnt[rk]?' <b>'+P.cnt[rk]+'</b>':'');
+      t.classList.toggle('on',ron);t.setAttribute('aria-pressed',String(ron));t.innerHTML=(P.cnt[rk]?'<b>'+P.cnt[rk]+'</b>':'');
       vote(rk,t.getAttribute('data-ppt'),ron).then(function(r){if(r&&r.ok&&typeof r.n==='number')P.cnt[rk]=r.n;},function(){});if(ron)ev('pick_vote',{kind:'road',title:t.getAttribute('data-ppt')});return;}
     if(t.hasAttribute('data-ppadd')){openForm(t.getAttribute('data-ppadd'));return;}
     if(t.hasAttribute('data-ppdel')){if(!confirm('이 추천을 지울까요?'))return;rpc('delete_pick_post',{p_reader:reader(false),p_id:+t.getAttribute('data-ppdel')}).then(function(){ev('pick_post_delete',{});load();});return;}
     var id=+t.getAttribute('data-ppvote'),p=P.posts.filter(function(y){return y.id===id;})[0];if(!p)return;
     var k=akey(p),on=!P.mine[k];P.mine[k]=on?1:0;P.cnt[k]=Math.max(0,(P.cnt[k]||0)+(on?1:-1));
-    t.classList.toggle('on',on);t.setAttribute('aria-pressed',String(on));t.innerHTML='👍 추천'+(P.cnt[k]?' <b>'+P.cnt[k]+'</b>':'');
+    t.classList.toggle('on',on);t.setAttribute('aria-pressed',String(on));t.innerHTML=(P.cnt[k]?'<b>'+P.cnt[k]+'</b>':'');
     vote(k,(p.body||'').slice(0,60),on).then(function(r){if(r&&r.ok&&typeof r.n==='number'){P.cnt[k]=r.n;}},function(){});
     if(on)ev('pick_vote',{kind:'act'});
   },true);
