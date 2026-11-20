@@ -76,7 +76,7 @@ returns table(title text, readers int)
 language sql stable security definer set search_path = public as $$
   with t as (
     select btrim(other_title) as title, reader,
-           left(regexp_replace(regexp_replace(replace(regexp_replace(lower(other_title), '[:(].*$', ''), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80) as k  -- 앱 책 키와 같은 규칙
+           left(regexp_replace(regexp_replace(replace(lower(other_title), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80) as k  -- 앱 책 키와 같은 규칙(부제 포함)
       from public.reading_logs
      where book_id is null and coalesce(btrim(other_title), '') <> ''
   ), g as (

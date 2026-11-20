@@ -1,5 +1,5 @@
 -- 스터디 책이 아닌 책도 후기(2026-11-20 운영자 요청): 나이테 120권·다른 엄마들이 읽은 책·직접 적은 책은 '제목'으로 후기를 남김
--- 같은 책 키(대소문자·띄어쓰기·기호·부제 무시)면 같은 책으로 모임. 공개 범위·익명은 기존 후기(migrate_reviews.sql)와 같음.
+-- 같은 책 키(대소문자·띄어쓰기·기호 무시, 부제가 다르면 다른 책)면 같은 책으로 모임. 공개 범위·익명은 기존 후기(migrate_reviews.sql)와 같음.
 -- 관리자 › 💬 후기 목록에도 같이 보임(숨기기 그대로). Supabase → SQL Editor 에 붙여넣어 실행. 여러 번 실행해도 안전.
 
 alter table public.book_reviews alter column book_id drop not null;
@@ -8,10 +8,11 @@ alter table public.book_reviews add column if not exists title text;
 create unique index if not exists book_reviews_title_reader on public.book_reviews(title_key, reader) where title_key is not null;
 create index if not exists book_reviews_title_idx on public.book_reviews(title_key) where title_key is not null and not hidden;
 
--- 책 키 = 앱(reading-log.js bkey)·재밌어요(likes.js key)와 같은 규칙: 소문자 → ':'·'(' 앞까지 → &는 and → 맨 앞 the 빼기 → 영문·숫자·한글만, 80자
+-- 책 키 = 앱(reading-log.js bkey)·재밌어요(likes.js key)와 같은 규칙: 소문자 → &는 and → 맨 앞 the 빼기 → 영문·숫자·한글만, 80자
+-- (대소문자·띄어쓰기·기호는 무시, 부제는 그대로 — 부제가 다르면 다른 책)
 create or replace function public._title_key(p text) returns text
 language sql immutable as $$
-  select left(regexp_replace(regexp_replace(replace(regexp_replace(lower(coalesce(p,'')), '[:(].*$', ''), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80)
+  select left(regexp_replace(regexp_replace(replace(lower(coalesce(p,'')), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80)
 $$;
 
 -- 1) 제목 후기 저장(같은 제목엔 한 사람 1개, 다시 쓰면 고침). 반응도 한 줄도 없으면 지움. 하루 상한은 기존 후기와 합쳐 20개
@@ -68,3 +69,12 @@ grant execute on function public.admin_list_reviews() to authenticated;
 update public.book_reviews r set title_key = public._title_key(r.title)
  where r.title_key is not null and r.title_key <> public._title_key(r.title)
    and not exists (select 1 from public.book_reviews x where x.reader = r.reader and x.title_key = public._title_key(r.title) and x.id <> r.id);
+
+-- 재밌어요도 같은 책 키로(2026-11-20: 예전엔 ':'·'(' 뒤 부제를 잘라서 다른 책이 한 칸에 모였음 → 부제까지 포함)
+-- 책 제목으로 눌린 표만 새 키로 옮김(걸어온 길 추천 등 다른 키는 그대로). 같은 사람이 이미 새 키에 표가 있으면 옮기지 않음
+update public.book_likes l set book_key = public._title_key(l.title)
+ where l.title <> ''
+   and l.book_key = left(regexp_replace(regexp_replace(replace(split_part(split_part(lower(l.title), ':', 1), '(', 1), '&', 'and'), '^\s*the\s+', ''), '[^0-9a-z가-힣]', '', 'g'), 80)
+   and l.book_key <> public._title_key(l.title)
+   and length(public._title_key(l.title)) >= 1
+   and not exists (select 1 from public.book_likes x where x.reader = l.reader and x.book_key = public._title_key(l.title));

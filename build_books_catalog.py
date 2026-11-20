@@ -1,6 +1,6 @@
 # 나이테 책 목록(책 DB) 만들기 → docs/books.json
 # 나이테 120권(c120_data.json) · 대박책(road-data.js BEST) · 국내 인기 책장(shop_data.json)을 한 목록으로 합침.
-# 같은 책은 '책 키'(likes.js key()와 같은 규칙: 소문자, ':'·'(' 앞까지, &→and, 맨 앞 the 빼고, 영문·숫자·한글만)로 한 줄.
+# 같은 책은 '책 키'(likes.js key()와 같은 규칙: 소문자, &→and, 맨 앞 the 빼고, 영문·숫자·한글만 — 부제도 포함, 부제가 다르면 다른 책)로 한 줄.
 # 기록·메모·후기·재밌어요는 이 책 키로 모임(스터디 달과 상관없이). 스터디 책(DB)은 앱에서 같은 키로 합쳐 씀.
 # 목록을 바꾸면(120권·대박책·인기 책장) 이 스크립트를 다시 돌리면 됨:  python build_books_catalog.py
 import json, os, re
@@ -11,7 +11,7 @@ SITE = "https://wh-jaimie.github.io/naite-library/"
 
 
 def key(t):
-    t = re.split(r"[:(]", str(t or "").lower())[0].replace("&", "and")
+    t = str(t or "").lower().replace("&", "and")
     t = re.sub(r"^\s*the\s+", "", t)
     return re.sub(r"[^0-9a-z가-힣]", "", t)[:80]
 

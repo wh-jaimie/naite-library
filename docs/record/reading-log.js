@@ -1234,9 +1234,9 @@
     rpc('shared_other_titles',{}).then(function(d){S.shared=(d||[]).filter(function(x){return x&&x.title;});S.sharedLoading=0;if(S.recSheet)S.recSheet.render();},function(){S.sharedLoading=0;S.shared=[];});}
   // 나이테 120권 목록(기록 페이지 검색용): 스터디 책(DB id가 있는 책)은 책 기록, 나머지는 '다른 책'에 제목으로 — 독서 로드맵 ✓도 그대로 맞춰짐
   // 나이테 책 목록(2026-11-20 운영자 요청: 스터디 달과 끊고 '책 DB'처럼) = docs/books.json(120권·대박책·인기 책장, build_books_catalog.py)
-  // 같은 책 = 같은 책 키(likes.js key()와 같은 규칙). 기록·메모·후기·재밌어요는 책 키로 모임
+  // 같은 책 = 같은 책 키(likes.js key()와 같은 규칙: 대소문자·띄어쓰기·기호 무시, 부제가 다르면 다른 책). 기록·메모·후기·재밌어요는 책 키로 모임
   var CAT=null,CATK={};
-  function bkey(t){t=String(t||'').toLowerCase().split(/[:(]/)[0].replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
+  function bkey(t){t=String(t||'').toLowerCase().replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);}
   function loadCat(){if(CAT)return Promise.resolve(CAT);if(S&&S.catP)return S.catP;
     var pr=fetch('../books.json?v='+EV).then(function(r){return r.json();}).then(function(d){CAT=(d&&d.books)||[];CATK={};CAT.forEach(function(b){CATK[b.k]=b;});if(S)S.catP=null;return CAT;});
     if(S)S.catP=pr;return pr;}
