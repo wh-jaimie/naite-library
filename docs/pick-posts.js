@@ -5,7 +5,7 @@
  * 이벤트: pick_form_open·pick_post_save·pick_post_delete·pick_vote {kind} (KPI_EVENTS.md) */
 (function(){
   var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',H={apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'};
-  var P={ok:false,posts:[],cnt:{},mine:{}};
+  var P={ok:false,posts:[],cnt:{},mine:{},auto:[],cov:{}};
   function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function lkey(t){t=String(t||'').toLowerCase().replace(/&/g,'and').replace(/^\s*the\s+/,'');return t.replace(/[^0-9a-z가-힣]/g,'').slice(0,80);} // likes.js key()와 같게
   function hex(n){var a=new Uint8Array(n);crypto.getRandomValues(a);var s='';for(var i=0;i<n;i++)s+=('0'+a[i].toString(16)).slice(-2);return s;}
@@ -20,8 +20,12 @@
   function ageTxt(m){return m==null?'':m+'개월';}
 
   function load(){
-    return rpc('list_pick_posts',{p_reader:reader(false)||null}).then(function(l){return l;},function(){return null;}).then(function(list){P.ok=!!list;P.posts=list||[];P.vok=true; // 엄마 추천 표가 없어도 걸어온 길 👍는 보이게
+    // 2026-11-20 운영자: 엄마들이 직접 입력한 책 중 5명 이상 기록 or 좋은 반응 후기 5명 이상 → 대박책에 자동으로(member_best_titles, migrate_member_best.sql). 표지는 책 목록(books.json)에서
+    var autoP=rpc('member_best_titles',{}).then(function(l){P.auto=(l||[]).filter(function(x){return x&&x.title;});},function(){P.auto=[];});
+    var covP=fetch('books.json').then(function(r){return r.ok?r.json():null;}).then(function(d){P.cov={};((d&&d.books)||[]).forEach(function(b){if(b.c)P.cov[b.k]=b.c;});},function(){});
+    return Promise.all([rpc('list_pick_posts',{p_reader:reader(false)||null}).then(function(l){return l;},function(){return null;}),autoP,covP]).then(function(a){var list=a[0];P.ok=!!list;P.posts=list||[];P.vok=true; // 엄마 추천 표가 없어도 걸어온 길 👍는 보이게
       var keys=(window.BEST||[]).map(function(b){return lkey(b[0]);});
+      P.auto.forEach(function(x){keys.push(lkey(x.title));});
       P.posts.forEach(function(p){keys.push(p.kind==='book'?lkey(p.title):akey(p));});
       (window.ROAD||[]).forEach(function(y){(y[1]||[]).forEach(function(i){keys.push(rkey(i.n));});});
       keys=keys.filter(function(k,i){return k&&keys.indexOf(k)===i;}).slice(0,600);
@@ -40,11 +44,12 @@
     (window.BEST||[]).forEach(function(b,i){var k=lkey(b[0]);if(seen[k])return;seen[k]=1;items.push({k:k,t:b[0],c:b[1],o:i,mine:0});});
     P.posts.filter(function(p){return p.kind==='book';}).forEach(function(p,i){var k=lkey(p.title);
       if(seen[k]){var it=items.filter(function(x){return x.k===k;})[0];if(it){(it.by=it.by||[]).push(p);}return;}
-      seen[k]=1;items.push({k:k,t:p.title,o:1000+i,by:[p],member:1});});
+      seen[k]=1;items.push({k:k,t:p.title,c:P.cov[k]||'',o:1000+i,by:[p],member:1});});
+    P.auto.forEach(function(x,i){var k=lkey(x.title);if(!k||seen[k])return;seen[k]=1;items.push({k:k,t:x.title,c:P.cov[k]||'',o:500+i});});
     items.forEach(function(it){it.n=P.cnt[it.k]||0;});
     items.sort(function(a,b){return b.n-a.n||a.o-b.o;});
     box.innerHTML=items.map(function(it){
-      var cv=it.c?img(it.c):'<span class="ph">📚</span>',u=lk(it.t);
+      var cv=it.c?img(it.c):'<span class="ph pt">'+e(it.t)+'</span>',u=lk(it.t); // 표지 없는 책은 표지 칸에 제목
       var who=it.by&&it.by.length?'<span class="pp-by">'+(it.member?'엄마 추천':'엄마 추천도 '+it.by.length)+(it.by[0].age_m!=null?' · '+ageTxt(it.by[0].age_m):'')+'</span>'+(it.by[0].body?'<span class="pp-why">“'+e(it.by[0].body)+'”</span>':''):'';
       var del=(it.by||[]).filter(function(p){return p.mine;})[0];
       return '<div class="bk'+(it.member?' pp-m':'')+'">'+(u?wrap(u,cv,it.t):'<span class="cv">'+cv+'</span>')+'<span class="bt">'+e(it.t)+'</span>'+who+
