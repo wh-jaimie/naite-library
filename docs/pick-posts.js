@@ -47,7 +47,7 @@
       var cv=it.c?img(it.c):'<span class="ph">📚</span>',u=lk(it.t);
       var who=it.by&&it.by.length?'<span class="pp-by">'+(it.member?'엄마 추천':'엄마 추천도 '+it.by.length)+(it.by[0].age_m!=null?' · '+ageTxt(it.by[0].age_m):'')+'</span>'+(it.by[0].body?'<span class="pp-why">“'+e(it.by[0].body)+'”</span>':''):'';
       var del=(it.by||[]).filter(function(p){return p.mine;})[0];
-      return '<div class="bk'+(it.member?' pp-m':'')+'">'+wrap(u,cv,it.t)+'<span class="bt">'+e(it.t)+'</span>'+who+
+      return '<div class="bk'+(it.member?' pp-m':'')+'">'+(u?wrap(u,cv,it.t):'<span class="cv">'+cv+'</span>')+'<span class="bt">'+e(it.t)+'</span>'+who+
         '<button type="button" data-like="'+e(it.t)+'" hidden></button>'+(del?'<button type="button" class="pp-del" data-ppdel="'+del.id+'">내 추천 지우기</button>':'')+'</div>';}).join('');
   }
 

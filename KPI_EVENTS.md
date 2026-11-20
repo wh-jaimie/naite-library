@@ -55,7 +55,7 @@
 | buy_click | 쿠팡 클릭 | title, from?, pick?, at(이번 달 표지 카드: 'btn'=🛒 구매 버튼 · 'cover'=표지·제목, 11/17부터) |
 | title_copy | 책 제목 복사(다른 데서 사려는 행동) | title |
 | book_info_go / guide_click / blog_click / insta_click | 책 정보·가이드·블로그·인스타 | from 등 |
-| guide_click (상세) | 사이트 guide.html 글 클릭 = `{title}` → KPI ‘가이드 글 클릭’·많이 누른 글 / 스터디 앱 버튼 = `{from}`: app_top(맨 위 📚 가이드)·month_shelf(이번 달 책 5권 활용법, guide:12)·welcome(처음 안내) → KPI 나이테 탭 ‘앱에서 가이드로 가는 버튼’ 표(2026-11-19 분리) | title 또는 from |
+| guide_click (상세) | 사이트 guide.html 글 클릭 = `{title}`(11/19 전엔 insert에 .then이 없어 한 번도 안 남음 → KPI ‘가이드 글 클릭’·많이 누른 글은 guide.html의 글 링크 **ui_click**(href = guide/NN-… 또는 블로그 주소)으로 셈) / 스터디 앱 버튼 = `{from}`: app_top(맨 위 📚 가이드)·month_shelf(이번 달 책 5권 활용법, guide:12)·welcome(처음 안내) → KPI 나이테 탭 ‘앱에서 가이드로 가는 버튼’ 표(2026-11-19 분리) | title 또는 from |
 | groupbuy_interest | 공동구매 관심 | theme_key, page |
 | age_pick | 아이 나이 고르기 | age, from(popup·change·welcome) |
 | age_popup_open / age_popup_skip / age_change_open | 처음 한 번 뜨는 나이 창 / '나중에' / 표지 아래 '나이 바꾸기' (11/17부터) | |
@@ -118,3 +118,6 @@
 | type | 뜻 | meta |
 |---|---|---|
 | daangn_click | 메인 당근모임 링크 | |
+| c120_search | 나이테 120 제목 검색(입력 멈추고 1.2초 뒤, 같은 검색어는 1번, 2글자 이상, 2026-11-20) | q(30자까지), hits(찾은 권수), src |
+| c120_book_detail | 나이테 120 책 제목 눌러 자세히 열기(2026-11-20 개편: 설명·재밌어요·제목 복사·쿠팡이 자세히 안으로) | title, src |
+| title_copy (나이테 120) | 자세히 안 제목 복사 아이콘(2026-11-20부터 사이트 이벤트로 남김) | title, page:'나이테 120', src |
