@@ -105,6 +105,21 @@ a.cv:active>img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26
 .pp-rv{display:inline-block;margin-top:8px}
 /* 2026-11-18 운영자 요청: 맨 위 설명 글씨 줄임 */
 h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
+/* 2026-11-20 운영자: 대박책은 표지만, 한 줄에 5권(제목·추천 글은 빼고 재밌어요는 하트+숫자만) */
+.bgrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 6px}
+.bgrid .bk{gap:4px}.bgrid .bk .bt,.bgrid .bk .pp-why{display:none}
+.bgrid .bk img{max-height:none}.bgrid .bk .ph{height:76px;font-size:1.2rem}
+.bgrid .bk .rp{font-size:.66rem;margin-top:0}
+.bgrid .bk .pp-by{font-size:.56rem;padding:1px 4px;white-space:nowrap}
+.bgrid .nl-like{font-size:0!important;padding:2px 6px!important;gap:2px!important}.bgrid .nl-like .em{font-size:.72rem}.bgrid .nl-like b{font-size:.64rem}
+.bgrid .pp-del{font-size:.56rem;padding:1px 4px}
+/* 표지 칸 높이를 맞춰 재밌어요 줄이 나란히(카드) */
+.bgrid{align-items:stretch}
+.bgrid .bk,.bgrid .bk:has(a.cv){background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 4px 6px;box-shadow:0 1px 2px rgba(35,41,31,.06)}.bgrid .bk:has(a.cv)::after{content:none}
+.bgrid .bk .cv{width:100%;height:84px;display:flex;align-items:flex-end;justify-content:center}
+.bgrid .bk .cv img{width:auto;height:auto;max-width:100%;max-height:100%}
+.bgrid .bk .cv .ph{width:100%;height:100%}
+.bgrid .bk .nl-like{margin-top:auto}
 </style>
 </head>
 <body>
@@ -122,6 +137,9 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
   <p class="foot">© 2026 나이테 영어책육아 메이트</p>
 </div>
 <script>if(/[?&]embed=/.test(location.search)){document.write('<style>.top{display:none}.hero{padding-top:14px}</style>');document.querySelector('.ask a').target='_blank';}</script>
+<script>/* 나이테 120 소개에서 왔으면(?back=c120) 맨 위에 '← 나이테 120' — 앱 안(embed)에서도 돌아갈 수 있게(2026-11-20) */
+(function(){var q;try{q=new URLSearchParams(location.search);}catch(e){return;}if(q.get('back')!=='c120')return;var e=q.get('embed'),t=document.querySelector('.top');if(!t)return;
+  t.innerHTML='<a href="challenge.html?tab=about'+(e?'&embed='+encodeURIComponent(e):'')+'">← 나이테 120</a>';t.style.justifyContent='flex-start';if(e){t.style.setProperty('display','flex','important');}})();</script>
 <script src="road-data.js?v=20261110a"></script>
 <script>
 /* 드니 나이: 2021년 1월생 기준. 카드 = 개월, 연도 제목 = 연 나이 */
@@ -142,7 +160,7 @@ document.getElementById('list').innerHTML=AG.map(function(y,yi){var g=y[0];
  return '<article class="it">'+'<div class="row">'+wrap(lk(i.n,i),cov(i),i.n)+'<div class="tx"><div class="h"><b>'+e(i.n)+'</b><span class="k">'+e(i.k)+'</span>'+pr(lk(i.n,i))+'</div><p><span class="when">'+e(age(i.w))+'</span><br>'+e(i.d)+'</p>'+
   (i.picks?'<details class="picks"><summary>대박책 '+i.picks.length+'권 보기</summary><ul>'+i.picks.map(function(x){return '<li>'+wrap(lk(x[0]),(x[1]?img(x[1]):'<span class="ph">📚</span>'),x[0])+'<div><b>'+e(x[0])+'</b>'+pr(lk(x[0]))+'<span>'+e(x[2])+'</span><button type="button" data-like="'+e(x[0])+'" hidden></button></div></li>';}).join('')+'</ul></details>':'')+
   (i.story?'<a href="'+e(i.story)+'" target="_blank" rel="noopener">우리 집 이야기 ›</a>':'')+'</div></div></article>';}).join('')+'</details>';}).join('');
-document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+wrap(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'),b[0])+'<span class="bt">'+e(b[0])+'</span>'+pr(lk(b[0]))+'<button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
+document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+(function(u,h){return u?wrap(u,h,b[0]):'<span class="cv">'+h+'</span>';})(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'))+'<span class="bt">'+e(b[0])+'</span>'+pr(lk(b[0]))+'<button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
 document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
 paintRoad();
 document.getElementById("rtab2").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;["list","bestSec"].forEach(function(id){document.getElementById(id).hidden=id!==b.dataset.t;});[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b);});window.scrollTo(0,0);});
@@ -161,6 +179,6 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
 </script>
 <script src="track.js" defer></script>
 <script src="likes.js?v=20261118a" data-page="나이테 Pick"></script>
-<script src="pick-posts.js?v=20261118a"></script>
+<script src="pick-posts.js?v=20261120a"></script>
 </body>
 </html>

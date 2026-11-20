@@ -195,6 +195,14 @@ a.cover{display:block;text-decoration:none;color:inherit}
 .lg .sw{width:12px;height:12px;border-radius:4px}
 /* 월/주제 */
 .month{margin-top:26px}
+/* 제목 검색(2026-11-20) */
+.csrch{margin:18px 0 0}
+.csrch .in{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 6px 0 12px;box-shadow:var(--shadow)}
+.csrch input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;padding:11px 0;color:var(--ink);outline:none}
+.csrch .x{border:0;background:none;font-size:16px;color:var(--muted);padding:6px 8px;cursor:pointer}
+.csrch .res{margin:6px 2px 0;font-size:.82rem;color:var(--muted)}
+.csrch .res:empty{display:none}
+#course-body [hidden]{display:none!important}
 .month>.mh{font-family:'Gowun Batang',serif;font-weight:700;font-size:1.05rem;color:var(--coral);margin:0 2px 10px;
   border-bottom:2px solid var(--line);padding-bottom:6px}
 .theme{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 16px 18px;box-shadow:var(--shadow);margin-bottom:16px}
@@ -203,7 +211,29 @@ a.cover{display:block;text-decoration:none;color:inherit}
 .theme .th h3{font-size:1.2rem}
 .theme .th .en{font-size:.82rem;color:var(--ink-soft);font-weight:700}
 .theme .th .done{margin-left:auto;font-size:.76rem;font-weight:800;color:var(--teal-deep)}
-.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 8px}
+/* 2026-11-20 개편: 한 줄 5권(앱 이번 달 책처럼) */
+.theme{padding:14px 12px 14px}
+.step{gap:4px;align-items:center;text-align:center}
+.step .tier{background:none!important;padding:0!important;font-size:.6rem!important;font-weight:800;align-self:center!important;white-space:nowrap;letter-spacing:-.02em}
+.step .cover{width:100%;border:0;padding:0;cursor:pointer;border-radius:3px 6px 6px 3px;box-shadow:0 1px 2px rgba(0,0,0,.16),0 6px 12px rgba(35,41,31,.18)}
+.step .tt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;width:100%;border:0;background:none;padding:0;font:inherit;font-size:.68rem;font-weight:700;line-height:1.25;color:var(--ink);cursor:pointer;text-align:center}
+.step.on .cover{outline:2px solid var(--teal);outline-offset:2px}
+.step .aw{font-size:.56rem!important;padding:1px 4px!important;align-self:center!important;margin-top:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bdet{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+.bd-in{position:relative}
+.bd-x{position:absolute;top:-4px;right:-2px;border:0;background:none;font-size:15px;color:var(--ink-soft);padding:4px 6px;cursor:pointer}
+.bd-top{display:flex;gap:12px;align-items:flex-start;padding-right:22px}
+.bd-top img{width:62px;flex:none;border-radius:3px 6px 6px 3px;box-shadow:0 1px 2px rgba(0,0,0,.16),0 6px 12px rgba(35,41,31,.18)}
+.bd-tx{min-width:0}.bd-tx .tier{font-size:.7rem;font-weight:800}
+.bd-tx h4{margin:2px 0 0;font-size:.95rem;line-height:1.3}
+.bd-tx .au{font-size:.75rem;color:var(--ink-soft);margin-top:2px}
+.bd-tx .aw{display:inline-block;margin-top:5px;font-size:.68rem;font-weight:800;color:#7a5a00;background:#f3e9c9;border-radius:6px;padding:2px 7px}
+.cp-ic{display:inline-grid;place-items:center;vertical-align:-3px;width:24px;height:24px;margin-left:6px;padding:0;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--teal-deep);cursor:pointer}
+.cp-ic.done{background:color-mix(in srgb,var(--teal) 16%,var(--surface));border-color:var(--teal)}
+.bdet .rs{margin:10px 0 0;font-size:.8rem;line-height:1.55;color:var(--ink-soft)}
+.bd-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.bd-buy{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;border-radius:99px;background:var(--coral);color:#fff;font-size:.78rem;font-weight:800;text-decoration:none}
 .step{display:flex;flex-direction:column;gap:6px;position:relative;min-width:0;overflow-wrap:anywhere}
 .step .tier{font-size:.66rem;font-weight:800;color:#fff;padding:2px 7px;border-radius:6px;align-self:flex-start}
 .step .cover{position:relative;aspect-ratio:3/4;border-radius:9px;overflow:hidden;background:var(--surface-2);box-shadow:var(--shadow);cursor:pointer}
@@ -240,9 +270,7 @@ a.cover:active{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26)
 .step .lvb.l3{background:#fbe3d6;color:#b05a2a}
 #statline{margin-top:12px}
 #statline b{color:var(--ink)}
-@media (max-width:760px){.ladder{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-  .step .rs{display:none}.step .au{display:none}}
-@media (max-width:520px){.ladder{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.step .rs{display:-webkit-box}.step .au{display:block}}
+@media (max-width:520px){.ladder{gap:10px 5px}.theme{padding:12px 9px 12px}}
 footer{border-top:1px solid var(--line);margin-top:34px;padding-block:26px 42px}
 footer p{color:var(--ink-soft);font-size:.82rem;margin:.3em 0}
 .prthumb{display:block;margin:16px auto 0;padding:0;border:0;background:none;cursor:pointer;width:min(100%,260px)}
@@ -308,12 +336,13 @@ __ABOUT__
       <a class="appnote" href="record/app.html?tab=log">📲 진행률은 스터디 앱에서 읽은 책을 기록하면 쌓여요 ›</a>
       <button class="print" id="prPrint" hidden>🖨️ 120권 목록 인쇄 · PDF 저장</button>
     </div>
+  <div class="csrch"><div class="in"><span aria-hidden="true">🔍</span><input id="cq" type="text" placeholder="책 제목으로 찾기" autocomplete="off" enterkeyhint="search" aria-label="책 제목으로 찾기"><button type="button" class="x" id="cqx" aria-label="지우기" hidden>✕</button></div><p class="res" id="cqr" aria-live="polite"></p></div>
   <section><div id="course-body"></div></section>
   </div>
   <p class="small-disc bottom-disc">※ 🛒 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </main>
 <script>/* 스터디 앱 안(독서 로드맵, ?embed=): 위 여백 줄이고, 맨 아래 스터디방 참여하기는 숨김(2026-11-07) */
-if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.html"],a[href="road.html"]').forEach(function(x){x.href=x.getAttribute('href')+'?embed=record';}); // 유형 글에서 돌아올 때도 앱 모드 유지
+if(/[?&]embed=/.test(location.search))document.querySelectorAll('a[href="types.html"],a[href^="road.html"]').forEach(function(x){var h=x.getAttribute('href');x.href=h+(h.indexOf('?')<0?'?':'&')+'embed=record';}); // 유형 글에서 돌아올 때도 앱 모드 유지
 if(/[?&]embed=/.test(location.search))document.write('<style>.hero{padding-block:8px 0}.joinmini{display:none}.wrap{padding-inline:16px}.hero .eyebrow{font-size:.85rem}.hero h1{font-size:24px;margin:2px 0 4px}.top .sharebtn{margin-left:auto}.panel .appnote{display:none}</style>');
 </script>
 
@@ -370,28 +399,37 @@ if(document.getElementById('legend'))document.getElementById('legend').innerHTML
  if(el)el.innerHTML='<b>글밥</b> 🌱 '+lvc[1]+' · 🌿 '+lvc[2]+' · 🌳 '+lvc[3]+' &nbsp;|&nbsp; <b>조작북 형태</b> 팝업 '+fmt['팝업']+' · 플랩 '+fmt['플랩']+' · 놀이북 '+fmt['놀이북'];
 })();
 
+// 2026-11-20 운영자: 앱 화면처럼 한 줄 5권. 칸엔 유형·표지·수상만(제목은 표지에 보이니 뺌), 표지 누르면 아래 '자세히'(제목·설명·재밌어요·제목 복사·구매하기). 버튼 이름은 '구매하기'(‘쿠팡에서 보기’ 금지)
+function shortTier(l){return String(l||'').replace(/^\s*\d+\.\s*/,'').replace(/\s*\/\s*/g,'·');}
+function awShort(a){return String(a||'').split(/[,·]/)[0].trim();}
 function stepHTML(b){
   return `<div class="step" data-id="${b.id}">
-    <span class="tier" style="background:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
-    ${b.buy_url?`<a class="cover${b.cover?'':' noimg'}" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow">`:`<div class="cover${b.cover?'':' noimg'}">`}
+    <span class="tier" style="color:var(--t${POS[b.tier]})">${esc(shortTier(b.tier_label))}</span>
+    <button type="button" class="cover${b.cover?'':' noimg'}" data-bd="${b.id}" aria-expanded="false" aria-label="${esc(b.title)} 자세히">
       ${b.cover?`<img loading="lazy" src="${esc(b.cover)}" alt="${esc(b.title)}" onerror="_imgErr(this)">`:''}
       <div class="ph"><div class="pt">${esc(b.title)}</div></div>
-      ${(b.pop_rank||b.kr_popular)?`<div class="cbg">${b.pop_rank?`<span class="pop">🌍 세계 인기</span>`:''}${b.kr_popular?`<span class="krb">🇰🇷 국내 인기</span>`:''}</div>`:''}
-    ${b.buy_url?'</a>':'</div>'}
-    ${b.buy_url?`<a class="buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow"><div class="tt">${esc(b.title)} <span class="cart">🛒</span></div><div class="au">${esc(b.author)}</div></a>`:`<div class="tt">${esc(b.title)}</div><div class="au">${esc(b.author)}</div>`}
-    <button type="button" data-like="${esc(b.title)}" hidden></button>
-    ${(function(){const l=level(b);return l?`<span class="lvb l${l}">${LV_LABEL[l]}</span>`:'';})()}${b.format?`<span class="fmt">${esc(b.format)}</span>`:''}${(b.series||[]).map(x=>`<span class="ser" title="노래 CD·세이펜이 있는 ${x} 시리즈">🎵 ${x}</span>`).join('')}
-    <button class="cp" type="button" data-copy="${esc(b.title)}" title="제목 복사">📋 제목 복사</button>
-    ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
-    ${b.lib_loans?`<div class="lib">📚 도서관 ${b.lib_loans}회</div>`:''}
-    <div class="rs">${esc(b.reason)}</div>
+    </button>
+    <span class="tt" hidden>${esc(b.title)}</span>
+    ${b.award?`<div class="aw">🏅 수상</div>`:''}
   </div>`;
+}
+function detailHTML(b){
+  return `<div class="bd-in"><button type="button" class="bd-x" data-bdx aria-label="닫기">✕</button>
+    <div class="bd-top">${b.cover?`<img src="${esc(b.cover)}" alt="">`:''}<div class="bd-tx">
+      <span class="tier" style="color:var(--t${POS[b.tier]})">${POS[b.tier]}. ${esc(b.tier_label)}</span>
+      <h4>${esc(b.title)}<button type="button" class="cp-ic" data-copy="${esc(b.title)}" aria-label="제목 복사" title="제목 복사"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></h4>
+      <div class="au">${esc(b.author||'')}</div>
+      ${b.award?`<div class="aw">${esc(b.award)}</div>`:''}
+    </div></div>
+    ${b.reason?`<p class="rs">${esc(b.reason)}</p>`:''}
+    <div class="bd-act"><button type="button" data-like="${esc(b.title)}" hidden></button>${b.buy_url?`<a class="bd-buy" href="${esc(b.buy_url)}" target="_blank" rel="noopener sponsored nofollow" data-ev="자세히 → 구매하기">🛒 구매하기</a>`:''}</div></div>`;
 }
 function themeHTML(t){
   return `<div class="theme" data-key="${esc(t.key)}">
     <div class="th"><span class="emo">${t.emoji}</span><h3>${esc(t.ko)}</h3>
       <span class="en">${esc(t.en)}</span></div>
     <div class="ladder">${[...t.books].sort((a,b)=>POS[a.tier]-POS[b.tier]).map(stepHTML).join('')}</div>
+    <div class="bdet" hidden></div>
   </div>`;
 }
 function renderBody(){
@@ -422,9 +460,26 @@ async function copyTitle(btn){
   const o=btn.dataset.label||btn.textContent;btn.dataset.label=o;btn.textContent='복사됨 ✓';btn.classList.add('done');
   clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=o;btn.classList.remove('done');},1200);
 }
+const BYID={};themes.forEach(t=>t.books.forEach(b=>{BYID[b.id]=b;}));
+function bdEv(b){try{if(localStorage.getItem('naite_notrack')==='1')return;var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',sid=localStorage.getItem('joy_sid')||'anon';
+  fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'c120_book_detail',session_id:sid,path:location.pathname,meta:{title:b.title,src:window.NAITE_SRC||''}})}).catch(function(){});}catch(e){}}
 document.getElementById('course-body').addEventListener('click',e=>{
-  const cp=e.target.closest('.cp');if(cp){copyTitle(cp);return;}
+  const cp=e.target.closest('[data-copy]');if(cp){e.preventDefault();copyIcon(cp);return;}
+  const x=e.target.closest('[data-bdx]');if(x){const d=x.closest('.bdet');closeBd(d);return;}
+  const t=e.target.closest('[data-bd]');if(!t)return;
+  const th=t.closest('.theme'),d=th&&th.querySelector('.bdet'),b=BYID[t.dataset.bd];if(!d||!b)return;
+  if(!d.hidden&&d.dataset.id===String(b.id)){closeBd(d);return;}
+  th.querySelectorAll('.step.on').forEach(s=>{s.classList.remove('on');const q=s.querySelector('.cover');if(q)q.setAttribute('aria-expanded','false');});
+  const st=t.closest('.step');if(st){st.classList.add('on');const q=st.querySelector('.cover');if(q)q.setAttribute('aria-expanded','true');}
+  d.innerHTML=detailHTML(b);d.dataset.id=b.id;d.hidden=false;bdEv(b);
+  const r=d.getBoundingClientRect();if(r.bottom>innerHeight)d.scrollIntoView({block:'nearest',behavior:'smooth'});
 });
+function closeBd(d){if(!d)return;d.hidden=true;d.innerHTML='';d.dataset.id='';const th=d.closest('.theme');if(th)th.querySelectorAll('.step.on').forEach(s=>{s.classList.remove('on');const q=s.querySelector('.cover');if(q)q.setAttribute('aria-expanded','false');});}
+async function copyIcon(btn){const t=btn.dataset.copy||'';
+  try{await navigator.clipboard.writeText(t);}catch(e){try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();}catch(_){}}
+  btn.classList.add('done');clearTimeout(btn._t);btn._t=setTimeout(()=>btn.classList.remove('done'),1200);
+  try{if(localStorage.getItem('naite_notrack')!=='1'){var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi';fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'title_copy',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{title:t,page:'나이테 120',src:window.NAITE_SRC||''}})}).catch(function(){});}}catch(e){}
+}
 // 앱에서 기록이 바뀌면(같은 저장소) 완주율만 다시
 window.addEventListener('storage',e=>{if(e.key==='naite_reads_v2'||e.key==='naite_bookmeta'){seen=logSeen();updateProgress();}});
 const root=document.documentElement;
@@ -517,6 +572,23 @@ renderBody();updateProgress();
     }).catch(function(){});
 })();
 </script>
+<script>/* 제목 검색(2026-11-20): 띄어쓰기·대소문자·기호 무시. 안 맞는 책·주제·개월차는 숨김. 검색어는 c120_search 로 집계 */
+(function(){var q=document.getElementById('cq'),x=document.getElementById('cqx'),r=document.getElementById('cqr');if(!q)return;
+  function nz(t){return String(t||'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'');}
+  var lastLog='',tm=null;
+  function logQ(v,n){if(!v||v===lastLog||v.length<2)return;lastLog=v;try{if(localStorage.getItem('naite_notrack')==='1')return;var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',sid=localStorage.getItem('joy_sid')||'anon';
+    fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'c120_search',session_id:sid,path:location.pathname,meta:{q:v.slice(0,30),hits:n,src:window.NAITE_SRC||''}})}).catch(function(){});}catch(e){}}
+  function run(){var raw=q.value.trim(),k=nz(raw),n=0;x.hidden=!raw;
+    document.querySelectorAll('#course-body .step').forEach(function(st){var t=st.querySelector('.tt'),hit=!k||nz(t&&t.textContent).indexOf(k)>=0;st.hidden=!hit;if(hit&&k)n++;});
+    document.querySelectorAll('#course-body .theme').forEach(function(th){th.hidden=!!k&&!th.querySelector('.step:not([hidden])');});
+    document.querySelectorAll('#course-body .month').forEach(function(m){m.hidden=!!k&&!m.querySelector('.theme:not([hidden])');});
+    r.textContent=k?(n?n+'권 찾았어요':'찾는 책이 없어요'):'';
+    clearTimeout(tm);if(k)tm=setTimeout(function(){logQ(raw,n);},1200);}
+  q.addEventListener('input',run);
+  q.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();try{q.blur();}catch(x){}}});
+  x.addEventListener('click',function(){q.value='';run();q.focus();});
+  new MutationObserver(function(){if(q.value.trim())run();}).observe(document.getElementById('course-body'),{childList:true});
+})();</script>
 <script src="track.js" data-page="나이테 120"></script>
 <script src="likes.js?v=20261118a" data-page="나이테 120"></script>
 <script src="study-room.js" defer></script>
@@ -567,7 +639,7 @@ _about = f"""    <p class="lead">알아보는 수고는 나이테가 할게요.<
       <div class="res" id="abRes" hidden><div class="r" id="rAge" hidden></div><div class="r" id="rOwn" hidden></div></div>
       <button type="button" class="golist" id="goList" data-ev="소개: 목록 보러 가기">📚 120권 목록 보기</button>
     </section>
-    <p class="road"><a class="lnk" href="road.html">🌳 고른 사람 이야기 · 나이테(드니맘)가 걸어온 길 →</a></p>"""
+    <p class="road"><a class="lnk" href="road.html?back=c120">🌳 고른 사람 이야기 · 나이테(드니맘)가 걸어온 길 →</a></p>"""
 _about_js = r"""<script>(function(){
 var AGE=[['👶','조작북·반복 책부터','어린 아이도 이해하기 쉬워요. 라임 책은 노래처럼 들려주세요.'],['🧒','5권 골고루','조작북·반복으로 편하게 시작하고, 유머·스토리로 재미를 넓혀 가요.'],['🧑','유머·스토리, 라임까지','큰 아이일수록 유머와 이야기에서 재미를 더 많이 느껴요. 라임은 노래처럼 들려 색다른 재미를 줘요.']];
 var OWN=[['🌱','알아보지 말고, 지금 스터디 중인 달부터 그대로','매달 스터디 책 5권만 구해서 따라오다 보면 웬만한 유명 원서를 골고루 만나요.'],['📦','전집은 하던 대로, 원서 그림책은 나이테 120으로','잉글리시에그·월드패밀리 같은 영어 전집과 원서 그림책은 따로 가져가요. 전집은 그대로 하고, 한 달에 5권씩 더해 주세요.'],['📚','읽던 책은 그대로, 이번 달 5권은 전면책장에','매달 5권을 전면책장에 올려 두고 한 번씩만 읽어 줘도 새로운 책을 골고루 만나요.<span class="me">🌳 나이테네는요 — 기존 ORT는 자기 전 매일 읽고, 전면책장 5권은 매달 바꾸면서 ‘이번 달 이 5권은 꼭’ 하는 마음으로 한 번씩 읽어 줘요.</span>']];
