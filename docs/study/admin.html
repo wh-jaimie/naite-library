@@ -362,13 +362,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var pr=sel?await client.rpc('admin_study_progress',{p_theme:sel}):{data:[]},rows=pr.data||[],old=!!pr.error;
       var isCur=sel===cur,nudge=rows.filter(function(x){return x.week_days<2;});
       box.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+(keys.length?keys.map(function(k){return '<button class="btn" data-jk="'+esc(k)+'" style="padding:4px 10px;font-size:.8rem'+(k===sel?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+esc(k)+(k===cur?' (이번 달)':'')+' · '+cnt[k]+'명</button>';}).join(''):'<span>아직 참여한 엄마가 없어요.</span>')+'</div>'+
-        (old?'<p class="hint">⚙️ 기록 현황을 보려면 <b>migrate_study_joins.sql</b>을 다시 실행해 주세요(수료 규칙 추가분).</p>':'')+
-        (rows.length?'<p class="hint" style="margin:0 0 8px">수료 = 그 달 기록한 날 <b>8번</b> 이상 · 주 목표 <b>2번</b>(월~일) · 기록 = 책을 기록한 날(하루 여러 권은 1번)</p>'+
+        (old?'<p class="hint">⚙️ 기록 현황을 보려면 <b>migrate_study_joins.sql</b>을 다시 실행해 주세요(수료 규칙 추가분).</p>':'')+(rows.length&&rows[0].month_reviews==null?'<p class="hint">⚙️ 후기 수를 보려면 <b>migrate_study_reviews.sql</b>을 실행해 주세요.</p>':'')+
+        (rows.length?'<p class="hint" style="margin:0 0 8px">수료 = 그 달 기록한 날 <b>8번</b> 이상 + 책 후기 <b>3건</b> 이상(어떤 책이든) · 주 목표 <b>2번</b>(월~일) · 기록 = 책을 기록한 날(하루 여러 권은 1번)</p>'+
           (isCur&&nudge.length?'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;font-size:.84rem"><b style="color:#B87343">이번 주 2번 안 된 엄마 '+nudge.length+'명</b><button class="btn" id="joinNudge" style="padding:4px 10px;font-size:.78rem">📋 닉네임 복사</button></div>':'')+
-          '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr style="text-align:left;color:var(--soft)"><th style="padding:4px">닉네임</th><th>그 달 기록</th>'+(isCur?'<th>이번 주</th><th>지난 주</th>':'')+'<th>아이</th><th>어디서</th><th>공구</th><th>참여</th></tr>'+
-          rows.map(function(x){var ok=x.month_days>=8;
+          '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.84rem"><tr style="text-align:left;color:var(--soft)"><th style="padding:4px">닉네임</th><th>그 달 기록·후기</th>'+(isCur?'<th>이번 주</th><th>지난 주</th>':'')+'<th>아이</th><th>어디서</th><th>공구</th><th>참여</th></tr>'+
+          rows.map(function(x){var hasRv=x.month_reviews!=null,ok=x.month_days>=8&&(!hasRv||x.month_reviews>=3);
             return '<tr style="border-top:1px solid #E2E5DA'+(isCur&&x.week_days<2?';background:#FBF4E9':'')+'"><td style="padding:5px 4px;font-weight:800">'+esc(x.nickname)+'</td>'+
-              '<td>'+x.month_days+'/8'+(ok?' 🎓':'')+'</td>'+(isCur?'<td style="'+(x.week_days<2?'color:#B87343;font-weight:800':'')+'">'+x.week_days+'번</td><td>'+x.last_week_days+'번</td>':'')+
+              '<td>'+x.month_days+'/8'+(hasRv?' · 후기 '+x.month_reviews+'/3':'')+(ok?' 🎓':'')+'</td>'+(isCur?'<td style="'+(x.week_days<2?'color:#B87343;font-weight:800':'')+'">'+x.week_days+'번</td><td>'+x.last_week_days+'번</td>':'')+
               '<td>'+(AG[x.kid_age]||'')+'</td><td>'+(FR[x.came_from]||'')+'</td><td>'+(x.gb_interest?'🙋':'')+'</td><td>'+new Date(x.created_at).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})+' <span style="font-size:.74rem;color:'+(prev[x.reader]?'var(--tealD)">이어서':'#B87343">처음')+'</span></td>'+
               '</tr>';}).join('')+'</table></div>'+
           '<button class="btn" id="joinCsv" style="margin-top:10px">⬇️ CSV 내려받기</button>':'');
@@ -376,7 +376,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       var nb=document.getElementById('joinNudge');if(nb)nb.onclick=function(){var t=nudge.map(function(x){return x.nickname;}).join(', ');navigator.clipboard.writeText(t).then(function(){nb.textContent='✓ 복사함';},function(){prompt('복사해서 쓰세요',t);});};
       var cv=document.getElementById('joinCsv');if(cv)cv.onclick=function(){
         var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';};
-        var csv='﻿'+['주제,닉네임,그 달 기록한 날,수료,이번 주,지난 주,아이 나이,어디서,공구 관심,참여한 날,처음/이어서'].concat(rows.map(function(x){return [sel,x.nickname,x.month_days,x.month_days>=8?'수료':'',x.week_days,x.last_week_days,AG[x.kid_age]||'',FR[x.came_from]||'',x.gb_interest?'관심':'',String(x.created_at).slice(0,10),prev[x.reader]?'이어서':'처음'].map(q).join(',');})).join('\n');
+        var csv='﻿'+['주제,닉네임,그 달 기록한 날,그 달 후기,수료,이번 주,지난 주,아이 나이,어디서,공구 관심,참여한 날,처음/이어서'].concat(rows.map(function(x){return [sel,x.nickname,x.month_days,x.month_reviews==null?'':x.month_reviews,(x.month_days>=8&&(x.month_reviews==null||x.month_reviews>=3))?'수료':'',x.week_days,x.last_week_days,AG[x.kid_age]||'',FR[x.came_from]||'',x.gb_interest?'관심':'',String(x.created_at).slice(0,10),prev[x.reader]?'이어서':'처음'].map(q).join(',');})).join('\n');
         var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='스터디참여_'+sel+'.csv';a.click();};
     }
     draw();
