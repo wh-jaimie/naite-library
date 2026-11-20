@@ -1157,8 +1157,9 @@
         (memo&&!MEMO_POP?'<div class="rs-memo rs-inl"><label for="rsMemo">📝 <b>'+esc(shortTitle(memo.title))+'</b> 한 줄 메모 <span>(안 써도 돼요)</span></label>'+
           '<div class="row"><input id="rsMemo" maxlength="'+NOTE_MAX+'" placeholder="'+esc(NOTE_PH)+'" value="'+esc(noteGet(memo.key,day))+'">'+(noteGet(memo.key,day)?'<button type="button" class="done" data-smemo>✓ 저장됨</button>':'<button type="button" data-smemo>저장</button>')+'</div>'+
           '<p class="ok" aria-live="polite">'+(noteGet(memo.key,day)?'✓ 메모를 남겼어요':'')+'</p>'+
-          (memo.key.indexOf('b:')===0&&window.NaiteRv&&NaiteRv.canPost(+memo.key.slice(2))?'<button type="button" class="rs-m2r" data-sm2r'+(noteGet(memo.key,day)?'':' hidden')+'>💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small></button>':'')+'</div>'+
-          (memo.key.indexOf('b:')===0&&S.rvSlot?'<div class="rs-rvq rs-inl" data-rvq="'+esc(memo.key.slice(2))+'"></div>':''):'')+
+          (rvMonth(memo.key)?'<button type="button" class="rs-m2r" data-sm2r'+(noteGet(memo.key,day)?'':' hidden')+'>💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small></button>':
+            (rvxOk(memo.key)?((rvxMine(memo.key)||{}).body&&rvxMine(memo.key).body===noteGet(memo.key,day).trim()?'<button type="button" class="rs-m2r" disabled>✓ 후기로 올렸어요</button>':'<button type="button" class="rs-m2r" data-sm2rx'+(noteGet(memo.key,day)?'':' hidden')+'>💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small></button>'):''))+'</div>'+
+          (rvMonth(memo.key)&&S.rvSlot?'<div class="rs-rvq rs-inl" data-rvq="'+esc(memo.key.slice(2))+'"></div>':(rvxOk(memo.key)?'<div class="rs-rvq rs-inl rvx">'+rvxHTML(memo.key)+'</div>':'')):'')+
         (qraw&&!exact?'<button type="button" class="rp-new" data-sonew>📚 <b>'+esc(qraw)+'</b> 그대로 기록하기<small>목록에 없는 책이면 이렇게 적어 두세요</small></button>':'')+
         secs.map(function(x){return x[1].length||(!qq&&x[2])?'<h4 class="rp-h">'+esc(x[0])+(x[1].length&&x[0]!==secs[0][0]?' <span>'+x[1].length+'</span>':'')+'</h4>'+(x[1].join('')||x[2]||''):'';}).join('')+
         (qq&&!secs.some(function(x){return x[1].length;})?'<p class="rv-empty">찾는 책이 목록에 없어요. 위 버튼으로 제목 그대로 기록하세요.</p>':'')+
@@ -1183,13 +1184,17 @@
         t.disabled=true;t.textContent='올리는 중…';var bk=t;NaiteRv.postBody(+memo.key.slice(2),v4).then(function(ok){if(!document.body.contains(bk))return;
           if(ok){bk.textContent='✓ 후기로 올렸어요';try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}}else{bk.disabled=false;bk.innerHTML='💬 이 메모를 후기로도 올리기 <small>(다시 눌러 주세요)</small>';}});return;}
       if((t=e.target.closest('[data-smopen]'))){if(memo)openMemoPop(memo,day,function(){render();});return;}
+      if((t=e.target.closest('[data-rvxx]'))){if(memo)rvxToggle(memo.key,t.getAttribute('data-rvxx'));return;}
+      if((t=e.target.closest('[data-sm2rx]'))){var mi5=box.querySelector('#rsMemo'),v5=String(mi5&&mi5.value||'').trim();if(!v5||!memo)return;clearTimeout(memoT);noteSet(memo.key,day,v5);
+        t.disabled=true;t.textContent='올리는 중…';var bk5=t;rvxPost(memo.key,null,v5).then(function(){if(!document.body.contains(bk5))return;bk5.textContent='✓ 후기로 올렸어요';try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}},
+          function(d){if(!document.body.contains(bk5))return;bk5.disabled=false;bk5.innerHTML=d&&d.error==='limit'?'오늘은 후기를 더 남길 수 없어요':'💬 이 메모를 후기로도 올리기 <small>(다시 눌러 주세요)</small>';});return;}
       if((t=e.target.closest('[data-sdone]'))){saveMemo();closeSheet();return;}
     };
     function saveMemo(){var mi3=box.querySelector('#rsMemo');if(mi3&&memo){clearTimeout(memoT);noteSet(memo.key,day,mi3.value);}}
     var qT=0;
     root.addEventListener('input',function(e){
       if(e.target.id==='rpQ'){q=e.target.value;clearTimeout(qT);qT=setTimeout(function(){render();try{box.scrollTop=0;}catch(x){}},120);return;}
-      if(e.target.id!=='rsMemo'||!memo)return;var m2r=box.querySelector('[data-sm2r]');if(m2r){m2r.hidden=!e.target.value.trim();m2r.disabled=false;m2r.innerHTML='💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small>';}var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok'),sb=box.querySelector('[data-smemo]');if(ok)ok.textContent='';if(sb){sb.classList.remove('done','pop');sb.textContent='저장';}
+      if(e.target.id!=='rsMemo'||!memo)return;var m2r=box.querySelector('[data-sm2r],[data-sm2rx]');if(m2r){m2r.hidden=!e.target.value.trim();m2r.disabled=false;m2r.innerHTML='💬 이 메모를 후기로도 올리기 <small>(이름 없이 공개)</small>';}var k0=memo.key,v0=e.target.value,ok=box.querySelector('.rs-memo .ok'),sb=box.querySelector('[data-smemo]');if(ok)ok.textContent='';if(sb){sb.classList.remove('done','pop');sb.textContent='저장';}
       clearTimeout(memoT);memoT=setTimeout(function(){noteSet(k0,day,v0);if(ok&&document.body.contains(ok)&&v0.trim())ok.textContent='자동으로 저장됐어요';},700);});
     root.addEventListener('keydown',function(e){
       if(e.target.id==='rpQ'&&e.key==='Enter'){e.preventDefault();try{e.target.blur();}catch(x){}return;}
@@ -1197,6 +1202,33 @@
     render();
     if(S.onEvent)S.onEvent('record_sheet_open',{day:day,past:day!==logicalToday()});
   }
+  // 후기(2026-11-20 운영자 요청: 스터디 책이 아니어도). 이번 달 책 = 기존 후기(app.html), 지난 달 스터디 책 = 책 id 후기, 그 밖 = 제목 후기
+  var RVX={},RXL=[['laugh','😆','웃었어요'],['again','🔁','또 읽어 달래요'],['talk','🗣️','따라 말했어요'],['notyet','😴','아직 관심 없어요']];
+  function rvMonth(mk){return mk.indexOf('b:')===0&&!!(window.NaiteRv&&NaiteRv.canPost(+mk.slice(2)));}
+  function rvxOk(mk){return !!(window.NaiteRv&&NaiteRv.voice)&&!rvMonth(mk)&&(mk.indexOf('b:')===0||mk.replace(/^o:/,'').trim().length>=2);}
+  function rvxLoad(mk){if(RVX[mk])return;RVX[mk]={loading:1,list:[]};var v=NaiteRv.voice(false)||null;
+    (mk.indexOf('b:')===0?rpc('list_reviews',{p_book_ids:[+mk.slice(2)],p_reader:v}):rpc('list_title_reviews',{p_titles:[mk.slice(2)],p_reader:v}))
+      .then(function(d){RVX[mk]={ok:1,list:d||[]};if(S&&S.recSheet)S.recSheet.render();},function(){RVX[mk]={ok:0,list:[]};});}
+  function rvxMine(mk){return ((RVX[mk]||{}).list||[]).filter(function(x){return x.mine;})[0];}
+  function rvxHTML(mk){var R=RVX[mk];if(!R){rvxLoad(mk);return '';}if(!R.ok)return '';
+    var m=rvxMine(mk),on={},cnt={};(m&&m.reactions||[]).forEach(function(k){on[k]=1;});
+    R.list.forEach(function(x){if(!x.mine)(x.reactions||[]).forEach(function(k){cnt[k]=(cnt[k]||0)+1;});});
+    var sum=RXL.filter(function(x){return cnt[x[0]];}).map(function(x){return x[1]+' '+cnt[x[0]];}).join(' · '),q=R.list.filter(function(x){return x.body&&!x.mine;})[0];
+    return '<div class="rvq"><p class="rvq-h">💬 이 책 후기를 남겨 주세요! <span>아이 반응은 어땠어요? (여러 개 골라도 돼요)</span></p><div class="rvq-x">'+
+      RXL.map(function(x){return '<button type="button" data-rvxx="'+x[0]+'" aria-pressed="'+(!!on[x[0]])+'">'+x[1]+' '+x[2]+'</button>';}).join('')+'</div>'+
+      (m?'<p class="rvq-ok">✓ 반응을 남겼어요. 고마워요!</p>':'')+
+      (sum||q?'<p class="rvx-sum">엄마들 반응'+(sum?' · '+sum:'')+(q?'<br>“'+esc(q.body)+'”':'')+'</p>':'')+'</div>';}
+  function rvxPost(mk,re,body){var m=rvxMine(mk),age=(NaiteRv.age&&NaiteRv.age())||(m&&m.age)||null;
+    if(re==null)re=(m&&m.reactions)||[];if(body==null)body=(m&&m.body)||'';
+    var a={p_reader:NaiteRv.voice(true),p_age:age,p_reactions:re,p_body:String(body).slice(0,100)},isB=mk.indexOf('b:')===0;
+    if(isB)a.p_book_id=+mk.slice(2);else a.p_title=mk.slice(2);
+    return rpc(isB?'save_review':'save_title_review',a).then(function(d){if(!d||!d.ok)throw d||{};
+      if(S.onEvent)S.onEvent(d.deleted?'review_delete':'review_save',{book_id:isB?+mk.slice(2):null,title:isB?((S.byId[+mk.slice(2)]||{}).title||''):mk.slice(2),n:re.length,body:body?1:0,edit:m?1:0,from:'record_page',kind:isB?'past':'title'});
+      delete RVX[mk];rvxLoad(mk);return d;});}
+  var rvxBusy=0;
+  function rvxToggle(mk,k){if(rvxBusy)return;var m=rvxMine(mk),on={};(m&&m.reactions||[]).forEach(function(x){on[x]=1;});on[k]=!on[k];
+    var re=RXL.map(function(x){return x[0];}).filter(function(x){return on[x];});rvxBusy=1;
+    rvxPost(mk,re,null).then(function(){rvxBusy=0;try{if(navigator.vibrate)navigator.vibrate(12);}catch(x){}},function(d){rvxBusy=0;toast(d&&d.error==='limit'?'오늘은 후기를 더 남길 수 없어요.':'반응을 올리지 못했어요. 잠시 뒤 다시 해 주세요.');});}
   // 다른 엄마들이 '다른 책'에 적은 제목(서로 다른 2명 이상이 적은 것만, 서버가 골라 줌)
   function loadShared(){if(S.shared||S.sharedLoading)return;S.sharedLoading=1;
     rpc('shared_other_titles',{}).then(function(d){S.shared=(d||[]).filter(function(x){return x&&x.title;});S.sharedLoading=0;if(S.recSheet)S.recSheet.render();},function(){S.sharedLoading=0;S.shared=[];});}
