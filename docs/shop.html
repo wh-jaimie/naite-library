@@ -7,7 +7,7 @@
 <link rel="apple-touch-icon" href="/naite-library/apple-touch-icon.png">
 <meta name="theme-color" content="#245648">
 <title>나이테 - 영어책육아 메이트</title>
-<meta name="description" content="나이테 이번 달 스터디 책 5권과 나이테(드니맘)가 걸어온 길 속 영어책·세트.">
+<meta name="description" content="나이테 이번 달 스터디 책 5권과 나이테(드니맘)가 활용한 원서들.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&display=swap">
 <style>
@@ -28,22 +28,23 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
 .head .intro a{color:#245648;font-weight:700}
 .head .intro{margin:10px 0 0;font-size:.86rem;line-height:1.6;color:#5C6152}
 .head .sh{position:absolute;left:18px;top:14px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(31,61,42,.08)}
-.panel{background:#fff;border:1px solid #E7E0D0;border-radius:22px;margin:16px 14px 0;padding:6px 0 4px;overflow:hidden}
-.sec{margin-top:0}
-.sec h2{margin:14px 0 6px;text-align:center;font-size:1.08rem;font-weight:700}
-.sec p.sub{margin:0 0 6px;text-align:center;font-size:.8rem;color:var(--soft)}
-.row{display:flex;align-items:center;gap:14px;padding:12px 18px;text-decoration:none;color:inherit;border-bottom:1px solid #F1F2EC}
-.row:active{background:#FAFAF6}
-.im{flex:none;width:72px;height:72px;border-radius:8px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:28px}
-.im img{max-width:100%;max-height:100%;display:block}
-.tx{flex:1;min-width:0}
-.nm{font-size:.92rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mt{font-size:.74rem;color:var(--soft);margin-top:2px}
-.pr{font-size:.98rem;font-weight:700;margin-top:4px}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 14px 0}
-.pc{display:flex;align-items:center;gap:6px;padding:16px 12px;border:0;border-radius:999px;text-decoration:none;color:var(--ink);background:#fff;box-shadow:0 2px 8px rgba(31,61,42,.06)}
-.pc .pi{font-size:1.2rem}.pc b{flex:1;font-size:.95rem;font-weight:700;white-space:nowrap;letter-spacing:-.02em}.pc .pa{color:var(--pine);font-weight:900}
-.empty{text-align:center;color:var(--soft);font-size:.85rem;padding:20px}
+.sec{margin:26px 14px 0}
+.sec h2{margin:0 0 14px;text-align:center;font-size:1.12rem;font-weight:800;color:#23291F}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.row{display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 3px 12px rgba(60,50,30,.10);transition:transform .12s ease,box-shadow .12s ease;-webkit-tap-highlight-color:transparent}
+.row:active{transform:scale(.96);box-shadow:0 1px 5px rgba(60,50,30,.10)}
+.im{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#F4F1EA;overflow:hidden;font-size:30px;padding:8px}
+.im img{max-width:100%;max-height:100%;display:block;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.tx{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 6px 10px;flex:1;justify-content:center}
+.nm{font-size:.78rem;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+.mt{display:inline-block;font-size:.62rem;font-weight:700;color:#245648;background:#E7F0EA;border-radius:999px;padding:1px 6px;margin-top:4px}
+.pr{font-size:.82rem;font-weight:800;color:#E0482E;margin-top:3px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 14px 0}
+.pc{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:13px 8px;border-radius:16px;text-decoration:none;color:#fff;background:#245648;box-shadow:0 4px 12px rgba(36,86,72,.25);transition:transform .12s ease;-webkit-tap-highlight-color:transparent}
+.pc:active{transform:scale(.96)}
+.pc .pi{font-size:1.4rem}.pc b{font-size:.9rem;font-weight:800;white-space:nowrap;letter-spacing:-.02em}.pc .pa{display:none}
+.pc+.pc{background:#D1965C;box-shadow:0 4px 12px rgba(209,150,92,.3)}
+.empty{grid-column:1/-1;text-align:center;color:var(--soft);font-size:.85rem;padding:20px}
 .foot{text-align:center;font-size:.75rem;color:var(--soft);margin-top:26px;padding:0 18px;line-height:1.6}
 .foot a{color:var(--pine);font-weight:700}
 </style>
@@ -54,10 +55,10 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
     <a class="go" href="./?from=shop">나이테 스터디 ›</a></div>
   <div class="head"><button type="button" class="sh" id="shareBtn" aria-label="공유"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B1E19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
     <a class="lg" href="./?from=shop"><img src="naite-profile.jpg" alt="나이테(드니맘)"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.<br>문의 : <a href="mailto:naite_library@naver.com">naite_library@naver.com</a></p></div>
-  <section class="sec panel"><h2 id="mH">이번 달 스터디 책 5권</h2><div id="month"><p class="empty">불러오는 중…</p></div></section>
+  <section class="sec"><h2 id="mH">이번 달 스터디 책 5권</h2><div class="grid" id="month"><p class="empty">불러오는 중…</p></div></section>
   <div class="cards"><a class="pc" href="challenge.html?from=shop" data-pc="나이테 120"><span class="pi">🎯</span><b>스터디 전체 과정</b><span class="pa">›</span></a><a class="pc" href="domestic.html?from=shop" data-pc="국내 인기 책장"><span class="pi">🛒</span><b>인기 원서 100</b><span class="pa">›</span></a></div>
-  <section class="sec panel"><h2>나이테가 걸어온 길</h2><div id="road"></div></section>
-  <section class="sec panel"><h2>나이테 대박책</h2><div id="best"></div></section>
+  <section class="sec"><h2>나이테가 활용한 원서들</h2><div class="grid" id="road"></div></section>
+  <section class="sec"><h2>나이테 대박책</h2><div class="grid" id="best"></div></section>
   <p class="foot"><a href="./?from=shop">나이테 둘러보기 ›</a></p>
   <p class="disc2">이 페이지의 상품 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
 </div>
