@@ -819,6 +819,8 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd-gbline b{font-weight:800}
 .sd-gbline button{flex:0 0 auto;border:0;background:var(--clay);color:#fff;font:inherit;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;cursor:pointer}
 .sd-gbline button.on{background:var(--pine);cursor:default}
+.sd-gbline .gbgo{flex:0 0 auto;background:var(--clay);color:#fff;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;text-decoration:none;white-space:nowrap}
+.join-sheet .sd-gbline,.nsd .sd-gbline{margin:12px 0 0}
 /* 표지 = 쿠팡으로 가는 버튼처럼(2026-11-11) */
 a.sd-cv img,.sd a.nb .cv img,.gcard .gcv img{box-shadow:0 1px 3px rgba(35,41,31,.24),0 6px 14px rgba(35,41,31,.28);transition:transform .1s,box-shadow .1s}
 a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:translateY(2px);box-shadow:0 1px 3px rgba(35,41,31,.26)}
@@ -1321,7 +1323,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261121a"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261121b"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261119a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1554,6 +1556,11 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
   }
   // 신청자 전용 자료는 12월 자료부터(2026-11-18 운영자 결정). 11월 탈것까지는 지금처럼 누구나
   var GATE_FROM='2026-12-01';
+  // 2026-11-21 운영자: 12월 자료부터 공동구매는 '관심 있어요'가 아니라 '공동구매 신청하기'(구글 폼)
+  var GB_FORM='https://forms.gle/wZCh6SzQeLKi3yu87',GB_FROM='2026-12-01';
+  function gbApply(ym){return !!ym&&String(ym)>=GB_FROM;}
+  function mlYm(ml){var m=/(\d{4})\s*년\s*(\d{1,2})\s*월/.exec(ml||'');return m?m[1]+'-'+('0'+m[2]).slice(-2)+'-01':'';}
+  document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-gbapply]');if(a)logEvent('groupbuy_apply_click',{from:a.getAttribute('data-gbapply'),theme_key:a.getAttribute('data-gbtheme')||''});});
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-cert]');if(!b||!window.NaiteReading||!NaiteReading.openCert)return;
     var st=JS_.st||{};NaiteReading.openCert({name:st.nickname||'',month:st.month?+String(st.month).slice(5,7):0});});
   function gated(){var st=JS_.st;return !!(st&&st.month&&String(st.month)>=GATE_FROM);}
@@ -1651,7 +1658,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
       '<label class="q" for="joinNm">닉네임 <small>채팅방·당근에서 쓰는 이름</small></label><input id="joinNm" class="nm" maxlength="20" placeholder="예: 나이테" value="'+esc(st.nickname||'')+'">'+
       '<label class="q">아이 나이 <small>(선택)</small></label><div class="opts" data-g="age">'+[1,2,3].map(function(k){return '<button type="button" data-v="'+k+'" aria-pressed="'+(k===age)+'">'+AGE[k][1]+'</button>';}).join('')+'</div>'+
       '<label class="q">어디서 알게 되셨나요? <small>(선택)</small></label><div class="opts" data-g="from">'+JOIN_FROM.map(function(x){return '<button type="button" data-v="'+x[0]+'" aria-pressed="'+(x[0]===from)+'">'+x[1]+'</button>';}).join('')+'</div>'+
-      '<label class="gbck"><input type="checkbox" data-gbck'+(gbHas(th.key)?' checked':'')+'> 🙋 이 5권 <b>공동구매</b> 관심 있어요 <small>(선택)</small></label>'+
+      (gbApply(how==='next'&&NEXT?NEXT.ym:st.month)?'<div class="sd-gbline gbapply"><span>🛒 이 5권 <b>공동구매</b> 신청 받아요</span><a class="gbgo" href="'+GB_FORM+'" target="_blank" rel="noopener" data-gbapply="join" data-gbtheme="'+esc(th.key)+'">신청하기</a></div>':'<label class="gbck"><input type="checkbox" data-gbck'+(gbHas(th.key)?' checked':'')+'> 🙋 이 5권 <b>공동구매</b> 관심 있어요 <small>(선택)</small></label>')+
       '<div class="rule"><b>수료 조건</b>: 한 달에 <b>8번</b> 읽기 인증'+(rvRule(how==='next'&&NEXT?NEXT.ym:st.month)?' + 책 후기 <b>3건</b>':'')+'<br><b>수료 보상</b>: 귀여운 수료증을 드려요 🎓</div>'+
       '<p class="err" id="joinErr" hidden></p>'+
       '<button type="button" class="pri" data-joinsave>'+(how==='edit'?'고치기':'신청하기')+'</button><button type="button" class="subtle" data-joinx>닫기</button></div>';
@@ -1665,7 +1672,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
     var er=ov.querySelector('#joinErr'),nm=ov.querySelector('#joinNm');
     ov.querySelector('[data-joinsave]').onclick=async function(){
       var v=nm.value.trim();if(!v){er.textContent='닉네임을 적어 주세요.';er.hidden=false;nm.focus();return;}
-      if(await sendJoin({nick:v,age:age,from:from,gb:ov.querySelector('[data-gbck]').checked},how,er,this,how==='next'&&NEXT?NEXT.key:null)){close();if(after)after();}};
+      if(await sendJoin({nick:v,age:age,from:from,gb:ov.querySelector('[data-gbck]')?ov.querySelector('[data-gbck]').checked:null},how,er,this,how==='next'&&NEXT?NEXT.key:null)){close();if(after)after();}};
     logEvent('join_open',{how:how});
   }
   // 놀이 준비물 쿠팡 가격(2026-11-20): docs/play_prices.json(쿠팡 파트너스 API로 가져온 가격·날짜, ~/.naite/coupang_prices.py로 갱신)
@@ -1755,7 +1762,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
        hero+'<div class="sd-shelf">'+bh+'</div>'+
        // 2026-11-17 시안 B: 나이 표시·활용법·공동구매를 한 상자에 세 줄로(표지 아래를 얇게), 5권 소개 보기는 그 아래
        '<div class="sd-mid"><div id="sdAge"></div>'+(PREVIEW?'':useLineHTML())+
-       '<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div></div>'+
+       (gbApply(mlYm(c.month_label))?'<div class="sd-gbline gbapply"><span>🛒 이 5권 <b>공동구매</b> 신청 받아요</span><a class="gbgo" href="'+GB_FORM+'" target="_blank" rel="noopener" data-gbapply="month" data-gbtheme="'+esc(theme.key)+'">신청하기</a></div>':'<div class="sd-gbline" id="sdGb"><span>🙋 이 5권 <b>공동구매</b> 준비 중이에요</span><button type="button" id="sdGbBtn">관심 있어요</button></div>')+'</div>'+
        '<button type="button" class="shelf-more" id="sdInfoGo">5권 소개 보기'+ic('chev',15)+'</button>'+
        '<h3 class="binfo-h" id="sdInfo">5권 소개</h3><div class="sd-books">'+binfo+'</div>'+
        (exhtml?'<div id="s-extra"><h3 class="binfo-h">부가자료</h3><p class="note">이번 달 주제와 관련된 추가 영상·자료예요.</p><div class="card extras">'+exhtml+'</div></div>':'')+
@@ -2122,7 +2129,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       var nyr=m?(+m[2]===12?+m[1]+1:+m[1]):0;NEXT={key:nx.key,ko:nx.ko,emoji:nx.emoji||'',mon:mon,ym:m?nyr+'-'+('0'+((+m[2])%12+1)).slice(-2)+'-01':''};
       var html='<section id="s-next"><div class="sh">'+ic('eye',20)+'<h2>다음 달 미리보기</h2><span class="cnt clay">'+esc(mon+' · '+t.ko)+'</span></div>'+
         '<div class="card"><div class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보가 열려요.</div><div class="shelf">'+cards+'</div>'+
-        '<button type="button" class="copyall" data-copy="'+esc(all)+'" data-cpfrom="next_all">'+ic('copy',16)+'5권 제목 한 번에 복사</button><div class="hint">도서관 희망도서 신청 · 장바구니 검색할 때 편해요</div></div>'+
+        '<button type="button" class="copyall" data-copy="'+esc(all)+'" data-cpfrom="next_all">'+ic('copy',16)+'5권 제목 한 번에 복사</button><div class="hint">도서관 희망도서 신청 · 장바구니 검색할 때 편해요</div>'+(gbApply(NEXT.ym)?'<div class="sd-gbline gbapply"><span>🛒 이 5권 <b>공동구매</b> 신청 받아요</span><a class="gbgo" href="'+GB_FORM+'" target="_blank" rel="noopener" data-gbapply="next_preview" data-gbtheme="'+esc(nx.key)+'">신청하기</a></div>':'')+'</div>'+
         (nx.blog_url?'<a class="linkrow" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1"><span>이 5권을 고른 이유<small>블로그</small></span>'+ic('right',18)+'</a>':'')+'</section>';
       NEXT.html=html;paintNextLine();
       if(PREVIEW){el.innerHTML=html;}
