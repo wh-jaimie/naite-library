@@ -72,7 +72,7 @@ function img(c){if(!c)return '';var u=c.indexOf('road/')===0||c.indexOf('http')=
 var LP={};
 function mon(w){var m=/(\d{4})년 (\d{1,2})월/.exec(w||'');return m?((+m[1]-2021)*12+(+m[2])-1)+'개월':'';}
 function won(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
-function row(it,from){return '<a class="row" href="'+esc(it.url)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.name)+'" data-from="'+from+'"><span class="im">'+(it.img||'📚')+'</span><span class="tx"><span class="nm">'+esc(it.name)+'</span>'+(it.meta?'<span class="mt">'+esc(it.meta)+'</span>':'')+(LP[it.url]>0?'<div class="pr">'+won(LP[it.url])+'</div>':'')+'</span></a>';}
+function row(it,from){return '<a class="row" href="'+esc(it.url)+'" target="_blank" rel="noopener sponsored nofollow" data-t="'+esc(it.name)+'" data-from="'+from+'"><span class="im">'+(it.img||'📚')+'</span><span class="tx"><span class="nm">'+esc(it.name)+'</span>'+(it.meta?'<span class="mt">'+esc(it.meta)+'</span>':'')+'</span></a>';}
 function get(path){return fetch(U+'/rest/v1/'+path,{headers:H}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];});}
 Promise.all([
   get('link_prices?select=url,price'),
