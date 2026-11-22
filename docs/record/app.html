@@ -759,6 +759,9 @@ body:has(.rl-instbar) .td-fab{bottom:calc(136px + env(safe-area-inset-bottom,0px
 .sd .nb .ty{font-size:10.5px;font-weight:700;color:var(--pine);margin-top:7px}
 .sd .nb .tt{font-size:12px;font-weight:700;line-height:1.3;margin-top:1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sd .nb .lv{margin-top:3px}
+.sd .nb .nbf{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.sd .nb .nbcp{display:inline-grid;place-items:center;width:24px;height:24px;margin-top:3px;border:1px solid var(--line);border-radius:7px;background:var(--surface-2);color:var(--pine);cursor:pointer;padding:0;flex:none}
+.next-sheet .nb .nbf{justify-content:center}.next-sheet .nb .nbcp{margin-top:6px}
 .sd .copyall{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--clay-soft);color:var(--clay-ink);border:1px solid #E6D3C0;border-radius:12px;padding:11px;font:inherit;font-weight:700;font-size:13.5px;cursor:pointer}
 .sd .copyall+.hint{text-align:center;font-size:11.5px;color:var(--muted);margin-top:5px}
 .sd .linkrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);font-size:13.5px;font-weight:700}
@@ -1325,7 +1328,7 @@ a.sd-cv:active img,.sd a.nb:active .cv img,.gcard:active .gcv img{transform:tran
 <body>
 <div id="app"><div class="wrap"><p class="empty" style="padding:60px 0;text-align:center">불러오는 중…</p></div></div>
 <script src="../study/config.js"></script>
-<script src="reading-log.js?v=20261122d"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
+<script src="reading-log.js?v=20261122e"></script><script>/* 2026-11-17: 홈 화면 앱은 며칠씩 열린 채로 있어 새 버전이 안 들어감 → 다시 앱으로 돌아올 때 새 버전이 있으면 새로 고침(아래 창·카메라가 열려 있으면 다음에) */(function(){var el=document.querySelector('script[src*="reading-log.js"]'),m=el&&/v=([0-9a-z]+)/.exec(el.getAttribute('src')),V=m?m[1]:'',last=Date.now();if(!V)return;document.addEventListener('visibilitychange',function(){if(document.visibilityState!=='visible'||Date.now()-last<6e4)return;last=Date.now();fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){var n=/reading-log\.js\?v=([0-9a-z]+)/.exec(t||'');if(n&&n[1]!==V&&!document.querySelector('.rl-scrim:not([hidden]),.rl-cam,#pn:not([hidden])'))location.reload();}).catch(function(){});});})();</script><!-- 화면과 스크립트가 어긋나지 않게 바꿀 때마다 v 올리기 -->
 <script src="study-extras.js?v=20261119a"></script><!-- 영어표현 듣기 · 단어·줄거리 (바꿀 때마다 v 올리기) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -2129,13 +2132,13 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
       var books=t.books.slice().sort(function(a,b){return (level(a)||9)-(level(b)||9)||a.tier-b.tier;});
       var ag=getAge(),apk={};if(ag)agePicks(books,ag,nx.age_picks||null).forEach(function(b){apk[b.title]=1;}); // 2026-11-22 운영자: 미리보기에도 먼저 읽기·글밥
       var cards=books.map(function(b){var lv=level(b),L=links[b.title];
-        var inner='<span class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>')+(apk[b.title]?'<span class="apk">💛 먼저 읽기</span>':'')+'</span><span class="ty">'+esc(b.tier_label)+'</span><span class="tt">'+esc(b.title)+'</span>'+(lv?'<span class="lv">'+LV_EMO[lv]+' '+LV_TXT[lv]+'</span>':'');
+        var inner='<span class="cv">'+(b.cover?'<img loading="lazy" src="'+esc(b.cover)+'" alt="'+esc(b.title)+'">':'<span class="fbx">'+esc(b.title)+'</span>')+(apk[b.title]?'<span class="apk">💛 먼저 읽기</span>':'')+'</span><span class="ty">'+esc(b.tier_label)+'</span><span class="tt">'+esc(b.title)+'</span><span class="nbf">'+(lv?'<span class="lv">'+LV_EMO[lv]+' '+LV_TXT[lv]+'</span>':'')+'<button type="button" class="nbcp" data-copy="'+esc(b.title)+'" data-cpfrom="next" aria-label="제목 복사" title="제목 복사">'+ic('copy',13)+'</button></span>'; // 2026-11-22 운영자: 5권 한 번에 → 한 권씩 복사
         return L?'<a class="nb" href="'+esc(L)+'" target="_blank" rel="noopener sponsored nofollow" data-np="'+esc(b.title)+'">'+inner+'</a>':'<div class="nb">'+inner+'</div>';}).join('');
       var all=books.map(function(b,k){return (k+1)+'. '+b.title+(b.author?' ('+b.author+')':'');}).join('\n');
       var nyr=m?(+m[2]===12?+m[1]+1:+m[1]):0;NEXT={key:nx.key,ko:nx.ko,emoji:nx.emoji||'',mon:mon,ym:m?nyr+'-'+('0'+((+m[2])%12+1)).slice(-2)+'-01':''};
       var html='<section id="s-next"><div class="sh">'+ic('eye',20)+'<h2>다음 달 미리보기</h2><span class="cnt clay">'+esc(mon+' · '+t.ko)+'</span></div>'+
         '<div class="card"><div class="nsub">미리 책을 준비해 두세요. 표지를 누르면 책정보가 열려요.</div><div class="shelf">'+cards+'</div>'+
-        '<button type="button" class="copyall" data-copy="'+esc(all)+'" data-cpfrom="next_all">'+ic('copy',16)+'5권 제목 한 번에 복사</button><div class="hint">도서관 희망도서 신청 · 장바구니 검색할 때 편해요</div>'+(gbApply(NEXT.ym)?'<div class="sd-gbline gbapply"><span>🛒 이 5권 <b>공동구매</b> 신청 받아요</span><a class="gbgo" href="'+GB_FORM+'" target="_blank" rel="noopener" data-gbapply="next_preview" data-gbtheme="'+esc(nx.key)+'">신청하기</a></div>':'')+'</div>'+
+        (gbApply(NEXT.ym)?'<div class="sd-gbline gbapply"><span>🛒 이 5권 <b>공동구매</b> 신청 받아요</span><a class="gbgo" href="'+GB_FORM+'" target="_blank" rel="noopener" data-gbapply="next_preview" data-gbtheme="'+esc(nx.key)+'">신청하기</a></div>':'')+'</div>'+
         (nx.blog_url?'<a class="linkrow" href="'+esc(nx.blog_url)+'" target="_blank" rel="noopener" data-npblog="1"><span>이 5권을 고른 이유<small>블로그</small></span>'+ic('right',18)+'</a>':'')+'</section>';
       NEXT.html=html;paintNextLine();
       if(PREVIEW){el.innerHTML=html;}
