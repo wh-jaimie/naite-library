@@ -19,6 +19,15 @@ for _t in data["themes"]:
         _b["buy_url"] = BUY.get(_bnorm(_b["title"]), "")
         if _b["buy_url"]:
             _buycnt += 1
+# 글밥 = 책 전체 단어 수(2026-11-22 운영자, 스터디 자료 세션이 만든 output/word_counts.json — gid로 맞춤)
+try:
+    _WC = {b["gid"]: b.get("word_count") for b in json.load(open(os.path.join(HERE, "output", "word_counts.json"), encoding="utf-8"))["books"]}
+except Exception:
+    _WC = {}
+for _t in data["themes"]:
+    for _b in _t["books"]:
+        if _WC.get(_b.get("gid")):
+            _b["wc"] = _WC[_b["gid"]]
 payload = json.dumps(data, ensure_ascii=False)
 
 TEMPLATE = r"""<!doctype html>
@@ -370,10 +379,11 @@ const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"
 const tvar=t=>`var(--t${t})`;
 // 표시 순서: 조작북(1) → 반복(3) → 라임(2) → 유머(4) → 스토리(5). 번호·색은 표시 위치 기준.
 const DORD=[1,3,2,4,5];const POS={};DORD.forEach((t,i)=>POS[t]=i+1);
-// 글밥 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상 (AR는 계산용, 화면엔 표시 안 함)
-const LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+// 글밥 단계(2026-11-22 운영자): 책 전체 단어 수 기준 🌱 250 미만 / 🌿 250~449 / 🌳 450 이상. 조작북도 단어 수로(LV_T1_EASY=false, 운영자 2026-11-22).
+// 단어 수 = books.word_count(나이테 120은 output/word_counts.json). 단어 수가 없을 때만 예전 AR 기준(2.0/3.0)으로.
+var WC_EASY_MAX=250, WC_MID_MAX=450, LV_T1_EASY=false, LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
 const LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
-function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;const a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
+function level(b){if(LV_T1_EASY&&b.tier===1)return 1;var w=b.word_count!=null&&b.word_count!==''?b.word_count:b.wc;if(w!=null&&w!==''){w=Number(w);return w<WC_EASY_MAX?1:(w<WC_MID_MAX?2:3);}if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 // 완주율 = 스터디 앱 '읽기 기록'에 남긴 책(2026-11-08). 표지 체크 기능은 없앰 — 앱 안·사이트 모두 같은 기준
 // 기록(naite_reads_v2)의 책 번호 → 책 정보(naite_bookmeta: 제목·주제·유형) → 120권 중 같은 제목(없으면 같은 주제·유형)
 function logSeen(){
@@ -703,7 +713,7 @@ print(f"쿠팡 링크 연결된 책: {_buycnt}/120")
 # 나이테 스터디 앱의 '다음 달 미리보기'가 읽는 공개 데이터(아직 비공개인 달의 책도 120 페이지엔 공개돼 있음)
 _mini = {"themes": [{"key": t["key"], "emoji": t["emoji"], "ko": t["ko"], "en": t["en"],
           "books": [{"title": b["title"], "author": b["author"], "cover": b.get("cover") or "", "tier": b["tier"],
-                     "tier_label": b["tier_label"], "ar": b.get("ar"), "format": b.get("format") or "", "reason": b.get("reason") or ""} for b in sorted(t["books"], key=lambda x: x["tier"])]}
+                     "tier_label": b["tier_label"], "ar": b.get("ar"), "wc": b.get("wc"), "format": b.get("format") or "", "reason": b.get("reason") or ""} for b in sorted(t["books"], key=lambda x: x["tier"])]}
          for t in data["themes"]]}
 json.dump(_mini, open(os.path.join(os.path.dirname(OUT), "..", "docs", "c120_data.json"), "w", encoding="utf-8"), ensure_ascii=False)
 print(f"생성: {OUT} ({len(html_out)//1024} KB), 120권/24주제 + docs/c120_data.json")

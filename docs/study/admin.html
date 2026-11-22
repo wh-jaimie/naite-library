@@ -138,10 +138,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   var _hv=(location.hash||'').slice(1);
   var DEFAULT_STUDY_ROOM_URL='https://open.kakao.com/o/p8qXEfUi';
   var STATE={view:(['ops','content','buyurls','road','guides','members'].indexOf(_hv)>=0?_hv:'ops'),tab:'content', themes:[], booksByTheme:{}, contentByTheme:{}, current:null, studyRoomUrl:null, editKey:null, user:null};
-  // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
-  var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+  // 글밥 단계(2026-11-22 운영자): 책 전체 단어 수 기준 🌱 250 미만 / 🌿 250~449 / 🌳 450 이상. 조작북도 단어 수로(LV_T1_EASY=false, 운영자 2026-11-22).
+  // 단어 수 = books.word_count(나이테 120은 output/word_counts.json). 단어 수가 없을 때만 예전 AR 기준(2.0/3.0)으로.
+  var WC_EASY_MAX=250, WC_MID_MAX=450, LV_T1_EASY=false, LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
-  function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
+  function level(b){if(LV_T1_EASY&&b.tier===1)return 1;var w=b.word_count!=null&&b.word_count!==''?b.word_count:b.wc;if(w!=null&&w!==''){w=Number(w);return w<WC_EASY_MAX?1:(w<WC_MID_MAX?2:3);}if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 
   // ---------- AUTH ----------
   function renderLogin(){

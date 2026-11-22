@@ -152,10 +152,11 @@ h1,h2{font-family:'Gowun Batang',Georgia,serif;margin:0;line-height:1.2}
   function ytid(u){if(!u)return '';var m=String(u).match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:'';}
   var PLAYSVG='<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3 0 34 0 34 0S12.7 0 7.5 1.7a8.5 8.5 0 0 0-6 6A89 89 0 0 0 0 24a89 89 0 0 0 1.5 16.3 8.5 8.5 0 0 0 6 6C12.7 48 34 48 34 48s21.3 0 26.5-1.7a8.5 8.5 0 0 0 6-6A89 89 0 0 0 68 24a89 89 0 0 0-1.5-16.3z" fill="#f00"/><path d="M27 34l18-10-18-10z" fill="#fff"/></svg>';
 
-  // 난이도 단계: 🌱 조작북·AR<2.0 / 🌿 AR 2~3 / 🌳 AR 3 이상
-  var LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
+  // 글밥 단계(2026-11-22 운영자): 책 전체 단어 수 기준 🌱 250 미만 / 🌿 250~449 / 🌳 450 이상. 조작북도 단어 수로(LV_T1_EASY=false, 운영자 2026-11-22).
+  // 단어 수 = books.word_count(나이테 120은 output/word_counts.json). 단어 수가 없을 때만 예전 AR 기준(2.0/3.0)으로.
+  var WC_EASY_MAX=250, WC_MID_MAX=450, LV_T1_EASY=false, LV_EASY_MAX=2.0, LV_MID_MAX=3.0;
   var LV_LABEL={1:'🌱 글밥 적음',2:'🌿 글밥 보통',3:'🌳 글밥 많음'};
-  function level(b){if(b.tier===1)return 1;if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
+  function level(b){if(LV_T1_EASY&&b.tier===1)return 1;var w=b.word_count!=null&&b.word_count!==''?b.word_count:b.wc;if(w!=null&&w!==''){w=Number(w);return w<WC_EASY_MAX?1:(w<WC_MID_MAX?2:3);}if(b.ar==null||b.ar==='')return 0;var a=Number(b.ar);return a<LV_EASY_MAX?1:(a<LV_MID_MAX?2:3);}
 
   function render(theme,books,content){
     curKey=theme.key;
