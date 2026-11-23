@@ -332,7 +332,8 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
         return '<div class="ni" data-nid="'+n.id+'"><div class="nt">'+esc(n.title||(n.body||'').split('\n')[0].slice(0,40))+'</div>'+
           '<div class="nd">'+new Date(n.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+done+'/'+tg.length+'곳</div>'+
           '<div class="chk">'+tg.map(function(t){return '<label class="'+(p[t[0]]?'on':'')+'"><input type="checkbox" data-pt="'+t[0]+'"'+(p[t[0]]?' checked':'')+' style="margin:0">'+esc(t[1])+'</label>';}).join('')+
-          (OPS.hasInApp?'<button class="btn" data-inapp="'+n.id+'" style="padding:4px 10px;font-size:.78rem'+(n.in_app?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+(n.in_app?(n.pinned?'📌 ':'')+'📱 앱에 보임':'📱 앱에 안 보임')+'</button>':'')+
+          (OPS.hasInApp?'<button class="btn" data-inapp="'+n.id+'" style="padding:4px 10px;font-size:.78rem'+(n.in_app?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+(n.in_app?'📱 앱에 보임':'📱 앱에 안 보임')+'</button>'+
+            '<button class="btn" data-pin="'+n.id+'" style="padding:4px 10px;font-size:.78rem'+(n.pinned?';background:#FBEFD9;border-color:#E6C79C;color:#8A4A1F':'')+'">'+(n.pinned?'📌 맨 위 고정':'📌 고정 안 함')+'</button>':'')+
           '<button class="btn" data-reuse="'+n.id+'" style="padding:4px 10px;font-size:.78rem">다시 쓰기</button></div></div>';
       }).join(''):'<p class="hint">아직 저장한 공지가 없어요.</p>')+'</div>';
     }
@@ -471,7 +472,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     document.querySelectorAll('[data-inapp]').forEach(function(b){b.addEventListener('click',async function(){var id=+b.dataset.inapp,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
       var v=!n.in_app;if(!v&&!confirm('이 공지를 앱에서 내릴까요?'))return;
       var r=await client.from('notices').update({in_app:v}).eq('id',id);if(r.error){alert('바꾸지 못했어요: '+r.error.message);return;}
-      n.in_app=v;b.textContent=v?((n.pinned?'📌 ':'')+'📱 앱에 보임'):'📱 앱에 안 보임';b.style.background=v?'#E1EEE7':'';b.style.borderColor=v?'#B9D4C5':'';b.style.color=v?'var(--tealD)':'';});});
+      n.in_app=v;b.textContent=v?'📱 앱에 보임':'📱 앱에 안 보임';b.style.background=v?'#E1EEE7':'';b.style.borderColor=v?'#B9D4C5':'';b.style.color=v?'var(--tealD)':'';});});
+    // 📌 맨 위 고정 켜고 끄기(2026-11-23 운영자): 고정 = 앱 첫 화면 공지 줄에 계속 보임, 고정 안 함 = 새 공지일 때만(읽으면 사라짐)
+    document.querySelectorAll('[data-pin]').forEach(function(b){b.addEventListener('click',async function(){var id=+b.dataset.pin,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
+      var v=!n.pinned;var r=await client.from('notices').update({pinned:v}).eq('id',id);if(r.error){alert('바꾸지 못했어요: '+r.error.message);return;}
+      n.pinned=v;b.textContent=v?'📌 맨 위 고정':'📌 고정 안 함';b.style.background=v?'#FBEFD9':'';b.style.borderColor=v?'#E6C79C':'';b.style.color=v?'#8A4A1F':'';});});
     document.querySelectorAll('.ni [data-pt]').forEach(function(c){c.addEventListener('change',async function(){
       var ni=c.closest('.ni'),id=+ni.dataset.nid,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
       n.posted=n.posted||{};n.posted[c.dataset.pt]=c.checked;c.parentNode.classList.toggle('on',c.checked);
