@@ -68,10 +68,19 @@ h2 small{font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:700;
 .bk .nl-like{align-self:center}.picks li .nl-like{margin-top:4px}.picks li .nl-like b{display:inline;font-size:inherit}
 .disc{margin:18px 0 0;font-size:.76rem;color:var(--soft);text-align:center}
 .it:has(.row>a.cv),.picks li:has(a.cv),.bk:has(a.cv){cursor:pointer}
-.rtab2{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px -16px 0;padding:8px 16px;background:var(--bg)}
+.rtab2{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:1fr 1fr .8fr;gap:6px;margin:12px -16px 0;padding:8px 16px;background:var(--bg)}
 .rtab2 button{border:1px solid var(--line);background:var(--surface);color:var(--soft);font:inherit;font-weight:800;font-size:.95rem;padding:9px 0;border-radius:11px;cursor:pointer}
 .rtab2 button.on{background:var(--pine);border-color:var(--pine);color:#fff}
 #bestSec{margin-top:12px}
+#gbSec{margin-top:12px}
+.gbc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 2px rgba(43,42,38,.05)}
+.gbc .gt{font-weight:800;font-size:1rem;color:var(--ink)}
+.gbc .gw{margin-top:2px;font-size:.82rem;font-weight:700;color:var(--pine)}
+.gbc .gp{display:inline-block;margin-top:5px;font-size:.8rem;font-weight:800;color:var(--clay-ink);background:#FBEFE3;border-radius:6px;padding:2px 8px}
+.gbc .gd{margin:7px 0 0;font-size:.88rem;color:var(--soft);line-height:1.55}
+.gbc .gb{display:block;margin-top:11px;text-align:center;background:var(--pine);color:#fff;text-decoration:none;font-weight:800;font-size:.92rem;padding:11px;border-radius:12px}
+.gbc .gs{display:block;margin-top:7px;text-align:center;font-size:.8rem;font-weight:700;color:var(--pine)}
+.gbnone{text-align:center;color:var(--soft);font-size:.88rem;padding:30px 0}
 /* 대박책 제목 검색(2026-11-20) */
 .bsrch{margin:0 0 12px}
 .bsrch .in{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 6px 0 12px}
@@ -153,8 +162,9 @@ h1{font-size:20px}.hero p{font-size:.85rem}.hero p.ask{font-size:.85rem}
     <h1>나이테 Pick</h1>
     <p>드니 5개월부터 우리 집에서 써 본 영어책·영상입니다.</p>
   </header>
-  <nav class="rtab2" id="rtab2"><button type="button" class="on" data-t="list">시기별 추천템</button><button type="button" data-t="bestSec">단권 대박책</button></nav>
+  <nav class="rtab2" id="rtab2"><button type="button" class="on" data-t="list">시기별 추천템</button><button type="button" data-t="bestSec">단권 대박책</button><button type="button" data-t="gbSec">공구 추천</button></nav>
   <main id="list"></main>
+  <section id="gbSec" hidden><p class="bsub">나이테가 같이 소개하는 공구예요.</p><div id="gbList"></div></section>
   <section id="bestSec" hidden><p class="bsub">드니가 가장 좋아한 책과 엄마들 추천 책입니다. 😆 재밌어요 많은 순.</p><div class="bsrch"><div class="in"><span aria-hidden="true">🔍</span><input id="bq" type="text" placeholder="책 제목으로 찾기" autocomplete="off" enterkeyhint="search" aria-label="책 제목으로 찾기"><button type="button" class="x" id="bqx" aria-label="지우기" hidden>✕</button></div><p class="res" id="bqr" aria-live="polite"></p></div><div class="bgrid" id="best"></div></section>
   <p class="disc" id="disc" hidden>※ 이 페이지의 쿠팡 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
   <p class="foot">© 2026 나이테 영어책육아 메이트</p>
@@ -186,7 +196,7 @@ document.getElementById('list').innerHTML=AG.map(function(y,yi){var g=y[0];
 document.getElementById('best').innerHTML=BEST.map(function(b){return '<div class="bk">'+(function(u,h){return u?wrap(u,h,b[0]):'<span class="cv">'+h+'</span>';})(lk(b[0]),(b[1]?img(b[1]):'<span class="ph">📚</span>'))+'<span class="bt">'+e(b[0])+'</span>'+pr(lk(b[0]))+'<button type="button" data-like="'+e(b[0])+'" hidden></button></div>';}).join('');
 document.getElementById('disc').hidden=!Object.keys(LINKS).length&&!ROAD.some(function(y){return y[1].some(function(i){return i.buy;});});}
 paintRoad();
-document.getElementById("rtab2").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;["list","bestSec"].forEach(function(id){document.getElementById(id).hidden=id!==b.dataset.t;});[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b);});window.scrollTo(0,0);});
+document.getElementById("rtab2").addEventListener("click",function(e){var b=e.target.closest("[data-t]");if(!b)return;["list","bestSec","gbSec"].forEach(function(id){document.getElementById(id).hidden=id!==b.dataset.t;});if(window.naitePickEv)window.naitePickEv('pick_tab',{t:b.textContent});[].forEach.call(this.children,function(x){x.classList.toggle("on",x===b);});window.scrollTo(0,0);});
 (function(){var U='https://vvfqrewseibjdwcuscaz.supabase.co',K='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi',H={apikey:K,Authorization:'Bearer '+K};
   fetch(U+'/rest/v1/road_links?select=key,buy_url',{headers:H}).then(function(r){return r.ok?r.json():[];}).then(function(rows){var n=0;(rows||[]).forEach(function(r){if(r.buy_url){LINKS[r.key]=r.buy_url;n++;}});if(n)paintRoad();}).catch(function(){});
   // 쿠팡 가격(관리자 입력, link_prices)
@@ -215,6 +225,20 @@ document.getElementById("rtab2").addEventListener("click",function(e){var b=e.ta
   x.addEventListener('click',function(){q.value='';run();q.focus();});
   new MutationObserver(function(){if(q.value.trim())run();}).observe(box,{childList:true});
 })();</script>
+<script>/* 공구 탭(2026-11-23 운영자): 다른 인플루언서 공구 소개. 끝나는 날(end)이 지나면 자동으로 안 보임. 새 공구는 GB 맨 위에 추가 */
+(function(){
+  var GB=[
+    {t:'💛 북스(VOOKS) 공구',by:'써니맘 트리샤님',from:'2026-11-23',end:'2026-11-28',when:'11/23(월) ~ 11/28(토)',d:'원서·워크북이 들어간 처음 선보이는 구성, 최대 64% 할인',url:'https://kr.vooks.com/groupbuy/sunnymom',ig:'https://www.instagram.com/p/DgEJqgLElhH/'}
+  ];
+  function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  var today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10),live=GB.filter(function(g){return !g.end||g.end>=today;});
+  var box=document.getElementById('gbList');if(!box)return;
+  box.innerHTML=live.length?live.map(function(g){return '<div class="gbc"><div class="gt">'+e(g.t)+'</div>'+(g.by?'<div class="gw">진행: '+e(g.by)+'</div>':'')+'<span class="gp">📅 '+e(g.when)+'</span><p class="gd">'+e(g.d)+'</p><a class="gb" href="'+e(g.url)+'" target="_blank" rel="noopener" data-gbx="'+e(g.t)+'">공구 보러 가기</a>'+(g.ig?'<a class="gs" href="'+e(g.ig)+'" target="_blank" rel="noopener" data-gbig="'+e(g.t)+'">📷 인스타 공구 게시물 보기 ›</a>':'')+'</div>';}).join(''):'<p class="gbnone">지금 진행 중인 공구가 없어요.</p>';
+  window.naitePickEv=function(type,meta){try{if(localStorage.getItem('naite_notrack')==='1')return;var A='sb_publishable_3fPCK8UtW4E8iyxfiCit6w_YJlqBxRi';meta=meta||{};meta.page='나이테 Pick';meta.src=/[?&]embed=record/.test(location.search)?'record':'';
+    fetch('https://vvfqrewseibjdwcuscaz.supabase.co/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:A,Authorization:'Bearer '+A,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:type,session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:meta})}).catch(function(){});}catch(x){}};
+  box.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('[data-gbx]');if(a)window.naitePickEv('ext_gb_click',{title:a.getAttribute('data-gbx')});var g=ev.target.closest&&ev.target.closest('[data-gbig]');if(g)window.naitePickEv('ext_gb_click',{title:g.getAttribute('data-gbig'),to:'insta'});});
+})();
+</script>
 <script src="track.js" defer></script>
 <script src="likes.js?v=20261120b" data-page="나이테 Pick"></script>
 <script src="reviews.js?v=20261120b" data-page="나이테 Pick"></script>
