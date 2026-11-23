@@ -56,7 +56,8 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:'Noto Sans K
 h1,h2,h3{font-family:'Gowun Batang',Georgia,serif;font-weight:600;line-height:1.14;text-wrap:balance;margin:0}
 .tnum{font-variant-numeric:tabular-nums}
 a{color:var(--teal-deep)}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+/* 2026-11-23: 카톡 등 앱 안 브라우저가 safe-area 값을 크게 줘서 머리줄이 화면 중간에 붙던 문제 → top:0, 안전 영역은 안쪽 여백으로 */
+header.top{position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:14px;padding-block:12px}
 .brand{display:flex;align-items:center;gap:10px;font-family:'Gowun Batang',serif;font-weight:700;font-size:1.05rem;white-space:nowrap}
 .brand .mark{width:30px;height:30px;border-radius:9px;flex:0 0 auto;background:linear-gradient(135deg,var(--coral),var(--amber));display:grid;place-items:center;color:#fff;font-size:1rem;box-shadow:var(--shadow)}
