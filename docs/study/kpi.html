@@ -56,6 +56,13 @@ select.sm{width:auto;font-size:.84rem;padding:6px 10px}
 .kpi .n small{font-size:.8rem;color:var(--soft);font-family:'Noto Sans KR',sans-serif}
 .kpi .s{font-size:.72rem;color:var(--soft);margin-top:2px}
 .up{color:#2F6E58;font-weight:800}.down{color:#a2231d;font-weight:800}
+/* 2026-11-23 개편: 한눈에 = 핵심 5개 + 확인할 것 + 흐름, 나머지는 '자세히'에 접기. 다른 탭 카드도 제목 누르면 접기 */
+.sum5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}@media(max-width:760px){.sum5{grid-template-columns:repeat(2,minmax(0,1fr))}.sum5>.kpi:first-child{grid-column:1/-1}}
+.chk{list-style:none;margin:0;padding:0;display:grid;gap:8px}.chk li{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2,#F4F2EC);border-radius:12px;padding:10px 12px;font-size:.9rem;line-height:1.45}.chk li b{color:var(--tealD)}.chk .ic{flex:none}
+details.more{margin:18px 0 0}details.more>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:800;color:var(--tealD);padding:12px 16px;border:1px dashed var(--line);border-radius:14px;background:var(--surface)}details.more>summary::-webkit-details-marker{display:none}details.more>summary::after{content:'펼치기';margin-left:auto;white-space:nowrap;flex:none;font-size:.8rem;color:var(--soft)}details.more[open]>summary::after{content:'접기'}
+#body.fold>.card>h3,#body.fold>.card>.shd>h3,#body.fold>.two>.card>h3{cursor:pointer}
+#body.fold .card.shut>:not(h3):not(.shd){display:none!important}#body.fold .card.shut>.shd>:not(h3){display:none!important}#body.fold .card.shut>.shd{margin-bottom:0}
+#body.fold .card>h3::after,#body.fold .card>.shd>h3::after{content:'▾';margin-left:8px;color:var(--soft);font-size:.8em;display:inline-block;transition:transform .15s}#body.fold .card.shut>h3::after,#body.fold .card.shut>.shd>h3::after{transform:rotate(-90deg)}
 .shd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .fun{display:grid;gap:10px}.fr2{display:grid;grid-template-columns:minmax(120px,1.3fr) 2fr auto;gap:10px;align-items:center}.fl{font-size:.86rem;font-weight:700}.fl small,.fn small{display:block;font-size:.7rem;color:var(--soft);font-weight:500}.fb{background:#EEF0E8;border-radius:8px;height:22px;overflow:hidden}.fb span{display:block;height:100%;border-radius:8px}.fn{text-align:right;font-size:.8rem;min-width:70px}.fn b{font-family:'Gowun Batang',Georgia,serif;font-size:1.25rem;color:var(--tealD)}
 @media(max-width:520px){.fr2{grid-template-columns:1fr auto}.fb{grid-column:1/-1;grid-row:2}}
@@ -206,6 +213,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var logs=[];try{logs=await pageAll(function(){return client.from('reading_logs').select('reader,book_id,read_on,theme_key').gte('read_on',dstr(R.pstart)).order('id');});}catch(e){logs=null;}
     return (S.cache[key]={ev:ev,logs:logs});
   }
+  async function loadAllLogs(){if(S.allLogs)return S.allLogs;var l=[];try{l=await pageAll(function(){return client.from('reading_logs').select('reader,read_on').order('id');});}catch(e){l=null;}return (S.allLogs=l);}
   async function loadTheme(k){
     if(S.themeCache[k])return S.themeCache[k];
     var bq=await client.from('books').select('id,title,cover,tier,tier_label,sort,buy_url,workbook,read_aloud').eq('theme_key',k).order('sort');
@@ -289,7 +297,37 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var cur=D.ev.filter(function(e){return inR(e.created_at,R.start,R.end);}),prv=D.ev.filter(function(e){return inR(e.created_at,R.pstart,R.pend);});
     var lc=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.start,R.end);}):null,lp=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.pstart,R.lpend);}):null;
     var X={R:R,cur:cur,prv:prv,lc:lc,lp:lp,all:D.ev};
+    body.classList.remove('fold');
     if(S.tab==='naite')renderNaite(body,X);else if(S.tab==='record')renderRecord(body,X);else renderHome(body,X);
+    if(S.tab==='naite'||S.tab==='record')foldCards(body,S.tab);
+  }
+  // 2026-11-23 운영자: 데이터가 너무 많아서 → 위 2개 카드만 펼치고 나머지는 제목만(누르면 펼침, 이 기기에 기억)
+  function foldCards(body,tab){body.classList.add('fold');var st={};try{st=JSON.parse(localStorage.getItem('naite_kpi_fold')||'{}');}catch(e){}
+    var cards=[].slice.call(body.querySelectorAll(':scope>.card,:scope>.two>.card')).filter(function(c){return c.querySelector(':scope>h3,:scope>.shd>h3');});
+    cards.forEach(function(c,i){var h=c.querySelector(':scope>h3,:scope>.shd>h3'),k=tab+'|'+(h.childNodes[0]&&h.childNodes[0].textContent||'').trim();
+      c.classList.toggle('shut',k in st?!st[k]:i>=2);
+      h.addEventListener('click',function(){var sh=c.classList.toggle('shut');st[k]=!sh;try{localStorage.setItem('naite_kpi_fold',JSON.stringify(st));}catch(e){}});});}
+  // 한눈에 요약: 처음 기록한 폰 · 확인할 것 · 기록 흐름(2026-11-23)
+  async function homeSummary(X,R){
+    var L=await loadAllLogs(),first={},last={};
+    (L||[]).forEach(function(l){var d=l.read_on;if(!d)return;if(!first[l.reader]||d<first[l.reader])first[l.reader]=d;if(!last[l.reader]||d>last[l.reader])last[l.reader]=d;});
+    var s0=dstr(R.start),e0=dstr(R.end),ps=dstr(R.pstart),pe=dstr(R.pend);
+    var nNew=Object.keys(first).filter(function(k){return first[k]>=s0&&first[k]<e0;}).length,pNew=Object.keys(first).filter(function(k){return first[k]>=ps&&first[k]<pe;}).length;
+    var el=document.getElementById('sumNew');if(el)el.outerHTML=L?kpi('✏️ 처음 기록한 폰',nNew,pNew,R,'대'):kpi('✏️ 처음 기록한 폰','–',null,R,'');
+    var AA=null;try{AA=await loadAppAll();}catch(e){}
+    var ever=Object.keys(first).length,two=Object.keys(first).filter(function(k){return (new Date(last[k])-new Date(first[k]))/864e5>=14;}).length;
+    var fu=document.getElementById('sumFun');
+    if(fu)fu.innerHTML=funnel([['📲 스터디 앱을 연 사람',AA?Object.keys(AA.first).length:0,'','#4F9A72'],['✏️ 한 번이라도 기록한 폰',ever,'','#2F6E58'],['🔁 2주 넘게 이어서 기록한 폰',two,'','#B87343']]);
+    // 확인할 것: 숫자로 바로 판단할 것만 2~3줄
+    var out=[];
+    var newApp=AA?Object.keys(AA.first).filter(function(k){return AA.first[k]>=s0&&AA.first[k]<e0;}).length:0;
+    if(newApp)out.push(['✏️','이 기간 앱을 처음 연 사람 <b>'+newApp+'명</b> · 처음 기록한 폰 <b>'+nNew+'대</b>']);
+    var lcR=X.lc?cnt(readersOf(X.lc)):0,lpR=X.lp?cnt(readersOf(X.lp)):0;
+    if(lpR&&lcR<lpR*0.8)out.push(['📉','기록한 폰이 '+esc(R.plabel)+'보다 <b>'+(lpR-lcR)+'대</b> 줄었어요 ('+lpR+' → '+lcR+')']);
+    else if(lpR&&lcR>lpR*1.2)out.push(['📈','기록한 폰이 '+esc(R.plabel)+'보다 <b>'+(lcR-lpR)+'대</b> 늘었어요 ('+lpR+' → '+lcR+')']);
+    if(S.current){try{var bq=await client.from('books').select('title,buy_url').eq('theme_key',S.current).order('sort');var miss=(bq.data||[]).filter(function(b){return !b.buy_url;}).map(function(b){return b.title;});
+      if(miss.length)out.push(['🛒','이번 달 책 중 쿠팡 링크 없는 책 <b>'+miss.length+'권</b>: '+esc(miss.join(', '))]);}catch(e){}}
+    var ck=document.getElementById('sumChk');if(ck)ck.innerHTML=(out.length?out:[['✅','지금 따로 볼 건 없어요']]).map(function(o){return '<li><span class="ic">'+o[0]+'</span><span>'+o[1]+'</span></li>';}).join('');
   }
   function rangeNote(R){return '<p class="hint" style="margin:10px 2px 0">기간: <b>'+esc(R.label)+'</b> ('+(R.days.length===1?md(R.days[0]):md(R.days[0])+' ~ '+md(R.days[R.days.length-1]))+') · 비교: '+R.plabel+'. 관리자 로그인 기기와 ?notrack=1 기기는 집계에서 빠져요.</p>';}
 
@@ -515,8 +553,22 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       '<p class="hint">누적 사용자 = 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 전체 기간이에요.</p></div>';
     h+='<div class="card" id="joincard"><h3>🙋 스터디 참여 신청</h3><p class="status">불러오는 중…</p></div>';
     h+='<div class="card" id="gbcard"><h3>🛍 공동구매 관심</h3><p class="status">불러오는 중…</p></div>';
-    h+=rangeNote(R);
+    var isGbApply=function(e){return e.type==='groupbuy_apply_click';};
+    var lcR=X.lc?cnt(readersOf(X.lc)):null,lpR=X.lp?cnt(readersOf(X.lp)):null;
+    var top='<div class="card"><div class="shd"><h3>📌 핵심 5개</h3><span class="hint r">'+esc(R.label)+'</span></div><div class="sum5">'+
+      kpi('🌱 사이트 방문자',a.site,b.site,R,'명')+kpi('📲 앱 연 사람',a.app,b.app,R,'명')+
+      '<div id="sumNew" class="kpi"><div class="l">✏️ 처음 기록한 폰</div><div class="n">…</div></div>'+
+      kpi('📖 기록한 폰',lcR==null?'–':lcR,lpR,R,'대')+
+      (function(k){return k.slice(0,-6)+'<div class="s">쿠팡 누른 사람 '+a.buy+'명</div></div>';})(kpi('🛒 공구 신청 누른 사람',uniq(X.cur,isGbApply),uniq(X.prv,isGbApply),R,'명'))+
+      '</div></div>'+
+      '<div class="card"><h3>👀 확인할 것</h3><ul class="chk" id="sumChk"><li><span class="ic">⏳</span>불러오는 중…</li></ul></div>'+
+      '<div class="card"><h3>🔻 기록까지 이어지는 흐름 <span class="hint">전체 기간 · 폰 기준</span></h3><div id="sumFun"><p class="status">불러오는 중…</p></div>'+
+      '<p class="hint">2주 넘게 = 처음 기록한 날과 마지막 기록한 날이 14일 이상 떨어진 폰. 앱을 연 기록과 읽기 기록은 쓰는 ID가 달라서, 같은 사람을 따라간 숫자는 아니에요.</p></div>';
+    var openMore=false;try{openMore=localStorage.getItem('naite_kpi_more')==='1';}catch(e){}
+    h=top+'<details class="more" id="homeMore"'+(openMore?' open':'')+'><summary>📊 자세히 보기 · 사이트 유입 · 스터디 앱 · 참여 인원 추이 · 신청</summary>'+h+rangeNote(R)+'</details>';
     body.innerHTML=h;
+    document.getElementById('homeMore').addEventListener('toggle',function(){try{localStorage.setItem('naite_kpi_more',this.open?'1':'0');}catch(e){}});
+    homeSummary(X,R);
     body.querySelectorAll('a[data-t]').forEach(function(a){a.onclick=function(ev){ev.preventDefault();S.tab=a.dataset.t;try{history.replaceState(null,'','#'+S.tab);}catch(x){}shell();};});
     // 사이트 차트(오늘이면 시간대별)
     var sv=X.cur.filter(isSiteView),HR=[];

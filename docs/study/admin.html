@@ -40,6 +40,14 @@ a.btn{text-decoration:none;display:inline-block}
 .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.85rem;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer}
 .btn.cor{background:var(--coral);color:#fff;border-color:var(--coral)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--sh);margin:16px 0}
+/* 2026-11-23 개편: 운영 카드 접기(제목 누르면 펼침) · 바로가기 칩 · 스터디 내용 칸 바로가기 */
+.ops>.card{scroll-margin-top:120px}.ops>.card>h2{cursor:pointer;display:flex;align-items:center;gap:8px;margin-bottom:0}
+.ops>.card>h2::after{content:'';margin-left:auto;width:9px;height:9px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .15s;flex:none}
+.ops>.card.shut>h2::after{transform:rotate(-45deg)}.ops>.card:not(.shut)>h2{margin-bottom:10px}
+.ops>.card.shut>:not(h2){display:none!important}.ops>.card.shut{padding-block:14px}
+.jump{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px}.jump button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font:inherit;font-size:.82rem;font-weight:700;color:var(--ink);cursor:pointer}
+.jump button.hot{background:#FBEFD9;border-color:#E6C79C;color:#8A4A1F}
+#form label.f{scroll-margin-top:120px}.tojump{position:fixed;right:16px;bottom:18px;z-index:30;border:0;border-radius:99px;background:var(--tealD,#245648);color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}
 label.f{display:block;font-size:.82rem;font-weight:800;color:var(--soft);margin:14px 0 5px}
 input.t,select.t,textarea.t{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:.95rem;padding:10px 12px;border-radius:10px}
 textarea.t{min-height:90px;resize:vertical;line-height:1.5}
@@ -201,21 +209,28 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
   // ---------- SHELL ----------
   function renderApp(){
     var v=STATE.view||'ops';
-    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['road','🌱 시기별 추천템'],['guides','📚 가이드'],['reviews','💬 후기'],['members','🔑 회원 비밀번호']];
+    if(v==='members')v=STATE.view='ops'; // 회원 비밀번호 탭은 2026-11-23에 뺌(앱은 비밀번호 없이 열림)
+    var TABS=[['ops','🌳 운영'],['content','📝 스터디 내용'],['buyurls','🛒 쿠팡 링크'],['guides','📚 가이드'],['reviews','💬 후기']];
+    var tabOn=function(k){return v===k||(k==='buyurls'&&v==='road');};
     var h='<div class="top"><div class="wrap" style="display:block;padding:0 18px">'+
       '<div class="bar1"><span class="brand">🛠️ 나이테 관리</span><span class="sp"><a class="btn" href="kpi.html">📊 KPI</a>'+
         '<span class="menu" id="menu"><button class="btn" id="mbtn" aria-label="더보기">⋯</button><div class="dd">'+
-          '<a href="index.html" target="_blank">📘 스터디 자료 공유 페이지 ↗</a><a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a>'+
+          '<a href="../" target="_blank">🌱 나이테 열기 ↗</a><a href="../record/" target="_blank">📖 나이테 스터디 열기 ↗</a>'+
           '<button id="logout">로그아웃</button></div></span></span></div>'+
-      '<div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(v===t[0]?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+      '<div class="tabs">'+TABS.map(function(t){return '<button class="tab'+(tabOn(t[0])?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
       '</div></div><div class="wrap" id="body"></div>';
-    root.innerHTML=h;
+    root.innerHTML=h;var _tj=document.querySelector('.tojump');if(_tj)_tj.remove();
     root.querySelectorAll('[data-v]').forEach(function(b){b.addEventListener('click',function(){STATE.view=b.dataset.v;try{history.replaceState(null,'','#'+STATE.view);}catch(e){}renderApp();});});
     var menu=document.getElementById('menu');
     document.getElementById('mbtn').addEventListener('click',function(ev){ev.stopPropagation();menu.classList.toggle('open');});
     document.addEventListener('click',function(){menu.classList.remove('open');});
     document.getElementById('logout').addEventListener('click',async function(){await client.auth.signOut();STATE.user=null;renderLogin(null);});
-    if(v==='ops')renderOps(); else if(v==='buyurls')renderBuyUrls(); else if(v==='road')renderRoadLinks(); else if(v==='guides')renderGuides(); else if(v==='members')renderMembers(); else if(v==='reviews')renderReviews(); else renderContent();
+    if(v==='ops')renderOps(); else if(v==='buyurls'||v==='road')Promise.resolve(v==='road'?renderRoadLinks():renderBuyUrls()).then(function(){linkSeg(v);}); else if(v==='guides')renderGuides(); else if(v==='reviews')renderReviews(); else renderContent();
+  }
+  // 쿠팡 링크 탭 안에서 고르기: 나이테 120·스터디 책 / 나이테 Pick(시기별 추천템·대박책)
+  function linkSeg(v){var b=document.getElementById('body');if(!b||b.querySelector('.lseg'))return;
+    b.insertAdjacentHTML('afterbegin','<div class="jump lseg"><button type="button" data-lv="buyurls"'+(v==='buyurls'?' class="hot"':'')+'>📚 나이테 120 · 스터디 책</button><button type="button" data-lv="road"'+(v==='road'?' class="hot"':'')+'>💛 나이테 Pick</button></div>');
+    b.querySelectorAll('[data-lv]').forEach(function(x){x.onclick=function(){STATE.view=x.dataset.lv;try{history.replaceState(null,'','#'+STATE.view);}catch(e){}renderApp();};});
   }
 
 
@@ -255,64 +270,33 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     body.innerHTML='<div class="ops"><p style="padding:30px 0;color:var(--soft)">불러오는 중…</p></div>';
     var rr=await client.from('study_rooms').select('*').order('gen');
     OPS.rooms=rr.error?null:(rr.data||[]);OPS.roomsErr=rr.error;
-    var nn=rr.error?{data:[]}:await client.from('notices').select('*').order('created_at',{ascending:false}).limit(8);
+    var nn=await client.from('notices').select('*').order('created_at',{ascending:false}).limit(8);
     OPS.notices=(nn&&nn.data)||[];
     // 앱 공지(in_app) 컬럼이 있는지 — migrate_app_notices.sql 실행 여부
-    OPS.hasInApp=false;if(!rr.error){try{var ia=await client.from('notices').select('in_app').limit(1);OPS.hasInApp=!ia.error;}catch(e){}}
+    OPS.hasInApp=false;{try{var ia=await client.from('notices').select('in_app').limit(1);OPS.hasInApp=!ia.error;}catch(e){}}
     try{var mc=await client.from('member_config').select('member_code').eq('id',1).maybeSingle();OPS.memberCode=(mc.data&&mc.data.member_code)||'';}catch(e){}
     paintOps();
-    fillGlance();
   }
   function paintOps(){
     var body=document.getElementById('body');
     var h='<div class="ops">';
-    // ① 한눈에 보기
-    h+='<div class="card"><h2>📊 한눈에 보기</h2><div class="kgrid" id="glance"><div class="kpi"><div class="n">…</div><div class="l">불러오는 중</div></div></div></div>';
-    // ② 채팅방 현황
-    h+='<div class="card"><h2>💬 기수별 채팅방</h2><p class="sub">인원은 직접 입력해요. 저장하면 메인의 "지금 ○명의 엄마가 함께" 숫자도 합계로 바뀌어요.</p>';
-    if(OPS.rooms===null){
-      h+='<div class="warn">⚙️ Supabase에서 <b>supabase/migrate_ops.sql</b>을 먼저 실행해 주세요.'+(OPS.roomsErr?'<br><small>'+esc(OPS.roomsErr.message||'')+'</small>':'')+'</div>';
-    }else{
-      var total=0;
-      h+='<div class="rooms">'+OPS.rooms.map(function(r){total+=r.members||0;var pct=Math.min(100,Math.round((r.members||0)/(r.capacity||60)*100));
-        return '<div class="room'+(pct>=90?' full':'')+'" data-gen="'+r.gen+'"><div class="rh"><span>'+r.gen+'기</span>'+(r.url?'<a href="'+esc(r.url)+'" target="_blank" rel="noopener" style="font-size:.78rem">방 열기 ↗</a>':'')+'</div>'+
-          '<div class="gauge"><i style="width:'+pct+'%"></i></div>'+
-          '<div class="row2"><input class="t" type="number" min="0" data-f="members" value="'+(r.members||0)+'" style="width:70px"> / '+
-          '<input class="t" type="number" min="1" data-f="capacity" value="'+(r.capacity||60)+'" style="width:64px">명</div>'+
-          '<div class="row2" style="margin-top:6px"><select class="t" data-f="status">'+['모집 중','운영 중','마감'].map(function(o){return '<option'+(o===r.status?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div>'+
-          '<input class="t" data-f="url" placeholder="채팅방 링크(선택)" value="'+esc(r.url||'')+'" style="margin-top:6px;font-size:.78rem"></div>';}).join('')+'</div>';
-      var recruiting=OPS.rooms.filter(function(r){return r.status==='모집 중';});
-      var full=recruiting.filter(function(r){return (r.members||0)>=(r.capacity||60)-10;});
-      if(full.length)h+='<div class="alert">🔔 '+full.map(function(r){return r.gen+'기';}).join('·')+' 정원이 '+((full[0].capacity||60)-(full[0].members||0))+'자리 남았어요. 다음 기수 준비할 때예요.</div>';
-      if(!recruiting.length)h+='<div class="alert">🔔 모집 중인 방이 없어요. 새로 오는 분이 들어갈 방을 정해 주세요.</div>';
-      // 참여 버튼 링크 = 링크가 있는 가장 마지막 기수 방(저장할 때 자동 반영)
-      var lr=latestRoom(OPS.rooms);
-      h+='<div class="hint" style="margin-top:10px;font-size:.82rem">🔗 <b>참여 버튼 링크</b>(메인·나이테 120·인기 책장·참여 페이지): '+
-        (STATE.studyRoomUrl===null?'⚙️ <b>migrate_study_room_url.sql</b> 실행 후 자동으로 연결돼요':
-         lr?('<b>'+lr.gen+'기 방</b>으로 자동 연결'+(STATE.studyRoomUrl===lr.url?' ✓':' — 저장하면 바뀌어요')):
-         '기수 방 링크가 아직 없어서 지금 링크를 그대로 써요. 마지막 기수 방에 링크를 넣고 저장하세요')+'</div>';
-      h+='<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn cor" id="saveRooms">저장</button><button class="btn" id="addRoom">＋ '+((OPS.rooms.length?OPS.rooms[OPS.rooms.length-1].gen:0)+1)+'기 추가</button><span class="status" id="roomSt">합계 '+total+'명</span></div>';
-    }
-    h+='</div>';
+    // (한눈에 보기 숫자는 2026-11-23부터 KPI에서만 봄)
+    // (기수별 채팅방 카드는 2026-11-23 운영자 요청으로 뺌. study_rooms 자료는 DB에 그대로)
     // 메인 '함께하는 엄마' 숫자 = 당근모임 회원수(직접 입력, 2026-11-03). 기수 인원 저장과는 따로
     if(STATE.chatMembers!==null)h+='<div class="card"><h2>🥕 메인 ‘함께하는 엄마’ 숫자</h2><p class="sub">당근모임 회원수를 넣어 주세요. 메인 첫 화면·숫자 줄에 그대로 보여요(10명 미만이면 숨김).</p>'+
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input class="t" id="memIn" type="number" min="0" inputmode="numeric" value="'+(STATE.chatMembers||0)+'" style="width:120px">'+
       '<span>명</span><button class="btn cor" id="saveMem">저장</button><span class="status" id="memSt">지금 메인: '+(STATE.chatMembers||0)+'명</span></div></div>';
     // ③ 공지 작성기
-    h+='<div class="card"><h2>📣 공지 작성기</h2><p class="sub">카톡용으로 한 번 쓰면 당근·인스타 버전이 자동으로 만들어져요. 당근·인스타 버전에서는 비밀번호·앱 링크가 빠지고, 당근은 사이트 링크 하나만 남아요.</p>'+
+    h+='<div class="card"><h2>📣 공지 작성기</h2>'+
       '<label class="f" style="margin-top:0">제목(선택)</label><input class="t" id="nTitle" placeholder="예: 📚 11월 책이 공개됐어요 (🚗 탈것)">'+
-      '<label class="f">카톡용 공지</label><textarea class="t" id="nBody" style="min-height:150px" placeholder="회원용 원문 — 앱 링크·비밀번호를 넣어도 돼요"></textarea>'+
-      '<div class="vers">'+
-        '<div class="ver"><div class="vh">💬 카톡 (1~N기 공통)<button class="btn" data-cp="vK">📋 복사</button></div><textarea class="t" id="vK" readonly></textarea><div class="vn" id="vKn"></div></div>'+
-        '<div class="ver"><div class="vh">🥕 당근모임<button class="btn" data-cp="vD">📋 복사</button></div><textarea class="t" id="vD"></textarea><div class="vn">비밀번호·앱 링크 제외 · 링크는 사이트 1개</div></div>'+
-        '<div class="ver"><div class="vh">📷 인스타 스토리<button class="btn" data-cp="vI">📋 복사</button></div><textarea class="t" id="vI"></textarea><div class="vn">짧게 · 링크 없이 → 하이라이트 📢 공지에 저장</div></div>'+
-      '</div>'+
+      '<label class="f">공지 내용</label><textarea class="t" id="nBody" style="min-height:150px"></textarea>'+
       '<div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">'+
         (OPS.hasInApp?'<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:800;color:var(--tealD)"><input type="checkbox" id="nApp" checked> 📱 나이테 기록 앱 공지에도 올리기</label>'+
-          '<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:700;color:var(--soft)"><input type="checkbox" id="nPin"> 📌 맨 위 고정</label>':
+          '<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:700;color:var(--soft)"><input type="checkbox" id="nPin"> 📌 맨 위 고정</label>'+
+          '<label style="display:inline-flex;gap:6px;align-items:center;font-size:.86rem;font-weight:700;color:var(--soft)"><input type="checkbox" id="nPush"> 🔔 앱 알림도 보내기</label>':
           (OPS.rooms!==null?'<span class="hint" style="margin:0">📱 앱 공지는 <b>migrate_app_notices.sql</b> 실행 후 쓸 수 있어요</span>':''))+'</div>'+
-      '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+(OPS.rooms===null?' disabled':'')+'>공지 저장 (올림 체크 시작)</button><span class="status" id="nSt"></span></div>'+
-      '<div class="hint">당근·인스타 칸은 고쳐 써도 돼요. 위 원문을 고치면 다시 자동으로 만들어져요.</div></div>';
+      '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn cor" id="saveNotice"'+''+'>공지 저장</button><span class="status" id="nSt"></span></div>'+
+      '</div>';
     // ③-0 스터디 참여 신청(2026-11-18) — 스터디 앱 '이번 달 책' 맨 위 [참여하기]
     h+='<div class="card" id="joinCard"><h2>🌱 이번 달 스터디 참여</h2><p class="sub">스터디 앱 <b>이번 달 책</b> 맨 위에서 [참여하기]를 누른 엄마들이에요. 달마다 따로 받아요. 주말엔 이번 주 2번 안 된 엄마를 독려하고, 8번 기록하면 수료(앱에서 수료증을 받아요). 12월 자료부터 신청자만 자료가 열려요.</p><div id="joinBox" class="hint">불러오는 중…</div></div>';
     // ③-1 미니 챌린지(2026-11-12) — 스터디 앱 읽기 기록 맨 위 카드·완주 보고 이미지
@@ -326,12 +310,12 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn" id="pTest">📱 내 폰으로 테스트</button><button class="btn cor" id="pSend">🔔 모두에게 보내기</button><span class="hint" id="pMsg" style="margin:0"></span></div>'+
       '<div class="hint">테스트는 이 폰(같은 브라우저)에서 스터디 앱 알림을 켜 둔 경우에만 돼요.</div><div id="pLog"></div></div>';
     // ④ 최근 공지 + 올림 체크
-    if(OPS.rooms!==null){
-      h+='<div class="card nlist"><h2>✅ 최근 공지 · 어디에 올렸나</h2>'+(OPS.notices.length?OPS.notices.map(function(n){
+    {
+      h+='<div class="card nlist"><h2>✅ 최근 공지</h2>'+(OPS.notices.length?OPS.notices.map(function(n){
         var p=n.posted||{},tg=postTargets(),done=tg.filter(function(t){return p[t[0]];}).length;
         return '<div class="ni" data-nid="'+n.id+'"><div class="nt">'+esc(n.title||(n.body||'').split('\n')[0].slice(0,40))+'</div>'+
-          '<div class="nd">'+new Date(n.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' · '+done+'/'+tg.length+'곳</div>'+
-          '<div class="chk">'+tg.map(function(t){return '<label class="'+(p[t[0]]?'on':'')+'"><input type="checkbox" data-pt="'+t[0]+'"'+(p[t[0]]?' checked':'')+' style="margin:0">'+esc(t[1])+'</label>';}).join('')+
+          '<div class="nd">'+new Date(n.created_at).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</div>'+
+          '<div class="chk">'+
           (OPS.hasInApp?'<button class="btn" data-inapp="'+n.id+'" style="padding:4px 10px;font-size:.78rem'+(n.in_app?';background:#E1EEE7;border-color:#B9D4C5;color:var(--tealD)':'')+'">'+(n.in_app?'📱 앱에 보임':'📱 앱에 안 보임')+'</button>'+
             '<button class="btn" data-pin="'+n.id+'" style="padding:4px 10px;font-size:.78rem'+(n.pinned?';background:#FBEFD9;border-color:#E6C79C;color:#8A4A1F':'')+'">'+(n.pinned?'📌 맨 위 고정':'📌 고정 안 함')+'</button>':'')+
           '<button class="btn" data-reuse="'+n.id+'" style="padding:4px 10px;font-size:.78rem">다시 쓰기</button></div></div>';
@@ -343,12 +327,22 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<a class="btn" href="https://blog.naver.com/naite_library" target="_blank" rel="noopener">📝 블로그</a>'+
       '<a class="btn" href="https://www.instagram.com/naite_library/" target="_blank" rel="noopener">📷 인스타</a>'+
       '<a class="btn" href="https://daangn.com/kr/share/community/ref/invite-group/bePHNWA29W5" target="_blank" rel="noopener">🥕 당근모임</a>'+
-      '<a class="btn" href="'+SITE_URL+'" target="_blank" rel="noopener">🌱 나이테 사이트</a>'+
-      '<a class="btn" href="kpi.html">📊 KPI 자세히</a></div></div>';
+      '<a class="btn" href="'+SITE_URL+'" target="_blank" rel="noopener">🌱 나이테 사이트</a></div></div>';
     h+='</div>';
     body.innerHTML=h;
     wireOps();wirePush();wireChal();wireJoins();
+    foldOps(body);
   }
+  // 2026-11-23 운영자: 운영 탭이 너무 길어서 → 자주 쓰는 공지를 맨 위에 펼쳐 두고 나머지는 접기. 펼친 상태는 이 기기에 기억
+  var OPS_ORDER=[['📣 공지 작성기','📣 공지 쓰기',1],['✅ 최근 공지','✅ 최근 공지',1],['🔔 앱 푸시','🔔 푸시',0],['🌱 이번 달 스터디 참여','🌱 스터디 참여',0],['🏁 미니 챌린지','🏁 챌린지',0],['🥕 메인','🥕 메인 숫자',0],['🔗 바로가기','🔗 바로가기',0]];
+  function foldOps(body){var ops=body.querySelector('.ops');if(!ops)return;var st={};try{st=JSON.parse(localStorage.getItem('naite_admin_fold')||'{}');}catch(e){}
+    var cards=[].slice.call(ops.children).filter(function(c){return c.classList.contains('card')&&c.querySelector(':scope>h2');}),jump=[];
+    OPS_ORDER.forEach(function(o,i){var c=cards.filter(function(x){return x.querySelector(':scope>h2').textContent.indexOf(o[0])===0;})[0];if(!c)return;
+      c.id='op'+i;ops.appendChild(c);var k=o[0];var open=k in st?!!st[k]:!!o[2];c.classList.toggle('shut',!open);jump.push('<button type="button" data-jump="op'+i+'"'+(o[2]?' class="hot"':'')+'>'+o[1]+'</button>');
+      c.querySelector(':scope>h2').onclick=function(){var sh=c.classList.toggle('shut');st[k]=!sh;try{localStorage.setItem('naite_admin_fold',JSON.stringify(st));}catch(e){}};});
+    cards.forEach(function(c){if(!c.id)ops.appendChild(c);});
+    ops.insertAdjacentHTML('afterbegin','<div class="jump">'+jump.join('')+'</div>');
+    ops.querySelectorAll('[data-jump]').forEach(function(b){b.onclick=function(){var c=document.getElementById(b.dataset.jump);if(!c)return;if(c.classList.contains('shut')){c.querySelector(':scope>h2').click();}c.scrollIntoView({behavior:'smooth',block:'start'});};});}
   // 스터디 참여 목록(달별 인원 + 이번 달 명단 + CSV)
   async function wireJoins(){
     var box=document.getElementById('joinBox');if(!box)return;
@@ -423,6 +417,13 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     };});
   }
   // 푸시: 받는 폰 수·최근 보낸 기록 표시, 테스트/전체 발송(Edge Function send-push)
+  async function sendPushRaw(t,b,u,target,eps){
+    try{var g=await client.auth.getSession(),tok=g.data.session&&g.data.session.access_token;
+      var r=await fetch(window.SUPA_URL+'/functions/v1/send-push',{method:'POST',headers:{'Content-Type':'application/json',apikey:window.SUPA_ANON,Authorization:'Bearer '+tok},body:JSON.stringify({title:t,body:b,url:u,target:target,endpoints:eps})});
+      var j=await r.json().catch(function(){return {};});
+      if(!r.ok||!j.ok)return {ok:false,error:j.error||r.status};return {ok:true,sent:j.sent||0,failed:j.failed||0};
+    }catch(e){return {ok:false,error:e.message||e};}
+  }
   async function wirePush(){
     var st=document.getElementById('pushStat');if(!st)return;
     var c=await client.from('push_subs').select('id,ua',{count:'exact'});
@@ -448,13 +449,7 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     document.getElementById('pTest').onclick=function(){send('test');};
     document.getElementById('pSend').onclick=function(){send('all');};
   }
-  function regen(){
-    var t=document.getElementById('nTitle').value.trim(),b=document.getElementById('nBody').value;
-    var k=(t?t+'\n\n':'')+b.trim();
-    document.getElementById('vK').value=k;document.getElementById('vKn').textContent=k.length+'자';
-    document.getElementById('vD').value=b.trim()?toDaangn(k):'';
-    document.getElementById('vI').value=b.trim()?toInsta(t,b):'';
-  }
+  function regen(){} // 2026-11-23: 공지 하나만 씀(카톡·당근·인스타 버전 만들기 없앰)
   function wireOps(){
     var nb=document.getElementById('nBody'),nt=document.getElementById('nTitle');
     if(OPS.draft){nt.value=OPS.draft.title||'';nb.value=OPS.draft.body||'';regen();}
@@ -468,7 +463,11 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       if(OPS.hasInApp){row.in_app=!!(app&&app.checked);row.pinned=!!(pin&&pin.checked);}
       st.textContent='저장 중…';var r=await client.from('notices').insert(row);
       if(r.error){st.textContent='실패: '+r.error.message;return;}
-      OPS.draft={title:t,body:b};await renderOps();document.getElementById('nSt').textContent='✓ 저장했어요.'+(row.in_app?' 앱 공지에 바로 올라갔어요.':'')+' 아래에서 올린 곳을 체크하세요.';});
+      // 2026-11-23 운영자: 공지 올리면서 알림도 같이(알림을 누르면 앱 공지가 열림)
+      var pu=document.getElementById('nPush'),pr='';
+      if(pu&&pu.checked){var lines=b.split('\n').map(function(x){return x.trim();}).filter(Boolean),pt=(t||lines[0]||'').slice(0,60),pb=''; // 2026-11-23 운영자: 알림은 제목만
+        if(confirm('알림도 보낼까요?\n\n'+pt+(pb?'\n'+pb:''))){st.textContent='알림 보내는 중…';var j=await sendPushRaw(pt,pb,'/naite-library/record/app.html#news','all',[]);pr=j.ok?' 🔔 '+j.sent+'대에 알림을 보냈어요.':' 알림은 못 보냈어요: '+j.error;}}
+      OPS.draft={title:t,body:b};await renderOps();document.getElementById('nSt').textContent='✓ 저장했어요.'+(row.in_app?' 앱 공지에 바로 올라갔어요.':'')+pr;});
     document.querySelectorAll('[data-inapp]').forEach(function(b){b.addEventListener('click',async function(){var id=+b.dataset.inapp,n=OPS.notices.filter(function(x){return x.id===id;})[0];if(!n)return;
       var v=!n.in_app;if(!v&&!confirm('이 공지를 앱에서 내릴까요?'))return;
       var r=await client.from('notices').update({in_app:v}).eq('id',id);if(r.error){alert('바꾸지 못했어요: '+r.error.message);return;}
@@ -525,7 +524,6 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
     var h='';
     try{var ls=await client.rpc('landing_stats');var d=ls.data||{};if(d.ok)h+=kpi(d.reads||0,'이번 달 읽기(기록 앱)')+kpi(d.readers||0,'이번 달 기록한 기기');}catch(e){}
     var total=(OPS.rooms||[]).reduce(function(a,r){return a+(r.members||0);},0);
-    if(OPS.rooms)h+=kpi(total,'채팅방 인원 합계');
     try{
       var since=new Date(Date.now()-7*864e5).toISOString();
       var ev=await client.from('events').select('meta').eq('type','join_click').gte('created_at',since).limit(2000);
@@ -803,10 +801,16 @@ th{color:var(--soft);font-size:.76rem;text-transform:uppercase;letter-spacing:.0
       '<div class="hint" style="margin-top:4px">제목과 설명을 <b>|</b> (막대) 로 구분해요. 예) <code>그림책 준비 + 사진 인증 📸 | 이번 달 그림책을 준비해 사진으로 인증해요…</code></div>'+
       '<label class="f">📎 부가자료 <span class="hint">(한 줄에 하나 · "제목 | URL" · 유튜브 링크는 영상으로 노출)</span></label><textarea class="t" id="fext" style="min-height:90px">'+esc(c.extras||'')+'</textarea>'+
       '<div class="hint" style="margin-top:4px">유튜브 링크는 자동으로 재생 카드가 되고, 그 외 링크는 버튼으로 나와요. 예) <code>알파벳 송 | https://youtu.be/xxxx</code></div>'+
-      '<label class="f">🔒 이 페이지 비밀번호 <span class="hint">(비우면 누구나 열람 · 회원에게 배포할 비번을 넣으세요)</span></label><input class="t" id="fpass" value="'+esc(c.passcode||'')+'">'+
+      '<input type="hidden" id="fpass" value="'+esc(c.passcode||'')+'">'+
       '<label class="f" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:12px"><input type="checkbox" id="fpub" '+(c.published?'checked':'')+' style="width:auto;margin:0"> 발행 <span class="hint" style="margin:0">(회원 열람 가능 · 지난 달 보관함에 표시)</span></label>'+
       '<label class="f">이번 주제 5권 <span class="hint">(제목·저자·한줄소개 + 📺영상/📄워크지/📖책정보 링크)</span></label>'+
       '<div class="hint" style="margin-bottom:6px">📺 영상은 유튜브 read aloud URL. 📄 워크지는 출판사·작가 <b>공식 무료 활동지 링크</b>만(파일 재배포 금지). 📖 책정보는 쿠팡 파트너스 링크. 빈 칸은 카드에 버튼이 안 보여요.</div>'+bh;
+    // 2026-11-23 운영자: 고칠 칸으로 바로 가기(맨 위 칩 + 오른쪽 아래 '↑ 칸 고르기')
+    var labs=[].slice.call(f.querySelectorAll('label.f')).filter(function(l){return !l.querySelector('input');});
+    var chips=labs.map(function(l,i){l.id='fj'+i;var t=(l.childNodes[0]&&l.childNodes[0].textContent||l.textContent).replace(/\s+/g,' ').trim().slice(0,14);return '<button type="button" data-fj="fj'+i+'">'+esc(t)+'</button>';}).join('');
+    f.insertAdjacentHTML('afterbegin','<div class="jump" id="fjump">'+chips+'</div>');
+    f.querySelectorAll('[data-fj]').forEach(function(b){b.onclick=function(){var el=document.getElementById(b.dataset.fj);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};});
+    if(!document.querySelector('.tojump')){var tb=document.createElement('button');tb.type='button';tb.className='tojump';tb.textContent='↑ 칸 고르기';tb.onclick=function(){var j=document.getElementById('fjump');if(j)j.scrollIntoView({behavior:'smooth',block:'center'});};document.body.appendChild(tb);}
   }
   // ---------- 미리보기(저장 전 화면) ----------
   function openPreview(){
