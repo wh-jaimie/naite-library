@@ -834,6 +834,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
   }
   function whoOf(reader){var n=S.ppl.names[reader];return [n||'',String(reader).slice(-4).toUpperCase()];}
+  // 2026-11-23: 스터디 책이 아닌 책 후기(save_title_review)는 book_id 없이 제목(title)으로 저장됨 → '다른 책 · 제목'으로
+  function rvBook(x){return x.book_id!=null?bookOf(x.book_id):['다른 책',x.title||x.title_key||''];}
   function bookOf(id){var b=S.ppl.books[id];return b?[esc0(themeLabel(themeBy(b.theme_key))||b.theme_key||''),b.title]:['','(책 #'+id+')'];}
   function esc0(s){return String(s||'').trim();}
   function hm(t){if(!t)return '';var d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes());}
@@ -859,7 +861,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   function exportReviews(st){
     var L=S.ppl.reviews||[];
     if(!L.length){st.textContent='후기가 0개이거나 아직 읽을 수 없어요(migrate_reviews.sql 실행 여부 확인).';return;}
-    var rows=L.map(function(x){var w=whoOf(x.reader),b=bookOf(x.book_id);
+    var rows=L.map(function(x){var w=whoOf(x.reader),b=rvBook(x);
       return [dstr(new Date(x.created_at)),dstr(new Date(x.updated_at)),w[0],w[1],b[0],b[1],RVA[x.age]||'',(x.reactions||[]).map(function(k){return RVN[k]||k;}).join(', '),x.body||'',x.hidden?'숨김':''];});
     csvDown('나이테_후기_'+dstr(new Date())+'.csv',['쓴 날','고친 날','닉네임(백업)','기록 ID 끝','주제','책','아이 나이','반응','한 줄','숨김'],rows);
     st.textContent='✓ 후기 '+L.length+'개 내려받았어요';
@@ -889,7 +891,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       var bk=await client.from('reader_backups').select('reader,name');
       var bs=[];try{bs=await pageAll(function(){return client.from('books').select('id,title,theme_key').order('id');});}catch(e){}
       // 💬 후기(book_reviews)는 관리자만 표를 직접 읽을 수 있음(migrate_reviews.sql의 admin 정책). 표가 없으면 빈 목록
-      var rvs=[];try{rvs=await pageAll(function(){return client.from('book_reviews').select('id,reader,book_id,age,reactions,body,hidden,created_at,updated_at').order('id');});}catch(e){}
+      var rvs=[];try{rvs=await pageAll(function(){return client.from('book_reviews').select('*').order('id');});}catch(e){}
       S.ppl={logs:logs,names:{},books:{},reviews:rvs,rvBy:{}};
       rvs.forEach(function(x){(S.ppl.rvBy[x.reader]=S.ppl.rvBy[x.reader]||[]).push(x);});
       (bk.data||[]).forEach(function(b){S.ppl.names[b.reader]=b.name;});
@@ -951,7 +953,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       var ol=Object.keys(p.others).sort(function(a,b){return p.others[b]-p.others[a];}).map(function(t){return esc(t)+' <span class="ty">×'+p.others[t]+'</span>';}).join(', ');
       return '<div class="pdw"><div><div class="hint">최근 5주 (주황 테두리 = 오늘)</div><div class="cal">'+cells+'</div></div><div class="pdl">'+
         (bl||'<div class="hint">스터디 책 기록 없음</div>')+(ol?'<div><b>📚 다른 책</b> · '+ol+'</div>':'')+
-        ((P.rvBy[p.id]||[]).length?'<div><b>💬 후기</b> · '+P.rvBy[p.id].map(function(x){return esc(bookOf(x.book_id)[1])+' <span class="ty">('+(x.reactions||[]).map(function(k){return RVN[k]||k;}).join(', ')+(x.body?' · “'+esc(x.body)+'”':'')+(x.hidden?' · 숨김':'')+')</span>';}).join(', ')+'</div>':'')+
+        ((P.rvBy[p.id]||[]).length?'<div><b>💬 후기</b> · '+P.rvBy[p.id].map(function(x){return esc(rvBook(x)[1])+' <span class="ty">('+(x.reactions||[]).map(function(k){return RVN[k]||k;}).join(', ')+(x.body?' · “'+esc(x.body)+'”':'')+(x.hidden?' · 숨김':'')+')</span>';}).join(', ')+'</div>':'')+
         '<div class="hint" style="margin-top:4px">하루 평균 '+p.perDay+'번 기록 · 가장 길게 이어서 '+p.streak+'일 · 주로 '+hourLabel(p.hour)+'쯤</div></div></div>';
     }
     function draw(){
