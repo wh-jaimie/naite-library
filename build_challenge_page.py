@@ -712,9 +712,12 @@ with open(OUT, "w", encoding="utf-8") as f:
     f.write(html_out)
 print(f"쿠팡 링크 연결된 책: {_buycnt}/120")
 # 나이테 스터디 앱의 '다음 달 미리보기'가 읽는 공개 데이터(아직 비공개인 달의 책도 120 페이지엔 공개돼 있음)
+# 그 달에만 더 넣은 스터디 책(나이테 120엔 안 넣고 미리보기·앱에만, DB books 에 tier 6 으로) — 2026-11-24 운영자: 12월 6권
+EXTRA = {"christmas": [{"title": "Little Blue Truck's Christmas", "author": "Alice Schertle", "cover": "https://covers.openlibrary.org/b/id/14434529-L.jpg", "tier": 6,
+                        "tier_label": "반복·패턴", "ar": 1.1, "wc": 166, "format": "", "reason": "\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"}]}
 _mini = {"themes": [{"key": t["key"], "emoji": t["emoji"], "ko": t["ko"], "en": t["en"],
           "books": [{"title": b["title"], "author": b["author"], "cover": b.get("cover") or "", "tier": b["tier"],
-                     "tier_label": b["tier_label"], "ar": b.get("ar"), "wc": b.get("wc"), "format": b.get("format") or "", "reason": b.get("reason") or ""} for b in sorted(t["books"], key=lambda x: x["tier"])]}
+                     "tier_label": b["tier_label"], "ar": b.get("ar"), "wc": b.get("wc"), "format": b.get("format") or "", "reason": b.get("reason") or ""} for b in sorted(t["books"], key=lambda x: x["tier"])] + EXTRA.get(t["key"], [])}
          for t in data["themes"]]}
 json.dump(_mini, open(os.path.join(os.path.dirname(OUT), "..", "docs", "c120_data.json"), "w", encoding="utf-8"), ensure_ascii=False)
 print(f"생성: {OUT} ({len(html_out)//1024} KB), 120권/24주제 + docs/c120_data.json")
