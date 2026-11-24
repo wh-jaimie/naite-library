@@ -5,7 +5,7 @@
 update public.books set
   title      = 'Suzy Goose and the Christmas Star',
   author     = 'Petr Horáček',
-  cover      = 'https://covers.openlibrary.org/b/id/8209173-L.jpg',
+  cover      = 'https://covers.openlibrary.org/b/id/10514195-L.jpg',
   reason     = '트리 꼭대기에 달 별을 찾아 하늘의 별을 향해 길을 떠나는 거위 수지',
   pop_rank   = 0,
   lib_loans  = 0,
