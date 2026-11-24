@@ -57,7 +57,7 @@
 | book_info_go / guide_click / blog_click / insta_click | 책 정보·가이드·블로그·인스타 | from 등 |
 | guide_click (상세) | 사이트 guide.html 글 클릭 = `{title}`(11/19 전엔 insert에 .then이 없어 한 번도 안 남음 → KPI ‘가이드 글 클릭’·많이 누른 글은 guide.html의 글 링크 **ui_click**(href = guide/NN-… 또는 블로그 주소)으로 셈) / 스터디 앱 버튼 = `{from}`: app_top(맨 위 📚 가이드)·month_shelf(이번 달 책 5권 활용법, guide:12)·welcome(처음 안내) → KPI 나이테 탭 ‘앱에서 가이드로 가는 버튼’ 표(2026-11-19 분리) | title 또는 from |
 | groupbuy_interest | 공동구매 관심(11월까지) | theme_key, page |
-| groupbuy_apply_click | 공동구매 신청하기(구글 폼으로 이동, 12월 자료부터): 이번 달 자료(month) · 다음 달 미리보기(next_preview) · 스터디 신청 창(join) · 첫 화면 맨 위 띠(next_top, 11/23~), 11/21~ | from, theme_key |
+| groupbuy_apply_click | 공구 구매하기(상품 페이지로 이동, 11/24부터 · 그 전엔 공동구매 신청 구글 폼, 12월 자료부터): 이번 달 자료(month) · 다음 달 미리보기(next_preview) · 스터디 신청 창(join) · 첫 화면 맨 위 띠(next_top, 11/23~), 11/21~ | from, theme_key |
 | age_pick | 아이 나이 고르기 | age, from(popup·change·welcome) |
 | age_popup_open / age_popup_skip / age_change_open | 처음 한 번 뜨는 나이 창 / '나중에' / 표지 아래 '나이 바꾸기' (11/17부터) | |
 | age_book_go | (옛) 나이별 '먼저 읽을 2권' 카드 누름 — 11/17 카드 없앰. 지금은 💛 먼저 읽기 표지 누름 = `book_click`·`buy_click`의 `pick:1` | age, title |
