@@ -6,7 +6,7 @@
  * 기록하기 탭 위 달 칩으로 지난 달 책도 기록. 기록은 모든 달을 한 저장소(naite_reads_v2)에 모으고,
  * 읽기 통계는 '날짜 기준' — 이번 달에 읽은 기록이면 어느 달 책이든 이번 달로 셈.
  * 다른 책(스터디 책 아님): 기록하기 탭 '📚 다른 책도 읽었어요 +1' → 행 {b:0, o:제목, k:'_other'}, 서버 log_other/my_other_reads.
- *   통계 '총 읽기'·'오늘 N번'·인증 카드에는 포함, 반복한 책·유형별·책별 반응에는 넣지 않음.
+ *   통계 '총 읽기'·'오늘 N번'·인증 카드에는 포함, 책별 반응에는 넣지 않음(가장 많이 반복한 책에는 2026-11-24부터 포함).
  * 기록: 한 번 탭 = 1회. 화면에 먼저 반영 → 서버(log_read/undo_read)엔 뒤에서 전송,
  *       실패하면 outbox에 남겨 재전송(client_id로 중복 방지).
  * 사용: NaiteReading.mount({client, theme, books, monthLabel, onEvent}) — app.html render() 뒤에 호출.
@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261124e',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261124f',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1765,11 +1765,15 @@
     }
     if(!total){el.innerHTML=h+'</div>';return;} // 기록이 없으면 통계 카드는 숨김(아래 최근 기록에 안내가 있음)
     // 이번 달에 읽은 책들(지난 달 책 포함)
-    var readIds={};rows.forEach(function(r){if(r.k!=='_other')readIds[r.b]=1;});
-    var readBooks=Object.keys(readIds).map(function(id){return S.byId[+id]||{id:+id,title:'(지난 달 책)',type:''};});
     // 가장 많이 반복한 책: 2번 이상 읽은 책 중 최다. 동점이면 모두 보여줌
-    var fmax=0;readBooks.forEach(function(b){fmax=Math.max(fmax,cnt(b.id));});
-    var favs=fmax>=2?readBooks.filter(function(b){return cnt(b.id)===fmax;}):[];
+    // 2026-11-24 운영자: 스터디 책뿐 아니라 '다른 책'으로 적은 책도 같이(같은 제목은 책 키로 한 권으로 셈, 제목 없는 기록은 뺌)
+    var RB={};rows.forEach(function(r){var k,b;
+      if(r.k==='_other'){var t=String(r.o||'').trim();if(!t)return;k='o:'+(bkey(t)||t);if(!RB[k])RB[k]={id:k,title:t,cover:catCover(t),type:'',n:0};}
+      else{k='b:'+r.b;if(!RB[k]){b=S.byId[r.b]||{id:r.b,title:'(지난 달 책)',type:''};RB[k]={id:k,title:b.title,cover:b.cover,type:b.type||'',n:0};}}
+      RB[k].n++;});
+    var readBooks=Object.keys(RB).map(function(k){return RB[k];});
+    var fmax=0;readBooks.forEach(function(b){fmax=Math.max(fmax,b.n);});
+    var favs=fmax>=2?readBooks.filter(function(b){return b.n===fmax;}):[];
     h+='<div class="st-card"><h2>가장 많이 반복한 책</h2>';
     if(!favs.length)h+='<p class="st-soft">아직 두 번 이상 읽은 책이 없어요. 아이가 다시 가져오는 책이 생기면 여기에 나타나요.</p>';
     else if(favs.length===1){var fav=favs[0];
