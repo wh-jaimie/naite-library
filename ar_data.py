@@ -71,7 +71,7 @@ _AR = {
  "Room on the Broom": 3.0, "The Little Old Lady Who Was Not Afraid of Anything": 3.3,
  "Creepy Carrots!": 3.1, "Skeleton Hiccups": 1.9,
  "Pick a Pine Tree": 2.4,
- "Little Blue Truck's Christmas": 1.7, "Little Blue Trucks Christmas": 1.7,
+ "Suzy Goose and the Christmas Star": 1.7,  # AR BookFinder BL 1.7 (2026-11-24 스터디 자료 세션 확인)
  "Olivia Helps with Christmas": 2.4,  # AR BL 2.4 (도서관 목록, Quiz 114748)
  "Pip and Posy: The Christmas Tree": 2.3,  # 2026-11-20 운영자 확인
  "Walking Through the Jungle": 1.5, "Polar Bear, Polar Bear, What Do You Hear?": 1.5,
@@ -99,7 +99,6 @@ WENDY_AR = {
  "Don't Let the Pigeon Drive the Bus!": 0.9,
  "Goodnight, Goodnight, Construction Site": 3.8,
  "Pick a Pine Tree": 2.6,
- "Little Blue Truck's Christmas": 1.1,
  "The Watermelon Seed": 1.0,
  "I Will Not Ever Never Eat a Tomato": 2.7,
  "Pete the Cat: I Love My White Shoes": 1.5,

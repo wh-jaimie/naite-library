@@ -35,7 +35,7 @@ CURRICULUM = [
 ("🎄","Christmas","크리스마스",[
  (1,"Dear Santa","Rod Campbell","플랩으로 산타의 선물을 여는 플랩북"),
  (2,"Pick a Pine Tree","Patricia Toht","트리를 고르고 꾸미는 과정을 리듬감 있게 담은 운율책"),
- (3,"Little Blue Truck's Christmas","Alice Schertle","\"Beep!\" 반복과 1~5 카운팅, 불빛이 들어오는 크리스마스 배달"),
+ (3,"Suzy Goose and the Christmas Star","Petr Horáček","트리 꼭대기에 달 별을 찾아 하늘의 별을 향해 길을 떠나는 거위 수지"),  # 2026-11-24 운영자: Little Blue Truck's Christmas → 구하기 힘들어서 교체
  (4,"Olivia Helps with Christmas","Ian Falconer","산타를 기다리다 못해 크리스마스 준비를 \"돕겠다고\" 나서는 돼지 올리비아"),
  (5,"Pip and Posy: The Christmas Tree","Axel Scheffler","트리에 단 과자 장식을 몰래 먹다 배탈 난 핍, 정직과 용서를 담은 크리스마스 이야기"),  # 2026-11-20 운영자: Bear Stays Up for Christmas → 더 수월한 책
 ]),
