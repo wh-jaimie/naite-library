@@ -18,7 +18,7 @@
   var TAB_IDS=['study','shelf','c120','shop','pick'],TAB_KEY='naite_last_tab'; // 2026-11-07: 기록하기+읽기 통계 → '읽기 기록'(shelf) 하나로. 옛 'stats'는 shelf로
   // c120·shop = 나이테 공개 페이지를 앱 안(iframe)에서 열어 아래 탭을 유지
   // 앱 안 페이지는 서비스워커(record/) 밖이라 폰 캐시가 옛 화면을 줄 수 있음 → 바꿀 때마다 EV 올리기(2026-11-07)
-  var EV='20261124d',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
+  var EV='20261124e',EMBED={c120:'../challenge.html?embed=record&v='+EV,shop:'../domestic.html?embed=record&v='+EV,pick:'../road.html?embed=record&v='+EV};
   var S=null;              // 현재 마운트 상태
 
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -590,7 +590,7 @@
       wrap.querySelector('[data-sclose]').onclick=closeSheet;
       wrap.querySelector('.sc-save').addEventListener('click',function(){if(S.onEvent)S.onEvent(kind+'_save',meta||{});});
       var sb=wrap.querySelector('[data-scshare]');
-      if(sb)sb.onclick=function(){navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent(kind+'_share',meta||{});},function(){});};
+      if(sb)sb.onclick=function(){navigator.share({files:[file]}).then(function(){if(S.onEvent)S.onEvent(kind+'_share',meta||{});},function(){});};
     });
   }
   // 이미지 공유·저장 창(인증 카드·달력 공용). extra: 이미지 위에 넣을 조작 영역
@@ -964,7 +964,7 @@
       row.querySelector('[data-asave]').addEventListener('click',function(){if(S.onEvent)S.onEvent('stamp_photo_save',meta);});
       row.querySelector('[data-ashare]').onclick=function(){
         if(!canShare){note.hidden=false;note.textContent='이 브라우저에서는 바로 공유가 안 돼요. 이미지 저장 후 인스타·카카오톡에서 올려 주세요.';return;}
-        navigator.share({files:[file],title:'나이테 한달5권 스터디'}).then(function(){if(S.onEvent)S.onEvent('stamp_photo_share',meta);},function(){});};
+        navigator.share({files:[file]}).then(function(){if(S.onEvent)S.onEvent('stamp_photo_share',meta);},function(){});};
     },'image/jpeg',.9);
   }
   // 사진 고르러 나간 사이 앱이 다시 시작됐는지 알아보기 위한 표시
