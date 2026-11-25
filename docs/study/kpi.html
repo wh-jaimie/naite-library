@@ -314,6 +314,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var s0=dstr(R.start),e0=dstr(R.end),ps=dstr(R.pstart),pe=dstr(R.pend);
     var nNew=Object.keys(first).filter(function(k){return first[k]>=s0&&first[k]<e0;}).length,pNew=Object.keys(first).filter(function(k){return first[k]>=ps&&first[k]<pe;}).length;
     var el=document.getElementById('sumNew');if(el)el.outerHTML=L?kpi('✏️ 처음 기록한 폰',nNew,pNew,R,'대'):kpi('✏️ 처음 기록한 폰','–',null,R,'');
+    if(!document.getElementById('sumFun')&&!document.getElementById('sumChk'))return;
     var AA=null;try{AA=await loadAppAll();}catch(e){}
     var ever=Object.keys(first).length,two=Object.keys(first).filter(function(k){return (new Date(last[k])-new Date(first[k]))/864e5>=14;}).length;
     var fu=document.getElementById('sumFun');
@@ -561,14 +562,16 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       kpi('📖 기록한 폰',lcR==null?'–':lcR,lpR,R,'대')+
       (function(k){return k.slice(0,-6)+'<div class="s">쿠팡 누른 사람 '+a.buy+'명</div></div>';})(kpi('🛒 공구 구매하기 누른 사람',uniq(X.cur,isGbApply),uniq(X.prv,isGbApply),R,'명'))+
       '</div></div>'+
-      '<div class="card"><h3>👀 확인할 것</h3><ul class="chk" id="sumChk"><li><span class="ic">⏳</span>불러오는 중…</li></ul></div>'+
-      '<div class="card"><h3>🔻 기록까지 이어지는 흐름 <span class="hint">전체 기간 · 폰 기준</span></h3><div id="sumFun"><p class="status">불러오는 중…</p></div>'+
-      '<p class="hint">2주 넘게 = 처음 기록한 날과 마지막 기록한 날이 14일 이상 떨어진 폰. 앱을 연 기록과 읽기 기록은 쓰는 ID가 달라서, 같은 사람을 따라간 숫자는 아니에요.</p></div>';
-    var openMore=false;try{openMore=localStorage.getItem('naite_kpi_more')==='1';}catch(e){}
-    h=top+'<details class="more" id="homeMore"'+(openMore?' open':'')+'><summary>📊 자세히 보기 · 사이트 유입 · 스터디 앱 · 참여 인원 추이 · 신청</summary>'+h+rangeNote(R)+'</details>';
-    body.innerHTML=h;
-    document.getElementById('homeMore').addEventListener('toggle',function(){try{localStorage.setItem('naite_kpi_more',this.open?'1':'0');}catch(e){}});
+      '';
+    // 2026-11-25 운영자: 한눈에는 핵심 5개만(확인할 것·흐름·자세히는 다른 탭에 있는 내용이라 빼고, 불러오기도 빠르게)
+    // 2026-11-25 운영자: 스터디 참여 인원 추이(누적 사용자)는 한눈에 유지 — 핵심 5개 먼저 뜨고, 전체 기간 앱 기록은 뒤에서 불러와 채움
+    var allCard='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 전체 기간</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
+      '<div class="shd" style="margin-top:14px"><b style="font-size:.9rem">추이</b><select class="t sm r" id="hall" style="width:auto"><option value="c">누적 사용자</option><option value="w">주별 앱 연 사람</option><option value="d">날짜별 앱 연 사람</option><option value="i">누적 설치</option></select></div><div id="hallchart"></div>'+
+      '<p class="hint">누적 사용자 = 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 전체 기간이에요.</p></div>';
+    body.innerHTML=top+allCard+rangeNote(R);
     homeSummary(X,R);
+    loadAppAll().then(allTrend).catch(function(e){var el=document.getElementById('hallk');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
+    return;
     body.querySelectorAll('a[data-t]').forEach(function(a){a.onclick=function(ev){ev.preventDefault();S.tab=a.dataset.t;try{history.replaceState(null,'','#'+S.tab);}catch(x){}shell();};});
     // 사이트 차트(오늘이면 시간대별)
     var sv=X.cur.filter(isSiteView),HR=[];
@@ -609,7 +612,11 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         if(v==='i')el.innerHTML=barChart(R.days,R.days.map(function(d){return Object.keys(AA.inst).filter(function(k){return AA.inst[k]===d;}).length;}),'#B87343','명');
         else el.innerHTML=barChart(R.days,R.days.map(function(d){return cnt(AA.byDay[d]||{});}),'#6A4A8A','명');}
       document.getElementById('hap').onchange=drawApp;drawApp();
-      // 전체 기간
+    }).catch(function(e){var el=document.getElementById('hfun');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
+  }
+  // 스터디 참여 인원 추이(전체 기간) — 한눈에 카드 채우기
+  function allTrend(AA){
+      if(!document.getElementById('hallk'))return;
       var ds=Object.keys(AA.byDay).sort(),total=Object.keys(AA.first).length,ti=Object.keys(AA.inst).length;
       if(!ds.length){document.getElementById('hallk').innerHTML='<p class="empty">아직 데이터가 없어요.</p>';return;}
       var days=[],today=dstr(new Date());for(var d=new Date(ds[0]+'T00:00:00');dstr(d)<=today;d=addDays(d,1))days.push(dstr(d));
@@ -627,7 +634,6 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         else if(v==='w'){var w=weeks();el.innerHTML=barChart(w[0],w[1],'#4F9A72','명')+'<p class="hint">막대 하나 = 일주일(아래 날짜부터 7일), 그 주에 앱을 연 사람 수</p>';}
         else el.innerHTML=barChart(days,days.map(function(x){return cnt(AA.byDay[x]||{});}),'#6A4A8A','명');}
       document.getElementById('hall').onchange=drawAll;drawAll();
-    }).catch(function(e){var el=document.getElementById('hfun');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
   }
   // 가이드(2026-11-19): 사이트 가이드 목록의 글 클릭(meta.title)과 스터디 앱의 가이드 버튼(meta.from)을 나눠 셈
   var GUIDE_FROM={app_top:'앱 맨 위 📚 가이드',month_shelf:'이번 달 책 › 5권 활용법(가이드 12)',welcome:'처음 안내 › 엄마표영어 가이드'};
@@ -780,7 +786,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       (function(){var ot=X.lc.filter(function(l){return l.book_id==null;}),otp=X.lp?X.lp.filter(function(l){return l.book_id==null;}):null;
         return '<p class="hint">📚 다른 책 기록: <b>'+ot.length+'번 · '+cnt(countBy(ot,function(l){return l.reader;}))+'대</b>'+(otp?' (이전 기간 '+otp.length+'번 · '+cnt(countBy(otp,function(l){return l.reader;}))+'대)':'')+'. 책별·주제별 반응 통계에는 넣지 않아요.</p>';})()+'</div></div>';
     h+=rawEventsHTML(X);
-    body.innerHTML=h;wireAppTrend(X);
+    // 2026-11-25: '한눈에'에서 옮겨 옴 — 스터디 참여 신청·공동구매 관심(다른 탭에 없던 것)
+    h+='<div class="card" id="joincard"><h3>🙋 스터디 참여 신청</h3><p class="status">불러오는 중…</p></div><div class="card" id="gbcard"><h3>🛍 공동구매 관심</h3><p class="status">불러오는 중…</p></div>';
+    body.innerHTML=h;wireAppTrend(X);joinCard();groupbuyCard();
     var rsel=document.getElementById('rk');if(rsel)rsel.onchange=function(){S.repKey=rsel.value;monthReport(rsel.value);};
     if(rk)monthReport(rk);else document.getElementById('sbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';
     var sel=document.getElementById('rm');function draw(){var o=sel.value==='o',v=o?perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;})
