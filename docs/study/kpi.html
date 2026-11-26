@@ -259,6 +259,22 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var lg='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:.8rem">'+series.map(function(se){return '<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:'+se.color+';margin-right:5px;vertical-align:-1px"></i>'+esc(se.name)+'</span>';}).join('')+'</div>';
     return '<div class="chart">'+s+'</svg>'+lg+'</div>';
   }
+  // 나란히 막대: 날짜마다 시리즈별 막대를 옆에 붙여 그림(더하지 않음) — 2026-11-26 앱 메뉴 한눈에
+  function groupChart(days,series,unit){
+    var narrow=window.innerWidth<700,all=[];series.forEach(function(se){all=all.concat(se.vals);});
+    var max=Math.max.apply(null,all.concat([3])),W=narrow?380:700,H=narrow?170:150,bw=W/days.length,every=days.length>20?7:(days.length>10?(narrow?3:2):1),n=series.length;
+    var s='<svg viewBox="0 0 '+W+' '+(H+20)+'" role="img"><line x1="0" y1="16" x2="'+W+'" y2="16" stroke="#E2E5DA" stroke-dasharray="3 4"/><text x="'+W+'" y="12" text-anchor="end" font-size="10" fill="#565E4E">'+max+(unit||'')+'</text>';
+    days.forEach(function(k,i){var x=i*bw,w=Math.max((bw-4)/n,1),tip=md(k);series.forEach(function(se){tip+=' / '+se.name+' '+se.vals[i]+(unit||'');});
+      s+='<g><title>'+esc(tip)+'</title><rect class="hit" x="'+x+'" y="0" width="'+bw+'" height="'+H+'"/>';
+      series.forEach(function(se,j){var v=se.vals[i];if(!v)return;var bh=v/max*(H-16),bx=x+2+j*w;
+        s+='<rect class="bar" x="'+bx+'" y="'+(H-bh)+'" width="'+Math.max(w-1,1)+'" height="'+bh+'" rx="'+Math.min(3,w/2)+'" fill="'+se.color+'"/>';
+        if(days.length<=(narrow?8:14))s+='<text x="'+(bx+w/2)+'" y="'+(H-bh-3)+'" text-anchor="middle" font-size="9" fill="#23291F">'+v+'</text>';});
+      s+='</g>';});
+    s+='<line x1="0" y1="'+H+'" x2="'+W+'" y2="'+H+'" stroke="#CBD0C1"/>';
+    days.forEach(function(k,i){if(i%every===0)s+='<text x="'+((i+.5)*bw)+'" y="'+(H+14)+'" text-anchor="middle" font-size="10" fill="#565E4E">'+md(k)+'</text>';});
+    var lg='<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:.8rem">'+series.map(function(se){return '<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:'+se.color+';margin-right:5px;vertical-align:-1px"></i>'+esc(se.name)+'</span>';}).join('')+'</div>';
+    return '<div class="chart">'+s+'</svg>'+lg+'</div>';
+  }
   function hbars(rows,base){ // rows: [label, value, goal?]
     var max=base||Math.max.apply(null,rows.map(function(r){return r[1];}).concat([1]));
     return '<div class="bars">'+rows.map(function(r){var pct=max?Math.round(r[1]/max*100):0;
@@ -579,8 +595,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var allCard='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 최근 30일</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
       '<div class="shd" style="margin-top:14px"><b style="font-size:.9rem">추이</b><select class="t sm r" id="hall" style="width:auto"><option value="c">누적 사용자</option><option value="w">주별 앱 연 사람</option><option value="d">날짜별 앱 연 사람</option><option value="i">누적 설치</option></select></div><div id="hallchart"></div>'+
       '<p class="hint">누적 사용자 = 최근 30일 안에서 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 최근 30일이에요.</p></div>';
-    body.innerHTML=top+allCard+rangeNote(R);
-    homeSummary(X,R);
+    // 2026-11-26 운영자: 스터디 신청자도 한눈에서 보이게(나이테 스터디 탭에서 옮김)
+    body.innerHTML=top+'<div class="card" id="joincard"><h3>🙋 스터디 참여 신청</h3><p class="status">불러오는 중…</p></div>'+allCard+rangeNote(R);
+    homeSummary(X,R);joinCard();
     loadAppAll().then(allTrend).catch(function(e){var el=document.getElementById('hallk');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
     return;
     body.querySelectorAll('a[data-t]').forEach(function(a){a.onclick=function(ev){ev.preventDefault();S.tab=a.dataset.t;try{history.replaceState(null,'','#'+S.tab);}catch(x){}shell();};});
@@ -740,6 +757,30 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
 
   // 나이테 스터디 (회원)
+  // 2026-11-26 운영자: 앱에서 어느 메뉴를 많이 들어가는지 + 기록·이번 달 자료 날짜별 흐름을 한 화면에
+  function appMenuCard(X){
+    var R=X.R,rec=X.cur.filter(function(e){return appOf(e)==='record';}),dk=function(e){return dstr(e.created_at);},sid=function(e){return e.session_id;};
+    var studyOpen=rec.filter(function(e){return (e.type==='tab_view'&&(e.meta||{}).tab==='study')||e.type==='study_tab';});
+    var vRead=X.lc?perDayUniq(X.lc,R,function(l){return l.read_on;},function(l){return l.reader;}):R.days.map(function(){return 0;});
+    var vStudy=perDayUniq(studyOpen,R,dk,sid);
+    var tRead=X.lc?cnt(readersOf(X.lc)):0,tStudy=cnt(sessions(studyOpen));
+    // 메뉴별 들어간 사람(폰) 수 — 아래 탭 + 이번 달 책 안 메뉴
+    var tb={},sb={};function add(o,k,e){var x=o[k]=o[k]||{s:{},n:0};x.n++;if(e.session_id)x.s[e.session_id]=1;}
+    rec.forEach(function(e){var m=e.meta||{};
+      if(e.type==='tab_view')add(tb,TABN[m.tab]||m.tab||'?',e);
+      else if(e.type==='study_tab')add(sb,stabName(m),e);});
+    function bars(o,col){var keys=Object.keys(o).sort(function(a,b){return cnt(o[b].s)-cnt(o[a].s)||o[b].n-o[a].n;});
+      if(!keys.length)return '<p class="empty">이 기간에 누른 기록이 없어요.</p>';
+      var mx=Math.max.apply(null,keys.map(function(k){return cnt(o[k].s);}).concat([1]));
+      return '<div class="bars">'+keys.slice(0,10).map(function(k){var p=cnt(o[k].s);return '<div class="brow"><span>'+esc(k)+'</span><span class="track"><i style="width:'+Math.round(p/mx*100)+'%;background:'+col+'"></i></span><span class="v">'+p+'명 <small>'+o[k].n+'번</small></span></div>';}).join('')+'</div>';}
+    var sub=function(t){return '<b style="display:block;font-size:.9rem;margin:16px 0 6px">'+t+' <span class="hint">들어간 사람 · 누른 횟수</span></b>';};
+    return '<div class="card"><div class="shd"><h3>📱 앱 메뉴 한눈에</h3><span class="hint r">'+esc(R.label)+'</span></div>'+
+      '<b style="font-size:.9rem">날짜별 흐름</b>'+
+      groupChart(R.days,[{name:'✅ 기록한 폰 (기간 '+tRead+'대)',color:'#2F6E58',vals:vRead},{name:'📘 이번 달 책 연 사람 (기간 '+tStudy+'명)',color:'#6A4A8A',vals:vStudy}])+
+      sub('많이 들어간 아래 메뉴')+bars(tb,'#2F6E58')+
+      sub('📘 이번 달 책 안에서 많이 누른 메뉴')+bars(sb,'#6A4A8A')+
+      '<p class="hint">이번 달 책 연 사람 = 아래 메뉴에서 이번 달 책을 열었거나 그 안 메뉴를 누른 사람. 기록한 폰은 읽기 기록 날짜 기준이에요.</p></div>';
+  }
   function renderRecord(body,X){
     var R=X.R;
     if(!X.lc){body.innerHTML='<div class="card"><div class="warn">읽기 기록 DB(reading_logs)를 읽지 못했어요. migrate_reading_logs.sql 실행 여부를 확인해 주세요.</div></div>';return;}
@@ -748,7 +789,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         ra:rec.filter(function(e){return e.type==='read_aloud_click';}).length,wb:rec.filter(function(e){return e.type==='workbook_click';}).length,buy:rec.filter(function(e){return e.type==='buy_click';}).length,rec:rec};}
     var a=m(X.lc,X.cur),b=m(X.lp,X.prv);
     var rk=S.repKey||S.current||(S.pubs[0]&&S.pubs[0].key)||'';
-    var h='<div class="card rep"><div class="shd"><h3>📖 읽기 기록 리포트</h3>'+(S.pubs.length?'<select class="t sm r" id="rk">'+S.pubs.map(function(m){return '<option value="'+esc(m.key)+'"'+(m.key===rk?' selected':'')+'>'+esc((m.month_label||'').split('·')[0].trim()||m.ko)+' · '+esc(m.emoji||'')+' '+esc(m.ko)+'</option>';}).join('')+'</select>':'')+'</div>'+
+    var h=appMenuCard(X)+'<div class="card rep"><div class="shd"><h3>📖 읽기 기록 리포트</h3>'+(S.pubs.length?'<select class="t sm r" id="rk">'+S.pubs.map(function(m){return '<option value="'+esc(m.key)+'"'+(m.key===rk?' selected':'')+'>'+esc((m.month_label||'').split('·')[0].trim()||m.ko)+' · '+esc(m.emoji||'')+' '+esc(m.ko)+'</option>';}).join('')+'</select>':'')+'</div>'+
       '<div id="sbody"><p class="empty">불러오는 중…</p></div>'+
       '<p class="hint" style="margin-top:14px">스터디 달 전체 기록이에요(위 기간 선택과 무관). 회원 이름은 저장하지 않아요. ‘폰’은 기록한 브라우저 하나예요. 같은 사람이 폰이나 브라우저를 바꾸면 따로 세요.</p></div>';
     h+='<h3 style="margin:22px 2px 0;font-size:1.05rem">🗓 기간별 이용 <span class="hint">'+esc(R.label)+'</span></h3>';
@@ -798,8 +839,8 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
         return '<p class="hint">📚 다른 책 기록: <b>'+ot.length+'번 · '+cnt(countBy(ot,function(l){return l.reader;}))+'대</b>'+(otp?' (이전 기간 '+otp.length+'번 · '+cnt(countBy(otp,function(l){return l.reader;}))+'대)':'')+'. 책별·주제별 반응 통계에는 넣지 않아요.</p>';})()+'</div></div>';
     h+=rawEventsHTML(X);
     // 2026-11-25: '한눈에'에서 옮겨 옴 — 스터디 참여 신청·공동구매 관심(다른 탭에 없던 것)
-    h+='<div class="card" id="joincard"><h3>🙋 스터디 참여 신청</h3><p class="status">불러오는 중…</p></div><div class="card" id="gbcard"><h3>🛍 공동구매 관심</h3><p class="status">불러오는 중…</p></div>';
-    body.innerHTML=h;wireAppTrend(X);joinCard();groupbuyCard();
+    h+='<div class="card" id="gbcard"><h3>🛍 공동구매 관심</h3><p class="status">불러오는 중…</p></div>'; // 스터디 참여 신청은 한눈에로(2026-11-26)
+    body.innerHTML=h;wireAppTrend(X);groupbuyCard();
     var rsel=document.getElementById('rk');if(rsel)rsel.onchange=function(){S.repKey=rsel.value;monthReport(rsel.value);};
     if(rk)monthReport(rk);else document.getElementById('sbody').innerHTML='<p class="empty">공개된 스터디 달이 없어요.</p>';
     var sel=document.getElementById('rm');function draw(){var o=sel.value==='o',v=o?perDayUniq(X.cur.filter(function(e){return appOf(e)==='record'&&e.type==='page_view';}),R,function(e){return dstr(e.created_at);},function(e){return e.session_id;})
