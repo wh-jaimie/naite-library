@@ -1606,57 +1606,86 @@
   function getDN(){try{return (localStorage.getItem('naite_display_name')||'').trim();}catch(e){return '';}}
   function setDN(v){try{if(v)localStorage.setItem('naite_display_name',v);else localStorage.removeItem('naite_display_name');}catch(e){}}
 
-  /* 🎓 스터디 수료증(2026-11-18): 그 달 기록한 날 8번 이상인 신청자. 이름·주제·기록 횟수·만난 책 표지 */
+  /* 🎓 스터디 수료증(2026-11-18): 그 달 기록한 날 8번 이상인 신청자. 이름·주제·기록 횟수·만난 책 표지
+     2026-11-26 운영자: 나이테 수료증 — 나이테 120 링 그림(예전 메인 .ringmap)에 지금까지 수료한 주제는 컬러+수료한 달, 아직 안 한 주제는 흑백.
+     수료한 주제 = my_grad_themes RPC(migrate_grad_rings.sql). RPC가 없거나 실패하면 이번 달 주제만 컬러. 주제 목록 = ../c120_data.json */
+  var C120T=null;
+  function certThemes(){if(C120T)return Promise.resolve(C120T);
+    return fetch('../c120_data.json?v='+new Date().toISOString().slice(0,10)).then(function(r){return r.json();}).then(function(d){C120T=(d&&d.themes||[]).map(function(t){return {key:t.key,emoji:t.emoji,ko:t.ko};});return C120T;}).catch(function(){return null;});}
+  function certGrads(){if(!S||!S.client||!S.reader)return Promise.resolve([]);
+    var a={p_reader:S.reader};try{var vo=localStorage.getItem('naite_voice');if(vo&&vo.length>=16)a.p_voice=vo;}catch(e){}
+    try{return Promise.resolve(S.client.rpc('my_grad_themes',a)).then(function(r){return (r&&!r.error&&Array.isArray(r.data))?r.data:[];},function(){return [];});}catch(e){return Promise.resolve([]);}}
+  // 흑백 이모지: ctx.filter가 안 되는 브라우저(아이폰 사파리 등)가 있어 픽셀로 직접 회색 처리
+  function grayEmoji(em,px){var s=Math.ceil(px*1.5),cv=document.createElement('canvas');cv.width=cv.height=s;var g=cv.getContext('2d');
+    g.textAlign='center';g.textBaseline='middle';g.font=px+'px sans-serif';g.fillText(em,s/2,s/2+px*.06);
+    try{var im=g.getImageData(0,0,s,s),d=im.data;for(var i=0;i<d.length;i+=4){var y=d[i]*.3+d[i+1]*.59+d[i+2]*.11;d[i]=d[i+1]=d[i+2]=y;}g.putImageData(im,0,0);}catch(e){}
+    return cv;}
   function drawCert(o){
     var W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;var c=cv.getContext('2d');
     var serif='"Gowun Batang",Georgia,serif',sans='"Noto Sans KR",sans-serif',PINE='#245648',HONEY='#D1965C',CORAL='#B87343',INK='#2E2A22';
-    var bks=(S.books||[]).slice(0,5),rec=recDays(),mon=o.month||monthInfo().month,name=(o.name||'').trim();
+    var bks=(S.books||[]).slice(0,5),rec=recDays(),mon=o.month||monthInfo().month,name=(o.name||'').trim(),curKey=S.home.key||'';
     var td=dateOf(logicalToday()),dstr=td.getFullYear()+'년 '+(td.getMonth()+1)+'월 '+td.getDate()+'일';
-    var txt='수료증나이테영어그림책스터디님월에서엄마목소리로을번읽어주었어요꾸준히함께한마음을칭찬하며이드려요만난책권'+name+(S.home.ko||'')+dstr+'0123456789';
-    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 90px "Gowun Batang"',txt),document.fonts.load('800 30px "Noto Sans KR"',txt+'@naite_library STUDY')]).catch(function(){}):null]
+    var txt='수료증나이테영어그림책스터디님월에서엄마목소리로을번읽어주었어요이번달권중만났어요주제개를함께했어요'+name+(S.home.ko||'')+dstr+'0123456789';
+    return Promise.all([document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 90px "Gowun Batang"',txt),document.fonts.load('800 30px "Noto Sans KR"',txt+'@naite_library STUDY CERTIFICATE')]).catch(function(){}):null,certThemes(),certGrads()]
       .concat(bks.map(function(b){return loadImg(b.cover);}))).then(function(res){
-      var ims=res.slice(1);
-      // 바탕: 크림색 + 나이테 무늬(오른쪽 위·왼쪽 아래)
+      var TH=res[1],GR=res[2]||[],ims=res.slice(3);
       c.fillStyle='#FBF4E6';c.fillRect(0,0,W,H);
       function rings(cx,cy,n,step,al){c.save();c.strokeStyle='rgba(36,86,72,'+al+')';c.lineWidth=2;
         for(var k=1;k<=n;k++){var R=step*k;c.beginPath();for(var t=0;t<=72;t++){var a=t/72*Math.PI*2,q=R*(1+.07*Math.sin(3*a+k*.7)+.04*Math.sin(5*a+k*1.3));t?c.lineTo(cx+q*Math.cos(a),cy+q*Math.sin(a)):c.moveTo(cx+q*Math.cos(a),cy+q*Math.sin(a));}c.closePath();c.stroke();}c.restore();}
       rings(W-40,40,9,26,.09);rings(30,H-30,8,26,.08);
-      // 테두리: 두 줄(초록 실선 + 꿀색 점선)
       c.strokeStyle=PINE;c.lineWidth=7;rrect(c,38,38,W-76,H-76,36);c.stroke();
       c.save();c.setLineDash([3,13]);c.lineCap='round';c.strokeStyle=HONEY;c.lineWidth=6;rrect(c,62,62,W-124,H-124,26);c.stroke();c.restore();
-      // 귀여운 점·새싹 장식
       function dot(x,y,r,col){c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();}
-      function sprout(x,y,s){c.save();c.translate(x,y);c.scale(s,s);c.strokeStyle=PINE;c.lineWidth=4;c.lineCap='round';c.beginPath();c.moveTo(0,0);c.lineTo(0,-30);c.stroke();
-        c.fillStyle='#6FA27F';c.beginPath();c.ellipse(-13,-34,14,8,-.5,0,Math.PI*2);c.fill();c.fillStyle='#8DBE8E';c.beginPath();c.ellipse(13,-38,14,8,.5,0,Math.PI*2);c.fill();c.restore();}
-      [[130,150,7,HONEY],[950,170,6,CORAL],[115,560,5,'#8DBE8E'],[968,610,7,HONEY],[150,1010,6,CORAL],[935,1040,5,'#8DBE8E']].forEach(function(d){dot(d[0],d[1],d[2],d[3]);});
-      sprout(160,300,1);sprout(925,300,1.1);
       // 로고
       var cx=W/2;c.lineWidth=3.2;c.strokeStyle=PINE;[[24,1],[16,.75],[8,.5]].forEach(function(q){c.globalAlpha=q[1];c.beginPath();c.arc(cx-128,140,q[0],0,Math.PI*2);c.stroke();});c.globalAlpha=1;
       c.fillStyle=PINE;c.font='700 30px '+serif;c.textBaseline='middle';c.fillText('나이테 영어그림책 스터디',cx-92,142);c.textBaseline='alphabetic';
-      // 제목
-      c.fillStyle='rgba(209,150,92,.3)';rrect(c,cx-200,268,400,30,15);c.fill();
-      c.textAlign='center';c.fillStyle=PINE;c.font='700 112px '+serif;c.fillText('수 료 증',cx,300);
-      c.fillStyle=CORAL;c.font='800 24px '+sans;c.fillText('STUDY CERTIFICATE',cx,350);
-      // 이름
-      var nm=name?name+' 님':'우리 집 엄마 님',fs=66;c.font='700 '+fs+'px '+serif;while(fs>40&&c.measureText(nm).width>760){fs-=4;c.font='700 '+fs+'px '+serif;}
-      c.fillStyle=INK;c.fillText(nm,cx,470);var nw=c.measureText(nm).width;c.strokeStyle=HONEY;c.lineWidth=4;c.beginPath();c.moveTo(cx-nw/2-20,498);c.lineTo(cx+nw/2+20,498);c.stroke();
-      // 본문
-      c.fillStyle='#4A4538';c.font='700 36px '+serif;
-      [mon+'월 '+(S.home.emoji||'')+' '+(S.home.ko||'')+' 스터디에서','엄마 목소리로 영어 그림책을',rec.month+'번이나 읽어 주었어요.'].forEach(function(t,i){c.fillText(t,cx,580+i*58);});
-      c.fillStyle='#6A6C60';c.font='700 28px '+sans;c.fillText('꾸준히 함께한 마음을 칭찬하며 이 수료증을 드려요',cx,775);
+      // 제목·이름·본문
+      c.fillStyle='rgba(209,150,92,.3)';rrect(c,cx-190,248,380,28,14);c.fill();
+      c.textAlign='center';c.fillStyle=PINE;c.font='700 100px '+serif;c.fillText('수 료 증',cx,278);
+      c.fillStyle=CORAL;c.font='800 22px '+sans;c.fillText('STUDY CERTIFICATE',cx,322);
+      var nm=name?name+' 님':'우리 집 엄마 님',fs=60;c.font='700 '+fs+'px '+serif;while(fs>40&&c.measureText(nm).width>760){fs-=4;c.font='700 '+fs+'px '+serif;}
+      c.fillStyle=INK;c.fillText(nm,cx,412);var nw=c.measureText(nm).width;c.strokeStyle=HONEY;c.lineWidth=4;c.beginPath();c.moveTo(cx-nw/2-20,438);c.lineTo(cx+nw/2+20,438);c.stroke();
+      c.fillStyle='#4A4538';c.font='700 34px '+serif;
+      [mon+'월 '+(S.home.emoji||'')+' '+(S.home.ko||'')+' 스터디에서','엄마 목소리로 영어 그림책을 '+rec.month+'번 읽어 주었어요.'].forEach(function(t,i){c.fillText(t,cx,505+i*52);});
+      // 나이테 120 링 그림: 바깥 12 + 안쪽 12, 수료한 주제는 컬러 + 수료한 달
+      if(TH&&TH.length){
+        var done={},M=372,ry=752,cell=M*.12,nd=0,badges=[];
+        GR.forEach(function(g){if(g&&g.key)done[g.key]=+String(g.month||'').slice(5,7)||0;});
+        if(curKey)done[curKey]=mon;
+        c.lineWidth=M*.05;c.strokeStyle='rgba(36,86,72,.12)';c.beginPath();c.arc(cx,ry,M*.44,0,Math.PI*2);c.stroke();
+        c.lineWidth=M*.04;c.strokeStyle='rgba(36,86,72,.16)';c.beginPath();c.arc(cx,ry,M*.30,0,Math.PI*2);c.stroke();
+        c.lineWidth=M*.03;c.strokeStyle='rgba(209,150,92,.35)';c.beginPath();c.arc(cx,ry,M*.17,0,Math.PI*2);c.stroke();
+        TH.slice(0,24).forEach(function(t,i){var outer=i<12,r=(outer?.44:.30)*M,a=(i%12)/12*2*Math.PI-Math.PI/2+(outer?0:Math.PI/12),
+            x=cx+r*Math.cos(a),y=ry+r*Math.sin(a),dm=Object.prototype.hasOwnProperty.call(done,t.key),now=t.key===curKey;
+          if(dm)nd++;
+          if(now)dot(x,y,cell/2+5,'rgba(209,150,92,.55)');
+          c.save();c.shadowColor='rgba(0,0,0,'+(dm?.14:.06)+')';c.shadowBlur=dm?8:3;c.shadowOffsetY=dm?3:1;
+          dot(x,y,cell/2,now?PINE:dm?'#FFFDF8':'#F1EEE7');c.restore();
+          if(dm&&!now){c.strokeStyle='rgba(36,86,72,.55)';c.lineWidth=3;c.beginPath();c.arc(x,y,cell/2+1.5,0,Math.PI*2);c.stroke();}
+          if(dm){c.save();c.textBaseline='middle';c.font='24px sans-serif';c.fillText(t.emoji,x,y+1);c.restore();}
+          else{var gi=grayEmoji(t.emoji,24);c.save();c.globalAlpha=.35;c.drawImage(gi,x-gi.width/2,y-gi.height/2);c.restore();}
+          if(dm&&done[t.key])badges.push([x,y+cell/2,done[t.key]+'월',now]);});
+        badges.forEach(function(b){c.font='800 12px '+sans;var bw=c.measureText(b[2]).width+14;c.fillStyle=b[3]?CORAL:PINE;rrect(c,b[0]-bw/2,b[1]-8,bw,18,9);c.fill();
+          c.fillStyle='#fff';c.textBaseline='middle';c.fillText(b[2],b[0],b[1]+1.5);c.textBaseline='alphabetic';});
+        c.fillStyle=PINE;c.font='700 48px '+serif;c.fillText(String(nd),cx,ry+12);
+        c.fillStyle='#5E6253';c.font='700 14px '+sans;c.fillText('24주제 중',cx,ry+40);
+        c.fillStyle=PINE;c.font='700 30px '+serif;c.fillText('나이테 120 주제 중 '+nd+'개를 함께했어요',cx,986);
+      }else{
+        c.fillStyle='#6A6C60';c.font='700 28px '+sans;c.fillText('꾸준히 함께한 마음을 칭찬하며 이 수료증을 드려요',cx,800);
+      }
       // 만난 책 표지
-      var n=bks.length,tw=128,th=tw*4/3,gap=22,x0=cx-(n*tw+(n-1)*gap)/2,ty=830,met=0;
+      var n=bks.length,tw=104,th=tw*4/3,gap=18,x0=cx-(n*tw+(n-1)*gap)/2,ty=1018,met=0;
       bks.forEach(function(b,i){var x=x0+i*(tw+gap),im=ims[i],read=count(b.id)>0;if(read)met++;
-        c.save();c.globalAlpha=read?1:.3;c.shadowColor='rgba(0,0,0,.18)';c.shadowBlur=10;c.shadowOffsetY=4;rrect(c,x,ty,tw,th,12);c.fillStyle='#EBE3D2';c.fill();c.restore();
-        c.save();c.globalAlpha=read?1:.3;rrect(c,x,ty,tw,th,12);c.clip();if(im){var k=Math.max(tw/im.width,th/im.height);c.drawImage(im,x+(tw-im.width*k)/2,ty+(th-im.height*k)/2,im.width*k,im.height*k);}c.restore();
-        if(read){dot(x+tw-6,ty+6,17,PINE);c.strokeStyle='#fff';c.lineWidth=4;c.lineCap='round';c.beginPath();c.moveTo(x+tw-14,ty+6);c.lineTo(x+tw-8,ty+12);c.lineTo(x+tw+3,ty-1);c.stroke();}});
-      c.fillStyle=PINE;c.font='800 28px '+sans;c.fillText('이번 달 '+n+'권 중 '+met+'권 만났어요'+(met>=n&&n?' 🎉':''),cx,ty+th+52);
+        c.save();c.globalAlpha=read?1:.3;c.shadowColor='rgba(0,0,0,.18)';c.shadowBlur=8;c.shadowOffsetY=3;rrect(c,x,ty,tw,th,10);c.fillStyle='#EBE3D2';c.fill();c.restore();
+        c.save();c.globalAlpha=read?1:.3;rrect(c,x,ty,tw,th,10);c.clip();if(im){var k=Math.max(tw/im.width,th/im.height);c.drawImage(im,x+(tw-im.width*k)/2,ty+(th-im.height*k)/2,im.width*k,im.height*k);}c.restore();
+        if(read){dot(x+tw-6,ty+6,14,PINE);c.strokeStyle='#fff';c.lineWidth=3.5;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(x+tw-12,ty+6);c.lineTo(x+tw-7,ty+11);c.lineTo(x+tw+2,ty+1);c.stroke();}});
+      c.fillStyle=PINE;c.font='800 24px '+sans;c.fillText('이번 달 '+n+'권 중 '+met+'권 만났어요'+(met>=n&&n?' 🎉':''),cx,1194);
       // 날짜·도장
-      c.textAlign='left';c.fillStyle='#4A4538';c.font='700 30px '+serif;c.fillText(dstr,140,1215);
-      c.font='700 34px '+serif;c.fillText('나이테',140,1262);
-      c.save();c.translate(870,1215);c.rotate(-.16);c.strokeStyle=CORAL;c.lineWidth=6;c.beginPath();c.arc(0,0,78,0,Math.PI*2);c.stroke();c.lineWidth=2.5;c.beginPath();c.arc(0,0,66,0,Math.PI*2);c.stroke();
-        c.fillStyle=CORAL;c.textAlign='center';c.font='800 22px '+sans;c.fillText(mon+'월',0,-22);c.font='800 40px '+sans;c.fillText('수료',0,20);c.font='800 15px '+sans;c.fillText('NAITE STUDY',0,44);c.restore();
-      c.textAlign='center';c.fillStyle='rgba(36,86,72,.7)';c.font='700 24px '+sans;c.fillText('@naite_library',cx,1262);c.textAlign='left';
+      c.textAlign='left';c.fillStyle='#4A4538';c.font='700 28px '+serif;c.fillText(dstr,140,1238);
+      c.font='700 32px '+serif;c.fillText('나이테',140,1280);
+      c.save();c.translate(880,1222);c.rotate(-.16);c.strokeStyle=CORAL;c.lineWidth=6;c.beginPath();c.arc(0,0,70,0,Math.PI*2);c.stroke();c.lineWidth=2.5;c.beginPath();c.arc(0,0,59,0,Math.PI*2);c.stroke();
+        c.fillStyle=CORAL;c.textAlign='center';c.font='800 21px '+sans;c.fillText(mon+'월',0,-18);c.font='800 36px '+sans;c.fillText('수료',0,18);c.font='800 14px '+sans;c.fillText('NAITE STUDY',0,40);c.restore();
+      c.textAlign='center';c.fillStyle='rgba(36,86,72,.7)';c.font='700 23px '+sans;c.fillText('@naite_library',cx,1280);c.textAlign='left';
       return new Promise(function(r2){try{cv.toBlob(function(bl){r2(bl);},'image/jpeg',.92);}catch(e){r2(null);}});
     });
   }
