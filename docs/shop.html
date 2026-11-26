@@ -44,6 +44,15 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
 .pc:active{transform:scale(.96)}
 .pc .pi{font-size:1.4rem}.pc b{font-size:.9rem;font-weight:800;white-space:nowrap;letter-spacing:-.02em}.pc .pa{display:none}
 .pc+.pc{background:#D1965C;box-shadow:0 4px 12px rgba(209,150,92,.3)}
+.gb{margin:22px 14px 0}
+.gbc{display:block;text-decoration:none;color:#fff;background:linear-gradient(135deg,#9E3B33,#B8423A);border-radius:20px;padding:18px 16px 16px;text-align:center;box-shadow:0 6px 16px rgba(158,59,51,.28);transition:transform .12s ease;-webkit-tap-highlight-color:transparent}
+.gbc:active{transform:scale(.97)}
+.gbk{display:block;font-size:.78rem;font-weight:700;opacity:.9}
+.gbt{display:block;margin-top:3px;font-size:1.12rem;font-weight:800}
+.gbcv{display:flex;justify-content:center;gap:10px;margin:12px 0 10px}
+.gbcv img{height:84px;max-width:31%;object-fit:contain;border-radius:5px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.gbs{display:block;font-size:.78rem;line-height:1.5;opacity:.92}
+.gbb{display:inline-block;margin-top:12px;background:#fff;color:#9E3B33;font-size:.92rem;font-weight:800;border-radius:999px;padding:9px 20px}
 .empty{grid-column:1/-1;text-align:center;color:var(--soft);font-size:.85rem;padding:20px}
 .foot{text-align:center;font-size:.75rem;color:var(--soft);margin-top:26px;padding:0 18px;line-height:1.6}
 .foot a{color:var(--pine);font-weight:700}
@@ -56,6 +65,8 @@ body{background:#F7F3EA;color:var(--ink);font-family:'Pretendard',system-ui,-app
   <div class="head"><button type="button" class="sh" id="shareBtn" aria-label="공유"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B1E19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
     <a class="lg" href="./?from=shop"><img src="naite-profile.jpg" alt="나이테(드니맘)"></a><h1>나이테 - 영어책육아 메이트</h1><p class="intro">한달5권 원서 스터디 운영중입니다.<br>엄마표영어에 필요한 모든 자료를 제공합니다.<br>문의 : <a href="mailto:naite_library@naver.com">naite_library@naver.com</a></p></div>
   <section class="sec"><h2 id="mH">이번 달 스터디 책 5권</h2><div class="grid" id="month"><p class="empty">불러오는 중…</p></div></section>
+  <!-- 2026-11-26 운영자: 인스타 shop 페이지에 12월 공구 구매 링크 (공구 끝나면 이 section 빼기) -->
+  <section class="gb"><a class="gbc" href="https://www.0549.co.kr/shop/detail.php?pno=3279E1D4C83720ED7E4B99F98B26FEB1" target="_blank" rel="noopener" data-gb="christmas"><span class="gbk">🎄 12월 스터디 책 공동구매</span><span class="gbt">크리스마스 그림책 3권</span><span class="gbcv"><img src="https://covers.openlibrary.org/b/id/438889-M.jpg" alt="Dear Santa"><img src="https://covers.openlibrary.org/b/id/10514195-M.jpg" alt="Suzy Goose and the Christmas Star"><img src="https://covers.openlibrary.org/b/id/760875-M.jpg" alt="Olivia Helps with Christmas"></span><span class="gbs">Dear Santa · Suzy Goose · Olivia<br>잉글리쉬북랜드 · 3만 원 이상 무료배송</span><span class="gbb">🛒 공구 구매하기 ›</span></a></section>
   <div class="cards"><a class="pc" href="challenge.html?from=shop" data-pc="나이테 120"><span class="pi">🎯</span><b>스터디 전체 과정</b><span class="pa">›</span></a><a class="pc" href="domestic.html?from=shop" data-pc="국내 인기 책장"><span class="pi">🛒</span><b>인기 원서 100</b><span class="pa">›</span></a></div>
   <section class="sec"><h2>나이테가 활용한 원서들</h2><div class="grid" id="road"></div></section>
   <section class="sec"><h2>나이테 대박책</h2><div class="grid" id="best"></div></section>
@@ -105,7 +116,7 @@ Promise.all([
     document.getElementById('best').innerHTML=best.slice(0,10).map(function(b){return row(b,'best');}).join('');});
 });
 document.getElementById('shareBtn').onclick=function(){var u=location.origin+location.pathname;if(navigator.share)navigator.share({title:'나이테 - 영어책육아 메이트',url:u}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){alert('링크를 복사했어요');});};
-document.addEventListener('click',function(e){var c=e.target.closest('a.pc');if(c){try{if(localStorage.getItem('naite_notrack')!=='1')fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'cta_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{page:'인스타 상품',to:c.dataset.pc}}),keepalive:true}).catch(function(){});}catch(x){}return;}var a=e.target.closest('a.row');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
+document.addEventListener('click',function(e){var g=e.target.closest('a.gbc');if(g){try{if(localStorage.getItem('naite_notrack')!=='1')fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'groupbuy_apply_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{from:'shop',theme_key:g.dataset.gb,page:'인스타 상품'}}),keepalive:true}).catch(function(){});}catch(x){}return;}var c=e.target.closest('a.pc');if(c){try{if(localStorage.getItem('naite_notrack')!=='1')fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'cta_click',session_id:localStorage.getItem('joy_sid')||'anon',path:location.pathname,meta:{page:'인스타 상품',to:c.dataset.pc}}),keepalive:true}).catch(function(){});}catch(x){}return;}var a=e.target.closest('a.row');if(!a)return;try{if(localStorage.getItem('naite_notrack')==='1')return;var sid=localStorage.getItem('joy_sid')||'anon';
   fetch(U+'/rest/v1/events',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type:'buy_click',session_id:sid,path:location.pathname,meta:{title:a.dataset.t,page:'인스타 상품',from:a.dataset.from}}),keepalive:true}).catch(function(){});}catch(x){}});
 })();
 </script>
