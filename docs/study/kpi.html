@@ -141,9 +141,10 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   }
   var client=supabase.createClient(window.SUPA_URL, window.SUPA_ANON);
   var TABS=[['home','한눈에'],['naite','🌱 나이테<span class="x"> (유입)</span>'],['record','📖 나이테 스터디<span class="x"> (앱)</span>'],['people','👤 사람별']];
-  var PERIODS=[['today','오늘'],['7','최근 7일'],['30','최근 30일'],['month','이번 스터디 달']];
+  // 2026-11-26 운영자: 30일·이번 스터디 달은 불러오기가 느려서 뺌 — 오늘·최근 7일만
+  var PERIODS=[['today','오늘'],['7','최근 7일']];
   var S={tab:'home',period:'7',themes:[],pubs:[],current:'',bookKey:'',cache:{},themeCache:{}};
-  try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p)S.period=_p;}catch(e){}
+  try{var _h=(location.hash||'').slice(1);if(TABS.some(function(t){return t[0]===_h;}))S.tab=_h;var _p=localStorage.getItem('naite_kpi_period');if(_p&&PERIODS.some(function(p){return p[0]===_p;}))S.period=_p;}catch(e){}
 
   // ---------- 공통 유틸 ----------
   function pad(n){return (n<10?'0':'')+n;}
@@ -296,7 +297,7 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
     var R=periodRange(),D=await loadPeriod();
     var cur=D.ev.filter(function(e){return inR(e.created_at,R.start,R.end);}),prv=D.ev.filter(function(e){return inR(e.created_at,R.pstart,R.pend);});
     var lc=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.start,R.end);}):null,lp=D.logs?D.logs.filter(function(l){return inRd(l.read_on,R.pstart,R.lpend);}):null;
-    var X={R:R,cur:cur,prv:prv,lc:lc,lp:lp,all:D.ev};
+    var X={R:R,cur:cur,prv:prv,lc:lc,lp:lp,all:D.ev,logs:D.logs};
     body.classList.remove('fold');
     if(S.tab==='naite')renderNaite(body,X);else if(S.tab==='record')renderRecord(body,X);else renderHome(body,X);
     if(S.tab==='naite'||S.tab==='record')foldCards(body,S.tab);
@@ -309,9 +310,17 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       h.addEventListener('click',function(){var sh=c.classList.toggle('shut');st[k]=!sh;try{localStorage.setItem('naite_kpi_fold',JSON.stringify(st));}catch(e){}});});}
   // 한눈에 요약: 처음 기록한 폰 · 확인할 것 · 기록 흐름(2026-11-23)
   async function homeSummary(X,R){
-    var L=await loadAllLogs(),first={},last={};
-    (L||[]).forEach(function(l){var d=l.read_on;if(!d)return;if(!first[l.reader]||d<first[l.reader])first[l.reader]=d;if(!last[l.reader]||d>last[l.reader])last[l.reader]=d;});
-    var s0=dstr(R.start),e0=dstr(R.end),ps=dstr(R.pstart),pe=dstr(R.pend);
+    var first={},last={},ps=dstr(R.pstart),L=X.logs;
+    if(!document.getElementById('sumFun')&&!document.getElementById('sumChk')&&L){
+      // 2026-11-26 운영자(느림): 전체 기록 대신 — 이번·이전 기간에 기록한 폰만 골라, 그 전에 기록이 있었는지만 확인
+      (L||[]).forEach(function(l){var d=l.read_on;if(!d)return;if(!first[l.reader]||d<first[l.reader])first[l.reader]=d;});
+      var ids=Object.keys(first);
+      if(ids.length){try{(await pageAll(function(){return client.from('reading_logs').select('reader').lt('read_on',ps).in('reader',ids).order('id');})).forEach(function(r){first[r.reader]='0000';});}catch(e){L=null;}}
+    }else{
+      L=await loadAllLogs();
+      (L||[]).forEach(function(l){var d=l.read_on;if(!d)return;if(!first[l.reader]||d<first[l.reader])first[l.reader]=d;if(!last[l.reader]||d>last[l.reader])last[l.reader]=d;});
+    }
+    var s0=dstr(R.start),e0=dstr(R.end),pe=dstr(R.pend);
     var nNew=Object.keys(first).filter(function(k){return first[k]>=s0&&first[k]<e0;}).length,pNew=Object.keys(first).filter(function(k){return first[k]>=ps&&first[k]<pe;}).length;
     var el=document.getElementById('sumNew');if(el)el.outerHTML=L?kpi('✏️ 처음 기록한 폰',nNew,pNew,R,'대'):kpi('✏️ 처음 기록한 폰','–',null,R,'');
     if(!document.getElementById('sumFun')&&!document.getElementById('sumChk'))return;
@@ -423,7 +432,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
   // 전체 기간 스터디 앱 기록(앱 연 것 + 설치) — 한 번만 불러옴
   async function loadAppAll(){
     if(S.appAll)return S.appAll;
-    var ev=await pageAll(function(){return client.from('events').select('type,session_id,meta,created_at').or('type.eq.app_installed,and(type.eq.page_view,path.like.*/record/*)').order('created_at',{ascending:true});});
+    // 2026-11-26 운영자(느림): 전체 기간 대신 최근 30일만 불러옴
+    var since30=addDays(midnight(new Date()),-29).toISOString();
+    var ev=await pageAll(function(){return client.from('events').select('type,session_id,meta,created_at').gte('created_at',since30).or('type.eq.app_installed,and(type.eq.page_view,path.like.*/record/*)').order('created_at',{ascending:true});});
     var first={},inst={},byDay={};
     ev.forEach(function(e){var k=e.session_id;if(!k)return;var d=dstr(e.created_at);
       if(e.type==='page_view'){if(!first[k]||d<first[k])first[k]=d;(byDay[d]=byDay[d]||{})[k]=1;}
@@ -565,9 +576,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       '';
     // 2026-11-25 운영자: 한눈에는 핵심 5개만(확인할 것·흐름·자세히는 다른 탭에 있는 내용이라 빼고, 불러오기도 빠르게)
     // 2026-11-25 운영자: 스터디 참여 인원 추이(누적 사용자)는 한눈에 유지 — 핵심 5개 먼저 뜨고, 전체 기간 앱 기록은 뒤에서 불러와 채움
-    var allCard='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 전체 기간</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
+    var allCard='<div class="card"><h3>📈 스터디 참여 인원 추이 <span class="hint">스터디 앱 사용자 기준 · 최근 30일</span></h3><div class="kgrid" id="hallk"><div class="kpi"><div class="l">불러오는 중</div><div class="n">…</div></div></div>'+
       '<div class="shd" style="margin-top:14px"><b style="font-size:.9rem">추이</b><select class="t sm r" id="hall" style="width:auto"><option value="c">누적 사용자</option><option value="w">주별 앱 연 사람</option><option value="d">날짜별 앱 연 사람</option><option value="i">누적 설치</option></select></div><div id="hallchart"></div>'+
-      '<p class="hint">누적 사용자 = 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 전체 기간이에요.</p></div>';
+      '<p class="hint">누적 사용자 = 최근 30일 안에서 그날까지 스터디 앱을 한 번이라도 연 폰 수(설치 안 하고 링크로 연 사람도 포함). 같은 사람이 폰·브라우저를 바꾸면 따로 세요. 위 기간 버튼과 상관없이 최근 30일이에요.</p></div>';
     body.innerHTML=top+allCard+rangeNote(R);
     homeSummary(X,R);
     loadAppAll().then(allTrend).catch(function(e){var el=document.getElementById('hallk');if(el)el.innerHTML='<div class="warn">불러오지 못했어요: '+esc(e.message||e)+'</div>';});
@@ -624,9 +635,9 @@ details.raw summary{cursor:pointer;font-weight:700;font-size:.9rem;color:var(--s
       var cum=[],ci=[],c=0,c2=0;days.forEach(function(x){c+=newBy[x]||0;c2+=iBy[x]||0;cum.push(c);ci.push(c2);});
       var d7=dstr(addDays(new Date(),-6)),act7={},nw=0;days.forEach(function(x){if(x<d7)return;nw+=newBy[x]||0;Object.keys(AA.byDay[x]||{}).forEach(function(k){act7[k]=1;});});
       document.getElementById('hallk').innerHTML=
-        '<div class="kpi"><div class="l">지금까지 앱 쓴 사람</div><div class="n">'+total+'<small>명</small></div><div class="s">'+md(ds[0])+'부터 · 최근 7일 새로 '+nw+'명</div></div>'+
-        '<div class="kpi"><div class="l">최근 7일 앱 연 사람</div><div class="n">'+cnt(act7)+'<small>명</small></div><div class="s">전체의 '+(total?Math.round(cnt(act7)/total*100):0)+'%</div></div>'+
-        '<div class="kpi"><div class="l">홈 화면에 설치</div><div class="n">'+ti+'<small>명</small></div><div class="s">11/8부터 집계</div></div>';
+        '<div class="kpi"><div class="l">최근 30일 앱 쓴 사람</div><div class="n">'+total+'<small>명</small></div><div class="s">'+md(ds[0])+'부터</div></div>'+
+        '<div class="kpi"><div class="l">최근 7일 앱 연 사람</div><div class="n">'+cnt(act7)+'<small>명</small></div><div class="s">30일 쓴 사람의 '+(total?Math.round(cnt(act7)/total*100):0)+'%</div></div>'+
+        '<div class="kpi"><div class="l">최근 30일 홈 화면 설치</div><div class="n">'+ti+'<small>명</small></div><div class="s">설치 앱으로 처음 연 날 기준</div></div>';
       function weeks(){var o=[],v=[];for(var i=0;i<days.length;i+=7){var w=days.slice(i,i+7),u={};w.forEach(function(x){Object.keys(AA.byDay[x]||{}).forEach(function(k){u[k]=1;});});o.push(w[0]);v.push(cnt(u));}return [o,v];}
       function drawAll(){var v=document.getElementById('hall').value,el=document.getElementById('hallchart');
         if(v==='c')el.innerHTML=lineChart(days,cum,'#245648','명');
