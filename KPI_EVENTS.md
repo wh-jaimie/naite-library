@@ -60,7 +60,7 @@
 | groupbuy_apply_click | 공구 구매하기(상품 페이지로 이동, 11/24부터 · 그 전엔 공동구매 신청 구글 폼, 12월 자료부터): 이번 달 자료(month) · 다음 달 미리보기(next_preview) · 스터디 신청 창(join) · 첫 화면 맨 위 띠(next_top, 11/23~) · 인스타 shop 페이지(shop, 11/26~, meta.page=인스타 상품), 11/21~ | from, theme_key |
 | age_pick | 아이 나이 고르기 | age, from(popup·change·welcome) |
 | age_popup_open / age_popup_skip / age_change_open | 처음 한 번 뜨는 나이 창 / '나중에' / 표지 아래 '나이 바꾸기' (11/17부터) | |
-| age_book_go | (옛) 나이별 '먼저 읽을 2권' 카드 누름 — 11/17 카드 없앰. 지금은 💛 먼저 읽기 표지 누름 = `book_click`·`buy_click`의 `pick:1` | age, title |
+| age_book_go | (옛) 나이별 '먼저 읽을 2권' 카드 누름 — 11/17 카드 없앰, **더 이상 안 남음**(KPI는 예전 기간용으로 같이 셈). 지금은 💛 먼저 읽기 표지 누름 = `book_click`·`buy_click`의 `pick:1` | age, title |
 | use120_pick | '집에 영어책이 얼마나 있나요?' 답 | |
 | review_open / review_save / review_delete | 💬 이번 달 책 후기 창 열기 / 올리기 / 지우기 (2026-11-17) | book_id, title, write(창을 연 버튼이 '후기 남기기'면 1) · n(반응 수), body(한 줄 있음 1), edit(고침 1) · quick(기록할 때 반응 칩으로 바로 올림 1), from(card=자료 탭 '읽었어요' 뒤 / sheet=기록창) |
 | review_prompt | 💬 기록할 때 후기 유도 칩이 보임 (2026-11-17, 이번 달 책·후기 없을 때) | book_id, from(card / sheet) |
@@ -73,8 +73,8 @@
 | cal_day_open / cal_from_card / month_nav / shelf_month | 달력 날짜 열기 / 카드에서 달력 / 달 넘기기 / 기록 달 바꾸기 | |
 | cal_mode | 읽기 인증 달력 보기 바꾸기(2026-11-19) | mode: month / 5w |
 | chal_fold | 읽기 인증 챌린지 카드 접기/펼치기(2026-11-19) | id, fold: 1 접음 / 0 펼침 |
-| stamp_camera_open / stamp_photo_save / stamp_photo_share / stamp_photo_open / stamp_album / camera_fail / photo_reload | 인증샷 | |
-| share_card_open / _save / _share / _photo | 오늘 카드 이미지 | day |
+| stamp_camera_open / stamp_photo_save / stamp_photo_share / stamp_photo_open / stamp_album / camera_fail / photo_reload | 인증샷 (**stamp_photo_open = 인증샷이 달력에 저장된 순간** → KPI 📸 인증의 '인증샷 찍은 폰') | day, tpl |
+| share_card_open / _save / _share / _photo | 오늘 카드 이미지 — **더 이상 안 남음**('읽은 책 카드' 버튼 10/30 제거, 오늘 기록 공유도 11/10부터 day_card/day_photo로). KPI는 예전 기간용으로만 같이 셈 | day |
 | month_card_open / _save / _share | 달력 이미지 | month, ver: month(그 달 달력) / 5w(최근 5주, 2026-11-19) |
 | day_card_open / _save / _share | 하루 사진 모음 카드(사진 여러 장) | day |
 | day_photo_open / _save / _share | 하루 인증 사진 한 장 내보내기 | day |

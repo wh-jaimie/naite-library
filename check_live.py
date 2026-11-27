@@ -3,6 +3,7 @@
 사용: python check_live.py            (운영 사이트)
       python check_live.py local      (http://localhost:8765, python -m http.server -d docs 8765 필요)
 배포(push) 후 GitHub Pages 반영(1~2분)을 기다린 뒤 실행. 오류가 하나라도 있으면 종료코드 1.
+맨 먼저 check_kpi_events.py(KPI가 세는 이벤트를 앱이 아직 남기는지)도 같이 돌림.
 """
 import asyncio, sys, time
 from playwright.async_api import async_playwright
@@ -21,6 +22,12 @@ IGNORE = ("ServiceWorker",)  # localhost 전용 경고
 
 async def main():
     bad = 0
+    # KPI가 세는 이벤트를 앱이 아직 남기는지(버튼을 빼면 KPI가 늘 0이 되는 사고 방지, 2026-11-27)
+    import subprocess, os
+    r = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "check_kpi_events.py")],
+                       capture_output=True, text=True, encoding="utf-8", env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+    print(r.stdout.strip() or r.stderr.strip())
+    bad += 1 if r.returncode else 0
     async with async_playwright() as p:
         b = await p.chromium.launch(); pg = await b.new_page(viewport={"width": 390, "height": 844})
         errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
