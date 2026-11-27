@@ -32,7 +32,7 @@ th{background:#F3F3E9;color:var(--tealD);font-weight:700;white-space:nowrap}tr:l
 .callout{margin-top:24px;padding:18px;background:#F3F3E9;border-left:4px solid var(--amber);border-radius:10px}
 .foot{color:var(--soft);font-size:.82rem;text-align:center;padding:0 0 36px}
 @media(max-width:560px){header .wrap{flex-wrap:wrap;gap:8px}main{padding:20px 0 36px}.header-actions{width:100%;margin-left:0}.header-actions a{flex:1;min-width:0;text-align:center;white-space:normal;padding:8px;font-size:.78rem;line-height:1.3}table{min-width:570px}th,td{padding:11px 10px}}
-</style>
+/* 2026-11-27 운영자: 폰에서 표가 옆으로 길어 카드로 쌓기 */@media(max-width:560px){.table-wrap{overflow:visible;border:0;border-radius:0;background:none}.table-wrap table{min-width:0}.table-wrap thead{display:none}.table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap th,.table-wrap td{display:block;width:auto}.table-wrap tr{background:#fff;border:1px solid var(--line);border-radius:12px;margin:0 0 10px;overflow:hidden}.table-wrap tr>*{border-bottom:0;padding:9px 14px;word-break:keep-all}.table-wrap tr>:first-child{background:#F3F3E9;color:var(--tealD);font-weight:700;white-space:normal}.table-wrap td+td{border-top:1px dashed var(--line)}.table-wrap td[data-label]::before{content:attr(data-label);display:block;font-size:.78rem;font-weight:700;color:var(--coral);line-height:1.5}}/* 2026-11-27 운영자: 한글 단어 중간에서 줄 바뀌지 않게 */body{word-break:keep-all;overflow-wrap:break-word}</style>
 </head>
 <body>
 <header><div class="wrap"><a class="brand" href="../" aria-label="나이테 홈"><svg viewBox="0 0 64 64" fill="none" role="img" aria-label="나이테 로고"><circle cx="32" cy="32" r="28" stroke="#245648" stroke-width="3.6"/><circle cx="32" cy="32" r="19" stroke="#245648" stroke-width="3.6" opacity=".72"/><circle cx="32" cy="32" r="10" stroke="#245648" stroke-width="3.6" opacity=".5"/><circle cx="32" cy="32" r="3.6" fill="#D1965C"/></svg><b>나이테</b><span>영어책육아 메이트</span></a><nav class="header-actions" aria-label="바로가기"><a class="back" href="../guide.html">← 가이드 목록</a><a class="month-link" href="../record/app.html?tab=month">나이테 이번 달 자료 보러가기</a></nav></div></header>
@@ -49,9 +49,9 @@ th{background:#F3F3E9;color:var(--tealD);font-weight:700;white-space:nowrap}tr:l
   <div class="table-wrap"><table>
     <thead><tr><th scope="col"></th><th scope="col">흘려듣기</th><th scope="col">집중듣기</th></tr></thead>
     <tbody>
-      <tr><th scope="row">어떻게</th><td>놀거나 밥 먹을 때 배경으로 틀어둬요</td><td>책을 보면서 음원을 함께 들어요</td></tr>
-      <tr><th scope="row">언제</th><td>아직 책에 오래 앉아 있기 어려울 때</td><td>책을 좋아하고 글자에 관심이 생길 때</td></tr>
-      <tr><th scope="row">좋은 점</th><td>부담 없이 영어 소리에 익숙해져요</td><td>소리와 글자를 함께 만나요</td></tr>
+      <tr><th scope="row">어떻게</th><td data-label="흘려듣기">놀거나 밥 먹을 때 배경으로 틀어둬요</td><td data-label="집중듣기">책을 보면서 음원을 함께 들어요</td></tr>
+      <tr><th scope="row">언제</th><td data-label="흘려듣기">아직 책에 오래 앉아 있기 어려울 때</td><td data-label="집중듣기">책을 좋아하고 글자에 관심이 생길 때</td></tr>
+      <tr><th scope="row">좋은 점</th><td data-label="흘려듣기">부담 없이 영어 소리에 익숙해져요</td><td data-label="집중듣기">소리와 글자를 함께 만나요</td></tr>
     </tbody>
   </table></div>
   <p>흘려듣기는 "들어!" 하고 시키는 게 아니라<br>그냥 집 안에 영어 소리가 흐르게 두는 거예요</p>
